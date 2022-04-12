@@ -13,9 +13,9 @@ insert synopsis
 | Member | Skills | Personal Traits | Desired Growth | Weaknesses |
 | --- | --- | --- | --- | --- |
 | Grace Alwan | Front-end programming, React/React Native, Documentation/Management | Organized, dependable, detail-oriented, creative | Design | Backend |
-| Melissa Daniel | | | | |
-| Tara Jones | | | | |
-| Jiwon Lee | | | | |
+| Melissa Daniel | Front-end biotech development, Data system design, PYMOL, graphics | Creative, motivated, team-oriented, innovative | Design | AI, systems |
+| Tara Jones | Systems, Web, HCI design choices, Graphics | Motivated, outgoing, organized, creative | Organized code base, design | AI and App Development |
+| Jiwon Lee | Mobile/web dev, frontend and backend dev, design | Detail-oriented, organized, quick to learn | Design | Systems, AI |
 | Dean Stratakos | Systems, AI, mobile/web dev | Detail-oriented, passionate, light-spirited | Clean code, appropriate scoping of features | Design |
 
 ## Team Communication
