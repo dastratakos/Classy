@@ -1,5 +1,5 @@
 # Plan-It
-insert logo here
+<img src=images/logo.jpeg width=300 />
 
 ## Project Synopsis
   Our project aims to create a space where undergraduates can compare four year plans and share courses they are currently and are planning on taking. We want to be the social middle ground between explore courses and carta, allowing users to clearly visualize what their and their peers' schedules will look like. 
