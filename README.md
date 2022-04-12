@@ -5,7 +5,7 @@ insert logo here
 insert synopsis 
 
 ## Team
-| Grace img | Mel img | Tara img | Jiwon img | Dean img |
+| <img src=images/grace.JPG width=160/> | <img src=images/mel.jpeg width=160/> | <img src=images/tara.jpeg width=160/> | <img src=images/jiwon.jpeg width=160/>) | <img src=images/dean.jpg width=160/> |
 | :---: | :---: | :---: | :---: | :---: |
 | Grace Alwan | Melissa Daniel | Tara Jones | Jiwon Lee | Dean Stratakos |
 
