@@ -16,8 +16,18 @@ year, major, sport (if applicable), hobbies, clubs and more! Based on one’s
 courses, interests, and friends, we will offer them recommendations for courses
 to take in the future.
 
-## Technologies
+### Technologies
 Frontend - Expo App (TypeScript)
+
+To run the app, run these commands:
+
+```sh
+cd app
+expo start
+```
+
+Then, type `Shift + i` to select an iOS simulator to run the app on.
+
 Backend - Firebase
 
 ## Team
