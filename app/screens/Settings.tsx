@@ -1,7 +1,6 @@
 import { Platform, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 
-import EditScreenInfo from "../components/EditScreenInfo";
 import Layout from "../constants/Layout";
 import { StatusBar } from "expo-status-bar";
 import WideButton from "../components/Buttons/WideButton";

@@ -1,32 +1,63 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View } from "./Themed";
 
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
-import { Text, View } from "./Themed";
+import Navigation from "../navigation";
+import SquareButton from "./Buttons/SquareButton";
+import { useNavigation } from "@react-navigation/core";
 
-export default function CourseCard() {
+export default function CourseCard({
+  code,
+  title,
+  numUnits,
+  numFriends,
+}: {
+  code: string;
+  title: string;
+  numUnits: string;
+  numFriends: string;
+}) {
+  const navigation = useNavigation();
+
   return (
     <TouchableOpacity
-      onPress={() => console.log("Course pressed")}
+      onPress={() => navigation.navigate("Course")}
       style={styles.container}
     >
       <View style={styles.textContainer}>
-        <Text>CS 194W</Text>
-        <Text>Senior Project (WIM)</Text>
-        <Text>3 units</Text>
+        <Text style={styles.code}>{code}</Text>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.numUnits}>{numUnits} units</Text>
       </View>
-      <View>
-        <Text>9 friends</Text>
-      </View>
+      <SquareButton
+        num={numFriends}
+        text={"friend" + (numFriends !== "1" ? "s" : "")}
+      />
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: Layout.spacing.medium,
     borderRadius: Layout.radius.medium,
+    borderWidth: 1,
+    marginVertical: Layout.spacing.small,
   },
   textContainer: {
-    borderRadius: Layout.radius.medium,
+    justifyContent: "space-between",
+  },
+  code: {
+    fontSize: Layout.text.large,
+    fontWeight: "500",
+  },
+  title: {
+    fontSize: Layout.text.medium,
+  },
+  numUnits: {
+    // TODO: change font color
   },
 });

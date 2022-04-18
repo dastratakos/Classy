@@ -7,6 +7,7 @@ import {
 } from "../firebase";
 import { useEffect, useState } from "react";
 
+import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import WideButton from "../components/Buttons/WideButton";
 import { useNavigation } from "@react-navigation/core";
@@ -80,6 +81,7 @@ const styles = StyleSheet.create({
     padding: Layout.spacing.medium,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: Colors.light.background,
   },
   inputContainer: {
     width: "80%",

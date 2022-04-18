@@ -6,8 +6,11 @@ import { FontAwesome } from "@expo/vector-icons";
 import Layout from "../constants/Layout";
 import SquareButton from "../components/Buttons/SquareButton";
 import WideButton from "../components/Buttons/WideButton";
+import { useNavigation } from "@react-navigation/core";
 
 export default function Profile() {
+  const navigation = useNavigation();
+
   return (
     <ScrollView
       style={styles.container}
@@ -59,9 +62,12 @@ export default function Profile() {
               <Text>2022 (Senior)</Text>
             </View>
           </View>
-          <SquareButton num={83} text={"friends"}></SquareButton>
+          <SquareButton num="83" text="friends" />
         </View>
-        <WideButton text={"View Courses"} onPress={() => {}}></WideButton>
+        <WideButton
+          text={"View Courses"}
+          onPress={() => navigation.navigate("Courses")}
+        ></WideButton>
       </View>
       <View
         style={styles.separator}

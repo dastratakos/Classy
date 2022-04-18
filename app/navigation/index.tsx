@@ -1,33 +1,35 @@
+import * as React from "react";
+
+import { ColorSchemeName, Pressable } from "react-native";
+import {
+  DarkTheme,
+  DefaultTheme,
+  NavigationContainer,
+} from "@react-navigation/native";
+import {
+  RootStackParamList,
+  RootTabParamList,
+  RootTabScreenProps,
+} from "../types";
+
+import Colors from "../constants/Colors";
 /**
  * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
  * https://reactnavigation.org/docs/getting-started
  *
  */
 import { FontAwesome } from "@expo/vector-icons";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {
-  NavigationContainer,
-  DefaultTheme,
-  DarkTheme,
-} from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as React from "react";
-import { ColorSchemeName, Pressable } from "react-native";
-
-import Colors from "../constants/Colors";
-import useColorScheme from "../hooks/useColorScheme";
-import Settings from "../screens/Settings";
-import NotFoundScreen from "../screens/NotFoundScreen";
-import Messages from "../screens/Messages";
-import Search from "../screens/Search";
-import Profile from "../screens/Profile";
-import {
-  RootStackParamList,
-  RootTabParamList,
-  RootTabScreenProps,
-} from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
 import Login from "../screens/Login";
+import Messages from "../screens/Messages";
+import NotFoundScreen from "../screens/NotFoundScreen";
+import Profile from "../screens/Profile";
+import ProfileStackNavigator from "./ProfileStackNavigator";
+import Search from "../screens/Search";
+import Settings from "../screens/Settings";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import useColorScheme from "../hooks/useColorScheme";
 
 export default function Navigation({
   colorScheme,
@@ -123,27 +125,28 @@ function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="Profile"
-        component={Profile}
-        options={({ navigation }: RootTabScreenProps<"Profile">) => ({
-          title: "Profile",
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate("Settings")}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}
-            >
-              <FontAwesome
-                name="gear"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
-        })}
+        name="ProfileStack"
+        component={ProfileStackNavigator}
+        options={{ headerShown: false }}
+        // options={({ navigation }: RootTabScreenProps<"ProfileStack">) => ({
+        //   title: "Profile",
+        //   tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+        //   headerRight: () => (
+        //     <Pressable
+        //       onPress={() => navigation.navigate("Settings")}
+        //       style={({ pressed }) => ({
+        //         opacity: pressed ? 0.5 : 1,
+        //       })}
+        //     >
+        //       <FontAwesome
+        //         name="gear"
+        //         size={25}
+        //         color={Colors[colorScheme].text}
+        //         style={{ marginRight: 15 }}
+        //       />
+        //     </Pressable>
+        //   ),
+        // })}
       />
     </BottomTab.Navigator>
   );

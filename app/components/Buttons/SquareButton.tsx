@@ -1,14 +1,14 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View } from "../Themed";
 
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
-import { Text, View } from "../Themed";
 
 export default function SquareButton({
   num,
   text,
 }: {
-  num: number;
+  num: string;
   text: string;
 }) {
   return (
@@ -29,11 +29,14 @@ const styles = StyleSheet.create({
     padding: 3,
     borderWidth: 1,
     borderColor: Colors.light.border, // TODO: useThemeColor
-    height: 60,
-    width: 60,
+    height: 70,
+    width: 70,
     borderRadius: Layout.radius.small,
   },
   number: {
     fontSize: Layout.text.large
   },
+  text: {
+    fontSize: Layout.text.medium
+  }
 });
