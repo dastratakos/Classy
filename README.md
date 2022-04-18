@@ -23,5 +23,5 @@ In our webapp, users are able to input their four-year plan, view their progress
 ## Team Communication
 * Group iMessage
 * Slack with TA (Jess Yeung)
-* Email: {dstratak, galwan, jiwonlee, mdaniel8, tarabeth}@ stanford.edu
+* Email: {galwan, mdaniel8, tarabeth, jiwonlee, dstratak}@ stanford.edu
 * SGM Wednesdays @ 12:30pm with Jess
