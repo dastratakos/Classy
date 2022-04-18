@@ -61,7 +61,7 @@ export default function Profile() {
           </View>
           <SquareButton num={83} text={"friends"}></SquareButton>
         </View>
-        <WideButton text={"View Courses"}></WideButton>
+        <WideButton text={"View Courses"} onPress={() => {}}></WideButton>
       </View>
       <View
         style={styles.separator}

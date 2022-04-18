@@ -4,12 +4,15 @@ import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
 import { Text, View } from "../Themed";
 
-export default function WideButton({ text }: { text: string }) {
+export default function WideButton({
+  text,
+  onPress,
+}: {
+  text: string;
+  onPress: () => void;
+}) {
   return (
-    <TouchableOpacity
-      onPress={() => console.log("WideButton pressed")}
-      style={styles.container}
-    >
+    <TouchableOpacity onPress={onPress} style={styles.container}>
       <Text>{text}</Text>
     </TouchableOpacity>
   );
