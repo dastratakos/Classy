@@ -20,7 +20,7 @@ export default function Profile() {
             {/* <View> */}
             <View>
               <Text style={styles.name}>Dean Stratakos</Text>
-              <View style={[styles.row, {marginTop: Layout.spacing.xsmall}]}>
+              <View style={[styles.row, { marginTop: Layout.spacing.xsmall }]}>
                 <View style={styles.status}></View>
                 <Text style={styles.statusText}>In class</Text>
               </View>
@@ -69,8 +69,32 @@ export default function Profile() {
         darkColor="rgba(255,255,255,0.1)"
       />
       <View style={styles.section}>
-        <Text>TODO: Calendar view</Text>
         <Text>TODO: Edit profile or Settings button</Text>
+      </View>
+      <View
+        style={styles.separator}
+        lightColor="#ccc"
+        darkColor="rgba(255,255,255,0.1)"
+      />
+      <View style={styles.section}>
+        <Text>TODO: Calendar view</Text>
+        {/* <View style={[styles.row, { justifyContent: "space-between" }]}>
+          <View style={styles.day}>
+            <Text>M</Text>
+          </View>
+          <View style={styles.day}>
+            <Text>T</Text>
+          </View>
+          <View style={styles.day}>
+            <Text>W</Text>
+          </View>
+          <View style={styles.day}>
+            <Text>T</Text>
+          </View>
+          <View style={[styles.day, styles.daySelected]}>
+            <Text style={styles.daySelected}>F</Text>
+          </View>
+        </View> */}
       </View>
     </ScrollView>
   );
@@ -118,5 +142,17 @@ const styles = StyleSheet.create({
     height: 2,
     borderRadius: 1,
     width: "80%",
+  },
+  day: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 30,
+    width: 30,
+    borderRadius: 30 / 2,
+    borderWidth: 1,
+  },
+  daySelected: {
+    color: "#fff",
+    backgroundColor: "red",
   },
 });
