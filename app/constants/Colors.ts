@@ -4,6 +4,7 @@ const tintColorDark = "#fff";
 export default {
   light: {
     text: "#000",
+    secondaryText: "#888",
     background: "#fff",
     tint: tintColorLight,
     tabIconDefault: "#ccc",
@@ -19,4 +20,8 @@ export default {
     border: "#fff",
   },
   imagePlaceholder: "#ccc",
+  status: {
+    inClass: "green",
+    notInClass: "red",
+  },
 };

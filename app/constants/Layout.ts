@@ -20,8 +20,16 @@ export default {
     large: 100,
   },
   spacing: {
+    xsmall: 5,
     small: 10,
     medium: 15,
     large: 20,
+  },
+  text: {
+    small: 10,
+    medium: 14,
+    large: 18,
+    xlarge: 22,
+    xxlarge: 26,
   },
 };
