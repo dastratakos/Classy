@@ -1,12 +1,12 @@
-import { useNavigation } from "@react-navigation/core";
-import { StatusBar } from "expo-status-bar";
 import { Platform, StyleSheet } from "react-native";
-import WideButton from "../components/Buttons/WideButton";
+import { Text, View } from "../components/Themed";
 
 import EditScreenInfo from "../components/EditScreenInfo";
-import { Text, View } from "../components/Themed";
 import Layout from "../constants/Layout";
+import { StatusBar } from "expo-status-bar";
+import WideButton from "../components/Buttons/WideButton";
 import { auth } from "../firebase";
+import { useNavigation } from "@react-navigation/core";
 
 export default function ModalScreen() {
   const navigation = useNavigation();

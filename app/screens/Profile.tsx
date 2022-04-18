@@ -1,11 +1,11 @@
-import { FontAwesome } from "@expo/vector-icons";
 import { ScrollView, StyleSheet } from "react-native";
-
 import { Text, View } from "../components/Themed";
+
+import Colors from "../constants/Colors";
+import { FontAwesome } from "@expo/vector-icons";
+import Layout from "../constants/Layout";
 import SquareButton from "../components/Buttons/SquareButton";
 import WideButton from "../components/Buttons/WideButton";
-import Colors from "../constants/Colors";
-import Layout from "../constants/Layout";
 
 export default function Profile() {
   return (

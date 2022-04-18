@@ -1,15 +1,15 @@
-import { useNavigation } from "@react-navigation/core";
-import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, StyleSheet, TextInput } from "react-native";
-import WideButton from "../components/Buttons/WideButton";
-
 import { Text, View } from "../components/Themed";
-import Layout from "../constants/Layout";
 import {
   auth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "../firebase";
+import { useEffect, useState } from "react";
+
+import Layout from "../constants/Layout";
+import WideButton from "../components/Buttons/WideButton";
+import { useNavigation } from "@react-navigation/core";
 
 export default function Login() {
   const [email, setEmail] = useState("");
