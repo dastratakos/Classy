@@ -68,7 +68,7 @@ export default function Login() {
       </View>
 
       <View style={styles.buttonContainer}>
-        <WideButton text="Login" onPress={handleLogin} />
+        <WideButton text="Log In" onPress={handleLogin} />
         <WideButton text="Register" onPress={handleSignUp} />
       </View>
     </KeyboardAvoidingView>
