@@ -79,14 +79,6 @@ export default function Profile() {
         darkColor="rgba(255,255,255,0.1)"
       />
       <View style={styles.section}>
-        <Text>TODO: Edit profile or Settings button</Text>
-      </View>
-      <View
-        style={styles.separator}
-        lightColor="#ccc"
-        darkColor="rgba(255,255,255,0.1)"
-      />
-      <View style={styles.section}>
         <Text>TODO: Calendar view</Text>
         {/* <View style={[styles.row, { justifyContent: "space-between" }]}>
           <View style={styles.day}>

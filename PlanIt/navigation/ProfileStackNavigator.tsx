@@ -35,7 +35,6 @@ export default function ProfileStackNavigator() {
                 name="gear"
                 size={25}
                 color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
               />
             </Pressable>
           ),

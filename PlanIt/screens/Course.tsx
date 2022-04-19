@@ -1,3 +1,5 @@
+import * as WebBrowser from 'expo-web-browser';
+
 import { ScrollView, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 
@@ -25,7 +27,22 @@ export default function Course() {
       <View style={styles.section}>
         <Text>TODO: Single course</Text>
       </View>
+      <WideButton text="Explore Courses" onPress={handleExplorePress} />
+      <WideButton text="Carta" onPress={handleCartaPress} />
     </ScrollView>
+  );
+}
+
+function handleExplorePress() {
+  WebBrowser.openBrowserAsync(
+    'https://explorecourses.stanford.edu/search?view=catalog&filter-coursestatus-Active=on&page=0&catalog=&academicYear=&q=cs+194w&collapse='
+  );
+}
+
+// TODO: Carta requires Stanford sign-in...
+function handleCartaPress() {
+  WebBrowser.openBrowserAsync(
+    'https://carta-beta.stanford.edu/course/CS%20194W/1226'
   );
 }
 
