@@ -49,3 +49,7 @@ Backend - Firebase
 * Slack with TA (Jess Yeung)
 * Email: {galwan, mdaniel8, tarabeth, jiwonlee, dstratak}@ stanford.edu
 * SGM Wednesdays @ 12:30pm with Jess
+
+
+## Notes
+- make sure to run `expo install firebase` from the `PlanIt` directory.
