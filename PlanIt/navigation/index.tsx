@@ -97,7 +97,9 @@ function BottomTabNavigator() {
         component={Messages}
         options={({ navigation }: RootTabScreenProps<"Messages">) => ({
           title: "Messages",
-          tabBarIcon: ({ color }) => <TabBarIcon name="comments" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="comments" color={color} />
+          ),
           headerRight: () => (
             <Pressable
               onPress={() => navigation.navigate("Settings")}
@@ -126,26 +128,10 @@ function BottomTabNavigator() {
       <BottomTab.Screen
         name="ProfileStack"
         component={ProfileStackNavigator}
-        options={{ headerShown: false }}
-        // options={({ navigation }: RootTabScreenProps<"ProfileStack">) => ({
-        //   title: "Profile",
-        //   tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-        //   headerRight: () => (
-        //     <Pressable
-        //       onPress={() => navigation.navigate("Settings")}
-        //       style={({ pressed }) => ({
-        //         opacity: pressed ? 0.5 : 1,
-        //       })}
-        //     >
-        //       <FontAwesome
-        //         name="gear"
-        //         size={25}
-        //         color={Colors[colorScheme].text}
-        //         style={{ marginRight: 15 }}
-        //       />
-        //     </Pressable>
-        //   ),
-        // })}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+        }}
       />
     </BottomTab.Navigator>
   );

@@ -8,7 +8,7 @@ import Courses from "../screens/Courses";
 import { FontAwesome } from "@expo/vector-icons";
 import Friends from "../screens/Friends";
 import Profile from "../screens/Profile";
-import { RootStackScreenProps } from "../types";
+import { ProfileStackScreenProps } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import useColorScheme from "../hooks/useColorScheme";
 
@@ -22,9 +22,8 @@ export default function ProfileStackNavigator() {
       <Stack.Screen
         name="Profile"
         component={Profile}
-        options={({ navigation }: RootStackScreenProps<"Profile">) => ({
+        options={({ navigation }: ProfileStackScreenProps<"Profile">) => ({
           title: "Profile",
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
           headerRight: () => (
             <Pressable
               onPress={() => navigation.navigate("Settings")}
