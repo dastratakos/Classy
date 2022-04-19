@@ -6,6 +6,7 @@ import Colors from "../constants/Colors";
 import Course from "../screens/Course";
 import Courses from "../screens/Courses";
 import { FontAwesome } from "@expo/vector-icons";
+import Friends from "../screens/Friends";
 import Profile from "../screens/Profile";
 import { RootStackScreenProps } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -43,6 +44,7 @@ export default function ProfileStackNavigator() {
       />
       <Stack.Screen name="Courses" component={Courses} />
       <Stack.Screen name="Course" component={Course} />
+      <Stack.Screen name="Friends" component={Friends} />
     </Stack.Navigator>
   );
 }

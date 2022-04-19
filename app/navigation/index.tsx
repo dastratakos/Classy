@@ -23,7 +23,6 @@ import LinkingConfiguration from "./LinkingConfiguration";
 import Login from "../screens/Login";
 import Messages from "../screens/Messages";
 import NotFoundScreen from "../screens/NotFoundScreen";
-import Profile from "../screens/Profile";
 import ProfileStackNavigator from "./ProfileStackNavigator";
 import Search from "../screens/Search";
 import Settings from "../screens/Settings";

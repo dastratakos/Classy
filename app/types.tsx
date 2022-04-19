@@ -24,6 +24,8 @@ export type RootStackParamList = {
   Settings: undefined;
   Courses: undefined;
   Course: undefined;
+  Friends: undefined;
+  // FriendProfile: undefined;
   NotFound: undefined;
 };
 

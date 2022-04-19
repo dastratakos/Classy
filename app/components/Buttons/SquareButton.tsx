@@ -7,13 +7,15 @@ import Layout from "../../constants/Layout";
 export default function SquareButton({
   num,
   text,
+  onPress
 }: {
   num: string;
   text: string;
+  onPress: () => void;
 }) {
   return (
     <TouchableOpacity
-      onPress={() => console.log("SquareButton pressed")}
+      onPress={onPress}
       style={styles.container}
     >
       <Text style={styles.number}>{num}</Text>

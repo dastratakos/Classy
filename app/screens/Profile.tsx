@@ -62,7 +62,11 @@ export default function Profile() {
               <Text>2022 (Senior)</Text>
             </View>
           </View>
-          <SquareButton num="83" text="friends" />
+          <SquareButton
+            num="83"
+            text="friends"
+            onPress={() => navigation.navigate("Friends")}
+          />
         </View>
         <WideButton
           text={"View Courses"}
