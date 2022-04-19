@@ -87,7 +87,7 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="Profile"
+      initialRouteName="ProfileStack"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
       }}

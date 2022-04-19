@@ -4,6 +4,7 @@ import { Text, View } from "../components/Themed";
 import Colors from "../constants/Colors";
 import CourseCard from "../components/CourseCard";
 import { FontAwesome } from "@expo/vector-icons";
+import FriendCard from "../components/FriendCard";
 import Layout from "../constants/Layout";
 import WideButton from "../components/Buttons/WideButton";
 
@@ -43,12 +44,11 @@ export default function Friends() {
     >
       <View style={styles.section}>
         {friends.map((friend, i) => (
-          // <FriendCard
-          //   name={friend.name}
-          //   major={friend.major}
-          //   gradYear={friend.gradYear}
-          // />
-          <Text>{friend.name}</Text>
+          <FriendCard
+            name={friend.name}
+            major={friend.major}
+            gradYear={friend.gradYear}
+          />
         ))}
       </View>
     </ScrollView>

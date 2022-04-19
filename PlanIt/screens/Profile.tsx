@@ -8,6 +8,14 @@ import SquareButton from "../components/Buttons/SquareButton";
 import WideButton from "../components/Buttons/WideButton";
 import { useNavigation } from "@react-navigation/core";
 
+const profile = {
+  name: "Dean Stratakos",
+  inClass: true,
+  major: "Computer Science",
+  gradYear: "2022 (Senior)",
+  numFriends: "83",
+};
+
 export default function Profile() {
   const navigation = useNavigation();
 
@@ -21,10 +29,17 @@ export default function Profile() {
           <View style={styles.row}>
             <View style={styles.photo}></View>
             <View>
-              <Text style={styles.name}>Dean Stratakos</Text>
+              <Text style={styles.name}>{profile.name}</Text>
               <View style={[styles.row, { marginTop: Layout.spacing.xsmall }]}>
-                <View style={styles.status}></View>
-                <Text style={styles.statusText}>In class</Text>
+                <View
+                  style={[
+                    styles.status,
+                    profile.inClass ? styles.inClass : styles.notInClass,
+                  ]}
+                ></View>
+                <Text style={styles.statusText}>
+                  {profile.inClass ? "In class" : "Not in class"}
+                </Text>
               </View>
             </View>
           </View>
@@ -45,9 +60,9 @@ export default function Profile() {
                   color={Colors.light.text}
                 />
               </View>
-              <Text>Computer Science</Text>
+              <Text>{profile.major}</Text>
             </View>
-            {/* Class */}
+            {/* Graduation Year */}
             <View style={styles.row}>
               <View style={styles.iconWrapper}>
                 <FontAwesome
@@ -56,11 +71,11 @@ export default function Profile() {
                   color={Colors.light.text}
                 />
               </View>
-              <Text>2022 (Senior)</Text>
+              <Text>{profile.gradYear}</Text>
             </View>
           </View>
           <SquareButton
-            num="83"
+            num={profile.numFriends}
             text="friends"
             onPress={() => navigation.navigate("Friends")}
           />
@@ -76,7 +91,7 @@ export default function Profile() {
         darkColor="rgba(255,255,255,0.1)"
       />
       <View style={styles.section}>
-        <Text>TODO: Calendar view</Text>
+        <Text style={{ alignSelf: "center" }}>TODO: Calendar view</Text>
         {/* <View style={[styles.row, { justifyContent: "space-between" }]}>
           <View style={styles.day}>
             <Text>M</Text>
@@ -121,7 +136,12 @@ const styles = StyleSheet.create({
     height: 10,
     width: 10,
     borderRadius: 10 / 2,
+  },
+  inClass: {
     backgroundColor: Colors.status.inClass,
+  },
+  notInClass: {
+    backgroundColor: Colors.status.notInClass,
   },
   statusText: {
     color: Colors.light.secondaryText,

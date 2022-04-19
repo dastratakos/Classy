@@ -20,10 +20,13 @@ export default {
     large: 100,
   },
   spacing: {
+    xxsmall: 3,
     xsmall: 5,
     small: 10,
     medium: 15,
     large: 20,
+    xlarge: 30,
+    xxlarge: 50,
   },
   text: {
     small: 10,

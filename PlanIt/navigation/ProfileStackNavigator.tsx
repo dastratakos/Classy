@@ -6,6 +6,7 @@ import Colors from "../constants/Colors";
 import Course from "../screens/Course";
 import Courses from "../screens/Courses";
 import { FontAwesome } from "@expo/vector-icons";
+import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
 import Profile from "../screens/Profile";
 import { ProfileStackScreenProps } from "../types";
@@ -18,7 +19,7 @@ export default function ProfileStackNavigator() {
   const colorScheme = useColorScheme();
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="Profile">
       <Stack.Screen
         name="Profile"
         component={Profile}
@@ -43,6 +44,11 @@ export default function ProfileStackNavigator() {
       <Stack.Screen name="Courses" component={Courses} />
       <Stack.Screen name="Course" component={Course} />
       <Stack.Screen name="Friends" component={Friends} />
+      <Stack.Screen
+        name="FriendProfile"
+        component={FriendProfile}
+        options={{ title: "Friend Profile" }}
+      />
     </Stack.Navigator>
   );
 }

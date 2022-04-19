@@ -1,8 +1,8 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View } from "../Themed";
 
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
-import { Text, View } from "../Themed";
 
 export default function WideButton({
   text,
@@ -21,7 +21,7 @@ export default function WideButton({
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    padding: 3,
+    padding: Layout.spacing.xxsmall,
     width: "100%",
     borderWidth: 1,
     borderColor: Colors.light.border, // TODO: useThemeColor

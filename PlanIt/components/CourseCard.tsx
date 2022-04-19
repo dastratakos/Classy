@@ -12,18 +12,20 @@ export default function CourseCard({
   title,
   units,
   numFriends,
+  emphasize,
 }: {
   code: string;
   title: string;
   units: string;
   numFriends: string;
+  emphasize: boolean;
 }) {
   const navigation = useNavigation();
 
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate("Course")}
-      style={styles.container}
+      style={[styles.container, emphasize ? styles.emphasize : null]}
     >
       <View style={styles.textContainer}>
         <Text style={styles.code}>{code}</Text>
@@ -33,6 +35,7 @@ export default function CourseCard({
       <SquareButton
         num={numFriends}
         text={"friend" + (numFriends !== "1" ? "s" : "")}
+        onPress={() => navigation.navigate("Course")}
       />
     </TouchableOpacity>
   );
@@ -46,6 +49,10 @@ const styles = StyleSheet.create({
     borderRadius: Layout.radius.medium,
     borderWidth: 1,
     marginVertical: Layout.spacing.small,
+    width: "100%",
+  },
+  emphasize: {
+    borderWidth: 3,
   },
   textContainer: {
     justifyContent: "space-between",

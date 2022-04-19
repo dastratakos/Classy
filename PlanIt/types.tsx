@@ -23,9 +23,12 @@ export type RootStackParamList = {
   Settings: undefined;
   NotFound: undefined;
 
+  Messages: undefined;
+
   Courses: undefined;
   Course: undefined;
   Friends: undefined;
+  FriendProfile: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
@@ -44,13 +47,13 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
   >;
 
 export type ProfileStackParamList = {
+  Settings: undefined;
+
   Profile: undefined;
   Courses: undefined;
   Course: undefined;
   Friends: undefined;
-  // FriendProfile: undefined;
-
-  Settings: undefined;
+  FriendProfile: undefined;
 };
 
 export type ProfileStackScreenProps<

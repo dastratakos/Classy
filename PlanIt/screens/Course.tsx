@@ -5,10 +5,8 @@ import { Text, View } from "../components/Themed";
 
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
-import CourseCard from "../components/CourseCard";
-import { FontAwesome } from "@expo/vector-icons";
+import FriendCard from "../components/FriendCard";
 import Layout from "../constants/Layout";
-import SquareButton from "../components/Buttons/SquareButton";
 import WideButton from "../components/Buttons/WideButton";
 
 const course = {
@@ -188,12 +186,16 @@ export default function Course() {
         {/* TODO: start with 5 lines max and have a "read more" button */}
         <Text style={styles.description}>{course.description}</Text>
         <View style={styles.row}>
-          <Button text="Explore Courses" onPress={handleExplorePress} />
-          <Button text="Carta" onPress={handleCartaPress} />
+          <View style={{ width: "48%" }}>
+            <Button text="Explore Courses" onPress={handleExplorePress} />
+          </View>
+          <View style={{ width: "48%" }}>
+            <Button text="Carta" onPress={handleCartaPress} />
+          </View>
         </View>
         <WideButton
-          text="Add to courses"
-          onPress={() => console.log("Add to courses pressed")}
+          text="Add to Courses"
+          onPress={() => console.log("Add to Courses pressed")}
         />
       </View>
       <View
@@ -201,19 +203,20 @@ export default function Course() {
         lightColor="#ccc"
         darkColor="rgba(255,255,255,0.1)"
       />
-      <View style={styles.friendsContainer}>
+      <View style={styles.friendsSection}>
         <Text style={styles.friendsHeader}>Friends</Text>
         <Text style={{ marginBottom: Layout.spacing.medium }}>
           TODO: horizontal swipable list of quarters
         </Text>
-        {friends.spr2022.map((friend, i) => (
-          // <FriendCard
-          //   name={friend.name}
-          //   major={friend.major}
-          //   gradYear={friend.gradYear}
-          // />
-          <Text>{friend.name}</Text>
-        ))}
+        <View style={styles.section}>
+          {friends.spr2022.map((friend, i) => (
+            <FriendCard
+              name={friend.name}
+              major={friend.major}
+              gradYear={friend.gradYear}
+            />
+          ))}
+        </View>
       </View>
     </ScrollView>
   );
@@ -258,7 +261,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginVertical: Layout.spacing.medium,
   },
-  friendsContainer: {
+  friendsSection: {
     width: "100%",
     alignItems: "center",
   },

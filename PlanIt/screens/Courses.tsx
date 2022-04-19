@@ -13,30 +13,35 @@ const courses = [
     title: "Senior Project (WIM)",
     units: "3",
     numFriends: "9",
+    taking: true,
   },
   {
     code: "CS 224U",
     title: "Natural Language Understanding",
     units: "4",
     numFriends: "13",
+    taking: true,
   },
   {
     code: "CS 224U",
     title: "Seminar on AI Safety",
     units: "1",
     numFriends: "1",
+    taking: true,
   },
   {
     code: "ME 104B",
     title: "Designing Your Life",
     units: "2",
     numFriends: "4",
+    taking: true,
   },
   {
     code: "PSYC 135",
     title: "Dement's Sleep and Dreams",
     units: "3",
     numFriends: "27",
+    taking: true,
   },
 ];
 
@@ -53,11 +58,15 @@ export default function Courses() {
             title={course.title}
             units={course.units}
             numFriends={course.numFriends}
+            emphasize={course.taking}
           />
         ))}
       </View>
       <View style={styles.section}>
-        <WideButton text={"View All Quarters"} onPress={() => {}}></WideButton>
+        <WideButton
+          text={"View All Quarters"}
+          onPress={() => console.log("View All Quarters pressed")}
+        ></WideButton>
       </View>
     </ScrollView>
   );

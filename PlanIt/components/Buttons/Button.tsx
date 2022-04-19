@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   container: {
     // alignSelf: "flex-start",
     alignItems: "center",
-    padding: 3,
+    padding: Layout.spacing.xxsmall,
     borderWidth: 1,
     borderColor: Colors.light.border, // TODO: useThemeColor
     borderRadius: Layout.radius.small,

@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 3,
+    padding: Layout.spacing.xxsmall,
     borderWidth: 1,
     borderColor: Colors.light.border, // TODO: useThemeColor
     height: 70,
