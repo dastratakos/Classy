@@ -11,31 +11,31 @@ const courses = [
   {
     code: "CS 194W",
     title: "Senior Project (WIM)",
-    numUnits: "3",
+    units: "3",
     numFriends: "9",
   },
   {
     code: "CS 224U",
     title: "Natural Language Understanding",
-    numUnits: "4",
+    units: "4",
     numFriends: "13",
   },
   {
     code: "CS 224U",
     title: "Seminar on AI Safety",
-    numUnits: "1",
+    units: "1",
     numFriends: "1",
   },
   {
     code: "ME 104B",
     title: "Designing Your Life",
-    numUnits: "2",
+    units: "2",
     numFriends: "4",
   },
   {
     code: "PSYC 135",
     title: "Dement's Sleep and Dreams",
-    numUnits: "3",
+    units: "3",
     numFriends: "27",
   },
 ];
@@ -51,7 +51,7 @@ export default function Courses() {
           <CourseCard
             code={course.code}
             title={course.title}
-            numUnits={course.numUnits}
+            units={course.units}
             numFriends={course.numFriends}
           />
         ))}

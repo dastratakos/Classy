@@ -1,15 +1,18 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View } from "../Themed";
 
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
-import { Text, View } from "../Themed";
 
-export default function Button({ text }: { text: string }) {
+export default function Button({
+  text,
+  onPress,
+}: {
+  text: string;
+  onPress: () => void;
+}) {
   return (
-    <TouchableOpacity
-      onPress={() => console.log("Button pressed")}
-      style={styles.container}
-    >
+    <TouchableOpacity onPress={onPress} style={styles.container}>
       <Text>{text}</Text>
     </TouchableOpacity>
   );

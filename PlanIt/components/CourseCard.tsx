@@ -10,12 +10,12 @@ import { useNavigation } from "@react-navigation/core";
 export default function CourseCard({
   code,
   title,
-  numUnits,
+  units,
   numFriends,
 }: {
   code: string;
   title: string;
-  numUnits: string;
+  units: string;
   numFriends: string;
 }) {
   const navigation = useNavigation();
@@ -28,7 +28,7 @@ export default function CourseCard({
       <View style={styles.textContainer}>
         <Text style={styles.code}>{code}</Text>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.numUnits}>{numUnits} units</Text>
+        <Text style={styles.units}>{units} units</Text>
       </View>
       <SquareButton
         num={numFriends}
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: Layout.text.medium,
   },
-  numUnits: {
+  units: {
     // TODO: change font color
   },
 });

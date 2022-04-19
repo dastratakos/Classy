@@ -20,7 +20,6 @@ export default function Profile() {
         <View style={[styles.row, { justifyContent: "space-between" }]}>
           <View style={styles.row}>
             <View style={styles.photo}></View>
-            {/* <View> */}
             <View>
               <Text style={styles.name}>Dean Stratakos</Text>
               <View style={[styles.row, { marginTop: Layout.spacing.xsmall }]}>
@@ -28,8 +27,6 @@ export default function Profile() {
                 <Text style={styles.statusText}>In class</Text>
               </View>
             </View>
-            {/* <Button text={"Edit Profile"}></Button> */}
-            {/* </View> */}
           </View>
         </View>
         <View

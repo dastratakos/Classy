@@ -1,14 +1,176 @@
-import * as WebBrowser from 'expo-web-browser';
+import * as WebBrowser from "expo-web-browser";
 
 import { ScrollView, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 
+import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import CourseCard from "../components/CourseCard";
 import { FontAwesome } from "@expo/vector-icons";
 import Layout from "../constants/Layout";
 import SquareButton from "../components/Buttons/SquareButton";
 import WideButton from "../components/Buttons/WideButton";
+
+const course = {
+  code: "CS 194W",
+  title: "Software Project (WIM)",
+  units: "3",
+  ways: "None",
+  description:
+    "Restricted to Computer Science and Electrical Engineering undergraduates. Writing-intensive version of CS 194W. Preference given to seniors.",
+};
+
+const friends = {
+  aut2020: [
+    {
+      name: "Jiwon Lee",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Melissa Daniel",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Grace Alwan",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Tara Jones",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Melanie Kessinger",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+  ],
+  win2021: [
+    {
+      name: "Jiwon Lee",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Melissa Daniel",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Grace Alwan",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+  ],
+  spr2021: [
+    {
+      name: "Grace Alwan",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Tara Jones",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Melanie Kessinger",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+  ],
+  sum2021: [],
+  aut2021: [
+    {
+      name: "Jiwon Lee",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Melissa Daniel",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Grace Alwan",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Tara Jones",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Melanie Kessinger",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+  ],
+  win2022: [
+    {
+      name: "Jiwon Lee",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Melissa Daniel",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Grace Alwan",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Tara Jones",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Melanie Kessinger",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+  ],
+  spr2022: [
+    {
+      name: "Jiwon Lee",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Melissa Daniel",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Grace Alwan",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Tara Jones",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+    {
+      name: "Melanie Kessinger",
+      major: "Computer Science",
+      gradYear: "2022 (Senior)",
+    },
+  ],
+  sum2022: [],
+};
+
+const exploreCoursesLink =
+  "https://explorecourses.stanford.edu/search?view=catalog&filter-coursestatus-Active=on&page=0&catalog=&academicYear=&q=cs+194w&collapse=";
+// TODO: Carta requires Stanford sign-in...
+const cartaLink = "https://carta-beta.stanford.edu/course/CS%20194W/1226";
 
 export default function Course() {
   return (
@@ -17,33 +179,52 @@ export default function Course() {
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={styles.section}>
-        <WideButton text={"TODO"} onPress={() => {}}></WideButton>
+        <Text style={styles.title}>
+          {course.code}: {course.title}
+        </Text>
+        <Text style={styles.unitsWays}>
+          Units: {course.units}, WAYS: {course.ways}
+        </Text>
+        {/* TODO: start with 5 lines max and have a "read more" button */}
+        <Text style={styles.description}>{course.description}</Text>
+        <View style={styles.row}>
+          <Button text="Explore Courses" onPress={handleExplorePress} />
+          <Button text="Carta" onPress={handleCartaPress} />
+        </View>
+        <WideButton
+          text="Add to courses"
+          onPress={() => console.log("Add to courses pressed")}
+        />
       </View>
       <View
         style={styles.separator}
         lightColor="#ccc"
         darkColor="rgba(255,255,255,0.1)"
       />
-      <View style={styles.section}>
-        <Text>TODO: Single course</Text>
+      <View style={styles.friendsContainer}>
+        <Text style={styles.friendsHeader}>Friends</Text>
+        <Text style={{ marginBottom: Layout.spacing.medium }}>
+          TODO: horizontal swipable list of quarters
+        </Text>
+        {friends.spr2022.map((friend, i) => (
+          // <FriendCard
+          //   name={friend.name}
+          //   major={friend.major}
+          //   gradYear={friend.gradYear}
+          // />
+          <Text>{friend.name}</Text>
+        ))}
       </View>
-      <WideButton text="Explore Courses" onPress={handleExplorePress} />
-      <WideButton text="Carta" onPress={handleCartaPress} />
     </ScrollView>
   );
 }
 
 function handleExplorePress() {
-  WebBrowser.openBrowserAsync(
-    'https://explorecourses.stanford.edu/search?view=catalog&filter-coursestatus-Active=on&page=0&catalog=&academicYear=&q=cs+194w&collapse='
-  );
+  WebBrowser.openBrowserAsync(exploreCoursesLink);
 }
 
-// TODO: Carta requires Stanford sign-in...
 function handleCartaPress() {
-  WebBrowser.openBrowserAsync(
-    'https://carta-beta.stanford.edu/course/CS%20194W/1226'
-  );
+  WebBrowser.openBrowserAsync(cartaLink);
 }
 
 const styles = StyleSheet.create({
@@ -54,51 +235,37 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: Layout.spacing.medium,
   },
-  photo: {
-    backgroundColor: Colors.imagePlaceholder,
-    height: Layout.image.medium,
-    width: Layout.image.medium,
-    borderRadius: Layout.image.medium / 2,
-    marginRight: Layout.spacing.large,
-  },
-  name: {
-    fontSize: Layout.text.xlarge,
-  },
-  status: {
-    height: 10,
-    width: 10,
-    borderRadius: 10 / 2,
-    backgroundColor: Colors.status.inClass,
-  },
-  statusText: {
-    color: Colors.light.secondaryText,
-    marginLeft: Layout.spacing.small,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  iconWrapper: {
-    width: 30,
-    marginRight: 15,
-    alignItems: "center",
-  },
   separator: {
     marginVertical: 10,
     height: 2,
     borderRadius: 1,
     width: "80%",
   },
-  day: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 30,
-    width: 30,
-    borderRadius: 30 / 2,
-    borderWidth: 1,
+  title: {
+    fontSize: Layout.text.xlarge,
+    fontWeight: "500",
+    marginBottom: Layout.spacing.small,
   },
-  daySelected: {
-    color: "#fff",
-    backgroundColor: "red",
+  unitsWays: {
+    fontWeight: "bold",
+    color: Colors.status.inClass,
+    marginBottom: Layout.spacing.small,
+  },
+  description: {},
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginVertical: Layout.spacing.medium,
+  },
+  friendsContainer: {
+    width: "100%",
+    alignItems: "center",
+  },
+  friendsHeader: {
+    fontSize: Layout.text.large,
+    fontWeight: "500",
+    marginTop: Layout.spacing.small,
+    marginBottom: Layout.spacing.medium,
   },
 });
