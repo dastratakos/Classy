@@ -15,7 +15,8 @@ const profile = {
   major: "Computer Science",
   gradYear: "2022 (Senior)",
   numFriends: "102",
-  courseSimilarity: 57.54,
+  // courseSimilarity: 57.54,
+  courseSimilarity: 83,
   friends: true,
   private: true,
   courses: [
