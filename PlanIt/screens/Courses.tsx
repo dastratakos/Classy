@@ -6,6 +6,7 @@ import Layout from "../constants/Layout";
 import { View } from "../components/Themed";
 import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
+import { useNavigation } from "@react-navigation/core";
 
 const courses = [
   {
@@ -46,6 +47,8 @@ const courses = [
 ];
 
 export default function Courses() {
+  const navigation = useNavigation();
+
   const colorScheme = useColorScheme();
 
   return (
@@ -67,7 +70,7 @@ export default function Courses() {
       <View style={styles.section}>
         <WideButton
           text={"View All Quarters"}
-          onPress={() => console.log("View All Quarters pressed")}
+          onPress={() => navigation.navigate("Quarters")}
         ></WideButton>
       </View>
     </ScrollView>

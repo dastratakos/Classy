@@ -11,6 +11,7 @@ import Profile from "../screens/Profile";
 import { ProfileStackScreenProps } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Icon } from "../components/Themed";
+import Quarters from "../screens/Quarters";
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +43,7 @@ export default function ProfileStackNavigator() {
         component={FriendProfile}
         options={{ title: "Friend Profile" }}
       />
+      <Stack.Screen name="Quarters" component={Quarters} />
     </Stack.Navigator>
   );
 }
