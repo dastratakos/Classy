@@ -6,6 +6,7 @@ import Layout from "../constants/Layout";
 import Navigation from "../navigation";
 import SquareButton from "./Buttons/SquareButton";
 import { useNavigation } from "@react-navigation/core";
+import useColorScheme from "../hooks/useColorScheme";
 
 export default function CourseCard({
   code,
@@ -22,13 +23,18 @@ export default function CourseCard({
 }) {
   const navigation = useNavigation();
 
+  const colorScheme = useColorScheme();
+
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate("Course")}
-      style={[styles.container, emphasize ? styles.emphasize : null]}
+      style={[
+        styles.container,
+        { borderColor: Colors[colorScheme].border },
+      ]}
     >
       <View style={styles.textContainer}>
-        <Text style={styles.code}>{code}</Text>
+        <Text style={styles.code}>{code}{emphasize ? " ⭐️" : null}</Text>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.units}>{units} units</Text>
       </View>
@@ -50,9 +56,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginVertical: Layout.spacing.small,
     width: "100%",
-  },
-  emphasize: {
-    borderWidth: 3,
   },
   textContainer: {
     justifyContent: "space-between",

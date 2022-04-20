@@ -5,20 +5,17 @@ import { ColorSchemeName, Pressable } from "react-native";
 import Colors from "../constants/Colors";
 import Course from "../screens/Course";
 import Courses from "../screens/Courses";
-import { FontAwesome } from "@expo/vector-icons";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
 import Messages from "../screens/Messages";
 import { MessagesStackScreenProps } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import useColorScheme from "../hooks/useColorScheme";
 import ChannelScreen from "../screens/ChannelScreen";
+import { Icon } from "../components/Themed";
 
 const Stack = createNativeStackNavigator();
 
 export default function MessagesStackNavigator() {
-  const colorScheme = useColorScheme();
-
   return (
     <Stack.Navigator initialRouteName="Messages">
       <Stack.Screen
@@ -33,11 +30,7 @@ export default function MessagesStackNavigator() {
                 opacity: pressed ? 0.5 : 1,
               })}
             >
-              <FontAwesome
-                name="edit"
-                size={25}
-                color={Colors[colorScheme].text}
-              />
+              <Icon name="edit" size={25} />
             </Pressable>
           ),
         })}

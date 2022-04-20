@@ -5,19 +5,16 @@ import { ColorSchemeName, Pressable } from "react-native";
 import Colors from "../constants/Colors";
 import Course from "../screens/Course";
 import Courses from "../screens/Courses";
-import { FontAwesome } from "@expo/vector-icons";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
 import Profile from "../screens/Profile";
 import { ProfileStackScreenProps } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import useColorScheme from "../hooks/useColorScheme";
+import { Icon } from "../components/Themed";
 
 const Stack = createNativeStackNavigator();
 
 export default function ProfileStackNavigator() {
-  const colorScheme = useColorScheme();
-
   return (
     <Stack.Navigator initialRouteName="Profile">
       <Stack.Screen
@@ -32,11 +29,7 @@ export default function ProfileStackNavigator() {
                 opacity: pressed ? 0.5 : 1,
               })}
             >
-              <FontAwesome
-                name="gear"
-                size={25}
-                color={Colors[colorScheme].text}
-              />
+              <Icon name="gear" size={25} />
             </Pressable>
           ),
         })}

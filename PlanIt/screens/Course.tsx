@@ -8,6 +8,7 @@ import Colors from "../constants/Colors";
 import FriendCard from "../components/FriendCard";
 import Layout from "../constants/Layout";
 import WideButton from "../components/Buttons/WideButton";
+import useColorScheme from "../hooks/useColorScheme";
 
 const course = {
   code: "CS 194W",
@@ -171,9 +172,11 @@ const exploreCoursesLink =
 const cartaLink = "https://carta-beta.stanford.edu/course/CS%20194W/1226";
 
 export default function Course() {
+  const colorScheme = useColorScheme();
+
   return (
     <ScrollView
-      style={styles.container}
+      style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={styles.section}>
@@ -231,9 +234,6 @@ function handleCartaPress() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.light.background,
-  },
   section: {
     width: "100%",
     padding: Layout.spacing.medium,

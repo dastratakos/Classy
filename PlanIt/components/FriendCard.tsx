@@ -1,10 +1,10 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { Text, View } from "./Themed";
+import { Icon, Text, View } from "./Themed";
 
 import Colors from "../constants/Colors";
-import { FontAwesome } from "@expo/vector-icons";
 import Layout from "../constants/Layout";
 import { useNavigation } from "@react-navigation/core";
+import useColorScheme from "../hooks/useColorScheme";
 
 export default function FriendCard({
   name,
@@ -17,10 +17,12 @@ export default function FriendCard({
 }) {
   const navigation = useNavigation();
 
+  const colorScheme = useColorScheme();
+
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate("FriendProfile")}
-      style={styles.container}
+      style={[styles.container, { borderColor: Colors[colorScheme].border }]}
     >
       <View style={styles.photo}></View>
       <View style={styles.textContainer}>
@@ -28,18 +30,14 @@ export default function FriendCard({
         {/* Major */}
         <View style={styles.row}>
           <View style={styles.iconWrapper}>
-            <FontAwesome name="pencil" size={25} color={Colors.light.text} />
+            <Icon name="pencil" size={25} />
           </View>
           <Text>{major}</Text>
         </View>
         {/* Graduation Year */}
         <View style={styles.row}>
           <View style={styles.iconWrapper}>
-            <FontAwesome
-              name="graduation-cap"
-              size={25}
-              color={Colors.light.text}
-            />
+            <Icon name="graduation-cap" size={25} />
           </View>
           <Text>{gradYear}</Text>
         </View>
@@ -56,7 +54,7 @@ const styles = StyleSheet.create({
     borderRadius: Layout.radius.medium,
     borderWidth: 1,
     marginVertical: Layout.spacing.small,
-    width: "100%"
+    width: "100%",
   },
   photo: {
     backgroundColor: Colors.imagePlaceholder,

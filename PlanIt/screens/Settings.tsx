@@ -16,6 +16,7 @@ import { auth } from "../firebase";
 import { useNavigation } from "@react-navigation/core";
 import { useContext, useState } from "react";
 import AppContext from "../context/Context";
+import useColorScheme from "../hooks/useColorScheme";
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -27,6 +28,8 @@ export default function Settings() {
   const [private_, setPrivate] = useState(context.userPrivate);
 
   const navigation = useNavigation();
+
+  const colorScheme = useColorScheme();
 
   const handleSignOut = () => {
     auth
@@ -52,7 +55,10 @@ export default function Settings() {
 
   return (
     <ScrollView
-      style={styles.container}
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme].background },
+      ]}
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={styles.photo}></View>
@@ -74,7 +80,7 @@ export default function Settings() {
             placeholder="Name"
             value={name}
             onChangeText={(text) => setName(text)}
-            style={styles.input}
+            style={[styles.input, { color: Colors[colorScheme].text }]}
           />
         </View>
         <View style={styles.row}>
@@ -85,7 +91,7 @@ export default function Settings() {
             placeholder="Major"
             value={major}
             onChangeText={(text) => setMajor(text)}
-            style={styles.input}
+            style={[styles.input, { color: Colors[colorScheme].text }]}
           />
         </View>
         <View style={styles.row}>
@@ -96,7 +102,7 @@ export default function Settings() {
             placeholder="Graduation Year"
             value={gradYear}
             onChangeText={(text) => setGradYear(text)}
-            style={styles.input}
+            style={[styles.input, { color: Colors[colorScheme].text }]}
           />
         </View>
         <View style={styles.row}>
@@ -107,14 +113,14 @@ export default function Settings() {
             placeholder="Clubs & Interests"
             value={interests}
             onChangeText={(text) => setInterests(text)}
-            style={styles.input}
+            style={[styles.input, { color: Colors[colorScheme].text }]}
           />
         </View>
         <View style={styles.row}>
           <View style={styles.field}>
             <Text>Email</Text>
           </View>
-          <Text style={{ color: Colors.light.secondaryText }}>
+          <Text style={{ color: Colors[colorScheme].secondaryText }}>
             {auth.currentUser?.email}
           </Text>
         </View>
@@ -170,9 +176,7 @@ export default function Settings() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: Layout.spacing.medium,
-    backgroundColor: Colors.light.background,
   },
   row: {
     flexDirection: "row",

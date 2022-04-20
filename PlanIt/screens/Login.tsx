@@ -11,12 +11,15 @@ import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import WideButton from "../components/Buttons/WideButton";
 import { useNavigation } from "@react-navigation/core";
+import useColorScheme from "../hooks/useColorScheme";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const navigation = useNavigation();
+
+  const colorScheme = useColorScheme();
 
   useEffect(() => {
     // TODO: show a loading/splash screen before we determine user
@@ -107,19 +110,37 @@ export default function Login() {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
+    <KeyboardAvoidingView
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme].background },
+      ]}
+      behavior="padding"
+    >
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"
           value={email}
           onChangeText={(text) => setEmail(text)}
-          style={styles.input}
+          style={[
+            styles.input,
+            {
+              backgroundColor: Colors[colorScheme].secondaryBackground,
+              color: Colors[colorScheme].text,
+            },
+          ]}
         />
         <TextInput
           placeholder="Password"
           value={password}
           onChangeText={(text) => setPassword(text)}
-          style={styles.input}
+          style={[
+            styles.input,
+            {
+              backgroundColor: Colors[colorScheme].secondaryBackground,
+              color: Colors[colorScheme].text,
+            },
+          ]}
           secureTextEntry
         />
       </View>
@@ -139,13 +160,11 @@ const styles = StyleSheet.create({
     padding: Layout.spacing.medium,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Colors.light.background,
   },
   inputContainer: {
     width: "80%",
   },
   input: {
-    backgroundColor: "#eee",
     paddingHorizontal: Layout.spacing.medium,
     paddingVertical: Layout.spacing.small,
     borderRadius: Layout.spacing.small,

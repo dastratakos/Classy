@@ -1,23 +1,25 @@
 import { ScrollView, StyleSheet } from "react-native";
-import { Text, View } from "../components/Themed";
+import { Icon, Text, View } from "../components/Themed";
 
 import AppContext from "../context/Context";
 import Colors from "../constants/Colors";
-import { FontAwesome } from "@expo/vector-icons";
 import Layout from "../constants/Layout";
 import SquareButton from "../components/Buttons/SquareButton";
 import WideButton from "../components/Buttons/WideButton";
 import { useContext } from "react";
 import { useNavigation } from "@react-navigation/core";
+import useColorScheme from "../hooks/useColorScheme";
 
 export default function Profile() {
   const context = useContext(AppContext);
 
   const navigation = useNavigation();
 
+  const colorScheme = useColorScheme();
+
   return (
     <ScrollView
-      style={styles.container}
+      style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={styles.section}>
@@ -33,7 +35,12 @@ export default function Profile() {
                     context.userInClass ? styles.inClass : styles.notInClass,
                   ]}
                 ></View>
-                <Text style={styles.statusText}>
+                <Text
+                  style={[
+                    styles.statusText,
+                    { color: Colors[colorScheme].secondaryText },
+                  ]}
+                >
                   {context.userInClass ? "In class" : "Not in class"}
                 </Text>
               </View>
@@ -50,22 +57,14 @@ export default function Profile() {
             {/* Major */}
             <View style={styles.row}>
               <View style={styles.iconWrapper}>
-                <FontAwesome
-                  name="pencil"
-                  size={25}
-                  color={Colors.light.text}
-                />
+                <Icon name="pencil" size={25} />
               </View>
               <Text>{context.userMajor}</Text>
             </View>
             {/* Graduation Year */}
             <View style={styles.row}>
               <View style={styles.iconWrapper}>
-                <FontAwesome
-                  name="graduation-cap"
-                  size={25}
-                  color={Colors.light.text}
-                />
+                <Icon name="graduation-cap" size={25} />
               </View>
               <Text>{context.userGradYear}</Text>
             </View>
@@ -111,9 +110,6 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.light.background,
-  },
   section: {
     width: "100%",
     padding: Layout.spacing.medium,
@@ -140,7 +136,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.status.notInClass,
   },
   statusText: {
-    color: Colors.light.secondaryText,
     marginLeft: Layout.spacing.small,
   },
   row: {

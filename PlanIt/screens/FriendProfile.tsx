@@ -1,13 +1,13 @@
 import { Pressable, ScrollView, StyleSheet } from "react-native";
-import { Text, View } from "../components/Themed";
+import { Icon, Text, View } from "../components/Themed";
 
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import CourseCard from "../components/CourseCard";
-import { FontAwesome } from "@expo/vector-icons";
 import Layout from "../constants/Layout";
 import SquareButton from "../components/Buttons/SquareButton";
 import { useNavigation } from "@react-navigation/core";
+import useColorScheme from "../hooks/useColorScheme";
 
 const profile = {
   name: "Jiwon Lee",
@@ -54,9 +54,11 @@ const profile = {
 export default function Profile() {
   const navigation = useNavigation();
 
+  const colorScheme = useColorScheme();
+
   return (
     <ScrollView
-      style={styles.container}
+      style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={styles.section}>
@@ -74,7 +76,12 @@ export default function Profile() {
                     profile.inClass ? styles.inClass : styles.notInClass,
                   ]}
                 ></View>
-                <Text style={styles.statusText}>
+                <Text
+                  style={[
+                    styles.statusText,
+                    { color: Colors[colorScheme].secondaryText },
+                  ]}
+                >
                   {profile.inClass ? "In class" : "Not in class"}
                 </Text>
               </View>
@@ -103,11 +110,7 @@ export default function Profile() {
                     styles.ellipsis,
                   ]}
                 >
-                  <FontAwesome
-                    name="ellipsis-h"
-                    size={25}
-                    color={Colors.light.text}
-                  />
+                  <Icon name="ellipsis-h" size={25} />
                 </Pressable>
               </View>
             </View>
@@ -123,22 +126,14 @@ export default function Profile() {
             {/* Major */}
             <View style={styles.row}>
               <View style={styles.iconWrapper}>
-                <FontAwesome
-                  name="pencil"
-                  size={25}
-                  color={Colors.light.text}
-                />
+                <Icon name="pencil" size={25} />
               </View>
               <Text>{profile.major}</Text>
             </View>
             {/* Graduation Year */}
             <View style={styles.row}>
               <View style={styles.iconWrapper}>
-                <FontAwesome
-                  name="graduation-cap"
-                  size={25}
-                  color={Colors.light.text}
-                />
+                <Icon name="graduation-cap" size={25} />
               </View>
               <Text>{profile.gradYear}</Text>
             </View>
@@ -181,7 +176,7 @@ export default function Profile() {
         <View
           style={{ alignItems: "center", marginTop: Layout.spacing.xxlarge }}
         >
-          <FontAwesome name="lock" size={100} color={Colors.light.text} />
+          <Icon name="lock" size={100} />
           <Text>This user is private</Text>
         </View>
       ) : (
@@ -229,9 +224,6 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.light.background,
-  },
   section: {
     width: "100%",
     padding: Layout.spacing.medium,
@@ -258,7 +250,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.status.notInClass,
   },
   statusText: {
-    color: Colors.light.secondaryText,
     marginLeft: Layout.spacing.small,
   },
   row: {

@@ -6,13 +6,16 @@ import {
   MessageList,
   OverlayProvider,
 } from "stream-chat-expo";
+import type { DeepPartial, Theme } from "stream-chat-expo";
 import { Text, View } from "../components/Themed";
 import { useEffect, useState } from "react";
 
+import Colors from "../constants/Colors";
 import EditScreenInfo from "../components/EditScreenInfo";
 import { RootTabScreenProps } from "../types";
 import { StreamChat } from "stream-chat";
 import { StyleSheet } from "react-native";
+import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
 const STREAM_API_KEY = "y9tk9hsvsxqa";
@@ -25,6 +28,24 @@ const user = {
 
 export default function Messages() {
   const navigation = useNavigation();
+
+  const colorScheme = useColorScheme();
+
+  console.log(`Color scheme: ${colorScheme}`);
+  // const getTheme = (): DeepPartial<Theme> => ({
+  //   colors: { black: Colors[colorScheme].text },
+  // });
+  const getTheme = (): DeepPartial<Theme> => ({
+    // colors: colorScheme === 'dark' ? { black: '#FFFFFF' } : { black: '#000000' },
+    colors:
+      colorScheme === "dark" ? { black: "#FFFFFF" } : { black: "#FFFFFF" },
+  });
+  const [theme, setTheme] = useState(getTheme());
+
+  useEffect(() => {
+    setTheme(getTheme());
+    console.log(`Theme: ${JSON.stringify(theme, null, 2)}`)
+  }, [colorScheme]);
 
   const [isReady, setIsReady] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState<any>(null);
@@ -54,7 +75,7 @@ export default function Messages() {
   };
 
   return (
-    <OverlayProvider>
+    <OverlayProvider value={{ style: theme }}>
       <Chat client={client}>
         <ChannelList
           onSelect={(channel) => {
