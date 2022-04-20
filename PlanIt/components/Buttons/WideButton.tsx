@@ -3,6 +3,7 @@ import { Text, View } from "../Themed";
 
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
+import useColorScheme from "../../hooks/useColorScheme";
 
 export default function WideButton({
   text,
@@ -11,8 +12,13 @@ export default function WideButton({
   text: string;
   onPress: () => void;
 }) {
+  const colorScheme = useColorScheme();
+
   return (
-    <TouchableOpacity onPress={onPress} style={styles.container}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.container, { borderColor: Colors[colorScheme].border }]}
+    >
       <Text>{text}</Text>
     </TouchableOpacity>
   );
@@ -21,10 +27,9 @@ export default function WideButton({
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    padding: Layout.spacing.xxsmall,
+    padding: Layout.spacing.small,
     width: "100%",
     borderWidth: 1,
-    borderColor: Colors.light.border, // TODO: useThemeColor
     borderRadius: Layout.radius.small,
   },
 });

@@ -1,44 +1,52 @@
 import { ScrollView, StyleSheet } from "react-native";
-import { Text, View } from "../components/Themed";
+import { Icon, Text, View } from "../components/Themed";
 
+import AppContext from "../context/Context";
 import Colors from "../constants/Colors";
-import { FontAwesome } from "@expo/vector-icons";
 import Layout from "../constants/Layout";
 import SquareButton from "../components/Buttons/SquareButton";
 import WideButton from "../components/Buttons/WideButton";
+import { useContext } from "react";
 import { useNavigation } from "@react-navigation/core";
-
-const profile = {
-  name: "Dean Stratakos",
-  inClass: true,
-  major: "Computer Science",
-  gradYear: "2022 (Senior)",
-  numFriends: "83",
-};
+import useColorScheme from "../hooks/useColorScheme";
 
 export default function Profile() {
+  const context = useContext(AppContext);
+
   const navigation = useNavigation();
+
+  const colorScheme = useColorScheme();
 
   return (
     <ScrollView
-      style={styles.container}
+      style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={styles.section}>
         <View style={[styles.row, { justifyContent: "space-between" }]}>
           <View style={styles.row}>
-            <View style={styles.photo}></View>
+            <View
+              style={[
+                styles.photo,
+                { backgroundColor: Colors[colorScheme].imagePlaceholder },
+              ]}
+            ></View>
             <View>
-              <Text style={styles.name}>{profile.name}</Text>
+              <Text style={styles.name}>{context.userName}</Text>
               <View style={[styles.row, { marginTop: Layout.spacing.xsmall }]}>
                 <View
                   style={[
                     styles.status,
-                    profile.inClass ? styles.inClass : styles.notInClass,
+                    context.userInClass ? styles.inClass : styles.notInClass,
                   ]}
                 ></View>
-                <Text style={styles.statusText}>
-                  {profile.inClass ? "In class" : "Not in class"}
+                <Text
+                  style={[
+                    styles.statusText,
+                    { color: Colors[colorScheme].secondaryText },
+                  ]}
+                >
+                  {context.userInClass ? "In class" : "Not in class"}
                 </Text>
               </View>
             </View>
@@ -54,28 +62,20 @@ export default function Profile() {
             {/* Major */}
             <View style={styles.row}>
               <View style={styles.iconWrapper}>
-                <FontAwesome
-                  name="pencil"
-                  size={25}
-                  color={Colors.light.text}
-                />
+                <Icon name="pencil" size={25} />
               </View>
-              <Text>{profile.major}</Text>
+              <Text>{context.userMajor}</Text>
             </View>
             {/* Graduation Year */}
             <View style={styles.row}>
               <View style={styles.iconWrapper}>
-                <FontAwesome
-                  name="graduation-cap"
-                  size={25}
-                  color={Colors.light.text}
-                />
+                <Icon name="graduation-cap" size={25} />
               </View>
-              <Text>{profile.gradYear}</Text>
+              <Text>{context.userGradYear}</Text>
             </View>
           </View>
           <SquareButton
-            num={profile.numFriends}
+            num={context.userNumFriends}
             text="friends"
             onPress={() => navigation.navigate("Friends")}
           />
@@ -87,8 +87,8 @@ export default function Profile() {
       </View>
       <View
         style={styles.separator}
-        lightColor="#ccc"
-        darkColor="rgba(255,255,255,0.1)"
+        lightColor={Colors.light.imagePlaceholder}
+        darkColor={Colors.dark.imagePlaceholder}
       />
       <View style={styles.section}>
         <Text style={{ alignSelf: "center" }}>TODO: Calendar view</Text>
@@ -115,15 +115,11 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.light.background,
-  },
   section: {
     width: "100%",
     padding: Layout.spacing.medium,
   },
   photo: {
-    backgroundColor: Colors.imagePlaceholder,
     height: Layout.image.medium,
     width: Layout.image.medium,
     borderRadius: Layout.image.medium / 2,
@@ -144,7 +140,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.status.notInClass,
   },
   statusText: {
-    color: Colors.light.secondaryText,
     marginLeft: Layout.spacing.small,
   },
   row: {

@@ -3,6 +3,7 @@ import { Text, View } from "../Themed";
 
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
+import useColorScheme from "../../hooks/useColorScheme";
 
 export default function Button({
   text,
@@ -11,8 +12,13 @@ export default function Button({
   text: string;
   onPress: () => void;
 }) {
+  const colorScheme = useColorScheme();
+
   return (
-    <TouchableOpacity onPress={onPress} style={styles.container}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.container, { borderColor: Colors[colorScheme].border }]}
+    >
       <Text>{text}</Text>
     </TouchableOpacity>
   );
@@ -20,11 +26,9 @@ export default function Button({
 
 const styles = StyleSheet.create({
   container: {
-    // alignSelf: "flex-start",
     alignItems: "center",
-    padding: Layout.spacing.xxsmall,
+    padding: Layout.spacing.small,
     borderWidth: 1,
-    borderColor: Colors.light.border, // TODO: useThemeColor
     borderRadius: Layout.radius.small,
   },
 });

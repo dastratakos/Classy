@@ -3,20 +3,23 @@ import { Text, View } from "../Themed";
 
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
+import useColorScheme from "../../hooks/useColorScheme";
 
 export default function SquareButton({
   num,
   text,
-  onPress
+  onPress,
 }: {
   num: string;
   text: string;
   onPress: () => void;
 }) {
+  const colorScheme = useColorScheme();
+
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={styles.container}
+      style={[styles.container, { borderColor: Colors[colorScheme].border }]}
     >
       <Text style={styles.number}>{num}</Text>
       <Text style={styles.text}>{text}</Text>
@@ -30,15 +33,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: Layout.spacing.xxsmall,
     borderWidth: 1,
-    borderColor: Colors.light.border, // TODO: useThemeColor
     height: 70,
     width: 70,
     borderRadius: Layout.radius.small,
   },
   number: {
-    fontSize: Layout.text.large
+    fontSize: Layout.text.large,
   },
   text: {
-    fontSize: Layout.text.medium
-  }
+    fontSize: Layout.text.medium,
+  },
 });

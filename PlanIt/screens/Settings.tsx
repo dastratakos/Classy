@@ -14,22 +14,22 @@ import { StatusBar } from "expo-status-bar";
 import WideButton from "../components/Buttons/WideButton";
 import { auth } from "../firebase";
 import { useNavigation } from "@react-navigation/core";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import AppContext from "../context/Context";
+import useColorScheme from "../hooks/useColorScheme";
 
-const profile = {
-  name: "Dean Stratakos",
-  major: "Computer Science",
-  gradYear: "2022 (Senior)",
-  private: true,
-};
+export default function Settings() {
+  const context = useContext(AppContext);
 
-export default function ModalScreen() {
-  const [name, setName] = useState(profile.name);
-  const [major, setMajor] = useState(profile.major);
-  const [gradYear, setGradYear] = useState(profile.gradYear);
-  const [private_, setPrivate] = useState(profile.private);
+  const [name, setName] = useState(context.userName);
+  const [major, setMajor] = useState(context.userMajor);
+  const [gradYear, setGradYear] = useState(context.userGradYear);
+  const [interests, setInterests] = useState(context.userInterests);
+  const [private_, setPrivate] = useState(context.userPrivate);
 
   const navigation = useNavigation();
+
+  const colorScheme = useColorScheme();
 
   const handleSignOut = () => {
     auth
@@ -37,26 +37,45 @@ export default function ModalScreen() {
       .then(() => {
         navigation.reset({
           index: 0,
-          routes: [{ name: "Login" }],
+          routes: [{ name: "AuthStack" }],
         });
       })
       .catch((error) => alert(error.message));
   };
 
+  const handleSavePress = () => {
+    context.setUserName(name);
+    context.setUserMajor(major);
+    context.setUserGradYear(gradYear);
+    context.setUserInterests(interests);
+    context.setUserPrivate(private_);
+
+    navigation.goBack();
+  };
+
   return (
     <ScrollView
-      style={styles.container}
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme].background },
+      ]}
       contentContainerStyle={{ alignItems: "center" }}
     >
-      <View style={styles.photo}></View>
+      <View
+        style={[
+          styles.photo,
+          { backgroundColor: Colors[colorScheme].imagePlaceholder },
+        ]}
+      ></View>
       <Button
         text="Edit profile photo"
         onPress={() => console.log("Edit profile photo pressed")}
       />
       <View
         style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
+        lightColor={Colors.light.imagePlaceholder}
+        darkColor={Colors.dark.imagePlaceholder}
+        s
       />
       <KeyboardAvoidingView style={styles.inputContainer} behavior="padding">
         <View style={styles.row}>
@@ -67,7 +86,8 @@ export default function ModalScreen() {
             placeholder="Name"
             value={name}
             onChangeText={(text) => setName(text)}
-            style={styles.input}
+            style={[styles.input, { color: Colors[colorScheme].text }]}
+            autoCapitalize="words"
           />
         </View>
         <View style={styles.row}>
@@ -78,7 +98,8 @@ export default function ModalScreen() {
             placeholder="Major"
             value={major}
             onChangeText={(text) => setMajor(text)}
-            style={styles.input}
+            style={[styles.input, { color: Colors[colorScheme].text }]}
+            autoCapitalize="words"
           />
         </View>
         <View style={styles.row}>
@@ -89,58 +110,73 @@ export default function ModalScreen() {
             placeholder="Graduation Year"
             value={gradYear}
             onChangeText={(text) => setGradYear(text)}
-            style={styles.input}
+            style={[styles.input, { color: Colors[colorScheme].text }]}
+            autoCapitalize="words"
+          />
+        </View>
+        <View style={styles.row}>
+          <View style={styles.field}>
+            <Text>Clubs & Interests</Text>
+          </View>
+          <TextInput
+            placeholder="Clubs & Interests"
+            value={interests}
+            onChangeText={(text) => setInterests(text)}
+            style={[styles.input, { color: Colors[colorScheme].text }]}
+            autoCapitalize="sentences"
           />
         </View>
         <View style={styles.row}>
           <View style={styles.field}>
             <Text>Email</Text>
           </View>
-          <Text style={{ color: Colors.light.secondaryText }}>
+          <Text style={{ color: Colors[colorScheme].secondaryText }}>
             {auth.currentUser?.email}
           </Text>
         </View>
       </KeyboardAvoidingView>
       <View
         style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
+        lightColor={Colors.light.imagePlaceholder}
+        darkColor={Colors.dark.imagePlaceholder}
       />
       {private_ ? (
         <WideButton
           text="Switch to Public Account"
-          onPress={() => console.log("Switch to Public Account pressed")}
+          onPress={() => setPrivate(false)}
         />
       ) : (
         <WideButton
           text="Switch to Private Account"
-          onPress={() => console.log("Switch to Private Account pressed")}
+          onPress={() => setPrivate(true)}
         />
       )}
-      <View style={{ height: Layout.spacing.medium }} />
       <View
-        style={[styles.row, { width: "100%", justifyContent: "space-between" }]}
-      >
-        <View style={{ width: "48%" }}>
-          <Button
-            text="Cancel"
-            onPress={() => console.log("Change password pressed")}
-          />
-        </View>
-        <View style={{ width: "48%" }}>
-          <Button
-            text="Save Changes"
-            onPress={() => console.log("Change password pressed")}
-          />
-        </View>
-      </View>
-      <View style={{ height: Layout.spacing.medium }} />
+        style={styles.separator}
+        lightColor={Colors.light.imagePlaceholder}
+        darkColor={Colors.dark.imagePlaceholder}
+      />
       <WideButton
         text="Change Password"
         onPress={() => console.log("Change password pressed")}
       />
       <View style={{ height: Layout.spacing.medium }} />
       <WideButton text="Log Out" onPress={handleSignOut} />
+      <View
+        style={styles.separator}
+        lightColor={Colors.light.imagePlaceholder}
+        darkColor={Colors.dark.imagePlaceholder}
+      />
+      <View
+        style={[styles.row, { width: "100%", justifyContent: "space-between" }]}
+      >
+        <View style={{ width: "48%" }}>
+          <Button text="Cancel" onPress={() => navigation.goBack()} />
+        </View>
+        <View style={{ width: "48%" }}>
+          <Button text="Save Changes" onPress={handleSavePress} />
+        </View>
+      </View>
 
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
@@ -150,9 +186,7 @@ export default function ModalScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: Layout.spacing.medium,
-    backgroundColor: Colors.light.background,
   },
   row: {
     flexDirection: "row",
@@ -170,7 +204,6 @@ const styles = StyleSheet.create({
     width: "60%",
   },
   photo: {
-    backgroundColor: Colors.imagePlaceholder,
     height: Layout.image.large,
     width: Layout.image.large,
     borderRadius: Layout.image.large / 2,

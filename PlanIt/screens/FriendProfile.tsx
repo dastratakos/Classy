@@ -1,13 +1,13 @@
 import { Pressable, ScrollView, StyleSheet } from "react-native";
-import { Text, View } from "../components/Themed";
+import { Icon, Text, View } from "../components/Themed";
 
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import CourseCard from "../components/CourseCard";
-import { FontAwesome } from "@expo/vector-icons";
 import Layout from "../constants/Layout";
 import SquareButton from "../components/Buttons/SquareButton";
 import { useNavigation } from "@react-navigation/core";
+import useColorScheme from "../hooks/useColorScheme";
 
 const profile = {
   name: "Jiwon Lee",
@@ -15,7 +15,8 @@ const profile = {
   major: "Computer Science",
   gradYear: "2022 (Senior)",
   numFriends: "102",
-  courseSimilarity: 57.54,
+  // courseSimilarity: 57.54,
+  courseSimilarity: 83,
   friends: true,
   private: true,
   courses: [
@@ -53,15 +54,22 @@ const profile = {
 export default function Profile() {
   const navigation = useNavigation();
 
+  const colorScheme = useColorScheme();
+
   return (
     <ScrollView
-      style={styles.container}
+      style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={styles.section}>
         <View style={[styles.row, { justifyContent: "space-between" }]}>
           <View style={styles.row}>
-            <View style={styles.photo}></View>
+            <View
+              style={[
+                styles.photo,
+                { backgroundColor: Colors[colorScheme].imagePlaceholder },
+              ]}
+            ></View>
             <View>
               <Text style={styles.name}>{profile.name}</Text>
               <View
@@ -73,7 +81,12 @@ export default function Profile() {
                     profile.inClass ? styles.inClass : styles.notInClass,
                   ]}
                 ></View>
-                <Text style={styles.statusText}>
+                <Text
+                  style={[
+                    styles.statusText,
+                    { color: Colors[colorScheme].secondaryText },
+                  ]}
+                >
                   {profile.inClass ? "In class" : "Not in class"}
                 </Text>
               </View>
@@ -102,11 +115,7 @@ export default function Profile() {
                     styles.ellipsis,
                   ]}
                 >
-                  <FontAwesome
-                    name="ellipsis-h"
-                    size={25}
-                    color={Colors.light.text}
-                  />
+                  <Icon name="ellipsis-h" size={25} />
                 </Pressable>
               </View>
             </View>
@@ -122,22 +131,14 @@ export default function Profile() {
             {/* Major */}
             <View style={styles.row}>
               <View style={styles.iconWrapper}>
-                <FontAwesome
-                  name="pencil"
-                  size={25}
-                  color={Colors.light.text}
-                />
+                <Icon name="pencil" size={25} />
               </View>
               <Text>{profile.major}</Text>
             </View>
             {/* Graduation Year */}
             <View style={styles.row}>
               <View style={styles.iconWrapper}>
-                <FontAwesome
-                  name="graduation-cap"
-                  size={25}
-                  color={Colors.light.text}
-                />
+                <Icon name="graduation-cap" size={25} />
               </View>
               <Text>{profile.gradYear}</Text>
             </View>
@@ -156,13 +157,17 @@ export default function Profile() {
                 opacity: pressed ? 0.5 : 1,
               },
               styles.similarityContainer,
+              { borderColor: Colors[colorScheme].text },
             ]}
           >
             <View
               style={[
                 StyleSheet.absoluteFill,
                 styles.similarityBar,
-                { width: `${profile.courseSimilarity}%` },
+                {
+                  backgroundColor: Colors[colorScheme].imagePlaceholder,
+                  width: `${profile.courseSimilarity}%`,
+                },
               ]}
             />
             <Text style={styles.similarityText}>
@@ -173,14 +178,14 @@ export default function Profile() {
       </View>
       <View
         style={styles.separator}
-        lightColor="#ccc"
-        darkColor="rgba(255,255,255,0.1)"
+        lightColor={Colors.light.imagePlaceholder}
+        darkColor={Colors.dark.imagePlaceholder}
       />
       {profile.private && !profile.friends ? (
         <View
           style={{ alignItems: "center", marginTop: Layout.spacing.xxlarge }}
         >
-          <FontAwesome name="lock" size={100} color={Colors.light.text} />
+          <Icon name="lock" size={100} />
           <Text>This user is private</Text>
         </View>
       ) : (
@@ -198,8 +203,8 @@ export default function Profile() {
           </View>
           <View
             style={styles.separator}
-            lightColor="#ccc"
-            darkColor="rgba(255,255,255,0.1)"
+            lightColor={Colors.light.imagePlaceholder}
+            darkColor={Colors.dark.imagePlaceholder}
           />
           <View style={styles.section}>
             <Text style={{ alignSelf: "center" }}>TODO: Calendar view</Text>
@@ -228,15 +233,11 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.light.background,
-  },
   section: {
     width: "100%",
     padding: Layout.spacing.medium,
   },
   photo: {
-    backgroundColor: Colors.imagePlaceholder,
     height: Layout.image.medium,
     width: Layout.image.medium,
     borderRadius: Layout.image.medium / 2,
@@ -257,7 +258,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.status.notInClass,
   },
   statusText: {
-    color: Colors.light.secondaryText,
     marginLeft: Layout.spacing.small,
   },
   row: {
@@ -281,11 +281,10 @@ const styles = StyleSheet.create({
   similarityContainer: {
     borderWidth: 1,
     borderRadius: Layout.radius.small,
-    paddingVertical: Layout.spacing.xxsmall,
+    paddingVertical: Layout.spacing.small,
     marginTop: Layout.spacing.medium,
   },
   similarityBar: {
-    backgroundColor: Colors.imagePlaceholder,
     borderRadius: Layout.radius.small,
   },
   similarityText: {

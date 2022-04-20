@@ -7,36 +7,38 @@ import Course from "../screens/Course";
 import Courses from "../screens/Courses";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
-import Profile from "../screens/Profile";
-import { ProfileStackScreenProps } from "../types";
+import Messages from "../screens/Messages";
+import { MessagesStackScreenProps } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import ChannelScreen from "../screens/ChannelScreen";
 import { Icon } from "../components/Themed";
 
 const Stack = createNativeStackNavigator();
 
-export default function ProfileStackNavigator() {
+export default function MessagesStackNavigator() {
   return (
-    <Stack.Navigator initialRouteName="Profile">
+    <Stack.Navigator initialRouteName="Messages">
       <Stack.Screen
-        name="Profile"
-        component={Profile}
-        options={({ navigation }: ProfileStackScreenProps<"Profile">) => ({
-          title: "Profile",
+        name="Messages"
+        component={Messages}
+        options={({ navigation }: MessagesStackScreenProps<"Messages">) => ({
+          title: "Messages",
           headerRight: () => (
             <Pressable
-              onPress={() => navigation.navigate("Settings")}
+              onPress={() => console.log("New Message pressed")}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
               })}
             >
-              <Icon name="gear" size={25} />
+              <Icon name="edit" size={25} />
             </Pressable>
           ),
         })}
       />
-      <Stack.Screen name="Courses" component={Courses} />
+      <Stack.Screen name="ChannelScreen" component={ChannelScreen} />
+      {/* <Stack.Screen name="Courses" component={Courses} />
       <Stack.Screen name="Course" component={Course} />
-      <Stack.Screen name="Friends" component={Friends} />
+      <Stack.Screen name="Friends" component={Friends} /> */}
       <Stack.Screen
         name="FriendProfile"
         component={FriendProfile}
