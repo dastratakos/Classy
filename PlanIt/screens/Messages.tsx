@@ -44,7 +44,7 @@ export default function Messages() {
 
   useEffect(() => {
     setTheme(getTheme());
-    console.log(`Theme: ${JSON.stringify(theme, null, 2)}`)
+    console.log(`Theme: ${JSON.stringify(theme, null, 2)}`);
   }, [colorScheme]);
 
   const [isReady, setIsReady] = useState(false);
@@ -77,14 +77,16 @@ export default function Messages() {
   return (
     <OverlayProvider value={{ style: theme }}>
       <Chat client={client}>
-        <ChannelList
-          onSelect={(channel) => {
-            console.log(`In Messages, Channel is ${channel}`);
-
-            navigation.navigate("ChannelScreen", { channel });
-          }}
-        />
         {/* <ChannelList onSelect={(channel) => navigation.navigate("ChannelScreen")} /> */}
+        {selectedChannel ? (
+          <Channel channel={selectedChannel}>
+            <Text onPress={() => setSelectedChannel(null)}>Back</Text>
+            <MessageList />
+            <MessageInput />
+          </Channel>
+        ) : (
+          <ChannelList onSelect={onChannelPressed} />
+        )}
       </Chat>
     </OverlayProvider>
   );
