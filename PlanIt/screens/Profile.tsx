@@ -1,22 +1,18 @@
 import { ScrollView, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 
+import AppContext from "../context/Context";
 import Colors from "../constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import Layout from "../constants/Layout";
 import SquareButton from "../components/Buttons/SquareButton";
 import WideButton from "../components/Buttons/WideButton";
+import { useContext } from "react";
 import { useNavigation } from "@react-navigation/core";
 
-const profile = {
-  name: "Dean Stratakos",
-  inClass: true,
-  major: "Computer Science",
-  gradYear: "2022 (Senior)",
-  numFriends: "83",
-};
-
 export default function Profile() {
+  const context = useContext(AppContext);
+
   const navigation = useNavigation();
 
   return (
@@ -29,16 +25,16 @@ export default function Profile() {
           <View style={styles.row}>
             <View style={styles.photo}></View>
             <View>
-              <Text style={styles.name}>{profile.name}</Text>
+              <Text style={styles.name}>{context.userName}</Text>
               <View style={[styles.row, { marginTop: Layout.spacing.xsmall }]}>
                 <View
                   style={[
                     styles.status,
-                    profile.inClass ? styles.inClass : styles.notInClass,
+                    context.userInClass ? styles.inClass : styles.notInClass,
                   ]}
                 ></View>
                 <Text style={styles.statusText}>
-                  {profile.inClass ? "In class" : "Not in class"}
+                  {context.userInClass ? "In class" : "Not in class"}
                 </Text>
               </View>
             </View>
@@ -60,7 +56,7 @@ export default function Profile() {
                   color={Colors.light.text}
                 />
               </View>
-              <Text>{profile.major}</Text>
+              <Text>{context.userMajor}</Text>
             </View>
             {/* Graduation Year */}
             <View style={styles.row}>
@@ -71,11 +67,11 @@ export default function Profile() {
                   color={Colors.light.text}
                 />
               </View>
-              <Text>{profile.gradYear}</Text>
+              <Text>{context.userGradYear}</Text>
             </View>
           </View>
           <SquareButton
-            num={profile.numFriends}
+            num={context.userNumFriends}
             text="friends"
             onPress={() => navigation.navigate("Friends")}
           />

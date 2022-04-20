@@ -13,15 +13,10 @@ import {
 } from "../types";
 
 import Colors from "../constants/Colors";
-/**
- * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
- * https://reactnavigation.org/docs/getting-started
- *
- */
 import { FontAwesome } from "@expo/vector-icons";
 import LinkingConfiguration from "./LinkingConfiguration";
 import Login from "../screens/Login";
-import Messages from "../screens/Messages";
+import MessagesStackNavigator from "./MessagesStackNavigator";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import ProfileStackNavigator from "./ProfileStackNavigator";
 import Search from "../screens/Search";
@@ -30,6 +25,11 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import useColorScheme from "../hooks/useColorScheme";
 
+/**
+ * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
+ * https://reactnavigation.org/docs/getting-started
+ *
+ */
 export default function Navigation({
   colorScheme,
 }: {
@@ -93,29 +93,15 @@ function BottomTabNavigator() {
       }}
     >
       <BottomTab.Screen
-        name="Messages"
-        component={Messages}
-        options={({ navigation }: RootTabScreenProps<"Messages">) => ({
+        name="MessagesStack"
+        component={MessagesStackNavigator}
+        options={{
           title: "Messages",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="comments" color={color} />
           ),
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate("Settings")}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}
-            >
-              <FontAwesome
-                name="edit"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
-        })}
+        }}
       />
       <BottomTab.Screen
         name="Search"
@@ -129,6 +115,7 @@ function BottomTabNavigator() {
         name="ProfileStack"
         component={ProfileStackNavigator}
         options={{
+          title: "Profile",
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}

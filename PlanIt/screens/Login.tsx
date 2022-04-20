@@ -19,6 +19,7 @@ export default function Login() {
   const navigation = useNavigation();
 
   useEffect(() => {
+    // TODO: show a loading/splash screen before we determine user
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         navigation.reset({
@@ -28,23 +29,79 @@ export default function Login() {
       }
     });
 
+    // TODO: firebase querying
+    // const usersRef = firebase.firestore().collection("users");
+    // firebase.auth().onAuthStateChanged((user) => {
+    //   if (user) {
+    //     usersRef
+    //       .doc(user.uid)
+    //       .get()
+    //       .then((document) => {
+    //         const userData = document.data();
+    //         setLoading(false);
+    //         setUser(userData);
+    //       })
+    //       .catch((error) => {
+    //         setLoading(false);
+    //       });
+    //   } else {
+    //     setLoading(false);
+    //   }
+    // });
+
     return unsubscribe;
   }, []);
 
   const handleSignUp = () => {
     createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredentials) => {
-        const user = userCredentials.user;
+      .then((response) => {
+        const user = response.user;
         console.log(`Registered with: ${user.email}`);
+
+        // TODO: add the user to the database
+        // const uid = response.user.uid;
+        // const data = {
+        //   id: uid,
+        //   email,
+        //   fullName,
+        // };
+        // const usersRef = firebase.firestore().collection("users");
+        // usersRef
+        //   .doc(uid)
+        //   .set(data)
+        //   .then(() => {
+        //     navigation.navigate("Home", { user: data });
+        //   })
+        //   .catch((error) => {
+        //     alert(error);
+        //   });
       })
       .catch((error) => alert(error.message));
   };
 
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredentials) => {
-        const user = userCredentials.user;
+      .then((response) => {
+        const user = response.user;
         console.log(`Logged in with: ${user.email}`);
+
+        // TODO: firebase querying
+        // const uid = response.user.uid;
+        // const usersRef = firebase.firestore().collection("users");
+        // usersRef
+        //   .doc(uid)
+        //   .get()
+        //   .then((firestoreDocument) => {
+        //     if (!firestoreDocument.exists) {
+        //       alert("User does not exist anymore.");
+        //       return;
+        //     }
+        //     const user = firestoreDocument.data();
+        //     navigation.navigate("Home", { user });
+        //   })
+        //   .catch((error) => {
+        //     alert(error);
+        //   });
       })
       .catch((error) => alert(error.message));
   };
@@ -69,6 +126,7 @@ export default function Login() {
 
       <View style={styles.buttonContainer}>
         <WideButton text="Log In" onPress={handleLogin} />
+        <View style={{ height: Layout.spacing.medium }} />
         <WideButton text="Register" onPress={handleSignUp} />
       </View>
     </KeyboardAvoidingView>

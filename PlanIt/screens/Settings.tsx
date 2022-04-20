@@ -14,20 +14,17 @@ import { StatusBar } from "expo-status-bar";
 import WideButton from "../components/Buttons/WideButton";
 import { auth } from "../firebase";
 import { useNavigation } from "@react-navigation/core";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import AppContext from "../context/Context";
 
-const profile = {
-  name: "Dean Stratakos",
-  major: "Computer Science",
-  gradYear: "2022 (Senior)",
-  private: true,
-};
+export default function Settings() {
+  const context = useContext(AppContext);
 
-export default function ModalScreen() {
-  const [name, setName] = useState(profile.name);
-  const [major, setMajor] = useState(profile.major);
-  const [gradYear, setGradYear] = useState(profile.gradYear);
-  const [private_, setPrivate] = useState(profile.private);
+  const [name, setName] = useState(context.userName);
+  const [major, setMajor] = useState(context.userMajor);
+  const [gradYear, setGradYear] = useState(context.userGradYear);
+  const [interests, setInterests] = useState(context.userInterests);
+  const [private_, setPrivate] = useState(context.userPrivate);
 
   const navigation = useNavigation();
 
@@ -41,6 +38,16 @@ export default function ModalScreen() {
         });
       })
       .catch((error) => alert(error.message));
+  };
+
+  const handleSavePress = () => {
+    context.setUserName(name);
+    context.setUserMajor(major);
+    context.setUserGradYear(gradYear);
+    context.setUserInterests(interests);
+    context.setUserPrivate(private_);
+
+    navigation.goBack();
   };
 
   return (
@@ -94,6 +101,17 @@ export default function ModalScreen() {
         </View>
         <View style={styles.row}>
           <View style={styles.field}>
+            <Text>Clubs & Interests</Text>
+          </View>
+          <TextInput
+            placeholder="Clubs & Interests"
+            value={interests}
+            onChangeText={(text) => setInterests(text)}
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.row}>
+          <View style={styles.field}>
             <Text>Email</Text>
           </View>
           <Text style={{ color: Colors.light.secondaryText }}>
@@ -109,38 +127,40 @@ export default function ModalScreen() {
       {private_ ? (
         <WideButton
           text="Switch to Public Account"
-          onPress={() => console.log("Switch to Public Account pressed")}
+          onPress={() => setPrivate(false)}
         />
       ) : (
         <WideButton
           text="Switch to Private Account"
-          onPress={() => console.log("Switch to Private Account pressed")}
+          onPress={() => setPrivate(true)}
         />
       )}
-      <View style={{ height: Layout.spacing.medium }} />
       <View
-        style={[styles.row, { width: "100%", justifyContent: "space-between" }]}
-      >
-        <View style={{ width: "48%" }}>
-          <Button
-            text="Cancel"
-            onPress={() => console.log("Change password pressed")}
-          />
-        </View>
-        <View style={{ width: "48%" }}>
-          <Button
-            text="Save Changes"
-            onPress={() => console.log("Change password pressed")}
-          />
-        </View>
-      </View>
-      <View style={{ height: Layout.spacing.medium }} />
+        style={styles.separator}
+        lightColor="#eee"
+        darkColor="rgba(255,255,255,0.1)"
+      />
       <WideButton
         text="Change Password"
         onPress={() => console.log("Change password pressed")}
       />
       <View style={{ height: Layout.spacing.medium }} />
       <WideButton text="Log Out" onPress={handleSignOut} />
+      <View
+        style={styles.separator}
+        lightColor="#eee"
+        darkColor="rgba(255,255,255,0.1)"
+      />
+      <View
+        style={[styles.row, { width: "100%", justifyContent: "space-between" }]}
+      >
+        <View style={{ width: "48%" }}>
+          <Button text="Cancel" onPress={() => navigation.goBack()} />
+        </View>
+        <View style={{ width: "48%" }}>
+          <Button text="Save Changes" onPress={handleSavePress} />
+        </View>
+      </View>
 
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
