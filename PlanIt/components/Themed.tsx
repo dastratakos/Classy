@@ -27,9 +27,14 @@ type ThemeProps = {
   darkColor?: string;
 };
 
+type IconOtherProps = {
+  name?: string;
+  size?: number;
+}
+
 export type TextProps = ThemeProps & DefaultText["props"];
 export type ViewProps = ThemeProps & DefaultView["props"];
-export type IconProps = ThemeProps;
+export type IconProps = ThemeProps & IconOtherProps;
 
 export function Text(props: TextProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;

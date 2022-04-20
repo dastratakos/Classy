@@ -2,6 +2,7 @@ import { Text, View } from "../components/Themed";
 
 import EditScreenInfo from "../components/EditScreenInfo";
 import { StyleSheet } from "react-native";
+import Colors from "../constants/Colors";
 
 export default function Search() {
   return (
@@ -9,8 +10,8 @@ export default function Search() {
       <Text style={styles.title}>Search</Text>
       <View
         style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
+        lightColor={Colors.light.imagePlaceholder}
+        darkColor={Colors.dark.imagePlaceholder}
       />
       <EditScreenInfo path="/screens/Search.tsx" />
     </View>

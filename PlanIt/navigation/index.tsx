@@ -24,6 +24,7 @@ import Settings from "../screens/Settings";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import useColorScheme from "../hooks/useColorScheme";
+import AuthStackNavigator from "./AuthStackNavigator";
 
 /**
  * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
@@ -55,8 +56,8 @@ function RootNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Login"
-        component={Login}
+        name="AuthStack"
+        component={AuthStackNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen

@@ -203,8 +203,8 @@ export default function Course() {
       </View>
       <View
         style={styles.separator}
-        lightColor="#ccc"
-        darkColor="rgba(255,255,255,0.1)"
+        lightColor={Colors.light.imagePlaceholder}
+        darkColor={Colors.dark.imagePlaceholder}
       />
       <View style={styles.friendsSection}>
         <Text style={styles.friendsHeader}>Friends</Text>

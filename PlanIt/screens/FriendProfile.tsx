@@ -64,7 +64,12 @@ export default function Profile() {
       <View style={styles.section}>
         <View style={[styles.row, { justifyContent: "space-between" }]}>
           <View style={styles.row}>
-            <View style={styles.photo}></View>
+            <View
+              style={[
+                styles.photo,
+                { backgroundColor: Colors[colorScheme].imagePlaceholder },
+              ]}
+            ></View>
             <View>
               <Text style={styles.name}>{profile.name}</Text>
               <View
@@ -152,13 +157,17 @@ export default function Profile() {
                 opacity: pressed ? 0.5 : 1,
               },
               styles.similarityContainer,
+              { borderColor: Colors[colorScheme].text },
             ]}
           >
             <View
               style={[
                 StyleSheet.absoluteFill,
                 styles.similarityBar,
-                { width: `${profile.courseSimilarity}%` },
+                {
+                  backgroundColor: Colors[colorScheme].imagePlaceholder,
+                  width: `${profile.courseSimilarity}%`,
+                },
               ]}
             />
             <Text style={styles.similarityText}>
@@ -169,8 +178,8 @@ export default function Profile() {
       </View>
       <View
         style={styles.separator}
-        lightColor="#ccc"
-        darkColor="rgba(255,255,255,0.1)"
+        lightColor={Colors.light.imagePlaceholder}
+        darkColor={Colors.dark.imagePlaceholder}
       />
       {profile.private && !profile.friends ? (
         <View
@@ -194,8 +203,8 @@ export default function Profile() {
           </View>
           <View
             style={styles.separator}
-            lightColor="#ccc"
-            darkColor="rgba(255,255,255,0.1)"
+            lightColor={Colors.light.imagePlaceholder}
+            darkColor={Colors.dark.imagePlaceholder}
           />
           <View style={styles.section}>
             <Text style={{ alignSelf: "center" }}>TODO: Calendar view</Text>
@@ -229,7 +238,6 @@ const styles = StyleSheet.create({
     padding: Layout.spacing.medium,
   },
   photo: {
-    backgroundColor: Colors.imagePlaceholder,
     height: Layout.image.medium,
     width: Layout.image.medium,
     borderRadius: Layout.image.medium / 2,
@@ -273,11 +281,10 @@ const styles = StyleSheet.create({
   similarityContainer: {
     borderWidth: 1,
     borderRadius: Layout.radius.small,
-    paddingVertical: Layout.spacing.xxsmall,
+    paddingVertical: Layout.spacing.small,
     marginTop: Layout.spacing.medium,
   },
   similarityBar: {
-    backgroundColor: Colors.imagePlaceholder,
     borderRadius: Layout.radius.small,
   },
   similarityText: {

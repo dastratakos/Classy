@@ -18,10 +18,13 @@ declare global {
 }
 
 export type RootStackParamList = {
-  Login: undefined;
+  AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Settings: undefined;
   NotFound: undefined;
+
+  Login: { email: string; password: string } | undefined;
+  Register: { email: string; password: string } | undefined;
 
   Messages: undefined;
   ChannelScreen: undefined;
@@ -77,6 +80,14 @@ export type MessagesStackScreenProps<
   Screen extends keyof MessagesStackParamList
 > = NativeStackScreenProps<MessagesStackParamList>;
 
+export type AuthStackParamList = {
+  Login: undefined;
+  Register: undefined;
+};
+
+export type AuthStackScreenProps<Screen extends keyof AuthStackParamList> =
+  NativeStackScreenProps<AuthStackParamList>;
+
 // Context
 
 export type Context = {
@@ -93,8 +104,8 @@ export type Context = {
   setUserInterests: (arg0: string) => void;
   setUserPrivate: (arg0: boolean) => void;
 
-  channel: undefined,
-  setChannel: () => void,
+  channel: undefined;
+  setChannel: () => void;
 };
 
 // Stream Chat

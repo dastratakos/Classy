@@ -27,7 +27,7 @@ export default function Button({
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    padding: Layout.spacing.xxsmall,
+    padding: Layout.spacing.small,
     borderWidth: 1,
     borderRadius: Layout.radius.small,
   },

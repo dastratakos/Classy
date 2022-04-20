@@ -24,7 +24,12 @@ export default function FriendCard({
       onPress={() => navigation.navigate("FriendProfile")}
       style={[styles.container, { borderColor: Colors[colorScheme].border }]}
     >
-      <View style={styles.photo}></View>
+      <View
+        style={[
+          styles.photo,
+          { backgroundColor: Colors[colorScheme].imagePlaceholder },
+        ]}
+      ></View>
       <View style={styles.textContainer}>
         <Text style={styles.name}>{name}</Text>
         {/* Major */}
@@ -57,7 +62,6 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   photo: {
-    backgroundColor: Colors.imagePlaceholder,
     height: Layout.image.small,
     width: Layout.image.small,
     borderRadius: Layout.image.small / 2,

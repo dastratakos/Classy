@@ -25,7 +25,12 @@ export default function Profile() {
       <View style={styles.section}>
         <View style={[styles.row, { justifyContent: "space-between" }]}>
           <View style={styles.row}>
-            <View style={styles.photo}></View>
+            <View
+              style={[
+                styles.photo,
+                { backgroundColor: Colors[colorScheme].imagePlaceholder },
+              ]}
+            ></View>
             <View>
               <Text style={styles.name}>{context.userName}</Text>
               <View style={[styles.row, { marginTop: Layout.spacing.xsmall }]}>
@@ -82,8 +87,8 @@ export default function Profile() {
       </View>
       <View
         style={styles.separator}
-        lightColor="#ccc"
-        darkColor="rgba(255,255,255,0.1)"
+        lightColor={Colors.light.imagePlaceholder}
+        darkColor={Colors.dark.imagePlaceholder}
       />
       <View style={styles.section}>
         <Text style={{ alignSelf: "center" }}>TODO: Calendar view</Text>
@@ -115,7 +120,6 @@ const styles = StyleSheet.create({
     padding: Layout.spacing.medium,
   },
   photo: {
-    backgroundColor: Colors.imagePlaceholder,
     height: Layout.image.medium,
     width: Layout.image.medium,
     borderRadius: Layout.image.medium / 2,

@@ -27,7 +27,7 @@ export default function WideButton({
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    padding: Layout.spacing.xxsmall,
+    padding: Layout.spacing.small,
     width: "100%",
     borderWidth: 1,
     borderRadius: Layout.radius.small,

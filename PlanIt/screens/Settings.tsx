@@ -37,7 +37,7 @@ export default function Settings() {
       .then(() => {
         navigation.reset({
           index: 0,
-          routes: [{ name: "Login" }],
+          routes: [{ name: "AuthStack" }],
         });
       })
       .catch((error) => alert(error.message));
@@ -61,15 +61,21 @@ export default function Settings() {
       ]}
       contentContainerStyle={{ alignItems: "center" }}
     >
-      <View style={styles.photo}></View>
+      <View
+        style={[
+          styles.photo,
+          { backgroundColor: Colors[colorScheme].imagePlaceholder },
+        ]}
+      ></View>
       <Button
         text="Edit profile photo"
         onPress={() => console.log("Edit profile photo pressed")}
       />
       <View
         style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
+        lightColor={Colors.light.imagePlaceholder}
+        darkColor={Colors.dark.imagePlaceholder}
+        s
       />
       <KeyboardAvoidingView style={styles.inputContainer} behavior="padding">
         <View style={styles.row}>
@@ -81,6 +87,7 @@ export default function Settings() {
             value={name}
             onChangeText={(text) => setName(text)}
             style={[styles.input, { color: Colors[colorScheme].text }]}
+            autoCapitalize="words"
           />
         </View>
         <View style={styles.row}>
@@ -92,6 +99,7 @@ export default function Settings() {
             value={major}
             onChangeText={(text) => setMajor(text)}
             style={[styles.input, { color: Colors[colorScheme].text }]}
+            autoCapitalize="words"
           />
         </View>
         <View style={styles.row}>
@@ -103,6 +111,7 @@ export default function Settings() {
             value={gradYear}
             onChangeText={(text) => setGradYear(text)}
             style={[styles.input, { color: Colors[colorScheme].text }]}
+            autoCapitalize="words"
           />
         </View>
         <View style={styles.row}>
@@ -114,6 +123,7 @@ export default function Settings() {
             value={interests}
             onChangeText={(text) => setInterests(text)}
             style={[styles.input, { color: Colors[colorScheme].text }]}
+            autoCapitalize="sentences"
           />
         </View>
         <View style={styles.row}>
@@ -127,8 +137,8 @@ export default function Settings() {
       </KeyboardAvoidingView>
       <View
         style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
+        lightColor={Colors.light.imagePlaceholder}
+        darkColor={Colors.dark.imagePlaceholder}
       />
       {private_ ? (
         <WideButton
@@ -143,8 +153,8 @@ export default function Settings() {
       )}
       <View
         style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
+        lightColor={Colors.light.imagePlaceholder}
+        darkColor={Colors.dark.imagePlaceholder}
       />
       <WideButton
         text="Change Password"
@@ -154,8 +164,8 @@ export default function Settings() {
       <WideButton text="Log Out" onPress={handleSignOut} />
       <View
         style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
+        lightColor={Colors.light.imagePlaceholder}
+        darkColor={Colors.dark.imagePlaceholder}
       />
       <View
         style={[styles.row, { width: "100%", justifyContent: "space-between" }]}
@@ -194,7 +204,6 @@ const styles = StyleSheet.create({
     width: "60%",
   },
   photo: {
-    backgroundColor: Colors.imagePlaceholder,
     height: Layout.image.large,
     width: Layout.image.large,
     borderRadius: Layout.image.large / 2,
