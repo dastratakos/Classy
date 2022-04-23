@@ -20,8 +20,6 @@ export default function FriendCard({
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
-  console.log("Friendcard id", id);
-
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate("FriendProfile", { id })}

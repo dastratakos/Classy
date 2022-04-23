@@ -83,8 +83,6 @@ export default function Friends({ route }: FriendsProps) {
 
   if (isLoading) return <ActivityIndicator />;
 
-  console.log("friends", friends);
-
   return (
     <ScrollView
       style={{ backgroundColor: Colors[colorScheme].background }}
