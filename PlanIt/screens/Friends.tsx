@@ -11,15 +11,16 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
   onSnapshot,
   query,
   where,
 } from "firebase/firestore";
 import { db } from "../firebase";
-import { User } from "../types";
+import { FriendsProps, User } from "../types";
 import AppStyles from "../styles/AppStyles";
 
-export default function Friends() {
+export default function Friends({ route }: FriendsProps) {
   const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
@@ -28,9 +29,10 @@ export default function Friends() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getFriendIds(context.user.id);
-    getFriendsFromIds(context.friendIds).then((res) => setFriends(res));
-    setIsLoading(false);
+    getFriendIds(route.params.id).then((res) => {
+      getFriendsFromIds(res).then((res2) => setFriends(res2));
+      setIsLoading(false);
+    });
   }, []);
 
   const getFriendIds = async (id: string) => {
@@ -39,14 +41,13 @@ export default function Friends() {
       where("ids", "array-contains", id),
       where("status", "==", "friends")
     );
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const friendIds = [] as string[];
-      querySnapshot.forEach((doc) => {
-        const friendId = doc.data().ids.filter((uid: string) => uid !== id)[0];
-        friendIds.push(friendId);
-      });
-      context.setFriendIds(friendIds);
+    const friendIds = [] as string[];
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      const friendId = doc.data().ids.filter((uid: string) => uid !== id)[0];
+      friendIds.push(friendId);
     });
+    return friendIds;
   };
 
   const getUser = async (id: string) => {
@@ -80,9 +81,9 @@ export default function Friends() {
     return friendsList;
   };
 
-  console.log("friends:", friends);
-
   if (isLoading) return <ActivityIndicator />;
+
+  console.log("friends", friends);
 
   return (
     <ScrollView
@@ -92,6 +93,7 @@ export default function Friends() {
       <View style={AppStyles.section}>
         {friends.map((friend, i) => (
           <FriendCard
+            id={friend.id}
             name={friend.name}
             major={friend.major}
             gradYear={friend.gradYear}

@@ -26,21 +26,22 @@ export default function CourseCard({
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate("Course")}
-      style={[
-        styles.container,
-        { borderColor: Colors[colorScheme].border },
-      ]}
+      onPress={() => navigation.navigate("Course", { id: "TODO" })}
+      style={[styles.container, { borderColor: Colors[colorScheme].border }]}
     >
       <View style={styles.textContainer}>
-        <Text style={styles.code}>{code}{emphasize ? " ⭐️" : null}</Text>
+        <Text style={styles.code}>
+          {code}
+          {emphasize ? " ⭐️" : null}
+        </Text>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.units}>{units} units</Text>
       </View>
       <SquareButton
         num={numFriends}
         text={"friend" + (numFriends !== "1" ? "s" : "")}
-        onPress={() => navigation.navigate("Course")}
+        onPress={() => navigation.navigate("Course", { id: "TODO" })}
+        pressable={false}
       />
     </TouchableOpacity>
   );

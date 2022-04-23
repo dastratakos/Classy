@@ -11,6 +11,10 @@ import useColorScheme from "../hooks/useColorScheme";
 import Calendar from "../components/Calendar";
 import AppStyles from "../styles/AppStyles";
 import Separator from "../components/Separator";
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
+import { Props, User } from "../types";
 
 const profile = {
   name: "Jiwon Lee",
@@ -54,9 +58,27 @@ const profile = {
   ],
 };
 
-export default function Profile() {
+export default function FriendProfile({ route }: Props) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+
+  const [user, setUser] = useState({} as User);
+
+  useEffect(() => {
+    const getUser = async (id: string) => {
+      const docRef = doc(db, "users", id);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setUser(docSnap.data() as User);
+      } else {
+        console.log(`Could not find user: ${id}`);
+        alert("This account does not exist.");
+      }
+    };
+
+    getUser(route.params.id);
+  }, []);
 
   return (
     <ScrollView
@@ -73,7 +95,7 @@ export default function Profile() {
               ]}
             ></View>
             <View>
-              <Text style={styles.name}>{profile.name}</Text>
+              <Text style={styles.name}>{user.name}</Text>
               <View
                 style={[styles.row, { marginVertical: Layout.spacing.xsmall }]}
               >
@@ -135,20 +157,22 @@ export default function Profile() {
               <View style={styles.iconWrapper}>
                 <Icon name="pencil" size={25} />
               </View>
-              <Text>{profile.major}</Text>
+              <Text>{user.major}</Text>
             </View>
             {/* Graduation Year */}
             <View style={styles.row}>
               <View style={styles.iconWrapper}>
                 <Icon name="graduation-cap" size={25} />
               </View>
-              <Text>{profile.gradYear}</Text>
+              <Text>{user.gradYear}</Text>
             </View>
           </View>
           <SquareButton
             num={profile.numFriends}
             text="friends"
-            onPress={() => navigation.navigate("Friends")}
+            onPress={() =>
+              navigation.navigate("Friends", { id: route.params.id })
+            }
           />
         </View>
         {profile.private && !profile.friends ? null : (
@@ -240,9 +264,9 @@ const styles = StyleSheet.create({
   },
   ellipsis: {
     marginLeft: Layout.spacing.small,
-    height: 25,
-    width: 25,
-    borderRadius: 25 / 2,
+    height: 40,
+    width: 40,
+    borderRadius: 40 / 2,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",

@@ -23,9 +23,10 @@ import {
   where,
 } from "firebase/firestore";
 import AppContext from "../context/Context";
+import { LoginProps } from "../types";
 
-export default function Login({ email_ }: { email_: string }) {
-  const [email, setEmail] = useState(email_);
+export default function Login({ route }: LoginProps) {
+  const [email, setEmail] = useState(route.params?.email || "");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 

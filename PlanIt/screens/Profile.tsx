@@ -117,7 +117,9 @@ export default function Profile() {
           <SquareButton
             num={`${context.friendIds.length}`}
             text={"friend" + (context.friendIds.length === 1 ? "" : "s")}
-            onPress={() => navigation.navigate("Friends")}
+            onPress={() =>
+              navigation.navigate("Friends", { id: context.user.id })
+            }
           />
         </View>
         <WideButton

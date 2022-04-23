@@ -32,10 +32,10 @@ export type RootStackParamList = {
   ChannelScreen: undefined;
 
   Courses: undefined;
-  Course: undefined;
+  Course: { id: string };
   Quarters: undefined;
-  Friends: undefined;
-  FriendProfile: undefined;
+  Friends: { id: string };
+  FriendProfile: { id: string };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
@@ -59,10 +59,10 @@ export type ProfileStackParamList = {
 
   Profile: undefined;
   Courses: undefined;
-  Course: undefined;
+  Course: { id: string };
   Quarters: undefined;
-  Friends: undefined;
-  FriendProfile: undefined;
+  Friends: { id: string };
+  FriendProfile: { id: string };
 };
 
 export type ProfileStackScreenProps<
@@ -76,9 +76,9 @@ export type MessagesStackParamList = {
   ChannelScreen: undefined;
 
   Courses: undefined;
-  Course: undefined;
-  Friends: undefined;
-  FriendProfile: undefined;
+  Course: { id: string };
+  Friends: { id: string };
+  FriendProfile: { id: string };
 };
 
 export type MessagesStackScreenProps<
@@ -93,16 +93,31 @@ export type AuthStackParamList = {
 export type AuthStackScreenProps<Screen extends keyof AuthStackParamList> =
   NativeStackScreenProps<AuthStackParamList>;
 
+export type LoginProps = NativeStackScreenProps<RootStackParamList, "Login">;
+export type RegisterProps = NativeStackScreenProps<
+  RootStackParamList,
+  "Register"
+>;
+export type CourseProps = NativeStackScreenProps<RootStackParamList, "Course">;
+export type FriendsProps = NativeStackScreenProps<
+  RootStackParamList,
+  "Friends"
+>;
+export type FriendProfileProps = NativeStackScreenProps<
+  RootStackParamList,
+  "FriendProfile"
+>;
+
 // Context
 
 export type User = {
-  id: string,
-  name: string,
-  major: string,
-  gradYear: string,
-  interests: string,
-  isPrivate: boolean,
-}
+  id: string;
+  name: string;
+  major: string;
+  gradYear: string;
+  interests: string;
+  isPrivate: boolean;
+};
 
 export type Context = {
   user: User;

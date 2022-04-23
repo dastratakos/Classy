@@ -11,6 +11,7 @@ import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
 import AppStyles from "../styles/AppStyles";
 import Separator from "../components/Separator";
+import { CourseProps } from "../types";
 
 const course = {
   code: "CS 194W",
@@ -173,7 +174,7 @@ const exploreCoursesLink =
 // TODO: Carta requires Stanford sign-in...
 const cartaLink = "https://carta-beta.stanford.edu/course/CS%20194W/1226";
 
-export default function Course() {
+export default function Course({ route }: CourseProps) {
   const colorScheme = useColorScheme();
 
   return (

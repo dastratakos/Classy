@@ -9,12 +9,24 @@ export default function SquareButton({
   num,
   text,
   onPress,
+  pressable = true,
 }: {
   num: string;
   text: string;
   onPress: () => void;
+  pressable?: boolean;
 }) {
   const colorScheme = useColorScheme();
+
+  if (!pressable)
+    return (
+      <View
+        style={[styles.container, { borderColor: Colors[colorScheme].border }]}
+      >
+        <Text style={styles.number}>{num}</Text>
+        <Text style={styles.text}>{text}</Text>
+      </View>
+    );
 
   return (
     <TouchableOpacity

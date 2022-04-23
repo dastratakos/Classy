@@ -15,9 +15,10 @@ import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { useState } from "react";
+import { RegisterProps } from "../types";
 
-export default function Register({ email_ }: { email_: string }) {
-  const [email, setEmail] = useState(email_);
+export default function Register({ route }: RegisterProps) {
+  const [email, setEmail] = useState(route.params?.email || "");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -133,7 +134,7 @@ export default function Register({ email_ }: { email_: string }) {
           Already have an account?
         </Text>
         <Pressable
-          onPress={() => navigation.navigate("Login", { email, password })}
+          onPress={() => navigation.navigate("Login", { email })}
         >
           <Text style={styles.login}>Login.</Text>
         </Pressable>

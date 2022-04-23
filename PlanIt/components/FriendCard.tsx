@@ -7,10 +7,12 @@ import { useNavigation } from "@react-navigation/core";
 import useColorScheme from "../hooks/useColorScheme";
 
 export default function FriendCard({
+  id,
   name,
   major,
   gradYear,
 }: {
+  id: string;
   name: string;
   major: string;
   gradYear: string;
@@ -18,9 +20,11 @@ export default function FriendCard({
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
+  console.log("Friendcard id", id);
+
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate("FriendProfile")}
+      onPress={() => navigation.navigate("FriendProfile", { id })}
       style={[styles.container, { borderColor: Colors[colorScheme].border }]}
     >
       <View
