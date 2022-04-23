@@ -33,6 +33,7 @@ export type RootStackParamList = {
 
   Courses: undefined;
   Course: undefined;
+  Quarters: undefined;
   Friends: undefined;
   FriendProfile: undefined;
 };
@@ -59,6 +60,7 @@ export type ProfileStackParamList = {
   Profile: undefined;
   Courses: undefined;
   Course: undefined;
+  Quarters: undefined;
   Friends: undefined;
   FriendProfile: undefined;
 };

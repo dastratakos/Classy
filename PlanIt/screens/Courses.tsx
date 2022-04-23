@@ -63,6 +63,7 @@ export default function Courses() {
             units={course.units}
             numFriends={course.numFriends}
             emphasize={course.taking}
+            key={i}
           />
         ))}
       </View>

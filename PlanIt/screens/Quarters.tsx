@@ -27,11 +27,11 @@ export default function Quarters() {
     >
       <View style={styles.section}>
         {years.map((year, i) => (
-          <View style={styles.yearContainer}>
+          <View style={styles.yearContainer} key={i}>
             <Text style={styles.year}>{year}</Text>
             <View style={styles.quartersContainer}>
               {quarters.map((quarter, idx) => (
-                <View style={{ width: "30%" }}>
+                <View style={{ width: "30%" }} key={idx}>
                   <Button
                     text={`${quarter.name} (${quarter.numUnits[i]})`}
                     onPress={() => navigation.navigate("Courses")}

@@ -50,6 +50,7 @@ export default function Friends() {
             name={friend.name}
             major={friend.major}
             gradYear={friend.gradYear}
+            key={i}
           />
         ))}
       </View>

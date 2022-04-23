@@ -217,6 +217,7 @@ export default function Course() {
               name={friend.name}
               major={friend.major}
               gradYear={friend.gradYear}
+              key={i}
             />
           ))}
         </View>

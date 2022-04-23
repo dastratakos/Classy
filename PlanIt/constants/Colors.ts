@@ -30,4 +30,6 @@ export default {
     inClass: "#20E070",
     notInClass: "#FF3742",
   },
+  white: "#fff",
+  red: "#FF3742",
 };
