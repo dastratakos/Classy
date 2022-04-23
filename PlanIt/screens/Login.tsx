@@ -37,7 +37,7 @@ export default function Login({ email_ }: { email_: string }) {
   useEffect(() => {
     if (auth.currentUser) {
       getUser(auth.currentUser.uid);
-      getFriends(auth.currentUser.uid);
+      getFriendIds(auth.currentUser.uid);
       navigation.reset({
         index: 0,
         routes: [{ name: "Root" }],
@@ -46,7 +46,7 @@ export default function Login({ email_ }: { email_: string }) {
       const unsubscribe = auth.onAuthStateChanged((user) => {
         if (user) {
           getUser(user.uid);
-          getFriends(user.uid);
+          getFriendIds(user.uid);
           navigation.reset({
             index: 0,
             routes: [{ name: "Root" }],
@@ -69,23 +69,19 @@ export default function Login({ email_ }: { email_: string }) {
     }
   };
 
-  const getFriends = async (id: string) => {
+  const getFriendIds = async (id: string) => {
     const q = query(
       collection(db, "friends"),
       where("ids", "array-contains", id),
       where("status", "==", "friends")
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const friends = [] as string[];
+      const friendIds = [] as string[];
       querySnapshot.forEach((doc) => {
         const friendId = doc.data().ids.filter((uid: string) => uid !== id)[0];
-        friends.push(friendId);
+        friendIds.push(friendId);
       });
-      context.setFriends(friends);
-      console.log(
-        "🚀 ~ file: Login.tsx ~ line 89 ~ unsubscribe ~ friends",
-        friends
-      );
+      context.setFriendIds(friendIds);
     });
   };
 

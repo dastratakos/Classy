@@ -3,16 +3,13 @@ import { Text, View } from "../components/Themed";
 import EditScreenInfo from "../components/EditScreenInfo";
 import { StyleSheet } from "react-native";
 import Colors from "../constants/Colors";
+import Separator from "../components/Separator";
 
 export default function Search() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Search</Text>
-      <View
-        style={styles.separator}
-        lightColor={Colors.light.imagePlaceholder}
-        darkColor={Colors.dark.imagePlaceholder}
-      />
+      <Separator />
       <EditScreenInfo path="/screens/Search.tsx" />
     </View>
   );
@@ -27,10 +24,5 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
   },
 });

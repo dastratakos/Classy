@@ -11,14 +11,14 @@ import { User } from "./types";
 export default function App() {
   /* Global variables. */
   const [user, setUser] = useState({} as User);
-  const [friends, setFriends] = useState([] as string[]);
+  const [friendIds, setFriendIds] = useState([] as string[]);
   const [channel, setChannel] = useState(null);
   
   const globalVariables = {
     user: user,
     setUser: setUser,
-    friends: friends,
-    setFriends: setFriends,
+    friendIds: friendIds,
+    setFriendIds: setFriendIds,
     // channel: channel,
     // setChannel: setChannel,
   };

@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/core";
 import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import AppStyles from "../styles/AppStyles";
+import Separator from "../components/Separator";
 
 export default function Profile() {
   const context = useContext(AppContext);
@@ -42,7 +43,7 @@ export default function Profile() {
       style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
     >
-      <View style={styles.section}>
+      <View style={AppStyles.section}>
         <View style={[styles.row, { justifyContent: "space-between" }]}>
           <View style={styles.row}>
             <View
@@ -114,8 +115,8 @@ export default function Profile() {
             )}
           </View>
           <SquareButton
-            num={`${context.friends.length}`}
-            text={"friend" + (context.friends.length === 1 ? "" : "s")}
+            num={`${context.friendIds.length}`}
+            text={"friend" + (context.friendIds.length === 1 ? "" : "s")}
             onPress={() => navigation.navigate("Friends")}
           />
         </View>
@@ -124,12 +125,8 @@ export default function Profile() {
           onPress={() => navigation.navigate("Courses")}
         ></WideButton>
       </View>
-      <View
-        style={styles.separator}
-        lightColor={Colors.light.imagePlaceholder}
-        darkColor={Colors.dark.imagePlaceholder}
-      />
-      <View style={styles.section}>
+      <Separator />
+      <View style={AppStyles.section}>
         <Calendar />
       </View>
     </ScrollView>
@@ -137,10 +134,6 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  section: {
-    width: "100%",
-    padding: Layout.spacing.medium,
-  },
   photo: {
     height: Layout.image.medium,
     width: Layout.image.medium,
@@ -172,11 +165,5 @@ const styles = StyleSheet.create({
     width: 30,
     marginRight: 15,
     alignItems: "center",
-  },
-  separator: {
-    marginVertical: 10,
-    height: 2,
-    borderRadius: 1,
-    width: "80%",
   },
 });

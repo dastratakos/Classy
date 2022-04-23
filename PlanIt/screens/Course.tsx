@@ -9,6 +9,8 @@ import FriendCard from "../components/FriendCard";
 import Layout from "../constants/Layout";
 import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
+import AppStyles from "../styles/AppStyles";
+import Separator from "../components/Separator";
 
 const course = {
   code: "CS 194W",
@@ -179,7 +181,7 @@ export default function Course() {
       style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
     >
-      <View style={styles.section}>
+      <View style={AppStyles.section}>
         <Text style={styles.title}>
           {course.code}: {course.title}
         </Text>
@@ -201,17 +203,13 @@ export default function Course() {
           onPress={() => console.log("Add to Courses pressed")}
         />
       </View>
-      <View
-        style={styles.separator}
-        lightColor={Colors.light.imagePlaceholder}
-        darkColor={Colors.dark.imagePlaceholder}
-      />
+      <Separator />
       <View style={styles.friendsSection}>
         <Text style={styles.friendsHeader}>Friends</Text>
         <Text style={{ marginBottom: Layout.spacing.medium }}>
           TODO: horizontal swipable list of quarters
         </Text>
-        <View style={styles.section}>
+        <View style={AppStyles.section}>
           {friends.spr2022.map((friend, i) => (
             <FriendCard
               name={friend.name}
@@ -235,16 +233,6 @@ function handleCartaPress() {
 }
 
 const styles = StyleSheet.create({
-  section: {
-    width: "100%",
-    padding: Layout.spacing.medium,
-  },
-  separator: {
-    marginVertical: 10,
-    height: 2,
-    borderRadius: 1,
-    width: "80%",
-  },
   title: {
     fontSize: Layout.text.xlarge,
     fontWeight: "500",

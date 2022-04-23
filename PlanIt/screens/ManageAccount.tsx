@@ -17,6 +17,7 @@ import WideButton from "../components/Buttons/WideButton";
 import { auth } from "../firebase";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import Separator from "../components/Separator";
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -74,22 +75,14 @@ export default function Settings() {
           onPress={() => setIsPrivate(true)}
         />
       )}
-      <View
-        style={styles.separator}
-        lightColor={Colors.light.imagePlaceholder}
-        darkColor={Colors.dark.imagePlaceholder}
-      />
+      <Separator />
       <WideButton
         text="Change Password"
         onPress={() => console.log("Change password pressed")}
       />
       <View style={{ height: Layout.spacing.medium }} />
       <WideButton text="Log Out" onPress={handleSignOut} />
-      <View
-        style={styles.separator}
-        lightColor={Colors.light.imagePlaceholder}
-        darkColor={Colors.dark.imagePlaceholder}
-      />
+      <Separator />
       <View
         style={[styles.row, { width: "100%", justifyContent: "space-between" }]}
       >
@@ -135,11 +128,5 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: Layout.spacing.large,
-    height: 2,
-    borderRadius: 1,
-    width: "80%",
   },
 });

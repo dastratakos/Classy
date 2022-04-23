@@ -8,6 +8,7 @@ import Layout from "../constants/Layout";
 import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import AppStyles from "../styles/AppStyles";
 
 const years = ["2018-19", "2019-20", "2020-21", "2021-22"];
 const quarters = [
@@ -25,7 +26,7 @@ export default function Quarters() {
       style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
     >
-      <View style={styles.section}>
+      <View style={AppStyles.section}>
         {years.map((year, i) => (
           <View style={styles.yearContainer} key={i}>
             <Text style={styles.year}>{year}</Text>
@@ -47,11 +48,6 @@ export default function Quarters() {
 }
 
 const styles = StyleSheet.create({
-  section: {
-    width: "100%",
-    padding: Layout.spacing.medium,
-    alignItems: "center",
-  },
   yearContainer: {
     width: "100%",
     alignItems: "center",

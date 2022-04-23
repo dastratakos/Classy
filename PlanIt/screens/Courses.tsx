@@ -7,6 +7,7 @@ import { View } from "../components/Themed";
 import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import AppStyles from "../styles/AppStyles";
 
 const courses = [
   {
@@ -55,7 +56,7 @@ export default function Courses() {
       style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
     >
-      <View style={styles.section}>
+      <View style={AppStyles.section}>
         {courses.map((course, i) => (
           <CourseCard
             code={course.code}
@@ -67,7 +68,7 @@ export default function Courses() {
           />
         ))}
       </View>
-      <View style={styles.section}>
+      <View style={AppStyles.section}>
         <WideButton
           text={"View All Quarters"}
           onPress={() => navigation.navigate("Quarters")}
@@ -78,8 +79,4 @@ export default function Courses() {
 }
 
 const styles = StyleSheet.create({
-  section: {
-    width: "100%",
-    padding: Layout.spacing.medium,
-  },
 });

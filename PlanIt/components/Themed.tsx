@@ -2,11 +2,16 @@
  * Learn more about Light and Dark modes:
  * https://docs.expo.io/guides/color-schemes/
  */
-import { Text as DefaultText, View as DefaultView } from "react-native";
+import {
+  ActivityIndicator as DefaultActivityIndicator,
+  Text as DefaultText,
+  View as DefaultView,
+} from "react-native";
 
 import Colors from "../constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import useColorScheme from "../hooks/useColorScheme";
+import AppStyles from "../styles/AppStyles";
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
@@ -30,11 +35,13 @@ type ThemeProps = {
 type IconOtherProps = {
   name?: string;
   size?: number;
-}
+};
 
 export type TextProps = ThemeProps & DefaultText["props"];
 export type ViewProps = ThemeProps & DefaultView["props"];
 export type IconProps = ThemeProps & IconOtherProps;
+export type ActivityIndicatorProps = ThemeProps &
+  DefaultActivityIndicator["props"];
 
 export function Text(props: TextProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;
@@ -58,4 +65,18 @@ export function Icon(props: IconProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
 
   return <FontAwesome style={{ color }} {...otherProps} />;
+}
+
+export function ActivityIndicator(props: ActivityIndicatorProps) {
+  const { lightColor, darkColor, ...otherProps } = props;
+  const color = useThemeColor(
+    { light: lightColor, dark: darkColor },
+    "background"
+  );
+
+  return (
+    <View style={AppStyles.activityIndicatorContainer}>
+      <DefaultActivityIndicator />
+    </View>
+  );
 }

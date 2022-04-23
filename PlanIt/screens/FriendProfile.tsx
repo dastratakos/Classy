@@ -9,6 +9,8 @@ import SquareButton from "../components/Buttons/SquareButton";
 import { useNavigation } from "@react-navigation/core";
 import useColorScheme from "../hooks/useColorScheme";
 import Calendar from "../components/Calendar";
+import AppStyles from "../styles/AppStyles";
+import Separator from "../components/Separator";
 
 const profile = {
   name: "Jiwon Lee",
@@ -61,9 +63,9 @@ export default function Profile() {
       style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
     >
-      <View style={styles.section}>
-        <View style={[styles.row, { justifyContent: "space-between" }]}>
-          <View style={styles.row}>
+      <View style={AppStyles.section}>
+        <View style={[AppStyles.row, { justifyContent: "space-between" }]}>
+          <View style={AppStyles.row}>
             <View
               style={[
                 styles.photo,
@@ -90,7 +92,7 @@ export default function Profile() {
                   {profile.inClass ? "In class" : "Not in class"}
                 </Text>
               </View>
-              <View style={styles.row}>
+              <View style={AppStyles.row}>
                 {profile.friends ? null : (
                   <View style={{ marginRight: Layout.spacing.small }}>
                     <Button
@@ -123,7 +125,7 @@ export default function Profile() {
         </View>
         <View
           style={[
-            styles.row,
+            AppStyles.row,
             { justifyContent: "space-between", marginTop: 15 },
           ]}
         >
@@ -176,11 +178,7 @@ export default function Profile() {
           </Pressable>
         )}
       </View>
-      <View
-        style={styles.separator}
-        lightColor={Colors.light.imagePlaceholder}
-        darkColor={Colors.dark.imagePlaceholder}
-      />
+      <Separator />
       {profile.private && !profile.friends ? (
         <View
           style={{ alignItems: "center", marginTop: Layout.spacing.xxlarge }}
@@ -190,7 +188,7 @@ export default function Profile() {
         </View>
       ) : (
         <>
-          <View style={styles.section}>
+          <View style={AppStyles.section}>
             {profile.courses.map((course, i) => (
               <CourseCard
                 code={course.code}
@@ -198,15 +196,12 @@ export default function Profile() {
                 units={course.units}
                 numFriends={course.numFriends}
                 emphasize={course.taking}
+                key={i}
               />
             ))}
           </View>
-          <View
-            style={styles.separator}
-            lightColor={Colors.light.imagePlaceholder}
-            darkColor={Colors.dark.imagePlaceholder}
-          />
-          <View style={styles.section}>
+          <Separator />
+          <View style={AppStyles.section}>
             <Calendar />
           </View>
         </>
@@ -216,10 +211,6 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  section: {
-    width: "100%",
-    padding: Layout.spacing.medium,
-  },
   photo: {
     height: Layout.image.medium,
     width: Layout.image.medium,
@@ -272,23 +263,5 @@ const styles = StyleSheet.create({
   },
   similarityText: {
     alignSelf: "center",
-  },
-  separator: {
-    marginVertical: 10,
-    height: 2,
-    borderRadius: 1,
-    width: "80%",
-  },
-  day: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 30,
-    width: 30,
-    borderRadius: 30 / 2,
-    borderWidth: 1,
-  },
-  daySelected: {
-    color: "#fff",
-    backgroundColor: "red",
   },
 });

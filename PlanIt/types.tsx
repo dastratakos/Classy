@@ -107,8 +107,8 @@ export type User = {
 export type Context = {
   user: User;
   setUser: (arg0: User) => void;
-  friends: string[];
-  setFriends: (arg0: string[]) => void;
+  friendIds: string[];
+  setFriendIds: (arg0: string[]) => void;
 };
 
 // export type Context = {
