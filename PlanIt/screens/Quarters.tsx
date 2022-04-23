@@ -18,7 +18,6 @@ const quarters = [
 
 export default function Quarters() {
   const navigation = useNavigation();
-
   const colorScheme = useColorScheme();
 
   return (

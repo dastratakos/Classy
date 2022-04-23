@@ -54,7 +54,6 @@ const profile = {
 
 export default function Profile() {
   const navigation = useNavigation();
-
   const colorScheme = useColorScheme();
 
   return (

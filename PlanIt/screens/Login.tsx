@@ -5,28 +5,39 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../components/Themed";
-import { auth, signInWithEmailAndPassword } from "../firebase";
-import { useEffect, useState } from "react";
+import { auth, db, signInWithEmailAndPassword } from "../firebase";
+import { useContext, useEffect, useState } from "react";
 
+import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import WideButton from "../components/Buttons/WideButton";
-import { useNavigation } from "@react-navigation/core";
 import useColorScheme from "../hooks/useColorScheme";
-import AppStyles from "../styles/AppStyles";
+import { useNavigation } from "@react-navigation/core";
+import {
+  onSnapshot,
+  collection,
+  doc,
+  getDoc,
+  query,
+  where,
+} from "firebase/firestore";
+import AppContext from "../context/Context";
 
 export default function Login({ email_ }: { email_: string }) {
   const [email, setEmail] = useState(email_);
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const context = useContext(AppContext);
   const navigation = useNavigation();
-
   const colorScheme = useColorScheme();
 
   /* Check if user is signed in. */
   useEffect(() => {
     if (auth.currentUser) {
+      getUser(auth.currentUser.uid);
+      getFriends(auth.currentUser.uid);
       navigation.reset({
         index: 0,
         routes: [{ name: "Root" }],
@@ -34,30 +45,12 @@ export default function Login({ email_ }: { email_: string }) {
     } else {
       const unsubscribe = auth.onAuthStateChanged((user) => {
         if (user) {
+          getUser(user.uid);
+          getFriends(user.uid);
           navigation.reset({
             index: 0,
             routes: [{ name: "Root" }],
           });
-
-          // TODO: firebase querying
-          // const usersRef = firebase.firestore().collection("users");
-          // firebase.auth().onAuthStateChanged((user) => {
-          //   if (user) {
-          //     usersRef
-          //       .doc(user.uid)
-          //       .get()
-          //       .then((document) => {
-          //         const userData = document.data();
-          //         setLoading(false);
-          //         setUser(userData);
-          //       })
-          //       .catch((error) => {
-          //         setLoading(false);
-          //       });
-          //   } else {
-          //     setLoading(false);
-          //   }
-          // });
         }
       });
 
@@ -65,9 +58,39 @@ export default function Login({ email_ }: { email_: string }) {
     }
   }, []);
 
+  const getUser = async (id: string) => {
+    const docRef = doc(db, "users", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      context.setUser({ ...context.user, ...docSnap.data() });
+    } else {
+      console.log(`Could not find user: ${id}`);
+    }
+  };
+
+  const getFriends = async (id: string) => {
+    const q = query(
+      collection(db, "friends"),
+      where("ids", "array-contains", id),
+      where("status", "==", "friends")
+    );
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const friends = [] as string[];
+      querySnapshot.forEach((doc) => {
+        const friendId = doc.data().ids.filter((uid: string) => uid !== id)[0];
+        friends.push(friendId);
+      });
+      context.setFriends(friends);
+      console.log(
+        "🚀 ~ file: Login.tsx ~ line 89 ~ unsubscribe ~ friends",
+        friends
+      );
+    });
+  };
+
   const signIn = () => {
     if (!email || !password) {
-      console.log("here");
       setErrorMessage("Please enter an email and a password.");
       return;
     }
@@ -80,24 +103,6 @@ export default function Login({ email_ }: { email_: string }) {
         setEmail("");
         setPassword("");
         setErrorMessage("");
-
-        // TODO: firebase querying
-        // const uid = response.user.uid;
-        // const usersRef = firebase.firestore().collection("users");
-        // usersRef
-        //   .doc(uid)
-        //   .get()
-        //   .then((firestoreDocument) => {
-        //     if (!firestoreDocument.exists) {
-        //       alert("User does not exist anymore.");
-        //       return;
-        //     }
-        //     const user = firestoreDocument.data();
-        //     navigation.navigate("Home", { user });
-        //   })
-        //   .catch((error) => {
-        //     alert(error);
-        //   });
       })
       .catch((error) => setErrorMessage(error.message));
   };
@@ -127,6 +132,7 @@ export default function Login({ email_ }: { email_: string }) {
               },
             ]}
             autoCapitalize="none"
+            autoCorrect={false}
           />
           <TextInput
             placeholder="Password"
@@ -140,6 +146,7 @@ export default function Login({ email_ }: { email_: string }) {
               },
             ]}
             autoCapitalize="none"
+            autoCorrect={false}
             secureTextEntry
           />
         </View>
@@ -166,9 +173,7 @@ export default function Login({ email_ }: { email_: string }) {
         >
           Don't have an account?
         </Text>
-        <Pressable
-          onPress={() => navigation.navigate("Register", { email })}
-        >
+        <Pressable onPress={() => navigation.navigate("Register", { email })}>
           <Text style={styles.textButton}>Register.</Text>
         </Pressable>
       </View>

@@ -16,7 +16,6 @@ export default function FriendCard({
   gradYear: string;
 }) {
   const navigation = useNavigation();
-
   const colorScheme = useColorScheme();
 
   return (

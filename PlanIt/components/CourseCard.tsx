@@ -22,7 +22,6 @@ export default function CourseCard({
   emphasize: boolean;
 }) {
   const navigation = useNavigation();
-
   const colorScheme = useColorScheme();
 
   return (

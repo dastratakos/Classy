@@ -5,17 +5,16 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../components/Themed";
-import { auth, createUserWithEmailAndPassword, firestore } from "../firebase";
+import { auth, createUserWithEmailAndPassword, db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
 
-import Button from "../components/Buttons/Button";
+import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import AppStyles from "../styles/AppStyles";
+import { useState } from "react";
 
 export default function Register({ email_ }: { email_: string }) {
   const [email, setEmail] = useState(email_);
@@ -24,7 +23,6 @@ export default function Register({ email_ }: { email_: string }) {
   const [errorMessage, setErrorMessage] = useState("");
 
   const navigation = useNavigation();
-
   const colorScheme = useColorScheme();
 
   const createUser = async () => {
@@ -40,7 +38,7 @@ export default function Register({ email_ }: { email_: string }) {
           id: uid,
           email,
         };
-        setDoc(doc(firestore, "users", uid), data)
+        setDoc(doc(db, "users", uid), data)
           .then(() => {
             // TODO: navigate to onboarding
             navigation.reset({
@@ -77,6 +75,7 @@ export default function Register({ email_ }: { email_: string }) {
               },
             ]}
             autoCapitalize="none"
+            autoCorrect={false}
           />
           <TextInput
             placeholder="Password"
@@ -93,6 +92,7 @@ export default function Register({ email_ }: { email_: string }) {
               },
             ]}
             autoCapitalize="none"
+            autoCorrect={false}
             secureTextEntry
           />
           <TextInput
@@ -110,6 +110,7 @@ export default function Register({ email_ }: { email_: string }) {
               },
             ]}
             autoCapitalize="none"
+            autoCorrect={false}
             secureTextEntry
           />
         </View>

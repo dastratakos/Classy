@@ -7,25 +7,35 @@ import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import SquareButton from "../components/Buttons/SquareButton";
 import WideButton from "../components/Buttons/WideButton";
-import { useAuthentication } from "../hooks/useAuthentication";
 import useColorScheme from "../hooks/useColorScheme";
 import { useContext, useEffect } from "react";
 import { useNavigation } from "@react-navigation/core";
+import { auth, db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
+import AppStyles from "../styles/AppStyles";
 
 export default function Profile() {
   const context = useContext(AppContext);
-
   const navigation = useNavigation();
-
   const colorScheme = useColorScheme();
 
-  // const user = useAuthentication();
-  // console.log("🚀 ~ file: Profile.tsx ~ line 23 ~ Profile ~ user", user);
-
   useEffect(() => {
-    // const uid = user.uid;
-    // console.log("🚀 ~ file: Profile.tsx ~ line 27 ~ useEffect ~ uid", uid)
-  }, [])
+    const getUser = async (id: string) => {
+      const docRef = doc(db, "users", id);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        context.setUser({ ...context.user, ...docSnap.data() });
+      } else {
+        console.log(`Could not find user: ${id}`);
+      }
+    };
+
+    if (!context.user && auth.currentUser) getUser(auth.currentUser.uid);
+  }, []);
+
+  // TODO: calculate inClass
+  const inClass = true;
 
   return (
     <ScrollView
@@ -42,12 +52,12 @@ export default function Profile() {
               ]}
             ></View>
             <View>
-              <Text style={styles.name}>{context.userName}</Text>
+              <Text style={styles.name}>{context.user.name}</Text>
               <View style={[styles.row, { marginTop: Layout.spacing.xsmall }]}>
                 <View
                   style={[
                     styles.status,
-                    context.userInClass ? styles.inClass : styles.notInClass,
+                    inClass ? styles.inClass : styles.notInClass,
                   ]}
                 ></View>
                 <Text
@@ -56,7 +66,7 @@ export default function Profile() {
                     { color: Colors[colorScheme].secondaryText },
                   ]}
                 >
-                  {context.userInClass ? "In class" : "Not in class"}
+                  {inClass ? "In class" : "Not in class"}
                 </Text>
               </View>
             </View>
@@ -64,29 +74,48 @@ export default function Profile() {
         </View>
         <View
           style={[
-            styles.row,
+            AppStyles.row,
             { justifyContent: "space-between", marginVertical: 15 },
           ]}
         >
           <View>
-            {/* Major */}
-            <View style={styles.row}>
-              <View style={styles.iconWrapper}>
-                <Icon name="pencil" size={25} />
+            {context.user.major ? (
+              // Major
+              <View style={styles.row}>
+                <View style={styles.iconWrapper}>
+                  <Icon name="pencil" size={25} />
+                </View>
+                <Text>{context.user.major}</Text>
               </View>
-              <Text>{context.userMajor}</Text>
-            </View>
-            {/* Graduation Year */}
-            <View style={styles.row}>
-              <View style={styles.iconWrapper}>
-                <Icon name="graduation-cap" size={25} />
+            ) : (
+              <></>
+            )}
+            {context.user.gradYear ? (
+              // Graduation Year
+              <View style={styles.row}>
+                <View style={styles.iconWrapper}>
+                  <Icon name="graduation-cap" size={25} />
+                </View>
+                <Text>{context.user.gradYear}</Text>
               </View>
-              <Text>{context.userGradYear}</Text>
-            </View>
+            ) : (
+              <></>
+            )}
+            {context.user.interests ? (
+              // Interests
+              <View style={styles.row}>
+                <View style={styles.iconWrapper}>
+                  <Icon name="puzzle-piece" size={25} />
+                </View>
+                <Text>{context.user.interests}</Text>
+              </View>
+            ) : (
+              <></>
+            )}
           </View>
           <SquareButton
-            num={context.userNumFriends}
-            text="friends"
+            num={`${context.friends.length}`}
+            text={"friend" + (context.friends.length === 1 ? "" : "s")}
             onPress={() => navigation.navigate("Friends")}
           />
         </View>

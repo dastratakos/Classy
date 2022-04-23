@@ -48,7 +48,6 @@ const courses = [
 
 export default function Courses() {
   const navigation = useNavigation();
-
   const colorScheme = useColorScheme();
 
   return (

@@ -14,10 +14,9 @@ import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import { StatusBar } from "expo-status-bar";
 import WideButton from "../components/Buttons/WideButton";
-import { auth, db } from "../firebase";
+import { auth } from "../firebase";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { doc, updateDoc } from "firebase/firestore";
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -26,9 +25,22 @@ export default function Settings() {
   const [major, setMajor] = useState(context.user.major);
   const [gradYear, setGradYear] = useState(context.user.gradYear);
   const [interests, setInterests] = useState(context.user.interests);
+  const [isPrivate, setIsPrivate] = useState(context.user.isPrivate);
 
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+
+  const handleSignOut = () => {
+    auth
+      .signOut()
+      .then(() => {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      })
+      .catch((error) => alert(error.message));
+  };
 
   const handleSavePress = () => {
     context.setUser({
@@ -37,21 +49,10 @@ export default function Settings() {
       major,
       gradYear,
       interests,
+      isPrivate,
     });
-
-    setUser(context.user.id);
 
     navigation.goBack();
-  };
-
-  const setUser = async (id: string) => {
-    const userRef = doc(db, "users", id);
-    await updateDoc(userRef, {
-      name,
-      major,
-      gradYear,
-      interests,
-    });
   };
 
   return (
@@ -62,88 +63,28 @@ export default function Settings() {
       ]}
       contentContainerStyle={{ alignItems: "center" }}
     >
-      <View
-        style={[
-          styles.photo,
-          { backgroundColor: Colors[colorScheme].imagePlaceholder },
-        ]}
-      ></View>
-      <Button
-        text="Edit profile photo"
-        onPress={() => console.log("Edit profile photo pressed")}
-      />
-      <View
-        style={styles.separator}
-        lightColor={Colors.light.imagePlaceholder}
-        darkColor={Colors.dark.imagePlaceholder}
-      />
-      <KeyboardAvoidingView style={styles.inputContainer} behavior="padding">
-        <View style={styles.row}>
-          <View style={styles.field}>
-            <Text>Name</Text>
-          </View>
-          <TextInput
-            placeholder="Name"
-            value={name}
-            onChangeText={(text) => setName(text)}
-            style={[styles.input, { color: Colors[colorScheme].text }]}
-            autoCapitalize="words"
-          />
-        </View>
-        <View style={styles.row}>
-          <View style={styles.field}>
-            <Text>Major</Text>
-          </View>
-          <TextInput
-            placeholder="Major"
-            value={major}
-            onChangeText={(text) => setMajor(text)}
-            style={[styles.input, { color: Colors[colorScheme].text }]}
-            autoCapitalize="words"
-          />
-        </View>
-        <View style={styles.row}>
-          <View style={styles.field}>
-            <Text>Graduation Year</Text>
-          </View>
-          <TextInput
-            placeholder="Graduation Year"
-            value={gradYear}
-            onChangeText={(text) => setGradYear(text)}
-            style={[styles.input, { color: Colors[colorScheme].text }]}
-            autoCapitalize="words"
-          />
-        </View>
-        <View style={styles.row}>
-          <View style={styles.field}>
-            <Text>Clubs & Interests</Text>
-          </View>
-          <TextInput
-            placeholder="Clubs & Interests"
-            value={interests}
-            onChangeText={(text) => setInterests(text)}
-            style={[styles.input, { color: Colors[colorScheme].text }]}
-            autoCapitalize="sentences"
-          />
-        </View>
-        <View style={styles.row}>
-          <View style={styles.field}>
-            <Text>Email</Text>
-          </View>
-          <Text style={{ color: Colors[colorScheme].secondaryText }}>
-            {auth.currentUser?.email}
-          </Text>
-        </View>
-      </KeyboardAvoidingView>
+      {isPrivate ? (
+        <WideButton
+          text="Switch to Public Account"
+          onPress={() => setIsPrivate(false)}
+        />
+      ) : (
+        <WideButton
+          text="Switch to Private Account"
+          onPress={() => setIsPrivate(true)}
+        />
+      )}
       <View
         style={styles.separator}
         lightColor={Colors.light.imagePlaceholder}
         darkColor={Colors.dark.imagePlaceholder}
       />
       <WideButton
-        text="Manage Account"
-        onPress={() => navigation.navigate("ManageAccount")}
+        text="Change Password"
+        onPress={() => console.log("Change password pressed")}
       />
+      <View style={{ height: Layout.spacing.medium }} />
+      <WideButton text="Log Out" onPress={handleSignOut} />
       <View
         style={styles.separator}
         lightColor={Colors.light.imagePlaceholder}

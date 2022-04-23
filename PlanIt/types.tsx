@@ -21,6 +21,7 @@ export type RootStackParamList = {
   AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Settings: undefined;
+  ManageAccount: undefined;
   NotFound: undefined;
 
   Login: { email?: string } | undefined;
@@ -53,6 +54,7 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
 
 export type ProfileStackParamList = {
   Settings: undefined;
+  ManageAccount: undefined;
 
   Profile: undefined;
   Courses: undefined;
@@ -91,23 +93,39 @@ export type AuthStackScreenProps<Screen extends keyof AuthStackParamList> =
 
 // Context
 
-export type Context = {
-  userName: string;
-  userMajor: string;
-  userGradYear: string;
-  userInterests: string;
-  userNumFriends: string;
-  userInClass: boolean;
-  userPrivate: boolean;
-  setUserName: (arg0: string) => void;
-  setUserMajor: (arg0: string) => void;
-  setUserGradYear: (arg0: string) => void;
-  setUserInterests: (arg0: string) => void;
-  setUserPrivate: (arg0: boolean) => void;
+export type User = {
+  id: string,
+  name: string,
+  major: string,
+  gradYear: string,
+  interests: string,
+  isPrivate: boolean,
+}
 
-  channel: undefined;
-  setChannel: () => void;
+export type Context = {
+  user: User;
+  setUser: (arg0: User) => void;
+  friends: string[];
+  setFriends: (arg0: string[]) => void;
 };
+
+// export type Context = {
+//   userName: string;
+//   userMajor: string;
+//   userGradYear: string;
+//   userInterests: string;
+//   userNumFriends: string;
+//   userInClass: boolean;
+//   userPrivate: boolean;
+//   setUserName: (arg0: string) => void;
+//   setUserMajor: (arg0: string) => void;
+//   setUserGradYear: (arg0: string) => void;
+//   setUserInterests: (arg0: string) => void;
+//   setUserPrivate: (arg0: boolean) => void;
+
+//   channel: undefined;
+//   setChannel: () => void;
+// };
 
 // Stream Chat
 

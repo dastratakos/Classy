@@ -5,23 +5,22 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../components/Themed";
-import { auth, signInWithEmailAndPassword } from "../firebase";
-import { useEffect, useState } from "react";
 
+import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import WideButton from "../components/Buttons/WideButton";
-import { useNavigation } from "@react-navigation/core";
-import useColorScheme from "../hooks/useColorScheme";
-import AppStyles from "../styles/AppStyles";
+import { auth } from "../firebase";
 import { sendPasswordResetEmail } from "firebase/auth";
+import useColorScheme from "../hooks/useColorScheme";
+import { useNavigation } from "@react-navigation/core";
+import { useState } from "react";
 
 export default function ResetPassword() {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const navigation = useNavigation();
-
   const colorScheme = useColorScheme();
 
   const resetPassword = () => {
@@ -55,6 +54,7 @@ export default function ResetPassword() {
               },
             ]}
             autoCapitalize="none"
+            autoCorrect={false}
           />
         </View>
         <View style={{ height: Layout.spacing.large }} />

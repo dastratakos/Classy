@@ -31,7 +31,6 @@ const user = {
 
 export default function Messages() {
   const navigation = useNavigation();
-
   const colorScheme = useColorScheme();
 
   const getTheme = (): DeepPartial<Theme> => ({

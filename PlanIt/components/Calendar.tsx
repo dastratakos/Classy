@@ -11,7 +11,6 @@ const days = ["M", "T", "W", "T", "F"];
 
 export default function Calendar() {
   const navigation = useNavigation();
-
   const colorScheme = useColorScheme();
 
   const d = new Date();
