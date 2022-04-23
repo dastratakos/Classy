@@ -21,6 +21,7 @@ export default StyleSheet.create({
     width: "80%",
   },
   errorText: {
+    alignSelf: "center",
     color: Colors.status.notInClass,
   },
   activityIndicatorContainer: {

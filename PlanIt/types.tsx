@@ -112,6 +112,7 @@ export type FriendProfileProps = NativeStackScreenProps<
 
 export type User = {
   id: string;
+  email: string;
   name: string;
   major: string;
   gradYear: string;

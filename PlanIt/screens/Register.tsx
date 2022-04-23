@@ -16,6 +16,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { useState } from "react";
 import { RegisterProps } from "../types";
+import { sendEmailVerification } from "firebase/auth";
 
 export default function Register({ route }: RegisterProps) {
   const [email, setEmail] = useState(route.params?.email || "");
@@ -34,6 +35,8 @@ export default function Register({ route }: RegisterProps) {
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((response) => {
+        if (auth.currentUser) sendEmailVerification(auth.currentUser);
+
         const uid = response.user.uid;
         const data = {
           id: uid,
@@ -133,9 +136,7 @@ export default function Register({ route }: RegisterProps) {
         >
           Already have an account?
         </Text>
-        <Pressable
-          onPress={() => navigation.navigate("Login", { email })}
-        >
+        <Pressable onPress={() => navigation.navigate("Login", { email })}>
           <Text style={styles.login}>Login.</Text>
         </Pressable>
       </View>

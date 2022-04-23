@@ -6,54 +6,135 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../components/Themed";
+import { auth, db } from "../firebase";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  where,
+  writeBatch,
+} from "firebase/firestore";
+import { deleteUser, signOut, updatePassword } from "firebase/auth";
 import { useContext, useState } from "react";
 
 import AppContext from "../context/Context";
+import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
+import Separator from "../components/Separator";
 import { StatusBar } from "expo-status-bar";
 import WideButton from "../components/Buttons/WideButton";
-import { auth } from "../firebase";
+import { signInWithEmailAndPassword } from "../firebase";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import Separator from "../components/Separator";
 
 export default function Settings() {
   const context = useContext(AppContext);
 
-  const [name, setName] = useState(context.user.name);
-  const [major, setMajor] = useState(context.user.major);
-  const [gradYear, setGradYear] = useState(context.user.gradYear);
-  const [interests, setInterests] = useState(context.user.interests);
   const [isPrivate, setIsPrivate] = useState(context.user.isPrivate);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
   const handleSignOut = () => {
-    auth
-      .signOut()
+    signOut(auth)
       .then(() => {
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
       })
-      .catch((error) => alert(error.message));
+      .catch((error) => setErrorMessage(error.message));
   };
 
-  const handleSavePress = () => {
-    context.setUser({
-      ...context.user,
-      name,
-      major,
-      gradYear,
-      interests,
-      isPrivate,
-    });
+  const handleUpdatePassword = () => {
+    if (newPassword !== confirmNewPassword) {
+      setErrorMessage("New passwords do not match.");
+      return;
+    }
 
-    navigation.goBack();
+    signInWithEmailAndPassword(
+      auth,
+      auth.currentUser?.email || "",
+      currentPassword
+    )
+      .then((response) => {
+        const user = response.user;
+        updatePassword(user, newPassword)
+          .then(() => {
+            setCurrentPassword("");
+            setNewPassword("");
+            setConfirmNewPassword("");
+            setErrorMessage("");
+          })
+          .catch((error) => setErrorMessage(error.message));
+      })
+      .catch((error) => setErrorMessage(error.message));
+  };
+
+  const handleDeleteUserAndData = () => {
+    if (!currentPassword) {
+      setErrorMessage("Please enter current password to delete your account.");
+      return;
+    }
+
+    signInWithEmailAndPassword(
+      auth,
+      auth.currentUser?.email || "",
+      currentPassword
+    )
+      .then((response) => {
+        const user = response.user;
+
+        /* Get all UserCourses and delete. */
+        const batch1 = writeBatch(db);
+        const q1 = query(
+          collection(db, "userCourses"),
+          where("userId", "==", user.uid)
+        );
+        getDocs(q1)
+          .then((querySnapshot1) => {
+            querySnapshot1.forEach((doc) => {
+              batch1.delete(doc.ref);
+            });
+            batch1.commit();
+
+            /* Get all Friends (relationships) and delete. */
+            const batch2 = writeBatch(db);
+            const q2 = query(
+              collection(db, "friends"),
+              where("ids", "array-contains", user.uid)
+            );
+            getDocs(q2).then((querySnapshot2) => {
+              querySnapshot2.forEach((doc) => {
+                batch2.delete(doc.ref);
+              });
+              batch2.commit();
+
+              /* Get the user document and delete it. */
+              deleteDoc(doc(db, "users", user.uid));
+
+              /* Delete the user from Firebase auth. */
+              deleteUser(user)
+                .then(() => {
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: "Root" }],
+                  });
+                })
+                .catch((error) => setErrorMessage(error.message));
+            });
+          })
+          .catch((error) => setErrorMessage(error.message));
+      })
+      .catch((error) => setErrorMessage(error.message));
   };
 
   return (
@@ -76,23 +157,70 @@ export default function Settings() {
         />
       )}
       <Separator />
-      <WideButton
-        text="Change Password"
-        onPress={() => console.log("Change password pressed")}
-      />
-      <View style={{ height: Layout.spacing.medium }} />
-      <WideButton text="Log Out" onPress={handleSignOut} />
+      <KeyboardAvoidingView style={styles.inputContainer}>
+        {errorMessage ? (
+          <Text style={AppStyles.errorText}>{errorMessage}</Text>
+        ) : null}
+        <TextInput
+          placeholder="Current password"
+          value={currentPassword}
+          onChangeText={(text) => {
+            setErrorMessage("");
+            setCurrentPassword(text);
+          }}
+          style={[
+            styles.input,
+            {
+              backgroundColor: Colors[colorScheme].secondaryBackground,
+              color: Colors[colorScheme].text,
+            },
+          ]}
+          autoCapitalize="none"
+          autoCorrect={false}
+          secureTextEntry
+        />
+        <TextInput
+          placeholder="New password"
+          value={newPassword}
+          onChangeText={(text) => {
+            setErrorMessage("");
+            setNewPassword(text);
+          }}
+          style={[
+            styles.input,
+            {
+              backgroundColor: Colors[colorScheme].secondaryBackground,
+              color: Colors[colorScheme].text,
+            },
+          ]}
+          autoCapitalize="none"
+          autoCorrect={false}
+          secureTextEntry
+        />
+        <TextInput
+          placeholder="Confirm new password"
+          value={confirmNewPassword}
+          onChangeText={(text) => {
+            setErrorMessage("");
+            setConfirmNewPassword(text);
+          }}
+          style={[
+            styles.input,
+            {
+              backgroundColor: Colors[colorScheme].secondaryBackground,
+              color: Colors[colorScheme].text,
+            },
+          ]}
+          autoCapitalize="none"
+          autoCorrect={false}
+          secureTextEntry
+        />
+      </KeyboardAvoidingView>
+      <WideButton text="Change Password" onPress={handleUpdatePassword} />
       <Separator />
-      <View
-        style={[styles.row, { width: "100%", justifyContent: "space-between" }]}
-      >
-        <View style={{ width: "48%" }}>
-          <Button text="Cancel" onPress={() => navigation.goBack()} />
-        </View>
-        <View style={{ width: "48%" }}>
-          <Button text="Save Changes" onPress={handleSavePress} />
-        </View>
-      </View>
+      <WideButton text="Delete Account" onPress={handleDeleteUserAndData} />
+      <Separator />
+      <WideButton text="Log Out" onPress={handleSignOut} />
 
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
@@ -104,29 +232,14 @@ const styles = StyleSheet.create({
   container: {
     padding: Layout.spacing.medium,
   },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  field: {
-    width: "40%",
-    paddingRight: Layout.spacing.large,
-  },
   inputContainer: {
     width: "100%",
   },
   input: {
-    paddingVertical: Layout.spacing.xsmall,
-    width: "60%",
-  },
-  photo: {
-    height: Layout.image.large,
-    width: Layout.image.large,
-    borderRadius: Layout.image.large / 2,
-    marginBottom: Layout.spacing.medium,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
+    paddingHorizontal: Layout.spacing.medium,
+    paddingVertical: Layout.spacing.small,
+    borderRadius: Layout.spacing.small,
+    // marginVertical: Layout.spacing.medium,
+    marginVertical: Layout.spacing.small,
   },
 });

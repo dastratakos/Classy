@@ -14,7 +14,7 @@ import Separator from "../components/Separator";
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
-import { Props, User } from "../types";
+import { FriendProfileProps, User } from "../types";
 
 const profile = {
   name: "Jiwon Lee",
@@ -58,7 +58,7 @@ const profile = {
   ],
 };
 
-export default function FriendProfile({ route }: Props) {
+export default function FriendProfile({ route }: FriendProfileProps) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
