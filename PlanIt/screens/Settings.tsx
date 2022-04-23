@@ -5,7 +5,9 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
+  Share,
   StyleSheet,
   TextInput,
 } from "react-native";
@@ -172,18 +174,27 @@ export default function Settings() {
       ) : (
         <>
           {photoUrl ? (
-            <Image
-              source={{ uri: photoUrl }}
-              style={[
-                AppStyles.photoXlarge,
-                {
-                  marginBottom: Layout.spacing.medium,
-                  backgroundColor: Colors[colorScheme].imagePlaceholder,
-                },
-              ]}
-            />
+            <Pressable
+              onLongPress={() =>
+                Share.share({
+                  message: photoUrl,
+                  title: "Check out this photo",
+                  url: photoUrl,
+                })
+              }
+            >
+              <Image
+                source={{ uri: photoUrl }}
+                style={[
+                  AppStyles.photoXlarge,
+                  {
+                    marginBottom: Layout.spacing.medium,
+                    backgroundColor: Colors[colorScheme].imagePlaceholder,
+                  },
+                ]}
+              />
+            </Pressable>
           ) : (
-            // TODO: longPress to share
             <View
               style={[
                 AppStyles.photoXlarge,
@@ -203,7 +214,7 @@ export default function Settings() {
       </View>
       <Separator />
       <KeyboardAvoidingView style={styles.inputContainer} behavior="padding">
-        <View style={styles.row}>
+        <View style={AppStyles.row}>
           <View style={styles.field}>
             <Text>Name</Text>
           </View>
@@ -215,7 +226,7 @@ export default function Settings() {
             autoCapitalize="words"
           />
         </View>
-        <View style={styles.row}>
+        <View style={AppStyles.row}>
           <View style={styles.field}>
             <Text>Major</Text>
           </View>
@@ -227,7 +238,7 @@ export default function Settings() {
             autoCapitalize="words"
           />
         </View>
-        <View style={styles.row}>
+        <View style={AppStyles.row}>
           <View style={styles.field}>
             <Text>Graduation Year</Text>
           </View>
@@ -239,7 +250,7 @@ export default function Settings() {
             autoCapitalize="words"
           />
         </View>
-        <View style={styles.row}>
+        <View style={AppStyles.row}>
           <View style={styles.field}>
             <Text>Clubs & Interests</Text>
           </View>
@@ -251,11 +262,11 @@ export default function Settings() {
             autoCapitalize="sentences"
           />
         </View>
-        <View style={styles.row}>
+        <View style={AppStyles.row}>
           <View style={styles.field}>
             <Text>Email</Text>
           </View>
-          <Text style={{ color: Colors[colorScheme].secondaryText }}>
+          <Text style={[styles.input, { color: Colors[colorScheme].secondaryText }]}>
             {auth.currentUser?.email}
           </Text>
         </View>
@@ -267,7 +278,7 @@ export default function Settings() {
       />
       <Separator />
       <View
-        style={[styles.row, { width: "100%", justifyContent: "space-between" }]}
+        style={[AppStyles.row, { width: "100%", justifyContent: "space-between" }]}
       >
         <View style={{ width: "48%" }}>
           <Button text="Cancel" onPress={() => navigation.goBack()} />
@@ -287,10 +298,6 @@ const styles = StyleSheet.create({
   container: {
     padding: Layout.spacing.medium,
   },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
   field: {
     width: "40%",
     paddingRight: Layout.spacing.large,
@@ -301,9 +308,5 @@ const styles = StyleSheet.create({
   input: {
     paddingVertical: Layout.spacing.xsmall,
     width: "60%",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
   },
 });
