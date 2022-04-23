@@ -27,7 +27,7 @@ export default {
     imagePlaceholder: "#888",
   },
   status: {
-    inClass: "green",
-    notInClass: "red",
+    inClass: "#20E070",
+    notInClass: "#FF3742",
   },
 };

@@ -1,14 +1,16 @@
-import { ScrollView, StyleSheet } from "react-native";
 import { Icon, Text, View } from "../components/Themed";
+import { ScrollView, StyleSheet } from "react-native";
 
 import AppContext from "../context/Context";
+import Calendar from "../components/Calendar";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import SquareButton from "../components/Buttons/SquareButton";
 import WideButton from "../components/Buttons/WideButton";
-import { useContext } from "react";
-import { useNavigation } from "@react-navigation/core";
+import { useAuthentication } from "../hooks/useAuthentication";
 import useColorScheme from "../hooks/useColorScheme";
+import { useContext, useEffect } from "react";
+import { useNavigation } from "@react-navigation/core";
 
 export default function Profile() {
   const context = useContext(AppContext);
@@ -16,6 +18,14 @@ export default function Profile() {
   const navigation = useNavigation();
 
   const colorScheme = useColorScheme();
+
+  // const user = useAuthentication();
+  // console.log("🚀 ~ file: Profile.tsx ~ line 23 ~ Profile ~ user", user);
+
+  useEffect(() => {
+    // const uid = user.uid;
+    // console.log("🚀 ~ file: Profile.tsx ~ line 27 ~ useEffect ~ uid", uid)
+  }, [])
 
   return (
     <ScrollView
@@ -91,24 +101,7 @@ export default function Profile() {
         darkColor={Colors.dark.imagePlaceholder}
       />
       <View style={styles.section}>
-        <Text style={{ alignSelf: "center" }}>TODO: Calendar view</Text>
-        {/* <View style={[styles.row, { justifyContent: "space-between" }]}>
-          <View style={styles.day}>
-            <Text>M</Text>
-          </View>
-          <View style={styles.day}>
-            <Text>T</Text>
-          </View>
-          <View style={styles.day}>
-            <Text>W</Text>
-          </View>
-          <View style={styles.day}>
-            <Text>T</Text>
-          </View>
-          <View style={[styles.day, styles.daySelected]}>
-            <Text style={styles.daySelected}>F</Text>
-          </View>
-        </View> */}
+        <Calendar />
       </View>
     </ScrollView>
   );
@@ -156,17 +149,5 @@ const styles = StyleSheet.create({
     height: 2,
     borderRadius: 1,
     width: "80%",
-  },
-  day: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 30,
-    width: 30,
-    borderRadius: 30 / 2,
-    borderWidth: 1,
-  },
-  daySelected: {
-    color: "#fff",
-    backgroundColor: "red",
   },
 });

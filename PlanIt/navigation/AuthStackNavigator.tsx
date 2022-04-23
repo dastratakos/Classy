@@ -4,6 +4,7 @@ import { AuthStackScreenProps } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "../screens/Login";
 import Register from "../screens/Register";
+import ResetPassword from "../screens/ResetPassword";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,10 +16,11 @@ export default function AuthStackNavigator() {
         component={Login}
         options={{ headerShown: false }}
       />
+      <Stack.Screen name="Register" component={Register} />
       <Stack.Screen
-        name="Register"
-        component={Register}
-        options={{ title: "Register" }}
+        name="ResetPassword"
+        component={ResetPassword}
+        options={{ title: "Reset Password" }}
       />
     </Stack.Navigator>
   );

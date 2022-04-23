@@ -1,65 +1,58 @@
 import {
-  Pressable,
   KeyboardAvoidingView,
+  Pressable,
   StyleSheet,
   TextInput,
 } from "react-native";
 import { Text, View } from "../components/Themed";
-import {
-  auth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "../firebase";
+import { auth, createUserWithEmailAndPassword, firestore } from "../firebase";
+import { doc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
+import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import WideButton from "../components/Buttons/WideButton";
-import Button from "../components/Buttons/Button";
-import { useNavigation } from "@react-navigation/core";
 import useColorScheme from "../hooks/useColorScheme";
+import { useNavigation } from "@react-navigation/core";
+import AppStyles from "../styles/AppStyles";
 
-export default function Register({
-  email_,
-  password_,
-}: {
-  email_: string;
-  password_: string;
-}) {
+export default function Register({ email_ }: { email_: string }) {
   const [email, setEmail] = useState(email_);
-  const [password, setPassword] = useState(password_);
-  const [name, setName] = useState("");
-  const [gradYear, setGradYear] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const navigation = useNavigation();
 
   const colorScheme = useColorScheme();
 
-  const handleSignUp = () => {
+  const createUser = async () => {
+    if (password !== confirmPassword) {
+      setErrorMessage("Passwords do not match.");
+      return;
+    }
+
     createUserWithEmailAndPassword(auth, email, password)
       .then((response) => {
-        const user = response.user;
-        console.log(`Registered with: ${user.email}`);
-
-        // TODO: add the user to the database
-        // const uid = response.user.uid;
-        // const data = {
-        //   id: uid,
-        //   email,
-        //   fullName,
-        // };
-        // const usersRef = firebase.firestore().collection("users");
-        // usersRef
-        //   .doc(uid)
-        //   .set(data)
-        //   .then(() => {
-        //     navigation.navigate("Home", { user: data });
-        //   })
-        //   .catch((error) => {
-        //     alert(error);
-        //   });
+        const uid = response.user.uid;
+        const data = {
+          id: uid,
+          email,
+        };
+        setDoc(doc(firestore, "users", uid), data)
+          .then(() => {
+            // TODO: navigate to onboarding
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Root" }],
+            });
+          })
+          .catch((error) => {
+            setErrorMessage(error);
+          });
       })
-      .catch((error) => alert(error.message));
+      .catch((error) => setErrorMessage(error.message));
   };
 
   return (
@@ -70,16 +63,7 @@ export default function Register({
       ]}
     >
       <KeyboardAvoidingView style={styles.keyboardContainer} behavior="padding">
-        <View
-          style={[
-            styles.photo,
-            { backgroundColor: Colors[colorScheme].imagePlaceholder },
-          ]}
-        ></View>
-        <Button
-          text="Edit profile photo"
-          onPress={() => console.log("Edit profile photo pressed")}
-        />
+        <Text style={AppStyles.errorText}>{errorMessage}</Text>
         <View style={styles.inputContainer}>
           <TextInput
             placeholder="Email"
@@ -97,7 +81,10 @@ export default function Register({
           <TextInput
             placeholder="Password"
             value={password}
-            onChangeText={(text) => setPassword(text)}
+            onChangeText={(text) => {
+              setErrorMessage("");
+              setPassword(text);
+            }}
             style={[
               styles.input,
               {
@@ -109,9 +96,12 @@ export default function Register({
             secureTextEntry
           />
           <TextInput
-            placeholder="Name"
-            value={name}
-            onChangeText={(text) => setName(text)}
+            placeholder="Confirm password"
+            value={confirmPassword}
+            onChangeText={(text) => {
+              setErrorMessage("");
+              setConfirmPassword(text);
+            }}
             style={[
               styles.input,
               {
@@ -119,26 +109,13 @@ export default function Register({
                 color: Colors[colorScheme].text,
               },
             ]}
-            autoCapitalize="words"
-          />
-          {/* TODO: choose from scrolling menu */}
-          <TextInput
-            placeholder="Graduation Year"
-            value={gradYear}
-            onChangeText={(text) => setGradYear(text)}
-            style={[
-              styles.input,
-              {
-                backgroundColor: Colors[colorScheme].secondaryBackground,
-                color: Colors[colorScheme].text,
-              },
-            ]}
-            autoCapitalize="words"
+            autoCapitalize="none"
+            secureTextEntry
           />
         </View>
         <View style={{ height: Layout.spacing.large }} />
 
-        <WideButton text="Register" onPress={handleSignUp} />
+        <WideButton text="Register" onPress={createUser} />
       </KeyboardAvoidingView>
       <View
         style={[

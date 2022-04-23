@@ -8,6 +8,7 @@ import Layout from "../constants/Layout";
 import SquareButton from "../components/Buttons/SquareButton";
 import { useNavigation } from "@react-navigation/core";
 import useColorScheme from "../hooks/useColorScheme";
+import Calendar from "../components/Calendar";
 
 const profile = {
   name: "Jiwon Lee",
@@ -207,24 +208,7 @@ export default function Profile() {
             darkColor={Colors.dark.imagePlaceholder}
           />
           <View style={styles.section}>
-            <Text style={{ alignSelf: "center" }}>TODO: Calendar view</Text>
-            {/* <View style={[styles.row, { justifyContent: "space-between" }]}>
-         <View style={styles.day}>
-           <Text>M</Text>
-         </View>
-         <View style={styles.day}>
-           <Text>T</Text>
-         </View>
-         <View style={styles.day}>
-           <Text>W</Text>
-         </View>
-         <View style={styles.day}>
-           <Text>T</Text>
-         </View>
-         <View style={[styles.day, styles.daySelected]}>
-           <Text style={styles.daySelected}>F</Text>
-         </View>
-       </View> */}
+            <Calendar />
           </View>
         </>
       )}

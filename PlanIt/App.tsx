@@ -5,13 +5,14 @@ import { StatusBar } from "expo-status-bar";
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 import { useState } from "react";
+import AppLoading from "expo-app-loading";
 
 const profile = {
   name: "Dean Stratakos",
   major: "Computer Science",
   gradYear: "2022 (Senior)",
   interests: "Tennis!",
-  numFriends: "83",
+  numFriends: "183",
   inClass: true,
   private: true,
 };
@@ -49,7 +50,7 @@ export default function App() {
   const colorScheme = useColorScheme();
 
   if (!isLoadingComplete) {
-    return null;
+    return <AppLoading />;
   } else {
     return (
       <AppContext.Provider value={userSettings}>

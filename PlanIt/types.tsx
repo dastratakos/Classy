@@ -23,8 +23,9 @@ export type RootStackParamList = {
   Settings: undefined;
   NotFound: undefined;
 
-  Login: { email: string; password: string } | undefined;
-  Register: { email: string; password: string } | undefined;
+  Login: { email?: string } | undefined;
+  Register: { email?: string } | undefined;
+  ResetPassword: undefined;
 
   Messages: undefined;
   ChannelScreen: undefined;

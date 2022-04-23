@@ -36,9 +36,9 @@ export default function Messages() {
 
   const getTheme = (): DeepPartial<Theme> => ({
     colors: {
-      accent_blue: "#005FFF",
-      accent_green: "#20E070",
-      accent_red: "#FF3742",
+      accent_blue: Colors.light.tint,
+      accent_green: Colors.status.inClass,
+      accent_red: Colors.status.notInClass,
       bg_gradient_end: "#F7F7F7",
       bg_gradient_start: "#FCFCFC",
       black: Colors[colorScheme].text,

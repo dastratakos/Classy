@@ -5,11 +5,7 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../components/Themed";
-import {
-  auth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "../firebase";
+import { auth, signInWithEmailAndPassword } from "../firebase";
 import { useEffect, useState } from "react";
 
 import Colors from "../constants/Colors";
@@ -17,16 +13,12 @@ import Layout from "../constants/Layout";
 import WideButton from "../components/Buttons/WideButton";
 import { useNavigation } from "@react-navigation/core";
 import useColorScheme from "../hooks/useColorScheme";
+import AppStyles from "../styles/AppStyles";
 
-export default function Login({
-  email_,
-  password_,
-}: {
-  email_: string;
-  password_: string;
-}) {
+export default function Login({ email_ }: { email_: string }) {
   const [email, setEmail] = useState(email_);
-  const [password, setPassword] = useState(password_);
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const navigation = useNavigation();
 
@@ -34,44 +26,60 @@ export default function Login({
 
   /* Check if user is signed in. */
   useEffect(() => {
-    // TODO: show a loading/splash screen before we determine user
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Root" }],
-        });
-      }
-    });
+    if (auth.currentUser) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Root" }],
+      });
+    } else {
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        if (user) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Root" }],
+          });
 
-    // TODO: firebase querying
-    // const usersRef = firebase.firestore().collection("users");
-    // firebase.auth().onAuthStateChanged((user) => {
-    //   if (user) {
-    //     usersRef
-    //       .doc(user.uid)
-    //       .get()
-    //       .then((document) => {
-    //         const userData = document.data();
-    //         setLoading(false);
-    //         setUser(userData);
-    //       })
-    //       .catch((error) => {
-    //         setLoading(false);
-    //       });
-    //   } else {
-    //     setLoading(false);
-    //   }
-    // });
+          // TODO: firebase querying
+          // const usersRef = firebase.firestore().collection("users");
+          // firebase.auth().onAuthStateChanged((user) => {
+          //   if (user) {
+          //     usersRef
+          //       .doc(user.uid)
+          //       .get()
+          //       .then((document) => {
+          //         const userData = document.data();
+          //         setLoading(false);
+          //         setUser(userData);
+          //       })
+          //       .catch((error) => {
+          //         setLoading(false);
+          //       });
+          //   } else {
+          //     setLoading(false);
+          //   }
+          // });
+        }
+      });
 
-    return unsubscribe;
+      return unsubscribe;
+    }
   }, []);
 
-  const handleLogin = () => {
+  const signIn = () => {
+    if (!email || !password) {
+      console.log("here");
+      setErrorMessage("Please enter an email and a password.");
+      return;
+    }
+
     signInWithEmailAndPassword(auth, email, password)
       .then((response) => {
         const user = response.user;
-        console.log(`Logged in with: ${user.email}`);
+        console.log(`Logged in with: ${JSON.stringify(user, null, 2)}`);
+
+        setEmail("");
+        setPassword("");
+        setErrorMessage("");
 
         // TODO: firebase querying
         // const uid = response.user.uid;
@@ -91,7 +99,7 @@ export default function Login({
         //     alert(error);
         //   });
       })
-      .catch((error) => alert(error.message));
+      .catch((error) => setErrorMessage(error.message));
   };
 
   return (
@@ -105,6 +113,7 @@ export default function Login({
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Plan-It</Text>
         </View>
+        <Text style={AppStyles.errorText}>{errorMessage}</Text>
         <View style={styles.inputContainer}>
           <TextInput
             placeholder="Email"
@@ -134,9 +143,14 @@ export default function Login({
             secureTextEntry
           />
         </View>
+        <View style={[AppStyles.row, { justifyContent: "flex-end" }]}>
+          <Pressable onPress={() => navigation.navigate("ResetPassword")}>
+            <Text style={styles.textButton}>Forgot password?</Text>
+          </Pressable>
+        </View>
         <View style={{ height: Layout.spacing.large }} />
 
-        <WideButton text="Log In" onPress={handleLogin} />
+        <WideButton text="Log In" onPress={signIn} />
       </KeyboardAvoidingView>
       <View
         style={[
@@ -153,9 +167,9 @@ export default function Login({
           Don't have an account?
         </Text>
         <Pressable
-          onPress={() => navigation.navigate("Register", { email, password })}
+          onPress={() => navigation.navigate("Register", { email })}
         >
-          <Text style={styles.register}>Register.</Text>
+          <Text style={styles.textButton}>Register.</Text>
         </Pressable>
       </View>
     </View>
@@ -198,7 +212,7 @@ const styles = StyleSheet.create({
   noAccount: {
     marginRight: Layout.spacing.xsmall,
   },
-  register: {
+  textButton: {
     fontWeight: "500",
   },
 });
