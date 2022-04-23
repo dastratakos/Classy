@@ -1,21 +1,21 @@
 import { Icon, Text, View } from "../components/Themed";
-import { ScrollView, StyleSheet } from "react-native";
+import { Image, ScrollView, StyleSheet } from "react-native";
+import { User, sendEmailVerification } from "firebase/auth";
+import { auth, db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
+import AppStyles from "../styles/AppStyles";
+import Button from "../components/Buttons/Button";
 import Calendar from "../components/Calendar";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
+import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
 import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
-import { useContext, useEffect } from "react";
 import { useNavigation } from "@react-navigation/core";
-import { auth, db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
-import AppStyles from "../styles/AppStyles";
-import Separator from "../components/Separator";
-import { sendEmailVerification, User } from "firebase/auth";
-import Button from "../components/Buttons/Button";
 
 export default function Profile() {
   const context = useContext(AppContext);
@@ -70,12 +70,26 @@ export default function Profile() {
       <View style={AppStyles.section}>
         <View style={[styles.row, { justifyContent: "space-between" }]}>
           <View style={styles.row}>
-            <View
-              style={[
-                styles.photo,
-                { backgroundColor: Colors[colorScheme].imagePlaceholder },
-              ]}
-            ></View>
+            {context.user.photoUrl ? (
+              <Image
+                source={{ uri: context.user.photoUrl }}
+                style={[
+                  AppStyles.photoMedium,
+                  { marginRight: Layout.spacing.large },
+                ]}
+              />
+            ) : (
+              // TODO: longPress to share
+              <View
+                style={[
+                  AppStyles.photoMedium,
+                  {
+                    marginRight: Layout.spacing.large,
+                    backgroundColor: Colors[colorScheme].imagePlaceholder,
+                  },
+                ]}
+              />
+            )}
             <View>
               <Text style={styles.name}>{context.user.name}</Text>
               <View style={[styles.row, { marginTop: Layout.spacing.xsmall }]}>
@@ -160,12 +174,6 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  photo: {
-    height: Layout.image.medium,
-    width: Layout.image.medium,
-    borderRadius: Layout.image.medium / 2,
-    marginRight: Layout.spacing.large,
-  },
   name: {
     fontSize: Layout.text.xlarge,
   },

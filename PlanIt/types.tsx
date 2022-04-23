@@ -118,6 +118,7 @@ export type User = {
   gradYear: string;
   interests: string;
   isPrivate: boolean;
+  photoUrl: string;
 };
 
 export type Context = {

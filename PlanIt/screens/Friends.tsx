@@ -1,27 +1,24 @@
-import { ScrollView, StyleSheet } from "react-native";
 import { ActivityIndicator, Text, View } from "../components/Themed";
-
-import Colors from "../constants/Colors";
-import FriendCard from "../components/FriendCard";
-import Layout from "../constants/Layout";
-import useColorScheme from "../hooks/useColorScheme";
-import { useContext, useEffect, useState } from "react";
-import AppContext from "../context/Context";
+import { FriendsProps, User } from "../types";
+import { ScrollView, StyleSheet } from "react-native";
 import {
   collection,
   doc,
   getDoc,
   getDocs,
-  onSnapshot,
   query,
   where,
 } from "firebase/firestore";
-import { db } from "../firebase";
-import { FriendsProps, User } from "../types";
+import { useContext, useEffect, useState } from "react";
+
+import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
+import Colors from "../constants/Colors";
+import FriendCard from "../components/FriendCard";
+import { db } from "../firebase";
+import useColorScheme from "../hooks/useColorScheme";
 
 export default function Friends({ route }: FriendsProps) {
-  const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
   const [friends, setFriends] = useState([] as User[]);
@@ -95,6 +92,7 @@ export default function Friends({ route }: FriendsProps) {
             name={friend.name}
             major={friend.major}
             gradYear={friend.gradYear}
+            photoUrl={friend.photoUrl}
             key={i}
           />
         ))}

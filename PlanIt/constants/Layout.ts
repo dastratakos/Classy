@@ -18,6 +18,7 @@ export default {
     small: 50,
     medium: 75,
     large: 100,
+    xlarge: 150,
   },
   spacing: {
     xxsmall: 3,

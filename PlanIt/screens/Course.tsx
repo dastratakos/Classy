@@ -25,145 +25,223 @@ const course = {
 const friends = {
   aut2020: [
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Jiwon Lee",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Melissa Daniel",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Grace Alwan",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Tara Jones",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Melanie Kessinger",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
   ],
   win2021: [
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Jiwon Lee",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Melissa Daniel",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Grace Alwan",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
   ],
   spr2021: [
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Grace Alwan",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Tara Jones",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Melanie Kessinger",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
   ],
   sum2021: [],
   aut2021: [
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Jiwon Lee",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Melissa Daniel",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Grace Alwan",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Tara Jones",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Melanie Kessinger",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
   ],
   win2022: [
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Jiwon Lee",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Melissa Daniel",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Grace Alwan",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Tara Jones",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Melanie Kessinger",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
   ],
   spr2022: [
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Jiwon Lee",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Melissa Daniel",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Grace Alwan",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Tara Jones",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
     {
+      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
       name: "Melanie Kessinger",
       major: "Computer Science",
       gradYear: "2022 (Senior)",
+      photoUrl:
+        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
     },
   ],
   sum2022: [],
@@ -213,9 +291,11 @@ export default function Course({ route }: CourseProps) {
         <View style={AppStyles.section}>
           {friends.spr2022.map((friend, i) => (
             <FriendCard
+              id={friend.id}
               name={friend.name}
               major={friend.major}
               gradYear={friend.gradYear}
+              photoUrl={friend.photoUrl}
               key={i}
             />
           ))}

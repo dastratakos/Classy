@@ -1,21 +1,24 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
 import { Icon, Text, View } from "./Themed";
+import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
+import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
-import { useNavigation } from "@react-navigation/core";
 import useColorScheme from "../hooks/useColorScheme";
+import { useNavigation } from "@react-navigation/core";
 
 export default function FriendCard({
   id,
   name,
   major,
   gradYear,
+  photoUrl,
 }: {
   id: string;
   name: string;
   major: string;
   gradYear: string;
+  photoUrl: string;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -25,12 +28,28 @@ export default function FriendCard({
       onPress={() => navigation.navigate("FriendProfile", { id })}
       style={[styles.container, { borderColor: Colors[colorScheme].border }]}
     >
-      <View
-        style={[
-          styles.photo,
-          { backgroundColor: Colors[colorScheme].imagePlaceholder },
-        ]}
-      ></View>
+      {photoUrl ? (
+        <Image
+          source={{ uri: photoUrl }}
+          style={[
+            AppStyles.photoSmall,
+            {
+              marginRight: Layout.spacing.small,
+              backgroundColor: Colors[colorScheme].imagePlaceholder,
+            },
+          ]}
+        />
+      ) : (
+        <View
+          style={[
+            AppStyles.photoSmall,
+            {
+              marginRight: Layout.spacing.small,
+              backgroundColor: Colors[colorScheme].imagePlaceholder,
+            },
+          ]}
+        />
+      )}
       <View style={styles.textContainer}>
         <Text style={styles.name}>{name}</Text>
         {/* Major */}
@@ -61,12 +80,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginVertical: Layout.spacing.small,
     width: "100%",
-  },
-  photo: {
-    height: Layout.image.small,
-    width: Layout.image.small,
-    borderRadius: Layout.image.small / 2,
-    marginRight: Layout.spacing.small,
   },
   textContainer: {
     justifyContent: "space-between",

@@ -1,4 +1,8 @@
+import * as ImagePicker from "expo-image-picker";
+
 import {
+  ActivityIndicator,
+  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -6,30 +10,34 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../components/Themed";
+import { auth, db, storage } from "../firebase";
+import { doc, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useContext, useState } from "react";
 
 import AppContext from "../context/Context";
+import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
+import Separator from "../components/Separator";
 import { StatusBar } from "expo-status-bar";
 import WideButton from "../components/Buttons/WideButton";
-import { auth, db } from "../firebase";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { doc, updateDoc } from "firebase/firestore";
-import Separator from "../components/Separator";
 
 export default function Settings() {
   const context = useContext(AppContext);
-
-  const [name, setName] = useState(context.user.name);
-  const [major, setMajor] = useState(context.user.major);
-  const [gradYear, setGradYear] = useState(context.user.gradYear);
-  const [interests, setInterests] = useState(context.user.interests);
-
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+
+  const [photoUrl, setPhotoUrl] = useState(context.user.photoUrl || "");
+  const [name, setName] = useState(context.user.name || "");
+  const [major, setMajor] = useState(context.user.major || "");
+  const [gradYear, setGradYear] = useState(context.user.gradYear || "");
+  const [interests, setInterests] = useState(context.user.interests || "");
+
+  const [uploading, setUploading] = useState(false);
 
   const handleSavePress = () => {
     context.setUser({
@@ -38,6 +46,7 @@ export default function Settings() {
       major,
       gradYear,
       interests,
+      photoUrl,
     });
 
     setUser(context.user.id);
@@ -52,7 +61,92 @@ export default function Settings() {
       major,
       gradYear,
       interests,
+      photoUrl,
     });
+  };
+
+  /**
+   * Image functions from
+   * https://github.com/expo/examples/blob/master/with-firebase-storage-upload/App.js
+   */
+  const uploadImageAsync = async (uri: string) => {
+    // Why are we using XMLHttpRequest? See:
+    // https://github.com/expo/expo/issues/2402#issuecomment-443726662
+    const blob: Blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", uri, true);
+      xhr.send(null);
+    });
+
+    const fileRef = ref(storage, `${context.user.id}/profilePhoto.jpg`);
+    const result = await uploadBytes(fileRef, blob)
+      .then(() => console.log("Successfully uploaded bytes"))
+      .catch((error) => console.log(error.message));
+
+    // We're done with the blob, close and release it
+    blob.close();
+
+    return await getDownloadURL(fileRef);
+  };
+
+  const handleImagePicked = async (
+    pickerResult: ImagePicker.ImagePickerResult
+  ) => {
+    try {
+      setUploading(true);
+
+      if (!pickerResult.cancelled) {
+        const uploadUrl = await uploadImageAsync(pickerResult.uri);
+        setPhotoUrl(uploadUrl);
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Failed to upload photo");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const choosePhoto = async () => {
+    // No permissions request is necessary for launching the image library
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+      // base64: true,
+    });
+
+    console.log(pickerResult);
+
+    handleImagePicked(pickerResult);
+  };
+
+  const takePhoto = async () => {
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("Please turn on camera permissions to take a photo.");
+      return;
+    }
+
+    let pickerResult = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+    });
+
+    console.log(pickerResult);
+
+    handleImagePicked(pickerResult);
   };
 
   return (
@@ -63,16 +157,50 @@ export default function Settings() {
       ]}
       contentContainerStyle={{ alignItems: "center" }}
     >
-      <View
-        style={[
-          styles.photo,
-          { backgroundColor: Colors[colorScheme].imagePlaceholder },
-        ]}
-      ></View>
-      <Button
-        text="Edit profile photo"
-        onPress={() => console.log("Edit profile photo pressed")}
-      />
+      {uploading ? (
+        <View
+          style={[
+            AppStyles.photoXlarge,
+            {
+              marginBottom: Layout.spacing.medium,
+              backgroundColor: Colors[colorScheme].imagePlaceholder,
+            },
+          ]}
+        >
+          <ActivityIndicator size="large" />
+        </View>
+      ) : (
+        <>
+          {photoUrl ? (
+            <Image
+              source={{ uri: photoUrl }}
+              style={[
+                AppStyles.photoXlarge,
+                {
+                  marginBottom: Layout.spacing.medium,
+                  backgroundColor: Colors[colorScheme].imagePlaceholder,
+                },
+              ]}
+            />
+          ) : (
+            // TODO: longPress to share
+            <View
+              style={[
+                AppStyles.photoXlarge,
+                {
+                  marginBottom: Layout.spacing.medium,
+                  backgroundColor: Colors[colorScheme].imagePlaceholder,
+                },
+              ]}
+            />
+          )}
+        </>
+      )}
+      <View style={AppStyles.row}>
+        <Button text="Choose profile photo" onPress={choosePhoto} />
+        <View style={{ width: Layout.spacing.medium }} />
+        <Button text="Take profile photo" onPress={takePhoto} />
+      </View>
       <Separator />
       <KeyboardAvoidingView style={styles.inputContainer} behavior="padding">
         <View style={styles.row}>
@@ -173,12 +301,6 @@ const styles = StyleSheet.create({
   input: {
     paddingVertical: Layout.spacing.xsmall,
     width: "60%",
-  },
-  photo: {
-    height: Layout.image.large,
-    width: Layout.image.large,
-    borderRadius: Layout.image.large / 2,
-    marginBottom: Layout.spacing.medium,
   },
   title: {
     fontSize: 20,

@@ -90,8 +90,11 @@ export default function FriendProfile({ route }: FriendProfileProps) {
           <View style={AppStyles.row}>
             <View
               style={[
-                styles.photo,
-                { backgroundColor: Colors[colorScheme].imagePlaceholder },
+                AppStyles.photoMedium,
+                {
+                  marginRight: Layout.spacing.large,
+                  backgroundColor: Colors[colorScheme].imagePlaceholder,
+                },
               ]}
             ></View>
             <View>
@@ -235,12 +238,6 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 }
 
 const styles = StyleSheet.create({
-  photo: {
-    height: Layout.image.medium,
-    width: Layout.image.medium,
-    borderRadius: Layout.image.medium / 2,
-    marginRight: Layout.spacing.large,
-  },
   name: {
     fontSize: Layout.text.xlarge,
   },

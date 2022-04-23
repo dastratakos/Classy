@@ -154,13 +154,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  photo: {
-    alignSelf: "center",
-    height: Layout.image.large,
-    width: Layout.image.large,
-    borderRadius: Layout.image.large / 2,
-    marginBottom: Layout.spacing.medium,
-  },
   inputContainer: {
     width: "100%",
   },
