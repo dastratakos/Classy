@@ -4,7 +4,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 
@@ -23,12 +23,12 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore();
 
 export {
-  analytics,
+  // analytics,
   auth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,

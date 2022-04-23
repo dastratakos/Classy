@@ -14,6 +14,8 @@ import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import AppStyles from "../styles/AppStyles";
 import Separator from "../components/Separator";
+import { sendEmailVerification, User } from "firebase/auth";
+import Button from "../components/Buttons/Button";
 
 export default function Profile() {
   const context = useContext(AppContext);
@@ -38,11 +40,33 @@ export default function Profile() {
   // TODO: calculate inClass
   const inClass = true;
 
+  const showSendVerificationEmail = () => {
+    return (
+      <>
+        <View style={AppStyles.section}>
+          <Text
+            style={{ textAlign: "center", marginBottom: Layout.spacing.medium }}
+          >
+            Please verify your email to use Plan-It.
+          </Text>
+          <Button
+            text="Resend Verification Email"
+            onPress={() =>
+              sendEmailVerification(auth.currentUser || ({} as User))
+            }
+          />
+        </View>
+        <Separator />
+      </>
+    );
+  };
+
   return (
     <ScrollView
       style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
     >
+      {auth.currentUser?.emailVerified ? null : showSendVerificationEmail()}
       <View style={AppStyles.section}>
         <View style={[styles.row, { justifyContent: "space-between" }]}>
           <View style={styles.row}>
