@@ -1,5 +1,5 @@
 import { Icon, Text, View } from "../components/Themed";
-import { Image, ScrollView, StyleSheet } from "react-native";
+import { Image, ScrollView, StyleSheet, RefreshControl } from "react-native";
 import { User, sendEmailVerification } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
@@ -22,20 +22,28 @@ export default function Profile() {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
+  const [refreshing, setRefreshing] = useState(false);
+
   useEffect(() => {
-    const getUser = async (id: string) => {
-      const docRef = doc(db, "users", id);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        context.setUser({ ...context.user, ...docSnap.data() });
-      } else {
-        console.log(`Could not find user: ${id}`);
-      }
-    };
-
     if (!context.user && auth.currentUser) getUser(auth.currentUser.uid);
   }, []);
+
+  const getUser = async (id: string) => {
+    const docRef = doc(db, "users", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      context.setUser({ ...context.user, ...docSnap.data() });
+    } else {
+      console.log(`Could not find user: ${id}`);
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await getUser(context.user.id);
+    setRefreshing(false);
+  }
 
   // TODO: calculate inClass
   const inClass = true;
@@ -65,6 +73,9 @@ export default function Profile() {
     <ScrollView
       style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
     >
       {auth.currentUser?.emailVerified ? null : showSendVerificationEmail()}
       <View style={AppStyles.section}>
@@ -79,7 +90,6 @@ export default function Profile() {
                 ]}
               />
             ) : (
-              // TODO: longPress to share
               <View
                 style={[
                   AppStyles.photoMedium,
