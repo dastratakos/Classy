@@ -44,6 +44,17 @@ export default function Settings() {
   const colorScheme = useColorScheme();
 
   const handleSignOut = () => {
+    // context.setUser({
+    //   id: "",
+    //   email: "",
+    //   name: "",
+    //   major: "",
+    //   gradYear: "",
+    //   interests: "",
+    //   isPrivate: false,
+    //   photoUrl: "",
+    // });
+
     signOut(auth)
       .then(() => {
         navigation.reset({

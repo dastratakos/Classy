@@ -156,19 +156,23 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         >
           <View>
             {/* Major */}
-            <View style={styles.row}>
-              <View style={styles.iconWrapper}>
-                <Icon name="pencil" size={25} />
+            {user.major && (
+              <View style={styles.row}>
+                <View style={styles.iconWrapper}>
+                  <Icon name="pencil" size={25} />
+                </View>
+                <Text>{user.major}</Text>
               </View>
-              <Text>{user.major}</Text>
-            </View>
+            )}
             {/* Graduation Year */}
-            <View style={styles.row}>
-              <View style={styles.iconWrapper}>
-                <Icon name="graduation-cap" size={25} />
+            {user.gradYear && (
+              <View style={styles.row}>
+                <View style={styles.iconWrapper}>
+                  <Icon name="graduation-cap" size={25} />
+                </View>
+                <Text>{user.gradYear}</Text>
               </View>
-              <Text>{user.gradYear}</Text>
-            </View>
+            )}
           </View>
           <SquareButton
             num={profile.numFriends}

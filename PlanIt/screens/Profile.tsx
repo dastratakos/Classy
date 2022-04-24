@@ -25,7 +25,9 @@ export default function Profile() {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    if (!context.user && auth.currentUser) getUser(auth.currentUser.uid);
+    // if (!context.user && auth.currentUser) getUser(auth.currentUser.uid);
+
+    if (auth.currentUser) getUser(auth.currentUser.uid);
   }, []);
 
   const getUser = async (id: string) => {
@@ -43,7 +45,7 @@ export default function Profile() {
     setRefreshing(true);
     await getUser(context.user.id);
     setRefreshing(false);
-  }
+  };
 
   // TODO: calculate inClass
   const inClass = true;
@@ -77,7 +79,7 @@ export default function Profile() {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      {auth.currentUser?.emailVerified ? null : showSendVerificationEmail()}
+      {!auth.currentUser?.emailVerified && showSendVerificationEmail()}
       <View style={AppStyles.section}>
         <View style={[styles.row, { justifyContent: "space-between" }]}>
           <View style={styles.row}>
@@ -128,38 +130,32 @@ export default function Profile() {
           ]}
         >
           <View>
-            {context.user.major ? (
-              // Major
+            {/* Major */}
+            {context.user.major && (
               <View style={styles.row}>
                 <View style={styles.iconWrapper}>
                   <Icon name="pencil" size={25} />
                 </View>
                 <Text>{context.user.major}</Text>
               </View>
-            ) : (
-              <></>
             )}
-            {context.user.gradYear ? (
-              // Graduation Year
+            {/* Graduation Year */}
+            {context.user.gradYear && (
               <View style={styles.row}>
                 <View style={styles.iconWrapper}>
                   <Icon name="graduation-cap" size={25} />
                 </View>
                 <Text>{context.user.gradYear}</Text>
               </View>
-            ) : (
-              <></>
             )}
-            {context.user.interests ? (
-              // Interests
+            {/* Interests */}
+            {context.user.interests && (
               <View style={styles.row}>
                 <View style={styles.iconWrapper}>
                   <Icon name="puzzle-piece" size={25} />
                 </View>
                 <Text>{context.user.interests}</Text>
               </View>
-            ) : (
-              <></>
             )}
           </View>
           <SquareButton

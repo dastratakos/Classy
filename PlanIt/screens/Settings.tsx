@@ -48,7 +48,6 @@ export default function Settings() {
       major,
       gradYear,
       interests,
-      photoUrl,
     });
 
     setUser(context.user.id);
@@ -108,6 +107,13 @@ export default function Settings() {
       if (!pickerResult.cancelled) {
         const uploadUrl = await uploadImageAsync(pickerResult.uri);
         setPhotoUrl(uploadUrl);
+
+        context.setUser({
+          ...context.user,
+          photoUrl,
+        });
+
+        setUser(context.user.id);
       }
     } catch (error) {
       console.log(error);
@@ -266,7 +272,9 @@ export default function Settings() {
           <View style={styles.field}>
             <Text>Email</Text>
           </View>
-          <Text style={[styles.input, { color: Colors[colorScheme].secondaryText }]}>
+          <Text
+            style={[styles.input, { color: Colors[colorScheme].secondaryText }]}
+          >
             {auth.currentUser?.email}
           </Text>
         </View>
@@ -278,7 +286,10 @@ export default function Settings() {
       />
       <Separator />
       <View
-        style={[AppStyles.row, { width: "100%", justifyContent: "space-between" }]}
+        style={[
+          AppStyles.row,
+          { width: "100%", justifyContent: "space-between" },
+        ]}
       >
         <View style={{ width: "48%" }}>
           <Button text="Cancel" onPress={() => navigation.goBack()} />

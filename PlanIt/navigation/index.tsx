@@ -26,6 +26,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import useColorScheme from "../hooks/useColorScheme";
 import AuthStackNavigator from "./AuthStackNavigator";
 import ManageAccount from "../screens/ManageAccount";
+import SearchStackNavigator from "./SearchStackNavigator";
 
 /**
  * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
@@ -107,10 +108,11 @@ function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="Search"
-        component={Search}
+        name="SearchStack"
+        component={SearchStackNavigator}
         options={{
           title: "Search",
+          headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
         }}
       />

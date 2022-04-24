@@ -43,7 +43,7 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
 
 export type RootTabParamList = {
   MessagesStack: NavigatorScreenParams<MessagesStackParamList> | undefined;
-  Search: undefined;
+  SearchStack: NavigatorScreenParams<MessagesStackParamList> | undefined;
   ProfileStack: NavigatorScreenParams<ProfileStackParamList> | undefined;
 };
 
@@ -69,9 +69,21 @@ export type ProfileStackScreenProps<
   Screen extends keyof ProfileStackParamList
 > = NativeStackScreenProps<ProfileStackParamList>;
 
-export type MessagesStackParamList = {
-  Settings: undefined;
+export type SearchStackParamList = {
+  Search: undefined;
+  Profile: undefined;
+  Courses: undefined;
+  Course: { id: string };
+  Quarters: undefined;
+  Friends: { id: string };
+  FriendProfile: { id: string };
+};
 
+export type SearchStackScreenProps<
+  Screen extends keyof SearchStackParamList
+> = NativeStackScreenProps<SearchStackParamList>;
+
+export type MessagesStackParamList = {
   Messages: undefined;
   ChannelScreen: undefined;
 
