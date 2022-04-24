@@ -21,7 +21,7 @@ import useColorScheme from "../hooks/useColorScheme";
 export default function Friends({ route }: FriendsProps) {
   const colorScheme = useColorScheme();
 
-  const [friends, setFriends] = useState([] as User[]);
+const [friends, setFriends] = useState([] as User[]);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,14 +35,18 @@ export default function Friends({ route }: FriendsProps) {
   const getFriendIds = async (id: string) => {
     const q = query(
       collection(db, "friends"),
-      where("ids", "array-contains", id),
+      where(`ids.${id}`, "==", true),
       where("status", "==", "friends")
     );
     const friendIds = [] as string[];
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      const friendId = doc.data().ids.filter((uid: string) => uid !== id)[0];
-      friendIds.push(friendId);
+      for (let key in doc.data().ids) {
+        if (key !== id) {
+          friendIds.push(key);
+          return;
+        }
+      }
     });
     return friendIds;
   };

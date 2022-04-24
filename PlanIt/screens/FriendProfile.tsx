@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, StyleSheet } from "react-native";
+import { Pressable, ScrollView, Image, StyleSheet } from "react-native";
 import { Icon, Text, View } from "../components/Themed";
 
 import Button from "../components/Buttons/Button";
@@ -11,10 +11,18 @@ import useColorScheme from "../hooks/useColorScheme";
 import Calendar from "../components/Calendar";
 import AppStyles from "../styles/AppStyles";
 import Separator from "../components/Separator";
-import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
+import { useContext, useEffect, useState } from "react";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import { FriendProfileProps, User } from "../types";
+import AppContext from "../context/Context";
 
 const profile = {
   name: "Jiwon Lee",
@@ -22,8 +30,8 @@ const profile = {
   major: "Computer Science",
   gradYear: "2022 (Senior)",
   numFriends: "102",
-  // courseSimilarity: 57.54,
-  courseSimilarity: 83,
+  courseSimilarity: 57.54,
+  // courseSimilarity: 83,
   friends: true,
   private: true,
   courses: [
@@ -61,24 +69,72 @@ const profile = {
 export default function FriendProfile({ route }: FriendProfileProps) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+  const context = useContext(AppContext);
 
   const [user, setUser] = useState({} as User);
+  const [friendStatus, setFriendStatus] = useState("");
+  const [friendStatusLoading, setFriendStatusLoading] = useState(true);
+  const [numFriends, setNumFriends] = useState("");
 
   useEffect(() => {
-    const getUser = async (id: string) => {
-      const docRef = doc(db, "users", id);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        setUser(docSnap.data() as User);
-      } else {
-        console.log(`Could not find user: ${id}`);
-        alert("This account does not exist.");
-      }
-    };
-
     getUser(route.params.id);
+    getFriendStatus(route.params.id);
+    getFriendIds(route.params.id).then((res) => {
+      setNumFriends(`${res.length}`);
+    });
   }, []);
+
+  const getUser = async (id: string) => {
+    const docRef = doc(db, "users", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      setUser(docSnap.data() as User);
+    } else {
+      console.log(`Could not find user: ${id}`);
+      alert("This account does not exist.");
+    }
+  };
+
+  const getFriendStatus = async (id: string) => {
+    setFriendStatusLoading(true);
+
+    const q = query(
+      collection(db, "friends"),
+      where(`ids.${id}`, "==", true),
+      where(`ids.${context.user.id}`, "==", true)
+    );
+
+    // default status
+    setFriendStatus("not friends");
+
+    const querySnapshot = await getDocs(q);
+    // TODO: check that this has 0 or 1 doc
+    querySnapshot.forEach((doc) => {
+      setFriendStatus(doc.data().status);
+    });
+
+    setFriendStatusLoading(false);
+  };
+
+  const getFriendIds = async (id: string) => {
+    const q = query(
+      collection(db, "friends"),
+      where(`ids.${id}`, "==", true),
+      where("status", "==", "friends")
+    );
+    const friendIds = [] as string[];
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      for (let key in doc.data().ids) {
+        if (key !== id) {
+          friendIds.push(key);
+          return;
+        }
+      }
+    });
+    return friendIds;
+  };
 
   return (
     <ScrollView
@@ -88,15 +144,25 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       <View style={AppStyles.section}>
         <View style={[AppStyles.row, { justifyContent: "space-between" }]}>
           <View style={AppStyles.row}>
-            <View
-              style={[
-                AppStyles.photoMedium,
-                {
-                  marginRight: Layout.spacing.large,
-                  backgroundColor: Colors[colorScheme].imagePlaceholder,
-                },
-              ]}
-            ></View>
+            {user.photoUrl ? (
+              <Image
+                source={{ uri: user.photoUrl }}
+                style={[
+                  AppStyles.photoMedium,
+                  { marginRight: Layout.spacing.large },
+                ]}
+              />
+            ) : (
+              <View
+                style={[
+                  AppStyles.photoMedium,
+                  {
+                    marginRight: Layout.spacing.large,
+                    backgroundColor: Colors[colorScheme].imagePlaceholder,
+                  },
+                ]}
+              />
+            )}
             <View>
               <Text style={styles.name}>{user.name}</Text>
               <View
@@ -118,19 +184,47 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                 </Text>
               </View>
               <View style={AppStyles.row}>
-                {profile.friends ? null : (
+                {friendStatusLoading ? (
                   <View style={{ marginRight: Layout.spacing.small }}>
                     <Button
-                      text="Add Friend"
-                      onPress={() => console.log("Add Friend pressed")}
+                      text="Loading"
+                      onPress={() => console.log("Loading pressed")}
+                      pressable={false}
                     />
                   </View>
+                ) : (
+                  <>
+                    {friendStatus === "not friends" && (
+                      <View style={{ marginRight: Layout.spacing.small }}>
+                        <Button
+                          text="Add Friend"
+                          onPress={() => console.log("Add Friend pressed")}
+                        />
+                      </View>
+                    )}
+                    {friendStatus === "pending" && (
+                      <View style={{ marginRight: Layout.spacing.small }}>
+                        <Button
+                          text="Accept request"
+                          onPress={() => console.log("Accept request pressed")}
+                        />
+                      </View>
+                    )}
+                    {friendStatus === "requested" && (
+                      <View style={{ marginRight: Layout.spacing.small }}>
+                        <Button
+                          text="Requested"
+                          onPress={() => console.log("Requested pressed")}
+                          pressable={false}
+                        />
+                      </View>
+                    )}
+                  </>
                 )}
                 <Button
                   text="Message"
                   onPress={() => {
-                    console.log("Message pressed");
-                    navigation.navigate("Messages");
+                    navigation.navigate("MessagesStack");
                   }}
                 />
                 <Pressable
@@ -175,14 +269,14 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             )}
           </View>
           <SquareButton
-            num={profile.numFriends}
-            text="friends"
+            num={numFriends}
+            text={"friend" + (numFriends === "1" ? "" : "s")}
             onPress={() =>
               navigation.navigate("Friends", { id: route.params.id })
             }
           />
         </View>
-        {profile.private && !profile.friends ? null : (
+        {profile.private && !(friendStatus === "friends") ? null : (
           <Pressable
             onPress={() => console.log("Course similarity pressed")}
             style={({ pressed }) => [
@@ -210,7 +304,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         )}
       </View>
       <Separator />
-      {profile.private && !profile.friends ? (
+      {profile.private && !(friendStatus === "friends") ? (
         <View
           style={{ alignItems: "center", marginTop: Layout.spacing.xxlarge }}
         >

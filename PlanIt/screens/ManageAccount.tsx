@@ -44,19 +44,24 @@ export default function Settings() {
   const colorScheme = useColorScheme();
 
   const handleSignOut = () => {
-    // context.setUser({
-    //   id: "",
-    //   email: "",
-    //   name: "",
-    //   major: "",
-    //   gradYear: "",
-    //   interests: "",
-    //   isPrivate: false,
-    //   photoUrl: "",
-    // });
+    // TODO: clear cached user data on signOut
+
+    console.log("user", context.user);
 
     signOut(auth)
       .then(() => {
+        context.setUser({
+          ...context.user,
+          // id: "",
+          // email: "",
+          name: "",
+          major: "",
+          gradYear: "",
+          // interests: "",
+          // isPrivate: false,
+          // photoUrl: "",
+        });
+
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
@@ -121,7 +126,7 @@ export default function Settings() {
             const batch2 = writeBatch(db);
             const q2 = query(
               collection(db, "friends"),
-              where("ids", "array-contains", user.uid)
+              where(`ids.${user.uid}`, "==", true)
             );
             getDocs(q2).then((querySnapshot2) => {
               querySnapshot2.forEach((doc) => {

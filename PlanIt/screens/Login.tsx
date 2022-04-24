@@ -73,14 +73,18 @@ export default function Login({ route }: LoginProps) {
   const getFriendIds = async (id: string) => {
     const q = query(
       collection(db, "friends"),
-      where("ids", "array-contains", id),
+      where(`ids.${id}`, "==", true),
       where("status", "==", "friends")
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const friendIds = [] as string[];
       querySnapshot.forEach((doc) => {
-        const friendId = doc.data().ids.filter((uid: string) => uid !== id)[0];
-        friendIds.push(friendId);
+        for (let key in doc.data().ids) {
+          if (key !== id) {
+            friendIds.push(key);
+            return;
+          }
+        }
       });
       context.setFriendIds(friendIds);
     });

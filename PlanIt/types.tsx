@@ -19,6 +19,7 @@ declare global {
 
 export type RootStackParamList = {
   AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;
+  MessagesStack: NavigatorScreenParams<MessagesStackParamList> | undefined;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Settings: undefined;
   ManageAccount: undefined;
