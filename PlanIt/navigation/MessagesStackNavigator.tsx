@@ -35,7 +35,11 @@ export default function MessagesStackNavigator() {
           ),
         })}
       />
-      <Stack.Screen name="ChannelScreen" component={ChannelScreen} />
+      <Stack.Screen
+        name="ChannelScreen"
+        component={ChannelScreen}
+        options={{ title: "Channel" }}
+      />
       {/* <Stack.Screen name="Courses" component={Courses} />
       <Stack.Screen name="Course" component={Course} />
       <Stack.Screen name="Friends" component={Friends} /> */}

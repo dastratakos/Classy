@@ -1,36 +1,22 @@
 import { Channel, MessageInput, MessageList } from "stream-chat-expo";
 
-import { ChannelSort as ChannelType } from "stream-chat";
-import { StreamChatGenerics } from "../types";
 import { StyleSheet } from "react-native";
 import { Text } from "../components/Themed";
+import { ChannelScreenProps } from "../types";
 
-export default function ChannelScreen({
-  channel,
-}: {
-  // channel: ChannelType<StreamChatGenerics>;
-  channel: any;
-}) {
-  console.log(`Channel is ${channel}`);
+export default function ChannelScreen({ route }: ChannelScreenProps) {
+  console.log(`Channel is`);
+  console.log(route.params.channel);
+  // console.log(`hello`, JSON.stringify(route.params.channel, null, 2));
 
-  if (!channel) return <Text>Channel Screen</Text>;
+  if (!route.params.channel) return <Text>Channel Screen</Text>;
 
   return (
-    <Channel channel={channel}>
+    <Channel channel={route.params.channel}>
       <MessageList />
       <MessageInput />
     </Channel>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-});
+const styles = StyleSheet.create({});

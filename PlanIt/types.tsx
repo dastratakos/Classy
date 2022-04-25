@@ -9,6 +9,7 @@ import {
 } from "@react-navigation/native";
 
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import { Channel as ChannelType } from "stream-chat";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 declare global {
@@ -55,7 +56,7 @@ export type RootStackParamList = {
   ResetPassword: undefined;
 
   Messages: undefined;
-  ChannelScreen: undefined;
+  ChannelScreen: { channel: ChannelType };
 
   Courses: undefined;
   Course: { course: Course };
@@ -110,7 +111,7 @@ export type SearchStackScreenProps<Screen extends keyof SearchStackParamList> =
 
 export type MessagesStackParamList = {
   Messages: undefined;
-  ChannelScreen: undefined;
+  ChannelScreen: { channel: ChannelType };
 
   Courses: undefined;
   Course: { course: Course };
@@ -135,6 +136,7 @@ export type RegisterProps = NativeStackScreenProps<
   RootStackParamList,
   "Register"
 >;
+export type ChannelScreenProps = NativeStackScreenProps<RootStackParamList, "ChannelScreen">;
 export type CourseProps = NativeStackScreenProps<RootStackParamList, "Course">;
 export type FriendsProps = NativeStackScreenProps<
   RootStackParamList,

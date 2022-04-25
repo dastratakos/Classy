@@ -24,6 +24,10 @@ import {
 } from "firebase/firestore";
 import AppContext from "../context/Context";
 import { LoginProps } from "../types";
+import { StreamChat } from "stream-chat";
+
+const STREAM_API_KEY = "y9tk9hsvsxqa";
+const client = StreamChat.getInstance(STREAM_API_KEY);
 
 export default function Login({ route }: LoginProps) {
   const [email, setEmail] = useState(route.params?.email || "");
@@ -34,24 +38,38 @@ export default function Login({ route }: LoginProps) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
+  const connectStreamChatUser = async (id: string, name: string) => {
+    const streamChatUser = { id, name };
+
+    await client.connectUser(
+      streamChatUser,
+      client.devToken(streamChatUser.id)
+    );
+    console.log("User connected:");
+    console.log(streamChatUser);
+
+    // Create a channel
+    const channel = client.channel("messaging", "cs194w-team4", {
+      name: "CS 194W Team 4",
+    });
+    // await channel.addMembers(["grace"], {
+    //   text: "Grace Alwan joined the channel.",
+    //   user_id: "grace",
+    // });
+    // const channel = client.channel("messaging", "cs194w-team4");
+    await channel.watch();
+  };
+
   /* Check if user is signed in. */
   useEffect(() => {
     if (auth.currentUser) {
-      getUser(auth.currentUser.uid);
-      getFriendIds(auth.currentUser.uid);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "Root" }],
-      });
+      console.log("Hello 1");
+      setUp(auth.currentUser.uid);
     } else {
       const unsubscribe = auth.onAuthStateChanged((user) => {
+        console.log("Hello 2");
         if (user) {
-          getUser(user.uid);
-          getFriendIds(user.uid);
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "Root" }],
-          });
+          setUp(user.uid);
         }
       });
 
@@ -59,12 +77,28 @@ export default function Login({ route }: LoginProps) {
     }
   }, []);
 
+  const setUp = async (id: string) => {
+    const name = await getUser(id);
+    getFriendIds(id);
+    connectStreamChatUser(id, name);
+    // connectStreamChatUser(id, context.user.name);
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Root" }],
+    });
+  };
+
   const getUser = async (id: string) => {
     const docRef = doc(db, "users", id);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
+      console.log("Hello 3");
       context.setUser({ ...context.user, ...docSnap.data() });
+      console.log("Hello 4");
+      console.log(context.user);
+      console.log(docSnap.data());
+      return docSnap.data().name;
     } else {
       console.log(`Could not find user: ${id}`);
     }
