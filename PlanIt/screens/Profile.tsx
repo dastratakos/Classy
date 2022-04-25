@@ -1,8 +1,8 @@
 import { Icon, Text, View } from "../components/Themed";
-import { Image, ScrollView, StyleSheet, RefreshControl } from "react-native";
+import { Image, RefreshControl, ScrollView, StyleSheet } from "react-native";
 import { User, sendEmailVerification } from "firebase/auth";
 import { auth, db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -10,6 +10,7 @@ import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Calendar from "../components/Calendar";
 import Colors from "../constants/Colors";
+import { Course } from "../types";
 import Layout from "../constants/Layout";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
@@ -22,12 +23,16 @@ export default function Profile() {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
+  const [courses, setCourses] = useState([] as Course[]);
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     // if (!context.user && auth.currentUser) getUser(auth.currentUser.uid);
 
-    if (auth.currentUser) getUser(auth.currentUser.uid);
+    if (auth.currentUser) {
+      getUser(auth.currentUser.uid);
+      getCourses(context.user.id);
+    }
   }, []);
 
   const getUser = async (id: string) => {
@@ -41,9 +46,22 @@ export default function Profile() {
     }
   };
 
+  const getCourses = async (id: string) => {
+    // TODO: use id to query for specific courses
+    const q = query(collection(db, "courses"));
+
+    const results = [];
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      results.push(doc.data());
+    });
+    setCourses(results);
+  };
+
   const onRefresh = async () => {
     setRefreshing(true);
     await getUser(context.user.id);
+    await getCourses(context.user.id);
     setRefreshing(false);
   };
 
@@ -79,6 +97,7 @@ export default function Profile() {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
+      {/* TODO: this needs to refresh to go away if we are verified */}
       {!auth.currentUser?.emailVerified && showSendVerificationEmail()}
       <View style={AppStyles.section}>
         <View style={[styles.row, { justifyContent: "space-between" }]}>
@@ -173,7 +192,7 @@ export default function Profile() {
       </View>
       <Separator />
       <View style={AppStyles.section}>
-        <Calendar />
+        <Calendar courses={courses}/>
       </View>
     </ScrollView>
   );
