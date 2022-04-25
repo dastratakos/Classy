@@ -209,10 +209,10 @@ export default function Calendar({ courses }: { courses: Course[] }) {
         ))}
       </View>
       <View>
-        <View style={[{ marginTop: Layout.spacing.medium }]}>
+        <View style={[{ marginTop: Layout.spacing.medium, zIndex: 100, backgroundColor: "transparent" }]}>
           {times.map((time, i) => (
             <View
-              style={[AppStyles.row, { height: Layout.spacing.xxlarge }]}
+              style={[AppStyles.row, { height: Layout.spacing.xxlarge, backgroundColor: "transparent" }]}
               key={i}
             >
               <Text
@@ -223,6 +223,7 @@ export default function Calendar({ courses }: { courses: Course[] }) {
                   textAlign: "right",
                   paddingRight: 10,
                   fontSize: Layout.text.small,
+                  backgroundColor: "transparent"
                 }}
               >
                 {((time - 1) % 12) + 1} {time > 11 ? "PM" : "AM"}
@@ -248,7 +249,6 @@ export default function Calendar({ courses }: { courses: Course[] }) {
             },
           ]}
         >
-          {/* <View style={AppStyles.row}> */}
           <View style={{ width: 45, backgroundColor: "transparent" }} />
           <Pressable
             style={({ pressed }) => ({
@@ -260,7 +260,6 @@ export default function Calendar({ courses }: { courses: Course[] }) {
               opacity: pressed ? 0.25 : 0.5,
               height: height,
               overflow: "hidden",
-              // position: "absolute",
             })}
           >
             <Text>
