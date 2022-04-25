@@ -12,6 +12,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import AppStyles from "../styles/AppStyles";
 import Separator from "../components/Separator";
 import { CourseProps } from "../types";
+import { useCallback, useEffect, useState } from "react";
 
 // const course = {
 //   code: "CS 194W",
@@ -256,7 +257,52 @@ export default function Course({ route }: CourseProps) {
   const colorScheme = useColorScheme();
 
   const course = route.params.course;
-  console.log("🚀 ~ file: Course.tsx ~ line 259 ~ Course ~ course", course);
+  // console.log("🚀 ~ file: Course.tsx ~ line 259 ~ Course ~ course", course);
+
+  const [showFullText, setShowFullText] = useState(true);
+  const [isLongText, setIsLongText] = useState(true);
+
+  const [textLoaded, setTextLoaded] = useState(false);
+
+  const onTextLayout = useCallback(
+    (e) => {
+      console.log("----");
+      console.log("showFullText:", showFullText);
+      console.log("isLongText:", isLongText);
+      console.log("lines.length:", e.nativeEvent.lines.length);
+
+      /* Checks if the description is more than 5 lines. */
+      // if (e.nativeEvent.lines.length > 5 && !showFullText) {
+      //   console.log("hello world");
+      //   setIsLongText(true);
+      //   console.log("isLongText:", isLongText);
+      // }
+      if (showFullText) {
+        if (e.nativeEvent.lines.length > 5) setIsLongText(true);
+        else setIsLongText(false);
+
+        if (!textLoaded) {
+          setShowFullText(false);
+          setTextLoaded(true);
+        }
+      }
+      // if (e.nativeEvent.lines.length > 5 && showFullText) {
+      //   console.log("hello world");
+      //   setIsLongText(true);
+      //   console.log("isLongText:", isLongText);
+      // }
+      // else {
+      //   setIsLongText(false);
+      // }
+    },
+    // []
+    [showFullText]
+  );
+
+  const toggleLines = () => {
+    console.log("showFullText:", showFullText);
+    setShowFullText(!showFullText);
+  };
 
   return (
     <ScrollView
@@ -273,7 +319,22 @@ export default function Course({ route }: CourseProps) {
           GERS: {course.gers || "None"}
         </Text>
         {/* TODO: start with 5 lines max and have a "read more" button */}
-        <Text style={styles.description}>{course.description}</Text>
+        <Text
+          onTextLayout={onTextLayout}
+          numberOfLines={showFullText ? undefined : 5}
+          style={styles.description}
+        >
+          {/* TODO: figure out decoding {decodeURIComponent(course.description)} */}
+          {course.description}
+        </Text>
+        {isLongText && (
+          <Text
+            onPress={toggleLines}
+            style={{ color: Colors[colorScheme].tint, alignSelf: "flex-end" }}
+          >
+            {showFullText ? "Read less" : "Read more"}
+          </Text>
+        )}
         <View style={styles.row}>
           <View style={{ width: "48%" }}>
             <Button
