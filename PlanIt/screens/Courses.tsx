@@ -8,6 +8,10 @@ import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import AppStyles from "../styles/AppStyles";
+import { useContext, useEffect, useState } from "react";
+import AppContext from "../context/Context";
+import { collection, getDocs, query } from "firebase/firestore";
+import { db } from "../firebase";
 
 const courses = [
   {
@@ -50,6 +54,25 @@ const courses = [
 export default function Courses() {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+  const context = useContext(AppContext);
+
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    // TODO: get courses from DB using passed in ID and quarter
+    getCourses(context.user.id);
+  }, []);
+
+  const getCourses = async (id: string) => {
+    const q = query(collection(db, "courses"));
+
+    const results = [];
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      results.push(doc.data());
+    });
+    setCourses(results);
+  }
 
   return (
     <ScrollView
@@ -59,11 +82,11 @@ export default function Courses() {
       <View style={AppStyles.section}>
         {courses.map((course, i) => (
           <CourseCard
-            code={course.code}
-            title={course.title}
-            units={course.units}
-            numFriends={course.numFriends}
-            emphasize={course.taking}
+            course={course}
+            // numFriends={result.numFriends}
+            numFriends={"0"}
+            // emphasize={result.taking}
+            emphasize={false}
             key={i}
           />
         ))}
@@ -78,5 +101,4 @@ export default function Courses() {
   );
 }
 
-const styles = StyleSheet.create({
-});
+const styles = StyleSheet.create({});

@@ -7,17 +7,14 @@ import Navigation from "../navigation";
 import SquareButton from "./Buttons/SquareButton";
 import { useNavigation } from "@react-navigation/core";
 import useColorScheme from "../hooks/useColorScheme";
+import { Course } from "../types";
 
 export default function CourseCard({
-  code,
-  title,
-  units,
+  course,
   numFriends,
   emphasize,
 }: {
-  code: string;
-  title: string;
-  units: string;
+  course: Course;
   numFriends: string;
   emphasize: boolean;
 }) {
@@ -26,21 +23,27 @@ export default function CourseCard({
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate("Course", { id: "TODO" })}
+      onPress={() => navigation.navigate("Course", { course })}
       style={[styles.container, { borderColor: Colors[colorScheme].border }]}
     >
       <View style={styles.textContainer}>
         <Text style={styles.code}>
-          {code}
+          {`${course.subject} ${course.code}`}
           {emphasize ? " ⭐️" : null}
         </Text>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.units}>{units} units</Text>
+        <Text style={styles.title}>{course.title}</Text>
+        <Text style={styles.units}>
+          {course.unitsMin}
+          {course.unitsMin === course.unitsMax
+            ? ""
+            : `-${course.unitsMax}`}{" "}
+          units
+        </Text>
       </View>
       <SquareButton
         num={numFriends}
         text={"friend" + (numFriends !== "1" ? "s" : "")}
-        onPress={() => navigation.navigate("Course", { id: "TODO" })}
+        onPress={() => console.log("Square button pressed")}
         pressable={false}
       />
     </TouchableOpacity>

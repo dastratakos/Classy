@@ -11,6 +11,7 @@ import FriendCard from "../components/FriendCard";
 import SearchBar from "../components/SearchBar";
 import useColorScheme from "../hooks/useColorScheme";
 import Layout from "../constants/Layout";
+import CourseCard from "../components/CourseCard";
 
 export default function Search() {
   const context = useContext(AppContext);
@@ -40,7 +41,16 @@ export default function Search() {
     querySnapshot.forEach((doc) => {
       if (doc.id !== context.user.id) results.push(doc.data());
     });
-    setSearchResults(results);
+    // setSearchResults(results);
+
+    const q2 = query(collection(db, "courses"));
+
+    const results2 = [];
+    const querySnapshot2 = await getDocs(q2);
+    querySnapshot2.forEach((doc) => {
+      results2.push(doc.data());
+    });
+    setSearchResults([...results, ...results2]);
   };
 
   const onRefresh = async () => {
@@ -66,15 +76,28 @@ export default function Search() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {searchResults.map((friend, i) => (
-          <FriendCard
-            id={friend.id}
-            name={friend.name}
-            major={friend.major}
-            gradYear={friend.gradYear}
-            photoUrl={friend.photoUrl}
-            key={i}
-          />
+        {searchResults.map((result, i) => (
+          <>
+            {result.id ? (
+              <FriendCard
+                id={result.id}
+                name={result.name}
+                major={result.major}
+                gradYear={result.gradYear}
+                photoUrl={result.photoUrl}
+                key={i}
+              />
+            ) : (
+              <CourseCard
+                course={result}
+                // numFriends={result.numFriends}
+                numFriends={"0"}
+                // emphasize={result.taking}
+                emphasize={false}
+                key={i}
+              />
+            )}
+          </>
         ))}
       </ScrollView>
     </View>

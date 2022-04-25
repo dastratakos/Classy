@@ -17,6 +17,31 @@ declare global {
   }
 }
 
+export type Course = {
+  year: string;
+  subject: string;
+  code: string;
+  title: string;
+  description: string;
+  gers: string;
+  repeatable: boolean;
+  grading: string;
+  unitsMin: number;
+  unitsMax: number;
+  remote: boolean;
+  administrativeInformation: {
+    courseId: number;
+    effectiveStatus: string;
+    offerNumber: string;
+    academicGroup: string;
+    academicOrganization: string;
+    academicCareer: string;
+    finalExamFlag: boolean;
+    maxUnitsRepeat: number;
+    maxTimesRepeat: number;
+  };
+};
+
 export type RootStackParamList = {
   AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;
   MessagesStack: NavigatorScreenParams<MessagesStackParamList> | undefined;
@@ -33,7 +58,7 @@ export type RootStackParamList = {
   ChannelScreen: undefined;
 
   Courses: undefined;
-  Course: { id: string };
+  Course: { course: Course };
   Quarters: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -60,7 +85,7 @@ export type ProfileStackParamList = {
 
   Profile: undefined;
   Courses: undefined;
-  Course: { id: string };
+  Course: { course: Course };
   Quarters: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -74,22 +99,21 @@ export type SearchStackParamList = {
   Search: undefined;
   Profile: undefined;
   Courses: undefined;
-  Course: { id: string };
+  Course: { course: Course };
   Quarters: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
 };
 
-export type SearchStackScreenProps<
-  Screen extends keyof SearchStackParamList
-> = NativeStackScreenProps<SearchStackParamList>;
+export type SearchStackScreenProps<Screen extends keyof SearchStackParamList> =
+  NativeStackScreenProps<SearchStackParamList>;
 
 export type MessagesStackParamList = {
   Messages: undefined;
   ChannelScreen: undefined;
 
   Courses: undefined;
-  Course: { id: string };
+  Course: { course: Course };
   Friends: { id: string };
   FriendProfile: { id: string };
 };

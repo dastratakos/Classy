@@ -13,14 +13,14 @@ import AppStyles from "../styles/AppStyles";
 import Separator from "../components/Separator";
 import { CourseProps } from "../types";
 
-const course = {
-  code: "CS 194W",
-  title: "Software Project (WIM)",
-  units: "3",
-  ways: "None",
-  description:
-    "Restricted to Computer Science and Electrical Engineering undergraduates. Writing-intensive version of CS 194W. Preference given to seniors.",
-};
+// const course = {
+//   code: "CS 194W",
+//   title: "Software Project (WIM)",
+//   units: "3",
+//   ways: "None",
+//   description:
+//     "Restricted to Computer Science and Electrical Engineering undergraduates. Writing-intensive version of CS 194W. Preference given to seniors.",
+// };
 
 const friends = {
   aut2020: [
@@ -248,12 +248,15 @@ const friends = {
 };
 
 const exploreCoursesLink =
-  "https://explorecourses.stanford.edu/search?view=catalog&filter-coursestatus-Active=on&page=0&catalog=&academicYear=&q=cs+194w&collapse=";
+  "https://explorecourses.stanford.edu/search?view=catalog&filter-coursestatus-Active=on&page=0&catalog=&academicYear=&q=";
 // TODO: Carta requires Stanford sign-in...
-const cartaLink = "https://carta-beta.stanford.edu/course/CS%20194W/1226";
+const cartaLink = "https://carta-beta.stanford.edu/course/";
 
 export default function Course({ route }: CourseProps) {
   const colorScheme = useColorScheme();
+
+  const course = route.params.course;
+  console.log("🚀 ~ file: Course.tsx ~ line 259 ~ Course ~ course", course);
 
   return (
     <ScrollView
@@ -262,19 +265,31 @@ export default function Course({ route }: CourseProps) {
     >
       <View style={AppStyles.section}>
         <Text style={styles.title}>
-          {course.code}: {course.title}
+          {course.subject} {course.code}: {course.title}
         </Text>
         <Text style={styles.unitsWays}>
-          Units: {course.units}, WAYS: {course.ways}
+          Units: {course.unitsMin}
+          {course.unitsMin === course.unitsMax ? "" : `-${course.unitsMax}`},
+          GERS: {course.gers || "None"}
         </Text>
         {/* TODO: start with 5 lines max and have a "read more" button */}
         <Text style={styles.description}>{course.description}</Text>
         <View style={styles.row}>
           <View style={{ width: "48%" }}>
-            <Button text="Explore Courses" onPress={handleExplorePress} />
+            <Button
+              text="Explore Courses"
+              onPress={() =>
+                handleExplorePress(course.administrativeInformation.courseId)
+              }
+            />
           </View>
           <View style={{ width: "48%" }}>
-            <Button text="Carta" onPress={handleCartaPress} />
+            <Button
+              text="Carta"
+              onPress={() =>
+                handleCartaPress(`${course.subject}${course.code}`)
+              }
+            />
           </View>
         </View>
         <WideButton
@@ -305,12 +320,12 @@ export default function Course({ route }: CourseProps) {
   );
 }
 
-function handleExplorePress() {
-  WebBrowser.openBrowserAsync(exploreCoursesLink);
+function handleExplorePress(courseId: number) {
+  WebBrowser.openBrowserAsync(`${exploreCoursesLink}${courseId}`);
 }
 
-function handleCartaPress() {
-  WebBrowser.openBrowserAsync(cartaLink);
+function handleCartaPress(subjectAndCode: string) {
+  WebBrowser.openBrowserAsync(cartaLink + subjectAndCode);
 }
 
 const styles = StyleSheet.create({
