@@ -266,43 +266,14 @@ export default function Course({ route }: CourseProps) {
 
   const onTextLayout = useCallback(
     (e) => {
-      console.log("----");
-      console.log("showFullText:", showFullText);
-      console.log("isLongText:", isLongText);
-      console.log("lines.length:", e.nativeEvent.lines.length);
-
-      /* Checks if the description is more than 5 lines. */
-      // if (e.nativeEvent.lines.length > 5 && !showFullText) {
-      //   console.log("hello world");
-      //   setIsLongText(true);
-      //   console.log("isLongText:", isLongText);
-      // }
-      if (showFullText) {
-        if (e.nativeEvent.lines.length > 5) setIsLongText(true);
-        else setIsLongText(false);
-
-        if (!textLoaded) {
-          setShowFullText(false);
-          setTextLoaded(true);
-        }
+      if (!textLoaded && showFullText) {
+        setIsLongText(e.nativeEvent.lines.length > 5);
+        setShowFullText(false);
+        setTextLoaded(true);
       }
-      // if (e.nativeEvent.lines.length > 5 && showFullText) {
-      //   console.log("hello world");
-      //   setIsLongText(true);
-      //   console.log("isLongText:", isLongText);
-      // }
-      // else {
-      //   setIsLongText(false);
-      // }
     },
-    // []
     [showFullText]
   );
-
-  const toggleLines = () => {
-    console.log("showFullText:", showFullText);
-    setShowFullText(!showFullText);
-  };
 
   return (
     <ScrollView
@@ -318,7 +289,6 @@ export default function Course({ route }: CourseProps) {
           {course.unitsMin === course.unitsMax ? "" : `-${course.unitsMax}`},
           GERS: {course.gers || "None"}
         </Text>
-        {/* TODO: start with 5 lines max and have a "read more" button */}
         <Text
           onTextLayout={onTextLayout}
           numberOfLines={showFullText ? undefined : 5}
@@ -329,7 +299,7 @@ export default function Course({ route }: CourseProps) {
         </Text>
         {isLongText && (
           <Text
-            onPress={toggleLines}
+            onPress={() => setShowFullText(!showFullText)}
             style={{ color: Colors[colorScheme].tint, alignSelf: "flex-end" }}
           >
             {showFullText ? "Read less" : "Read more"}
