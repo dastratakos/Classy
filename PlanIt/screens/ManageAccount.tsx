@@ -50,17 +50,17 @@ export default function Settings() {
 
     signOut(auth)
       .then(() => {
-        context.setUser({
-          ...context.user,
-          // id: "",
-          // email: "",
-          name: "",
-          major: "",
-          gradYear: "",
-          // interests: "",
-          // isPrivate: false,
-          // photoUrl: "",
-        });
+        // context.setUser({
+        //   ...context.user,
+        //   id: "",
+        //   email: "",
+        //   name: "",
+        //   major: "",
+        //   gradYear: "",
+        //   interests: "",
+        //   isPrivate: false,
+        //   photoUrl: "",
+        // });
 
         navigation.reset({
           index: 0,

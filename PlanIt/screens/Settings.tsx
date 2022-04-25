@@ -50,12 +50,12 @@ export default function Settings() {
       interests,
     });
 
-    setUser(context.user.id);
+    setUserDB(context.user.id);
 
     navigation.goBack();
   };
 
-  const setUser = async (id: string) => {
+  const setUserDB = async (id: string) => {
     const userRef = doc(db, "users", id);
     await updateDoc(userRef, {
       name,
@@ -113,7 +113,7 @@ export default function Settings() {
           photoUrl,
         });
 
-        setUser(context.user.id);
+        setUserDB(context.user.id);
       }
     } catch (error) {
       console.log(error);
@@ -139,11 +139,14 @@ export default function Settings() {
   };
 
   const takePhoto = async () => {
-    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+    if (Platform.OS !== "web") {
+      const permissionResult =
+        await ImagePicker.requestCameraPermissionsAsync();
 
-    if (permissionResult.granted === false) {
-      alert("Please turn on camera permissions to take a photo.");
-      return;
+      if (permissionResult.granted === false) {
+        alert("Please turn on camera permissions to take a photo.");
+        return;
+      }
     }
 
     let pickerResult = await ImagePicker.launchCameraAsync({

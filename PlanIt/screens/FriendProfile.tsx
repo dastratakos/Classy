@@ -234,6 +234,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                       opacity: pressed ? 0.5 : 1,
                     },
                     styles.ellipsis,
+                    {borderColor: Colors[colorScheme].text}
                   ]}
                 >
                   <Icon name="ellipsis-h" size={25} />

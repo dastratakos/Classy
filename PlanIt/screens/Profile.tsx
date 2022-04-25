@@ -169,7 +169,7 @@ export default function Profile() {
         <WideButton
           text={"View Courses"}
           onPress={() => navigation.navigate("Courses")}
-        ></WideButton>
+        />
       </View>
       <Separator />
       <View style={AppStyles.section}>
