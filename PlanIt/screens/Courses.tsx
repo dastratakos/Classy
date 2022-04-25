@@ -13,44 +13,6 @@ import AppContext from "../context/Context";
 import { collection, getDocs, query } from "firebase/firestore";
 import { db } from "../firebase";
 
-const courses = [
-  {
-    code: "CS 194W",
-    title: "Senior Project (WIM)",
-    units: "3",
-    numFriends: "9",
-    taking: true,
-  },
-  {
-    code: "CS 224U",
-    title: "Natural Language Understanding",
-    units: "4",
-    numFriends: "13",
-    taking: true,
-  },
-  {
-    code: "CS 224U",
-    title: "Seminar on AI Safety",
-    units: "1",
-    numFriends: "1",
-    taking: true,
-  },
-  {
-    code: "ME 104B",
-    title: "Designing Your Life",
-    units: "2",
-    numFriends: "4",
-    taking: true,
-  },
-  {
-    code: "PSYC 135",
-    title: "Dement's Sleep and Dreams",
-    units: "3",
-    numFriends: "27",
-    taking: true,
-  },
-];
-
 export default function Courses() {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -64,6 +26,7 @@ export default function Courses() {
   }, []);
 
   const getCourses = async (id: string) => {
+    // TODO: use id to query for specific courses
     const q = query(collection(db, "courses"));
 
     const results = [];

@@ -46,28 +46,38 @@ export default function Login({ route }: LoginProps) {
       client.devToken(streamChatUser.id)
     );
     console.log("User connected:");
-    console.log(streamChatUser);
+    // console.log(streamChatUser);
+
+    // const filter = { type: "messaging", members: { $in: [streamChatUser.id] } };
+    // const sort = { last_message_at: -1 };
+
+    // const channels = await client.queryChannels(filter, sort, {
+    //   watch: true, // this is the default
+    //   state: true,
+    // });
+
+    // channels.map((channel) => {
+    //   console.log(channel.data.name, channel.cid);
+    // });
 
     // Create a channel
-    const channel = client.channel("messaging", "cs194w-team4", {
-      name: "CS 194W Team 4",
-    });
+    // const channel = client.channel("messaging", "cs194w-team4", {
+    //   name: "CS 194W Team 4",
+    // });
     // await channel.addMembers(["grace"], {
     //   text: "Grace Alwan joined the channel.",
     //   user_id: "grace",
     // });
     // const channel = client.channel("messaging", "cs194w-team4");
-    await channel.watch();
+    // await channel.watch();
   };
 
   /* Check if user is signed in. */
   useEffect(() => {
     if (auth.currentUser) {
-      console.log("Hello 1");
       setUp(auth.currentUser.uid);
     } else {
       const unsubscribe = auth.onAuthStateChanged((user) => {
-        console.log("Hello 2");
         if (user) {
           setUp(user.uid);
         }
@@ -93,11 +103,7 @@ export default function Login({ route }: LoginProps) {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      console.log("Hello 3");
       context.setUser({ ...context.user, ...docSnap.data() });
-      console.log("Hello 4");
-      console.log(context.user);
-      console.log(docSnap.data());
       return docSnap.data().name;
     } else {
       console.log(`Could not find user: ${id}`);

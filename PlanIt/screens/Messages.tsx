@@ -3,18 +3,25 @@ import { StyleSheet } from "react-native";
 
 import { Channel as ChannelType } from "stream-chat";
 import { useNavigation } from "@react-navigation/core";
+import { useContext } from "react";
+import AppContext from "../context/Context";
 
 export default function Messages() {
   const navigation = useNavigation();
+  const context = useContext(AppContext);
+
+  const filters = { members: { $in: [context.user.id] } };
+  const sort = { last_message_at: -1 };
+  const options = { limit: 20, messages_limit: 30 };
 
   return (
     <ChannelList
-      onSelect={(channel: ChannelType) => {
-        console.log("pressed 1");
-        console.log(channel);
-        console.log("pressed 2");
-        navigation.navigate("ChannelScreen", { channel });
-      }}
+      filters={filters}
+      sort={sort}
+      options={options}
+      onSelect={(channel: ChannelType) =>
+        navigation.navigate("ChannelScreen", { channel })
+      }
     />
   );
 }
