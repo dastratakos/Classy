@@ -2,26 +2,18 @@ import * as WebBrowser from "expo-web-browser";
 
 import { ScrollView, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
+import { useCallback, useState } from "react";
 
+import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
+import { CourseProps } from "../types";
 import FriendCard from "../components/FriendCard";
 import Layout from "../constants/Layout";
+import Separator from "../components/Separator";
 import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
-import AppStyles from "../styles/AppStyles";
-import Separator from "../components/Separator";
-import { CourseProps } from "../types";
-import { useCallback, useEffect, useState } from "react";
-
-// const course = {
-//   code: "CS 194W",
-//   title: "Software Project (WIM)",
-//   units: "3",
-//   ways: "None",
-//   description:
-//     "Restricted to Computer Science and Electrical Engineering undergraduates. Writing-intensive version of CS 194W. Preference given to seniors.",
-// };
+import ReadMoreText from "../components/ReadMoreText";
 
 const friends = {
   aut2020: [
@@ -259,22 +251,6 @@ export default function Course({ route }: CourseProps) {
   const course = route.params.course;
   // console.log("🚀 ~ file: Course.tsx ~ line 259 ~ Course ~ course", course);
 
-  const [showFullText, setShowFullText] = useState(true);
-  const [isLongText, setIsLongText] = useState(true);
-
-  const [textLoaded, setTextLoaded] = useState(false);
-
-  const onTextLayout = useCallback(
-    (e) => {
-      if (!textLoaded && showFullText) {
-        setIsLongText(e.nativeEvent.lines.length > 5);
-        setShowFullText(false);
-        setTextLoaded(true);
-      }
-    },
-    [showFullText]
-  );
-
   return (
     <ScrollView
       style={{ backgroundColor: Colors[colorScheme].background }}
@@ -289,23 +265,16 @@ export default function Course({ route }: CourseProps) {
           {course.unitsMin === course.unitsMax ? "" : `-${course.unitsMax}`},
           GERS: {course.gers || "None"}
         </Text>
-        <Text
-          onTextLayout={onTextLayout}
-          numberOfLines={showFullText ? undefined : 5}
-          style={styles.description}
+        <ReadMoreText text={course.description} />
+        <View
+          style={[
+            AppStyles.row,
+            {
+              justifyContent: "space-between",
+              marginVertical: Layout.spacing.medium,
+            },
+          ]}
         >
-          {/* TODO: figure out decoding {decodeURIComponent(course.description)} */}
-          {course.description}
-        </Text>
-        {isLongText && (
-          <Text
-            onPress={() => setShowFullText(!showFullText)}
-            style={{ color: Colors[colorScheme].tint, alignSelf: "flex-end" }}
-          >
-            {showFullText ? "Read less" : "Read more"}
-          </Text>
-        )}
-        <View style={styles.row}>
           <View style={{ width: "48%" }}>
             <Button
               text="Explore Courses"
@@ -369,13 +338,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: Colors.status.inClass,
     marginBottom: Layout.spacing.small,
-  },
-  description: {},
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginVertical: Layout.spacing.medium,
   },
   friendsSection: {
     width: "100%",
