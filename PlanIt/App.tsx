@@ -1,25 +1,20 @@
+import { Chat, OverlayProvider } from "stream-chat-expo";
+import type { DeepPartial, Theme } from "stream-chat-expo";
+import { useEffect, useState } from "react";
+
 import AppContext from "./context/Context";
+import AppLoading from "expo-app-loading";
+import Colors from "./constants/Colors";
 import Navigation from "./navigation";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { StreamChat } from "stream-chat";
+import { User } from "./types";
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
-import { useEffect, useState } from "react";
-import AppLoading from "expo-app-loading";
-import { User } from "./types";
-import { StreamChat } from "stream-chat";
-import { Chat, OverlayProvider } from "stream-chat-expo";
-import type { DeepPartial, Theme } from "stream-chat-expo";
-import Colors from "./constants/Colors";
 
 const STREAM_API_KEY = "y9tk9hsvsxqa";
 const client = StreamChat.getInstance(STREAM_API_KEY);
-
-const streamChatUser = {
-  id: "dean",
-  name: "Dean Stratakos",
-};
-
 
 export default function App() {
   /* Global variables. */

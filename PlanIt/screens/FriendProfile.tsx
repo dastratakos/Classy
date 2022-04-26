@@ -33,7 +33,7 @@ const profile = {
   courseSimilarity: 57.54,
   // courseSimilarity: 83,
   friends: true,
-  private: true,
+  private: false,
   courses: [
     {
       code: "CS 194W",
@@ -329,9 +329,9 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             ))}
           </View>
           <Separator />
-          <View style={AppStyles.section}>
+          {/* <View style={AppStyles.section}>
             <Calendar courses={[]}/>
-          </View>
+          </View> */}
         </>
       )}
     </ScrollView>

@@ -55,23 +55,27 @@ export default function FriendCard({
           {name}
         </Text>
         {/* Major */}
-        <View style={AppStyles.row}>
-          <View style={styles.iconWrapper}>
-            <Icon name="pencil" size={25} />
+        {major ? (
+          <View style={AppStyles.row}>
+            <View style={styles.iconWrapper}>
+              <Icon name="pencil" size={25} />
+            </View>
+            <Text style={styles.aboutText} numberOfLines={1}>
+              {major}
+            </Text>
           </View>
-          <Text style={styles.aboutText} numberOfLines={1}>
-            {major}
-          </Text>
-        </View>
+        ) : null}
         {/* Graduation Year */}
-        <View style={AppStyles.row}>
-          <View style={styles.iconWrapper}>
-            <Icon name="graduation-cap" size={25} />
+        {gradYear ? (
+          <View style={AppStyles.row}>
+            <View style={styles.iconWrapper}>
+              <Icon name="graduation-cap" size={25} />
+            </View>
+            <Text style={styles.aboutText} numberOfLines={1}>
+              {gradYear}
+            </Text>
           </View>
-          <Text style={styles.aboutText} numberOfLines={1}>
-            {gradYear}
-          </Text>
-        </View>
+        ) : null}
       </View>
     </TouchableOpacity>
   );

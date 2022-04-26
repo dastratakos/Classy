@@ -76,29 +76,31 @@ export default function Search() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {searchResults.map((result, i) => (
-          <>
-            {result.id ? (
+        {searchResults.map((result, i) => {
+          if (result.id) {
+            return (
               <FriendCard
                 id={result.id}
                 name={result.name}
                 major={result.major}
                 gradYear={result.gradYear}
                 photoUrl={result.photoUrl}
-                key={i}
+                key={result.id}
               />
-            ) : (
-              <CourseCard
-                course={result}
-                // numFriends={result.numFriends}
-                numFriends={"0"}
-                // emphasize={result.taking}
-                emphasize={false}
-                key={i}
-              />
-            )}
-          </>
-        ))}
+            );
+          }
+
+          return (
+            <CourseCard
+              course={result}
+              // numFriends={result.numFriends}
+              numFriends={"0"}
+              // emphasize={result.taking}
+              emphasize={false}
+              key={result.courseId}
+            />
+          );
+        })}
       </ScrollView>
     </View>
   );

@@ -10,6 +10,7 @@ import AppStyles from "../styles/AppStyles";
 import { Course } from "../types";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import CalendarEvent from "./CalendarEvent";
 
 export default function Calendar({ courses }: { courses: Course[] }) {
   const navigation = useNavigation();
@@ -209,10 +210,24 @@ export default function Calendar({ courses }: { courses: Course[] }) {
         ))}
       </View>
       <View>
-        <View style={[{ marginTop: Layout.spacing.medium, zIndex: 100, backgroundColor: "transparent" }]}>
+        <View
+          style={[
+            {
+              marginTop: Layout.spacing.medium,
+              zIndex: 100,
+              backgroundColor: "transparent",
+            },
+          ]}
+        >
           {times.map((time, i) => (
             <View
-              style={[AppStyles.row, { height: Layout.spacing.xxlarge, backgroundColor: "transparent" }]}
+              style={[
+                AppStyles.row,
+                {
+                  height: Layout.spacing.xxlarge,
+                  backgroundColor: "transparent",
+                },
+              ]}
               key={i}
             >
               <Text
@@ -223,7 +238,7 @@ export default function Calendar({ courses }: { courses: Course[] }) {
                   textAlign: "right",
                   paddingRight: 10,
                   fontSize: Layout.text.small,
-                  backgroundColor: "transparent"
+                  backgroundColor: "transparent",
                 }}
               >
                 {((time - 1) % 12) + 1} {time > 11 ? "PM" : "AM"}
@@ -239,40 +254,16 @@ export default function Calendar({ courses }: { courses: Course[] }) {
             </View>
           ))}
         </View>
-        <View
-          style={[
-            AppStyles.row,
-            {
-              position: "absolute",
-              backgroundColor: "transparent",
-              marginTop: marginTop,
-            },
-          ]}
-        >
-          <View style={{ width: 45, backgroundColor: "transparent" }} />
-          <Pressable
-            style={({ pressed }) => ({
-              paddingVertical: Layout.spacing.xxsmall,
-              paddingHorizontal: Layout.spacing.small,
-              flex: 1,
-              borderRadius: Layout.radius.small,
-              backgroundColor: "red",
-              opacity: pressed ? 0.25 : 0.5,
-              height: height,
-              overflow: "hidden",
-            })}
-          >
-            <Text>
-              {course.subject} {course.code}
-            </Text>
-            <Text style={{ fontSize: Layout.text.small }}>
-              {startTime}-{endTime}
-            </Text>
-            <Text style={{ fontSize: Layout.text.small }}>
-              Location: {location}
-            </Text>
-          </Pressable>
-        </View>
+        {course ? (
+          <CalendarEvent
+            title={course.code}
+            time={`${startTime}-${endTime}`}
+            location={location}
+            marginTop={marginTop}
+            height={height}
+            onPress={() => console.log("CalendarEvent pressed")}
+          />
+        ) : null}
       </View>
     </>
   );

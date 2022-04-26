@@ -28,7 +28,7 @@ export default function CourseCard({
     >
       <View style={styles.textContainer}>
         <Text style={styles.code}>
-          {`${course.subject} ${course.code}`}
+          {course.code}
           {emphasize ? " ⭐️" : null}
         </Text>
         <Text style={styles.title}>{course.title}</Text>

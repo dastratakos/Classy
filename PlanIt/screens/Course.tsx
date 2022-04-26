@@ -258,7 +258,7 @@ export default function Course({ route }: CourseProps) {
     >
       <View style={AppStyles.section}>
         <Text style={styles.title}>
-          {course.subject} {course.code}: {course.title}
+          {course.code}: {course.title}
         </Text>
         <Text style={styles.unitsWays}>
           Units: {course.unitsMin}
@@ -287,7 +287,7 @@ export default function Course({ route }: CourseProps) {
             <Button
               text="Carta"
               onPress={() =>
-                handleCartaPress(`${course.subject}${course.code}`)
+                handleCartaPress(course.code)
               }
             />
           </View>
@@ -324,8 +324,8 @@ function handleExplorePress(courseId: number) {
   WebBrowser.openBrowserAsync(`${exploreCoursesLink}${courseId}`);
 }
 
-function handleCartaPress(subjectAndCode: string) {
-  WebBrowser.openBrowserAsync(cartaLink + subjectAndCode);
+function handleCartaPress(courseCode: string) {
+  WebBrowser.openBrowserAsync(cartaLink + courseCode);
 }
 
 const styles = StyleSheet.create({
