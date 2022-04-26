@@ -217,9 +217,12 @@ export default function Settings() {
         </>
       )}
       <View style={AppStyles.row}>
-        <Button text="Choose profile photo" onPress={choosePhoto} />
-        <View style={{ width: Layout.spacing.medium }} />
-        <Button text="Take profile photo" onPress={takePhoto} />
+        <View style={{ width: "48%" }}>
+          <Button text="Choose profile photo" onPress={choosePhoto} />
+        </View>
+        <View style={{ width: "48%" }}>
+          <Button text="Take profile photo" onPress={takePhoto} />
+        </View>
       </View>
       <Separator />
       <KeyboardAvoidingView style={styles.inputContainer} behavior="padding">
@@ -288,12 +291,7 @@ export default function Settings() {
         onPress={() => navigation.navigate("ManageAccount")}
       />
       <Separator />
-      <View
-        style={[
-          AppStyles.row,
-          { width: "100%", justifyContent: "space-between" },
-        ]}
-      >
+      <View style={AppStyles.row}>
         <View style={{ width: "48%" }}>
           <Button text="Cancel" onPress={() => navigation.goBack()} />
         </View>

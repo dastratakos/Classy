@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet } from "react-native";
-import { Icon, Text, View } from "./Themed";
+import { Text, View } from "./Themed";
 
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";

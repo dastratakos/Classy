@@ -51,20 +51,26 @@ export default function FriendCard({
         />
       )}
       <View style={styles.textContainer}>
-        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.name} numberOfLines={1}>
+          {name}
+        </Text>
         {/* Major */}
-        <View style={styles.row}>
+        <View style={AppStyles.row}>
           <View style={styles.iconWrapper}>
             <Icon name="pencil" size={25} />
           </View>
-          <Text>{major}</Text>
+          <Text style={styles.aboutText} numberOfLines={1}>
+            {major}
+          </Text>
         </View>
         {/* Graduation Year */}
-        <View style={styles.row}>
+        <View style={AppStyles.row}>
           <View style={styles.iconWrapper}>
             <Icon name="graduation-cap" size={25} />
           </View>
-          <Text>{gradYear}</Text>
+          <Text style={styles.aboutText} numberOfLines={1}>
+            {gradYear}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -82,7 +88,10 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   textContainer: {
-    justifyContent: "space-between",
+    flex: 1,
+  },
+  aboutText: {
+    flex: 1,
   },
   name: {
     fontSize: Layout.text.large,
@@ -93,10 +102,6 @@ const styles = StyleSheet.create({
   },
   units: {
     // TODO: change font color
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
   },
   iconWrapper: {
     width: 30,

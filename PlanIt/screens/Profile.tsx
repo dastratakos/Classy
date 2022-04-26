@@ -100,8 +100,8 @@ export default function Profile() {
       {/* TODO: this needs to refresh to go away if we are verified */}
       {!auth.currentUser?.emailVerified && showSendVerificationEmail()}
       <View style={AppStyles.section}>
-        <View style={[styles.row, { justifyContent: "space-between" }]}>
-          <View style={styles.row}>
+        <View style={AppStyles.row}>
+          <View style={AppStyles.row}>
             {context.user.photoUrl ? (
               <Image
                 source={{ uri: context.user.photoUrl }}
@@ -123,13 +123,15 @@ export default function Profile() {
             )}
             <View>
               <Text style={styles.name}>{context.user.name}</Text>
-              <View style={[styles.row, { marginTop: Layout.spacing.xsmall }]}>
+              <View
+                style={[AppStyles.row, { marginTop: Layout.spacing.xsmall }]}
+              >
                 <View
                   style={[
                     styles.status,
                     inClass ? styles.inClass : styles.notInClass,
                   ]}
-                ></View>
+                />
                 <Text
                   style={[
                     styles.statusText,
@@ -142,40 +144,35 @@ export default function Profile() {
             </View>
           </View>
         </View>
-        <View
-          style={[
-            AppStyles.row,
-            { justifyContent: "space-between", marginVertical: 15 },
-          ]}
-        >
-          <View>
+        <View style={[AppStyles.row, { marginVertical: 15 }]}>
+          <View style={{ flex: 1, marginRight: Layout.spacing.small }}>
             {/* Major */}
-            {context.user.major && (
-              <View style={styles.row}>
+            {context.user.major ? (
+              <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
                   <Icon name="pencil" size={25} />
                 </View>
-                <Text>{context.user.major}</Text>
+                <Text style={styles.aboutText}>{context.user.major}</Text>
               </View>
-            )}
+            ): null}
             {/* Graduation Year */}
-            {context.user.gradYear && (
-              <View style={styles.row}>
+            {context.user.gradYear ? (
+              <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
                   <Icon name="graduation-cap" size={25} />
                 </View>
-                <Text>{context.user.gradYear}</Text>
+                <Text style={styles.aboutText}>{context.user.gradYear}</Text>
               </View>
-            )}
+            ): null}
             {/* Interests */}
-            {context.user.interests && (
-              <View style={styles.row}>
+            {context.user.interests ? (
+              <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
                   <Icon name="puzzle-piece" size={25} />
                 </View>
-                <Text>{context.user.interests}</Text>
+                <Text style={styles.aboutText}>{context.user.interests}</Text>
               </View>
-            )}
+            ): null}
           </View>
           <SquareButton
             num={`${context.friendIds.length}`}
@@ -192,7 +189,7 @@ export default function Profile() {
       </View>
       <Separator />
       <View style={AppStyles.section}>
-        <Calendar courses={courses}/>
+        <Calendar courses={courses} />
       </View>
     </ScrollView>
   );
@@ -215,10 +212,10 @@ const styles = StyleSheet.create({
   },
   statusText: {
     marginLeft: Layout.spacing.small,
+    flex: 1,
   },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
+  aboutText: {
+    flex: 1,
   },
   iconWrapper: {
     width: 30,

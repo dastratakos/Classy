@@ -7,7 +7,7 @@ export default StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignSelf: "stretch",
   },
   section: {

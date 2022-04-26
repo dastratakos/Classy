@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TextInput,
 } from "react-native";
-import { Text, View } from "../components/Themed";
 import { auth, db } from "../firebase";
 import {
   collection,
@@ -21,11 +20,11 @@ import { useContext, useState } from "react";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
-import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import Separator from "../components/Separator";
 import { StatusBar } from "expo-status-bar";
+import { Text } from "../components/Themed";
 import WideButton from "../components/Buttons/WideButton";
 import { signInWithEmailAndPassword } from "../firebase";
 import useColorScheme from "../hooks/useColorScheme";
@@ -44,23 +43,19 @@ export default function Settings() {
   const colorScheme = useColorScheme();
 
   const handleSignOut = () => {
-    // TODO: clear cached user data on signOut
-
-    console.log("user", context.user);
-
     signOut(auth)
       .then(() => {
-        // context.setUser({
-        //   ...context.user,
-        //   id: "",
-        //   email: "",
-        //   name: "",
-        //   major: "",
-        //   gradYear: "",
-        //   interests: "",
-        //   isPrivate: false,
-        //   photoUrl: "",
-        // });
+        context.setUser({
+          ...context.user,
+          id: "",
+          email: "",
+          name: "",
+          major: "",
+          gradYear: "",
+          interests: "",
+          isPrivate: false,
+          photoUrl: "",
+        });
 
         navigation.reset({
           index: 0,

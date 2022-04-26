@@ -142,7 +142,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={AppStyles.section}>
-        <View style={[AppStyles.row, { justifyContent: "space-between" }]}>
+        <View style={AppStyles.row}>
           <View style={AppStyles.row}>
             {user.photoUrl ? (
               <Image
@@ -166,14 +166,14 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             <View>
               <Text style={styles.name}>{user.name}</Text>
               <View
-                style={[styles.row, { marginVertical: Layout.spacing.xsmall }]}
+                style={[AppStyles.row, { marginTop: Layout.spacing.xsmall }]}
               >
                 <View
                   style={[
                     styles.status,
                     profile.inClass ? styles.inClass : styles.notInClass,
                   ]}
-                ></View>
+                />
                 <Text
                   style={[
                     styles.statusText,
@@ -230,11 +230,9 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                 <Pressable
                   onPress={() => console.log("Ellipsis pressed")}
                   style={({ pressed }) => [
-                    {
-                      opacity: pressed ? 0.5 : 1,
-                    },
                     styles.ellipsis,
-                    {borderColor: Colors[colorScheme].text}
+                    { opacity: pressed ? 0.5 : 1 },
+                    { borderColor: Colors[colorScheme].text },
                   ]}
                 >
                   <Icon name="ellipsis-h" size={25} />
@@ -243,31 +241,35 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             </View>
           </View>
         </View>
-        <View
-          style={[
-            AppStyles.row,
-            { justifyContent: "space-between", marginTop: 15 },
-          ]}
-        >
-          <View>
+        <View style={[AppStyles.row, { marginTop: 15 }]}>
+          <View style={{ flex: 1, marginRight: Layout.spacing.small }}>
             {/* Major */}
-            {user.major && (
-              <View style={styles.row}>
+            {user.major ? (
+              <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
                   <Icon name="pencil" size={25} />
                 </View>
-                <Text>{user.major}</Text>
+                <Text style={styles.aboutText}>{user.major}</Text>
               </View>
-            )}
+            ): null}
             {/* Graduation Year */}
-            {user.gradYear && (
-              <View style={styles.row}>
+            {user.gradYear ? (
+              <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
                   <Icon name="graduation-cap" size={25} />
                 </View>
-                <Text>{user.gradYear}</Text>
+                <Text style={styles.aboutText}>{user.gradYear}</Text>
               </View>
-            )}
+            ): null}
+            {/* Interests */}
+            {user.interests ? (
+              <View style={AppStyles.row}>
+                <View style={styles.iconWrapper}>
+                  <Icon name="puzzle-piece" size={25} />
+                </View>
+                <Text style={styles.aboutText}>{user.interests}</Text>
+              </View>
+            ) : null}
           </View>
           <SquareButton
             num={numFriends}
@@ -328,7 +330,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
           </View>
           <Separator />
           <View style={AppStyles.section}>
-            <Calendar />
+            <Calendar courses={[]}/>
           </View>
         </>
       )}
@@ -353,6 +355,7 @@ const styles = StyleSheet.create({
   },
   statusText: {
     marginLeft: Layout.spacing.small,
+    flex: 1,
   },
   row: {
     flexDirection: "row",
@@ -366,6 +369,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  aboutText: {
+    flex: 1,
   },
   iconWrapper: {
     width: 30,
