@@ -99,7 +99,7 @@ export default function Register({ route }: RegisterProps) {
             ]}
             autoCapitalize="none"
             autoCorrect={false}
-            textContentType="password"
+            textContentType="newPassword"
             secureTextEntry
           />
           <TextInput
@@ -118,13 +118,13 @@ export default function Register({ route }: RegisterProps) {
             ]}
             autoCapitalize="none"
             autoCorrect={false}
-            textContentType="password"
+            textContentType="newPassword"
             secureTextEntry
           />
-        </View>
-        <View style={{ height: Layout.spacing.large }} />
+          <View style={{ height: Layout.spacing.large }} />
 
-        <WideButton text="Register" onPress={createUser} />
+          <WideButton text="Register" onPress={createUser} />
+        </View>
       </KeyboardAvoidingView>
       <View
         style={[
