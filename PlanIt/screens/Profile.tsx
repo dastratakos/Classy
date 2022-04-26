@@ -1,5 +1,11 @@
 import { Icon, Text, View } from "../components/Themed";
-import { Image, RefreshControl, ScrollView, StyleSheet } from "react-native";
+import {
+  Pressable,
+  Image,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import { User, sendEmailVerification } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
@@ -25,6 +31,9 @@ export default function Profile() {
 
   const [courses, setCourses] = useState([] as Course[]);
   const [refreshing, setRefreshing] = useState(false);
+  const [showEmailVerification, setShowEmailVerification] = useState(
+    !auth.currentUser?.emailVerified
+  );
 
   useEffect(() => {
     // if (!context.user && auth.currentUser) getUser(auth.currentUser.uid);
@@ -33,6 +42,12 @@ export default function Profile() {
       getUser(auth.currentUser.uid);
       getCourses(context.user.id);
     }
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) setShowEmailVerification(!user.emailVerified);
+    });
+
+    return unsubscribe;
   }, []);
 
   const getUser = async (id: string) => {
@@ -62,6 +77,9 @@ export default function Profile() {
     setRefreshing(true);
     await getUser(context.user.id);
     await getCourses(context.user.id);
+    if (auth.currentUser)
+      setShowEmailVerification(!auth.currentUser.emailVerified);
+    console.log("emailVerified:", auth.currentUser?.emailVerified);
     setRefreshing(false);
   };
 
@@ -83,6 +101,18 @@ export default function Profile() {
               sendEmailVerification(auth.currentUser || ({} as User))
             }
           />
+          <Pressable
+            onPress={() => setShowEmailVerification(false)}
+            style={({ pressed }) => [
+              styles.closeButton,
+              {
+                opacity: pressed ? 0.5 : 1,
+                borderColor: Colors[colorScheme].text,
+              },
+            ]}
+          >
+            <Icon name="close" size={20} />
+          </Pressable>
         </View>
         <Separator />
       </>
@@ -98,7 +128,7 @@ export default function Profile() {
       }
     >
       {/* TODO: this needs to refresh to go away if we are verified */}
-      {!auth.currentUser?.emailVerified && showSendVerificationEmail()}
+      {showEmailVerification && showSendVerificationEmail()}
       <View style={AppStyles.section}>
         <View style={AppStyles.row}>
           <View style={AppStyles.row}>
@@ -124,7 +154,10 @@ export default function Profile() {
             <View>
               <Text style={styles.name}>{context.user.name}</Text>
               <View
-                style={[AppStyles.row, { marginVertical: Layout.spacing.xsmall }]}
+                style={[
+                  AppStyles.row,
+                  { marginVertical: Layout.spacing.xsmall },
+                ]}
               >
                 <View
                   style={[
@@ -154,7 +187,7 @@ export default function Profile() {
                 </View>
                 <Text style={styles.aboutText}>{context.user.major}</Text>
               </View>
-            ): null}
+            ) : null}
             {/* Graduation Year */}
             {context.user.gradYear ? (
               <View style={AppStyles.row}>
@@ -163,7 +196,7 @@ export default function Profile() {
                 </View>
                 <Text style={styles.aboutText}>{context.user.gradYear}</Text>
               </View>
-            ): null}
+            ) : null}
             {/* Interests */}
             {context.user.interests ? (
               <View style={AppStyles.row}>
@@ -172,7 +205,7 @@ export default function Profile() {
                 </View>
                 <Text style={styles.aboutText}>{context.user.interests}</Text>
               </View>
-            ): null}
+            ) : null}
           </View>
           <SquareButton
             num={`${context.friendIds.length}`}
@@ -221,5 +254,10 @@ const styles = StyleSheet.create({
     width: 30,
     marginRight: 15,
     alignItems: "center",
+  },
+  closeButton: {
+    position: "absolute",
+    top: Layout.spacing.small,
+    right: Layout.spacing.medium,
   },
 });
