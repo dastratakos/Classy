@@ -27,34 +27,7 @@ export default function App() {
     setUser: setUser,
     friendIds: friendIds,
     setFriendIds: setFriendIds,
-    // channel: channel,
-    // setChannel: setChannel,
   };
-
-  // const [userName, setUserName] = useState(profile.name);
-  // const [userMajor, setUserMajor] = useState(profile.major);
-  // const [userGradYear, setUserGradYear] = useState(profile.gradYear);
-  // const [userInterests, setUserInterests] = useState(profile.interests);
-  // const [userNumFriends, setUserNumFriends] = useState(profile.numFriends);
-  // const [userInClass, setUserInClass] = useState(profile.inClass);
-  // const [userPrivate, setUserPrivate] = useState(profile.private);
-
-  // const userSettings = {
-  //   userName: userName,
-  //   userMajor: userMajor,
-  //   userGradYear: userGradYear,
-  //   userInterests: userInterests,
-  //   userNumFriends: userNumFriends,
-  //   userInClass: userInClass,
-  //   userPrivate: userPrivate,
-  //   setUserName,
-  //   setUserMajor,
-  //   setUserGradYear,
-  //   setUserInterests,
-  //   setUserNumFriends,
-  //   setUserInClass,
-  //   setUserPrivate,
-  // };
 
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
