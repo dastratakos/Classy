@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
   },
   unitsWays: {
     fontWeight: "bold",
-    color: Colors.status.inClass,
+    color: Colors.green,
     marginBottom: Layout.spacing.small,
   },
   friendsSection: {

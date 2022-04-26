@@ -27,9 +27,10 @@ export default {
     imagePlaceholder: "#888",
   },
   status: {
-    inClass: "#20E070",
-    notInClass: "#FF3742",
+    notInClass: "#20E070",
+    inClass: "#FF3742",
   },
   white: "#fff",
   red: "#FF3742",
+  green: "#20E070",
 };

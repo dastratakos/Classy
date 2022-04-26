@@ -36,12 +36,21 @@ export default function ProfileStackNavigator() {
         })}
       />
       <Stack.Screen name="Courses" component={Courses} />
-      <Stack.Screen name="Course" component={Course} />
-      <Stack.Screen name="Friends" component={Friends} />
+      <Stack.Screen
+        name="Course"
+        component={Course}
+        getId={({ params }) => params.course.courseId}
+      />
+      <Stack.Screen
+        name="Friends"
+        component={Friends}
+        getId={({ params }) => params.id}
+      />
       <Stack.Screen
         name="FriendProfile"
         component={FriendProfile}
         options={{ title: "Friend Profile" }}
+        getId={({ params }) => params.id}
       />
       <Stack.Screen name="Quarters" component={Quarters} />
     </Stack.Navigator>

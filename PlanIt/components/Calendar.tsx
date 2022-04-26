@@ -75,7 +75,7 @@ export default function Calendar({ courses }: { courses: Course[] }) {
   useEffect(() => {
     console.log("printing courses");
     for (let course of courses) {
-      console.log("course:", course);
+      // console.log("course:", course);
       setCourse(course);
     }
     getSchedules();
@@ -98,7 +98,7 @@ export default function Calendar({ courses }: { courses: Course[] }) {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      console.log("got data", docSnap.data());
+      // console.log("got data", docSnap.data());
       const schedule = docSnap.data();
       const days = schedule.days;
       const location = schedule.location;
@@ -136,17 +136,9 @@ export default function Calendar({ courses }: { courses: Course[] }) {
     const minutes = time.getMinutes();
 
     const firstHour = times[0];
-
     const hourDiff = hours - firstHour;
 
     const offset = Layout.spacing.medium + Layout.spacing.xxlarge / 2;
-
-    console.log(
-      "offset:",
-      offset +
-        hourDiff * Layout.spacing.xxlarge +
-        (minutes * Layout.spacing.xxlarge) / 60
-    );
 
     return (
       offset +
@@ -184,7 +176,7 @@ export default function Calendar({ courses }: { courses: Course[] }) {
                 styles.day,
                 selected === i
                   ? today === i
-                    ? { backgroundColor: Colors.status.notInClass }
+                    ? { backgroundColor: Colors.red }
                     : { backgroundColor: Colors[colorScheme].text }
                   : null,
               ]}

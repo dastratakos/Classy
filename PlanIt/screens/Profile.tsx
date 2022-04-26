@@ -124,7 +124,7 @@ export default function Profile() {
             <View>
               <Text style={styles.name}>{context.user.name}</Text>
               <View
-                style={[AppStyles.row, { marginTop: Layout.spacing.xsmall }]}
+                style={[AppStyles.row, { marginVertical: Layout.spacing.xsmall }]}
               >
                 <View
                   style={[

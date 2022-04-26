@@ -1,69 +1,42 @@
-import { Pressable, ScrollView, Image, StyleSheet } from "react-native";
+import { FriendProfileProps, User } from "../types";
 import { Icon, Text, View } from "../components/Themed";
-
-import Button from "../components/Buttons/Button";
-import Colors from "../constants/Colors";
-import CourseCard from "../components/CourseCard";
-import Layout from "../constants/Layout";
-import SquareButton from "../components/Buttons/SquareButton";
-import { useNavigation } from "@react-navigation/core";
-import useColorScheme from "../hooks/useColorScheme";
-import Calendar from "../components/Calendar";
-import AppStyles from "../styles/AppStyles";
-import Separator from "../components/Separator";
-import { useContext, useEffect, useState } from "react";
 import {
+  Image,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
+import {
+  addDoc,
   collection,
   doc,
   getDoc,
   getDocs,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "../firebase";
-import { FriendProfileProps, User } from "../types";
+import { useContext, useEffect, useState } from "react";
+
 import AppContext from "../context/Context";
+import AppStyles from "../styles/AppStyles";
+import Button from "../components/Buttons/Button";
+import Calendar from "../components/Calendar";
+import Colors from "../constants/Colors";
+import CourseCard from "../components/CourseCard";
+import Layout from "../constants/Layout";
+import Separator from "../components/Separator";
+import SquareButton from "../components/Buttons/SquareButton";
+import { db } from "../firebase";
+import useColorScheme from "../hooks/useColorScheme";
+import { useNavigation } from "@react-navigation/core";
 
 const profile = {
-  name: "Jiwon Lee",
   inClass: false,
-  major: "Computer Science",
-  gradYear: "2022 (Senior)",
-  numFriends: "102",
   courseSimilarity: 57.54,
   // courseSimilarity: 83,
-  friends: true,
   private: false,
-  courses: [
-    {
-      code: "CS 194W",
-      title: "Senior Project (WIM)",
-      units: "3",
-      numFriends: "12",
-      taking: true,
-    },
-    {
-      code: "CS 221",
-      title: "Artificial Intelligence",
-      units: "3-4",
-      numFriends: "8",
-      taking: false,
-    },
-    {
-      code: "ECON 1",
-      title: "Principles of Economics",
-      units: "5",
-      numFriends: "8",
-      taking: false,
-    },
-    {
-      code: "PSYC 135",
-      title: "Dement's Sleep and Dreams",
-      units: "3",
-      numFriends: "21",
-      taking: false,
-    },
-  ],
 };
 
 export default function FriendProfile({ route }: FriendProfileProps) {
@@ -73,16 +46,39 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 
   const [user, setUser] = useState({} as User);
   const [friendStatus, setFriendStatus] = useState("");
+  const [friendDocId, setFriendDocId] = useState("");
   const [friendStatusLoading, setFriendStatusLoading] = useState(true);
   const [numFriends, setNumFriends] = useState("");
+  const [courses, setCourses] = useState([]);
+
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
+    onRefresh();
+  }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
     getUser(route.params.id);
     getFriendStatus(route.params.id);
     getFriendIds(route.params.id).then((res) => {
       setNumFriends(`${res.length}`);
     });
-  }, []);
+    getCourses(route.params.id);
+    setRefreshing(false);
+  };
+
+  const getCourses = async (id: string) => {
+    // TODO: use id to query for specific courses
+    const q = query(collection(db, "courses"));
+
+    const results = [];
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      results.push(doc.data());
+    });
+    setCourses(results);
+  };
 
   const getUser = async (id: string) => {
     const docRef = doc(db, "users", id);
@@ -97,6 +93,13 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   };
 
   const getFriendStatus = async (id: string) => {
+    /**
+     * Possible friend statuses:
+     *   - not friends
+     *   - request sent (you sent this friend a request)
+     *   - request received (you received a request from this friend)
+     *   - friends
+     */
     setFriendStatusLoading(true);
 
     const q = query(
@@ -111,7 +114,17 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     const querySnapshot = await getDocs(q);
     // TODO: check that this has 0 or 1 doc
     querySnapshot.forEach((doc) => {
-      setFriendStatus(doc.data().status);
+      console.log("doc.data():", doc.data());
+      setFriendDocId(doc.id);
+
+      if (doc.data().status === "requested") {
+        console.log("hi,", doc.data().requesterId[context.user.id]);
+        if (doc.data().requesterId[context.user.id])
+          setFriendStatus("request sent");
+        else setFriendStatus("request received");
+      } else {
+        setFriendStatus(doc.data().status);
+      }
     });
 
     setFriendStatusLoading(false);
@@ -136,10 +149,41 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     return friendIds;
   };
 
+  const addFriend = async () => {
+    const userId = context.user.id;
+    const friendId = user.id;
+
+    const docRef = await addDoc(collection(db, "friends"), {
+      ids: {
+        [userId]: true,
+        [friendId]: true,
+      },
+      requesterId: {
+        [userId]: true,
+        [friendId]: false,
+      },
+      status: "requested",
+    });
+
+    setFriendStatus("request sent");
+
+    console.log("Friend request send with ID:", docRef.id);
+  };
+
+  const acceptRequest = async () => {
+    const docRef = doc(db, "friends", friendDocId);
+    await updateDoc(docRef, { status: "friends" });
+
+    setFriendStatus("friends");
+  };
+
   return (
     <ScrollView
       style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
     >
       <View style={AppStyles.section}>
         <View style={AppStyles.row}>
@@ -166,7 +210,10 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             <View>
               <Text style={styles.name}>{user.name}</Text>
               <View
-                style={[AppStyles.row, { marginTop: Layout.spacing.xsmall }]}
+                style={[
+                  AppStyles.row,
+                  { marginVertical: Layout.spacing.xsmall },
+                ]}
               >
                 <View
                   style={[
@@ -196,27 +243,21 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                   <>
                     {friendStatus === "not friends" && (
                       <View style={{ marginRight: Layout.spacing.small }}>
-                        <Button
-                          text="Add Friend"
-                          onPress={() => console.log("Add Friend pressed")}
-                        />
+                        <Button text="Add Friend" onPress={addFriend} />
                       </View>
                     )}
-                    {friendStatus === "pending" && (
-                      <View style={{ marginRight: Layout.spacing.small }}>
-                        <Button
-                          text="Accept request"
-                          onPress={() => console.log("Accept request pressed")}
-                        />
-                      </View>
-                    )}
-                    {friendStatus === "requested" && (
+                    {friendStatus === "request sent" && (
                       <View style={{ marginRight: Layout.spacing.small }}>
                         <Button
                           text="Requested"
                           onPress={() => console.log("Requested pressed")}
                           pressable={false}
                         />
+                      </View>
+                    )}
+                    {friendStatus === "request received" && (
+                      <View style={{ marginRight: Layout.spacing.small }}>
+                        <Button text="Accept request" onPress={acceptRequest} />
                       </View>
                     )}
                   </>
@@ -251,7 +292,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                 </View>
                 <Text style={styles.aboutText}>{user.major}</Text>
               </View>
-            ): null}
+            ) : null}
             {/* Graduation Year */}
             {user.gradYear ? (
               <View style={AppStyles.row}>
@@ -260,7 +301,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                 </View>
                 <Text style={styles.aboutText}>{user.gradYear}</Text>
               </View>
-            ): null}
+            ) : null}
             {/* Interests */}
             {user.interests ? (
               <View style={AppStyles.row}>
@@ -317,21 +358,19 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       ) : (
         <>
           <View style={AppStyles.section}>
-            {profile.courses.map((course, i) => (
+            {courses.map((course, i) => (
               <CourseCard
-                code={course.code}
-                title={course.title}
-                units={course.units}
-                numFriends={course.numFriends}
-                emphasize={course.taking}
+                course={course}
+                numFriends={"0"}
+                emphasize={false}
                 key={i}
               />
             ))}
           </View>
           <Separator />
-          {/* <View style={AppStyles.section}>
-            <Calendar courses={[]}/>
-          </View> */}
+          <View style={AppStyles.section}>
+            <Calendar courses={courses} />
+          </View>
         </>
       )}
     </ScrollView>

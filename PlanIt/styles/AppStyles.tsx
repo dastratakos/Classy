@@ -50,7 +50,7 @@ export default StyleSheet.create({
   },
   errorText: {
     alignSelf: "center",
-    color: Colors.status.notInClass,
+    color: Colors.red,
   },
   activityIndicatorContainer: {
     flex: 1,

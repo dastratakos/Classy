@@ -62,8 +62,8 @@ export default function App() {
   const theme: DeepPartial<Theme> = {
     colors: {
       accent_blue: Colors.light.tint,
-      accent_green: Colors.status.inClass,
-      accent_red: Colors.status.notInClass,
+      accent_green: Colors.green,
+      accent_red: Colors.red,
       bg_gradient_end: "#F7F7F7",
       bg_gradient_start: "#FCFCFC",
       black: Colors[colorScheme].text,
