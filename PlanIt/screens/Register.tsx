@@ -99,7 +99,7 @@ export default function Register({ route }: RegisterProps) {
             ]}
             autoCapitalize="none"
             autoCorrect={false}
-            textContentType="newPassword"
+            textContentType="password"
             secureTextEntry
           />
           <TextInput
@@ -118,7 +118,7 @@ export default function Register({ route }: RegisterProps) {
             ]}
             autoCapitalize="none"
             autoCorrect={false}
-            textContentType="newPassword"
+            textContentType="password"
             secureTextEntry
           />
           <View style={{ height: Layout.spacing.large }} />
