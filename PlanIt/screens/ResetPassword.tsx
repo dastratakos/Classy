@@ -55,6 +55,8 @@ export default function ResetPassword() {
             ]}
             autoCapitalize="none"
             autoCorrect={false}
+            textContentType="emailAddress"
+            keyboardType="email-address"
           />
         </View>
         <View style={{ height: Layout.spacing.large }} />

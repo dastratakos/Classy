@@ -174,6 +174,8 @@ export default function Login({ route }: LoginProps) {
             ]}
             autoCapitalize="none"
             autoCorrect={false}
+            textContentType="emailAddress"
+            keyboardType="email-address"
           />
           <TextInput
             placeholder="Password"
@@ -188,6 +190,7 @@ export default function Login({ route }: LoginProps) {
             ]}
             autoCapitalize="none"
             autoCorrect={false}
+            textContentType="password"
             secureTextEntry
           />
         </View>

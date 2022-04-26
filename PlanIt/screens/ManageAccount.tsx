@@ -188,6 +188,7 @@ export default function Settings() {
           ]}
           autoCapitalize="none"
           autoCorrect={false}
+          textContentType="password"
           secureTextEntry
         />
         <TextInput
@@ -206,6 +207,7 @@ export default function Settings() {
           ]}
           autoCapitalize="none"
           autoCorrect={false}
+          textContentType="newPassword"
           secureTextEntry
         />
         <TextInput
@@ -224,6 +226,7 @@ export default function Settings() {
           ]}
           autoCapitalize="none"
           autoCorrect={false}
+          textContentType="newPassword"
           secureTextEntry
         />
       </KeyboardAvoidingView>

@@ -236,6 +236,7 @@ export default function Settings() {
             onChangeText={(text) => setName(text)}
             style={[styles.input, { color: Colors[colorScheme].text }]}
             autoCapitalize="words"
+            textContentType="name"
           />
         </View>
         <View style={AppStyles.row}>

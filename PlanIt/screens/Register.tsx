@@ -80,6 +80,8 @@ export default function Register({ route }: RegisterProps) {
             ]}
             autoCapitalize="none"
             autoCorrect={false}
+            textContentType="emailAddress"
+            keyboardType="email-address"
           />
           <TextInput
             placeholder="Password"
@@ -97,6 +99,7 @@ export default function Register({ route }: RegisterProps) {
             ]}
             autoCapitalize="none"
             autoCorrect={false}
+            textContentType="password"
             secureTextEntry
           />
           <TextInput
@@ -115,6 +118,7 @@ export default function Register({ route }: RegisterProps) {
             ]}
             autoCapitalize="none"
             autoCorrect={false}
+            textContentType="password"
             secureTextEntry
           />
         </View>
