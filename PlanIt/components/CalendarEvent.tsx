@@ -28,7 +28,7 @@ export default function CalendarEvent({
       <Pressable
         style={({ pressed }) => [
           styles.event,
-          { opacity: pressed ? 0.25 : 0.75, height: height },
+          { opacity: pressed ? 0.5 : 0.75, height: height },
         ]}
         onPress={onPress}
       >

@@ -217,7 +217,7 @@ export default function Calendar({ events }: { events: [] }) {
         style={[
           {
             marginTop: Layout.spacing.medium,
-            zIndex: 100,
+            // zIndex: 100,
             backgroundColor: "transparent",
           },
         ]}
