@@ -5,7 +5,14 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { createRef, forwardRef, useEffect, useRef, useState } from "react";
+import {
+  createRef,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import AppStyles from "../styles/AppStyles";
 import CalendarEvent from "./CalendarEvent";
@@ -24,6 +31,7 @@ export default function Calendar({ events }: { events: [] }) {
   const newEvents = events.map((item) => ({ ...item, ref: createRef() }));
 
   const { width } = Dimensions.get("screen");
+  const dayWidth = width - 2 * Layout.spacing.medium;
   const scrollX = useRef(new Animated.Value(0)).current;
 
   const d = new Date();
@@ -79,11 +87,11 @@ export default function Calendar({ events }: { events: [] }) {
     );
   };
 
-  const DayTab = forwardRef(({ day, i }, ref) => {
+  const DayTab = forwardRef(({ day, i, onItemPress }, ref) => {
     return (
       <Pressable
         style={{ flex: 1, alignItems: "center" }}
-        onPress={() => setSelected(i)}
+        onPress={onItemPress}
         ref={ref}
       >
         <View style={styles.day}>
@@ -136,10 +144,7 @@ export default function Calendar({ events }: { events: [] }) {
   });
 
   const Indicator = ({ measurements, scrollX }) => {
-    // Subtract spacing for AppStyles.section padding
-    const inputRange = measurements.map(
-      (_, i) => i * (width - 2 * Layout.spacing.medium)
-    );
+    const inputRange = measurements.map((_, i) => i * dayWidth);
     const indicatorLeft = scrollX.interpolate({
       inputRange,
       outputRange: measurements.map(
@@ -152,7 +157,7 @@ export default function Calendar({ events }: { events: [] }) {
     );
   };
 
-  const Header = ({ data, scrollX }) => {
+  const Header = ({ data, scrollX, onItemPress }) => {
     // const dayInitials = ["M", "T", "W", "T", "F"];
     const [measurements, setMeasurements] = useState([]);
     const containerRef = useRef();
@@ -187,7 +192,15 @@ export default function Calendar({ events }: { events: [] }) {
           ref={containerRef}
         >
           {data.map((item, i) => {
-            return <DayTab key={i} day={item.day[0]} i={i} ref={item.ref} />;
+            return (
+              <DayTab
+                key={i}
+                day={item.day[0]}
+                i={i}
+                ref={item.ref}
+                onItemPress={() => onItemPress(i)}
+              />
+            );
           })}
         </View>
       </View>
@@ -245,8 +258,7 @@ export default function Calendar({ events }: { events: [] }) {
 
   const Day = ({ events }) => {
     return (
-      // Subtract spacing for AppStyles.section padding
-      <View style={{ width: width - 2 * Layout.spacing.medium }}>
+      <View style={{ width: dayWidth }}>
         <Grid />
         {events.map((event, i) => {
           return (
@@ -266,10 +278,21 @@ export default function Calendar({ events }: { events: [] }) {
     );
   };
 
+  const ref = useRef();
+
+  const onItemPress = useCallback((itemIndex) => {
+    if (ref && ref.current)
+      ref.current.scrollToOffset({
+        offset: itemIndex * dayWidth,
+      });
+    setSelected(itemIndex);
+  });
+
   return (
     <>
-      <Header data={newEvents} scrollX={scrollX} />
+      <Header data={newEvents} scrollX={scrollX} onItemPress={onItemPress} />
       <Animated.FlatList
+        ref={ref}
         data={newEvents}
         keyExtractor={(item: Object) => item.day}
         horizontal
