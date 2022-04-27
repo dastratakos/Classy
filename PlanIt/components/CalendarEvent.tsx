@@ -2,6 +2,7 @@ import { Pressable, StyleSheet } from "react-native";
 import { Text, View } from "./Themed";
 
 import AppStyles from "../styles/AppStyles";
+import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 
 export default function CalendarEvent({
@@ -10,6 +11,7 @@ export default function CalendarEvent({
   location,
   marginTop,
   height,
+  leftIndent = 0,
   onPress,
 }: {
   title: string;
@@ -17,15 +19,16 @@ export default function CalendarEvent({
   location: string;
   marginTop: number;
   height: number;
+  leftIndent: number;
   onPress: () => void;
 }) {
   return (
     <View style={[styles.container, { marginTop: marginTop }]}>
-      <View style={styles.leftPadding} />
+      <View style={[styles.leftPadding, { width: 45 + leftIndent }]} />
       <Pressable
         style={({ pressed }) => [
           styles.event,
-          { opacity: pressed ? 0.25 : 0.5, height: height },
+          { opacity: pressed ? 0.25 : 0.75, height: height },
         ]}
         onPress={onPress}
       >
@@ -44,7 +47,6 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   leftPadding: {
-    width: 45,
     backgroundColor: "transparent",
   },
   event: {
@@ -52,7 +54,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Layout.spacing.small,
     flex: 1,
     borderRadius: Layout.radius.small,
-    backgroundColor: "red",
+    backgroundColor: Colors.lightred,
     overflow: "hidden",
   },
   titleText: {

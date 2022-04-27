@@ -158,7 +158,6 @@ export default function Calendar({ events }: { events: [] }) {
   };
 
   const Header = ({ data, scrollX, onItemPress }) => {
-    // const dayInitials = ["M", "T", "W", "T", "F"];
     const [measurements, setMeasurements] = useState([]);
     const containerRef = useRef();
 
@@ -261,6 +260,20 @@ export default function Calendar({ events }: { events: [] }) {
       <View style={{ width: dayWidth }}>
         <Grid />
         {events.map((event, i) => {
+          /* Handle overlapping events by indenting. */
+          let leftIndent = 0;
+          let prevIndex = i - 1;
+          let currIndex = i;
+          while (prevIndex >= 0) {
+            const prevEndTime = events[prevIndex].endInfo;
+            const currStartTime = events[currIndex].startInfo;
+            if (prevEndTime > currStartTime) {
+              leftIndent += Layout.spacing.xsmall;
+              currIndex--;
+            }
+            prevIndex--;
+          }
+
           return (
             <CalendarEvent
               title={event.title}
@@ -268,9 +281,11 @@ export default function Calendar({ events }: { events: [] }) {
               location={event.location}
               marginTop={getMarginTop(event.startInfo)}
               height={getHeight(event.startInfo, event.endInfo)}
+              leftIndent={leftIndent}
               onPress={() =>
                 navigation.navigate("Course", { id: event.courseId })
               }
+              key={i}
             />
           );
         })}
