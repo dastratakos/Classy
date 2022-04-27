@@ -153,7 +153,12 @@ export default function Calendar({ events }: { events: [] }) {
     });
 
     return (
-      <Animated.View style={[styles.indicator, { left: indicatorLeft }]} />
+      <Animated.View
+        style={[
+          styles.indicator,
+          { left: indicatorLeft, backgroundColor: Colors[colorScheme].text },
+        ]}
+      />
     );
   };
 
