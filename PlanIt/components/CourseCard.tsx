@@ -23,7 +23,7 @@ export default function CourseCard({
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate("Course", { course })}
+      onPress={() => navigation.navigate("Course", { id: course.courseId })}
       style={[styles.container, { borderColor: Colors[colorScheme].border }]}
     >
       <View style={styles.textContainer}>

@@ -39,7 +39,7 @@ export default function ProfileStackNavigator() {
       <Stack.Screen
         name="Course"
         component={Course}
-        getId={({ params }) => params.course.courseId}
+        getId={({ params }) => params.id}
       />
       <Stack.Screen
         name="Friends"

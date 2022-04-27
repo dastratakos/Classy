@@ -1,4 +1,5 @@
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 
 import {
   ActivityIndicator,
@@ -27,6 +28,7 @@ import { StatusBar } from "expo-status-bar";
 import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { SaveFormat } from "expo-image-manipulator";
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -105,7 +107,15 @@ export default function Settings() {
       setUploading(true);
 
       if (!pickerResult.cancelled) {
-        const uploadUrl = await uploadImageAsync(pickerResult.uri);
+        const compressedImage = await ImageManipulator.manipulateAsync(
+          pickerResult.uri,
+          [{ resize: { width: 200, height: 200 } }],
+          { format: SaveFormat.JPEG }
+        );
+
+        console.log("compressed image:", compressedImage);
+
+        const uploadUrl = await uploadImageAsync(compressedImage.uri);
         setPhotoUrl(uploadUrl);
 
         context.setUser({
@@ -129,7 +139,7 @@ export default function Settings() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 0.5,
+      quality: 0,
       // base64: true,
     });
 

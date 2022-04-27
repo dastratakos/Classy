@@ -41,7 +41,7 @@ export default function SearchStackNavigator() {
       <Stack.Screen
         name="Course"
         component={Course}
-        getId={({ params }) => params.course.courseId}
+        getId={({ params }) => params.id}
       />
       <Stack.Screen
         name="Friends"

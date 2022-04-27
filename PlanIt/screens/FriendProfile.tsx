@@ -32,6 +32,8 @@ import { db } from "../firebase";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
+import events from "./dummyEvents";
+
 const profile = {
   inClass: false,
   courseSimilarity: 57.54,
@@ -369,7 +371,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
           </View>
           <Separator />
           <View style={AppStyles.section}>
-            <Calendar courses={courses} />
+            <Calendar events={events} />
           </View>
         </>
       )}

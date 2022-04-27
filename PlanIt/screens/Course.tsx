@@ -2,18 +2,20 @@ import * as WebBrowser from "expo-web-browser";
 
 import { ScrollView, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
-import { CourseProps } from "../types";
+import { Course as CourseType, CourseProps } from "../types";
 import FriendCard from "../components/FriendCard";
 import Layout from "../constants/Layout";
 import Separator from "../components/Separator";
 import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
 import ReadMoreText from "../components/ReadMoreText";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 const friends = {
   aut2020: [
@@ -248,8 +250,23 @@ const cartaLink = "https://carta-beta.stanford.edu/course/";
 export default function Course({ route }: CourseProps) {
   const colorScheme = useColorScheme();
 
-  const course = route.params.course;
-  // console.log("🚀 ~ file: Course.tsx ~ line 259 ~ Course ~ course", course);
+  const [course, setCourse] = useState({} as CourseType);
+
+  useEffect(() => {
+    getCourse(route.params.id);
+  }, []);
+
+  const getCourse = async (id: string) => {
+    const docRef = doc(db, "courses", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      setCourse(docSnap.data() as Course);
+    } else {
+      console.log(`Could not find course: ${id}`);
+      alert("This course does not exist.");
+    }
+  };
 
   return (
     <ScrollView
@@ -286,9 +303,7 @@ export default function Course({ route }: CourseProps) {
           <View style={{ width: "48%" }}>
             <Button
               text="Carta"
-              onPress={() =>
-                handleCartaPress(course.code)
-              }
+              onPress={() => handleCartaPress(course.code)}
             />
           </View>
         </View>

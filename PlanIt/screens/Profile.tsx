@@ -23,6 +23,7 @@ import SquareButton from "../components/Buttons/SquareButton";
 import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import events from "./dummyEvents";
 
 export default function Profile() {
   const context = useContext(AppContext);
@@ -222,7 +223,7 @@ export default function Profile() {
       </View>
       <Separator />
       <View style={AppStyles.section}>
-        <Calendar courses={courses} />
+        <Calendar events={events} />
       </View>
     </ScrollView>
   );

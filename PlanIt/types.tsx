@@ -22,6 +22,7 @@ export type Course = {
   year: string;
   subject: string;
   code: string;
+  courseId: string;
   title: string;
   description: string;
   gers: string;
@@ -59,7 +60,7 @@ export type RootStackParamList = {
   ChannelScreen: { channel: ChannelType };
 
   Courses: undefined;
-  Course: { course: Course };
+  Course: { id: string };
   Quarters: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -86,7 +87,7 @@ export type ProfileStackParamList = {
 
   Profile: undefined;
   Courses: undefined;
-  Course: { course: Course };
+  Course: { id: string };
   Quarters: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -100,7 +101,7 @@ export type SearchStackParamList = {
   Search: undefined;
   Profile: undefined;
   Courses: undefined;
-  Course: { course: Course };
+  Course: { id: string };
   Quarters: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -114,7 +115,7 @@ export type MessagesStackParamList = {
   ChannelScreen: { channel: ChannelType };
 
   Courses: undefined;
-  Course: { course: Course };
+  Course: { id: string };
   Friends: { id: string };
   FriendProfile: { id: string };
 };
