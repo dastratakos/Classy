@@ -45,7 +45,7 @@ export default function Login({ route }: LoginProps) {
       streamChatUser,
       client.devToken(streamChatUser.id)
     );
-    console.log("User connected:");
+    // console.log("User connected:");
     // console.log(streamChatUser);
 
     // const filter = { type: "messaging", members: { $in: [streamChatUser.id] } };

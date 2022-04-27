@@ -1,18 +1,27 @@
-import { Animated, Dimensions, Pressable, StyleSheet } from "react-native";
-import { Text, View } from "./Themed";
+import {
+  Animated,
+  Dimensions,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
+import { createRef, forwardRef, useEffect, useRef, useState } from "react";
 
-import Colors from "../constants/Colors";
-import Layout from "../constants/Layout";
-import { useNavigation } from "@react-navigation/core";
-import useColorScheme from "../hooks/useColorScheme";
-import { useRef, useState } from "react";
 import AppStyles from "../styles/AppStyles";
 import CalendarEvent from "./CalendarEvent";
+import Colors from "../constants/Colors";
+import Layout from "../constants/Layout";
+import { Text } from "./Themed";
 import { Timestamp } from "firebase/firestore";
+import useColorScheme from "../hooks/useColorScheme";
+import { useNavigation } from "@react-navigation/core";
 
-export default function Calendar({ events }: { events: Object }) {
+export default function Calendar({ events }: { events: [] }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+
+  /* Create new data structure with ref property. */
+  const newEvents = events.map((item) => ({ ...item, ref: createRef() }));
 
   const { width } = Dimensions.get("screen");
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -26,6 +35,22 @@ export default function Calendar({ events }: { events: Object }) {
   );
 
   const times = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+
+  const getTimeString = (startTime: Timestamp, endTime: Timestamp) => {
+    var start = startTime.toDate().toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+
+    var end = endTime.toDate().toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+
+    return `${start} - ${end}`;
+  };
 
   const getMarginTop = (time: Timestamp) => {
     const offset = Layout.spacing.medium + Layout.spacing.xxlarge / 2;
@@ -54,14 +79,32 @@ export default function Calendar({ events }: { events: Object }) {
     );
   };
 
-  const DayTab = ({ day, i }) => {
+  const DayTab = forwardRef(({ day, i }, ref) => {
     return (
       <Pressable
         style={{ flex: 1, alignItems: "center" }}
         onPress={() => setSelected(i)}
-        key={i}
+        ref={ref}
       >
-        <View
+        <View style={styles.day}>
+          <Text
+            style={
+              today === i
+                ? selected === i
+                  ? { color: Colors.white, fontWeight: "500" }
+                  : { color: Colors.red }
+                : selected === i
+                ? {
+                    color: Colors[colorScheme].background,
+                    fontWeight: "500",
+                  }
+                : { color: Colors[colorScheme].text }
+            }
+          >
+            {day}
+          </Text>
+        </View>
+        {/* <View
           style={[
             styles.day,
             selected === i
@@ -87,27 +130,66 @@ export default function Calendar({ events }: { events: Object }) {
           >
             {day}
           </Text>
-        </View>
+        </View> */}
       </Pressable>
+    );
+  });
+
+  const Indicator = ({ measurements, scrollX }) => {
+    // Subtract spacing for AppStyles.section padding
+    const inputRange = measurements.map(
+      (_, i) => i * (width - 2 * Layout.spacing.medium)
+    );
+    const indicatorLeft = scrollX.interpolate({
+      inputRange,
+      outputRange: measurements.map(
+        (measurement) => measurement.x + measurement.width / 2 - 15
+      ),
+    });
+
+    return (
+      <Animated.View style={[styles.indicator, { left: indicatorLeft }]} />
     );
   };
 
-  const Header = ({ scrollX }) => {
-    const dayInitials = ["M", "T", "W", "T", "F"];
+  const Header = ({ data, scrollX }) => {
+    // const dayInitials = ["M", "T", "W", "T", "F"];
+    const [measurements, setMeasurements] = useState([]);
+    const containerRef = useRef();
+
+    useEffect(() => {
+      let m = [];
+      data.forEach((item) => {
+        item.ref.current.measureLayout(
+          containerRef.current,
+          (x, y, width, height) => {
+            m.push({ x, y, width, height });
+
+            if (m.length === data.length) setMeasurements(m);
+          }
+        );
+      });
+    }, []);
 
     return (
-      <View
-        style={[
-          AppStyles.row,
-          {
-            justifyContent: "space-between",
-            marginBottom: Layout.spacing.medium,
-          },
-        ]}
-      >
-        {dayInitials.map((day, i) => {
-          return <DayTab key={i} day={day} i={i} />;
-        })}
+      <View>
+        {measurements.length > 0 && (
+          <Indicator measurements={measurements} scrollX={scrollX} />
+        )}
+        <View
+          style={[
+            AppStyles.row,
+            {
+              justifyContent: "space-between",
+              marginBottom: Layout.spacing.medium,
+            },
+          ]}
+          ref={containerRef}
+        >
+          {data.map((item, i) => {
+            return <DayTab key={i} day={item.day[0]} i={i} ref={item.ref} />;
+          })}
+        </View>
       </View>
     );
   };
@@ -170,7 +252,7 @@ export default function Calendar({ events }: { events: Object }) {
           return (
             <CalendarEvent
               title={event.title}
-              time={""}
+              time={getTimeString(event.startInfo, event.endInfo)}
               location={event.location}
               marginTop={getMarginTop(event.startInfo)}
               height={getHeight(event.startInfo, event.endInfo)}
@@ -186,9 +268,9 @@ export default function Calendar({ events }: { events: Object }) {
 
   return (
     <>
-      <Header scrollX={scrollX} />
+      <Header data={newEvents} scrollX={scrollX} />
       <Animated.FlatList
-        data={events}
+        data={newEvents}
         keyExtractor={(item: Object) => item.day}
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -211,5 +293,12 @@ const styles = StyleSheet.create({
     height: 30,
     width: 30,
     borderRadius: 30 / 2,
+  },
+  indicator: {
+    position: "absolute",
+    height: 30,
+    width: 30,
+    borderRadius: 30 / 2,
+    backgroundColor: "blue",
   },
 });
