@@ -269,7 +269,7 @@ export default function Calendar({ events }: { events: [] }) {
             const currStartTime = events[currIndex].startInfo;
             if (prevEndTime > currStartTime) {
               leftIndent += Layout.spacing.xsmall;
-              currIndex--;
+              currIndex = prevIndex;
             }
             prevIndex--;
           }
