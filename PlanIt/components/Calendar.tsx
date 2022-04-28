@@ -62,7 +62,7 @@ export default function Calendar({ events }: { events: [] }) {
 
   const getCurrentTimeString = () => {
     const now = Timestamp.now().toDate();
-    return `${now.getHours()}:${now.getMinutes()}`;
+    return `${now.getHours() % 12}:${now.getMinutes()}`;
   };
 
   const getMarginTop = (time: Timestamp) => {
@@ -135,33 +135,6 @@ export default function Calendar({ events }: { events: [] }) {
             {day}
           </Animated.Text>
         </View>
-        {/* <View
-          style={[
-            styles.day,
-            selected === i
-              ? today === i
-                ? { backgroundColor: Colors.red }
-                : { backgroundColor: Colors[colorScheme].text }
-              : null,
-          ]}
-        >
-          <Text
-            style={
-              today === i
-                ? selected === i
-                  ? { color: Colors.white, fontWeight: "500" }
-                  : { color: Colors.red }
-                : selected === i
-                ? {
-                    color: Colors[colorScheme].background,
-                    fontWeight: "500",
-                  }
-                : { color: Colors[colorScheme].text }
-            }
-          >
-            {day}
-          </Text>
-        </View> */}
       </Pressable>
     );
   });
@@ -303,7 +276,6 @@ export default function Calendar({ events }: { events: [] }) {
             />
           </View>
         ))}
-        {/* TODO: only render this if it's between 8AM and 6PM */}
         <View
           style={[
             AppStyles.row,
@@ -328,6 +300,16 @@ export default function Calendar({ events }: { events: [] }) {
               flex: 1,
               height: 1,
               borderRadius: 1,
+              backgroundColor: Colors.red,
+            }}
+          />
+          <View
+            style={{
+              position: "absolute",
+              left: 45 - Layout.spacing.xsmall / 2,
+              height: Layout.spacing.xsmall,
+              width: Layout.spacing.xsmall,
+              borderRadius: Layout.spacing.xsmall / 2,
               backgroundColor: Colors.red,
             }}
           />
