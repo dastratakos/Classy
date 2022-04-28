@@ -60,6 +60,11 @@ export default function Calendar({ events }: { events: [] }) {
     return `${start} - ${end}`;
   };
 
+  const getCurrentTimeString = () => {
+    const now = Timestamp.now().toDate();
+    return `${now.getHours()}:${now.getMinutes()}`;
+  };
+
   const getMarginTop = (time: Timestamp) => {
     const offset = Layout.spacing.medium + Layout.spacing.xxlarge / 2;
     const t = time.toDate();
@@ -88,6 +93,18 @@ export default function Calendar({ events }: { events: [] }) {
   };
 
   const DayTab = forwardRef(({ day, i, onItemPress }, ref) => {
+    const inputRange = [0, 1, 2, 3, 4].map((num) => num * dayWidth);
+    const regularOpacity = scrollX.interpolate({
+      inputRange,
+      outputRange: [0, 1, 2, 3, 4].map((num) => (num === i ? 0 : 1)),
+    });
+    const selectedOpacity = scrollX.interpolate({
+      inputRange,
+      outputRange: [0, 1, 2, 3, 4].map((num) => (num === i ? 1 : 0)),
+    });
+
+    console.log("inputRange:", inputRange);
+
     return (
       <Pressable
         style={{ flex: 1, alignItems: "center" }}
@@ -95,22 +112,30 @@ export default function Calendar({ events }: { events: [] }) {
         ref={ref}
       >
         <View style={styles.day}>
-          <Text
-            style={
+          <Animated.Text
+            style={[
+              { opacity: regularOpacity },
               today === i
-                ? selected === i
-                  ? { color: Colors.white, fontWeight: "500" }
-                  : { color: Colors.red }
-                : selected === i
-                ? {
-                    color: Colors[colorScheme].background,
-                    fontWeight: "500",
-                  }
-                : { color: Colors[colorScheme].text }
-            }
+                ? { color: Colors.red }
+                : { color: Colors[colorScheme].text },
+            ]}
           >
             {day}
-          </Text>
+          </Animated.Text>
+          <Animated.Text
+            style={[
+              {
+                opacity: selectedOpacity,
+                fontWeight: "500",
+                position: "absolute",
+              },
+              today === i
+                ? { color: Colors.white }
+                : { color: Colors[colorScheme].background },
+            ]}
+          >
+            {day}
+          </Animated.Text>
         </View>
         {/* <View
           style={[
@@ -217,7 +242,6 @@ export default function Calendar({ events }: { events: [] }) {
         style={[
           {
             marginTop: Layout.spacing.medium,
-            // zIndex: 100,
             backgroundColor: "transparent",
           },
         ]}
@@ -256,6 +280,35 @@ export default function Calendar({ events }: { events: [] }) {
             />
           </View>
         ))}
+        {/* TODO: only render this if it's between 8AM and 6PM */}
+        <View
+          style={[
+            AppStyles.row,
+            { position: "absolute", marginTop: getMarginTop(Timestamp.now()) },
+          ]}
+        >
+          <Text
+            style={{
+              color: Colors.red,
+              fontWeight: "600",
+              width: 45,
+              textAlign: "right",
+              paddingRight: 10,
+              fontSize: Layout.text.small,
+              backgroundColor: "transparent",
+            }}
+          >
+            {getCurrentTimeString()}
+          </Text>
+          <View
+            style={{
+              flex: 1,
+              height: 1,
+              borderRadius: 1,
+              backgroundColor: Colors.red,
+            }}
+          />
+        </View>
       </View>
     );
   };
@@ -299,6 +352,14 @@ export default function Calendar({ events }: { events: [] }) {
   };
 
   const ref = useRef();
+
+  useEffect(() => {
+    if (ref && ref.current) {
+      ref.current.scrollToOffset({
+        offset: today * dayWidth,
+      });
+    }
+  }, []);
 
   const onItemPress = useCallback((itemIndex) => {
     if (ref && ref.current)

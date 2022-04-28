@@ -16,231 +16,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import ReadMoreText from "../components/ReadMoreText";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
-
-const friends = {
-  aut2020: [
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Jiwon Lee",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Melissa Daniel",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Grace Alwan",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Tara Jones",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Melanie Kessinger",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-  ],
-  win2021: [
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Jiwon Lee",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Melissa Daniel",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Grace Alwan",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-  ],
-  spr2021: [
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Grace Alwan",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Tara Jones",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Melanie Kessinger",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-  ],
-  sum2021: [],
-  aut2021: [
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Jiwon Lee",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Melissa Daniel",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Grace Alwan",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Tara Jones",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Melanie Kessinger",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-  ],
-  win2022: [
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Jiwon Lee",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Melissa Daniel",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Grace Alwan",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Tara Jones",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Melanie Kessinger",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-  ],
-  spr2022: [
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Jiwon Lee",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Melissa Daniel",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Grace Alwan",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Tara Jones",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-    {
-      id: "30dmw08jM3MgRTFdG0oNuuCz4473",
-      name: "Melanie Kessinger",
-      major: "Computer Science",
-      gradYear: "2022 (Senior)",
-      photoUrl:
-        "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/30dmw08jM3MgRTFdG0oNuuCz4473%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-    },
-  ],
-  sum2022: [],
-};
+import friendsData from "./friendsData";
 
 const exploreCoursesLink =
   "https://explorecourses.stanford.edu/search?view=catalog&filter-coursestatus-Active=on&page=0&catalog=&academicYear=&q=";
@@ -257,11 +33,16 @@ export default function Course({ route }: CourseProps) {
   }, []);
 
   const getCourse = async (id: string) => {
-    const docRef = doc(db, "courses", id);
+    console.log("getting course:", id);
+
+    const docRef = doc(db, "courses", `${id}`);
+    console.log("hi");
     const docSnap = await getDoc(docRef);
+    console.log("mel")
 
     if (docSnap.exists()) {
-      setCourse(docSnap.data() as Course);
+      console.log("data:", docSnap.data());
+      setCourse(docSnap.data() as CourseType);
     } else {
       console.log(`Could not find course: ${id}`);
       alert("This course does not exist.");
@@ -296,7 +77,7 @@ export default function Course({ route }: CourseProps) {
             <Button
               text="Explore Courses"
               onPress={() =>
-                handleExplorePress(course.administrativeInformation.courseId)
+                handleExplorePress(course.courseId)
               }
             />
           </View>
@@ -319,7 +100,7 @@ export default function Course({ route }: CourseProps) {
           TODO: horizontal swipable list of quarters
         </Text>
         <View style={AppStyles.section}>
-          {friends.spr2022.map((friend, i) => (
+          {friendsData.spr2022.map((friend, i) => (
             <FriendCard
               id={friend.id}
               name={friend.name}
@@ -340,7 +121,8 @@ function handleExplorePress(courseId: number) {
 }
 
 function handleCartaPress(courseCode: string) {
-  WebBrowser.openBrowserAsync(cartaLink + courseCode);
+  /* Remove spaces from the courseCode. */
+  WebBrowser.openBrowserAsync(cartaLink + courseCode.replace(/\s+/g, ""));
 }
 
 const styles = StyleSheet.create({
