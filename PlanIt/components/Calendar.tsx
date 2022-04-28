@@ -126,7 +126,7 @@ export default function Calendar({ events }: { events: [] }) {
             style={[
               {
                 opacity: selectedOpacity,
-                fontWeight: "500",
+                fontWeight: "700",
                 position: "absolute",
               },
               today === i
@@ -176,14 +176,39 @@ export default function Calendar({ events }: { events: [] }) {
         (measurement) => measurement.x + measurement.width / 2 - 15
       ),
     });
+    const regularOpacity = scrollX.interpolate({
+      inputRange,
+      outputRange: measurements.map((_, i) => (today === i ? 0 : 1)),
+    });
+    const selectedOpacity = scrollX.interpolate({
+      inputRange,
+      outputRange: measurements.map((_, i) => (today === i ? 1 : 0)),
+    });
 
     return (
-      <Animated.View
-        style={[
-          styles.indicator,
-          { left: indicatorLeft, backgroundColor: Colors[colorScheme].text },
-        ]}
-      />
+      <>
+        <Animated.View
+          style={[
+            styles.indicator,
+            {
+              left: indicatorLeft,
+              backgroundColor: Colors[colorScheme].text,
+              opacity: regularOpacity,
+            },
+          ]}
+        />
+        <Animated.View
+          style={[
+            styles.indicator,
+            {
+              position: "absolute",
+              left: indicatorLeft,
+              backgroundColor: Colors.red,
+              opacity: selectedOpacity,
+            },
+          ]}
+        />
+      </>
     );
   };
 
