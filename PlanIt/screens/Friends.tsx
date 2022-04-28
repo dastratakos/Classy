@@ -21,7 +21,7 @@ import useColorScheme from "../hooks/useColorScheme";
 export default function Friends({ route }: FriendsProps) {
   const colorScheme = useColorScheme();
 
-const [friends, setFriends] = useState([] as User[]);
+  const [friends, setFriends] = useState([] as User[]);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -91,14 +91,7 @@ const [friends, setFriends] = useState([] as User[]);
     >
       <View style={AppStyles.section}>
         {friends.map((friend, i) => (
-          <FriendCard
-            id={friend.id}
-            name={friend.name}
-            major={friend.major}
-            gradYear={friend.gradYear}
-            photoUrl={friend.photoUrl}
-            key={i}
-          />
+          <FriendCard friend={friend} key={i} />
         ))}
       </View>
     </ScrollView>

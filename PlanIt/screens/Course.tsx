@@ -101,14 +101,7 @@ export default function Course({ route }: CourseProps) {
                 getTermString({termId}) ({friendsData[termId].length})
               </Text>
               {friendsData[termId].map((friend, i) => (
-                <FriendCard
-                  id={friend.id}
-                  name={friend.name}
-                  major={friend.major}
-                  gradYear={friend.gradYear}
-                  photoUrl={friend.photoUrl}
-                  key={i}
-                />
+                <FriendCard friend={friend} key={i} />
               ))}
             </View>
           ))}
@@ -151,5 +144,5 @@ const styles = StyleSheet.create({
   term: {
     fontSize: Layout.text.medium,
     fontWeight: "500",
-  }
+  },
 });
