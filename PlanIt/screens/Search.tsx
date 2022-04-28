@@ -70,7 +70,6 @@ export default function Search() {
           setFocused={setFocused}
         />
       </View>
-      {/* <View style={{ height: Layout.spacing.medium }} /> */}
       <ScrollView
         style={{ backgroundColor: Colors[colorScheme].background }}
         contentContainerStyle={{ alignItems: "center" }}

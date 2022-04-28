@@ -38,7 +38,7 @@ export default function Course({ route }: CourseProps) {
     const docRef = doc(db, "courses", `${id}`);
     console.log("hi");
     const docSnap = await getDoc(docRef);
-    console.log("mel")
+    console.log("mel");
 
     if (docSnap.exists()) {
       console.log("data:", docSnap.data());
@@ -76,9 +76,7 @@ export default function Course({ route }: CourseProps) {
           <View style={{ width: "48%" }}>
             <Button
               text="Explore Courses"
-              onPress={() =>
-                handleExplorePress(course.courseId)
-              }
+              onPress={() => handleExplorePress(course.courseId)}
             />
           </View>
           <View style={{ width: "48%" }}>
@@ -96,19 +94,23 @@ export default function Course({ route }: CourseProps) {
       <Separator />
       <View style={styles.friendsSection}>
         <Text style={styles.friendsHeader}>Friends</Text>
-        <Text style={{ marginBottom: Layout.spacing.medium }}>
-          TODO: horizontal swipable list of quarters
-        </Text>
         <View style={AppStyles.section}>
-          {friendsData.spr2022.map((friend, i) => (
-            <FriendCard
-              id={friend.id}
-              name={friend.name}
-              major={friend.major}
-              gradYear={friend.gradYear}
-              photoUrl={friend.photoUrl}
-              key={i}
-            />
+          {Object.keys(friendsData).map((termId) => (
+            <View key={termId}>
+              <Text style={styles.term}>
+                getTermString({termId}) ({friendsData[termId].length})
+              </Text>
+              {friendsData[termId].map((friend, i) => (
+                <FriendCard
+                  id={friend.id}
+                  name={friend.name}
+                  major={friend.major}
+                  gradYear={friend.gradYear}
+                  photoUrl={friend.photoUrl}
+                  key={i}
+                />
+              ))}
+            </View>
           ))}
         </View>
       </View>
@@ -146,4 +148,8 @@ const styles = StyleSheet.create({
     marginTop: Layout.spacing.small,
     marginBottom: Layout.spacing.medium,
   },
+  term: {
+    fontSize: Layout.text.medium,
+    fontWeight: "500",
+  }
 });
