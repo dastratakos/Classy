@@ -60,15 +60,17 @@ export default function Search() {
   };
 
   return (
-    <View style={[AppStyles.section, { flex: 1 }]}>
-      <SearchBar
-        placeholder="Search courses or people..."
-        searchPhrase={searchPhrase}
-        setSearchPhrase={setSearchPhrase}
-        focused={focused}
-        setFocused={setFocused}
-      />
-      <View style={{ height: Layout.spacing.medium }} />
+    <View style={{ flex: 1 }}>
+      <View style={AppStyles.section}>
+        <SearchBar
+          placeholder="Search courses or people..."
+          searchPhrase={searchPhrase}
+          setSearchPhrase={setSearchPhrase}
+          focused={focused}
+          setFocused={setFocused}
+        />
+      </View>
+      {/* <View style={{ height: Layout.spacing.medium }} /> */}
       <ScrollView
         style={{ backgroundColor: Colors[colorScheme].background }}
         contentContainerStyle={{ alignItems: "center" }}
@@ -76,31 +78,33 @@ export default function Search() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {searchResults.map((result, i) => {
-          if (result.id) {
+        <View style={AppStyles.section}>
+          {searchResults.map((result, i) => {
+            if (result.id) {
+              return (
+                <FriendCard
+                  id={result.id}
+                  name={result.name}
+                  major={result.major}
+                  gradYear={result.gradYear}
+                  photoUrl={result.photoUrl}
+                  key={result.id}
+                />
+              );
+            }
+
             return (
-              <FriendCard
-                id={result.id}
-                name={result.name}
-                major={result.major}
-                gradYear={result.gradYear}
-                photoUrl={result.photoUrl}
-                key={result.id}
+              <CourseCard
+                course={result}
+                // numFriends={result.numFriends}
+                numFriends={"0"}
+                // emphasize={result.taking}
+                emphasize={false}
+                key={result.courseId}
               />
             );
-          }
-
-          return (
-            <CourseCard
-              course={result}
-              // numFriends={result.numFriends}
-              numFriends={"0"}
-              // emphasize={result.taking}
-              emphasize={false}
-              key={result.courseId}
-            />
-          );
-        })}
+          })}
+        </View>
       </ScrollView>
     </View>
   );
