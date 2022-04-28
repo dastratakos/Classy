@@ -103,8 +103,6 @@ export default function Calendar({ events }: { events: [] }) {
       outputRange: [0, 1, 2, 3, 4].map((num) => (num === i ? 1 : 0)),
     });
 
-    console.log("inputRange:", inputRange);
-
     return (
       <Pressable
         style={{ flex: 1, alignItems: "center" }}

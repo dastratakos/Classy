@@ -14,6 +14,7 @@ import {
   getDoc,
   getDocs,
   query,
+  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -35,7 +36,7 @@ import { useNavigation } from "@react-navigation/core";
 import events from "./dummyEvents";
 
 const profile = {
-  inClass: false,
+  // inClass: false,
   courseSimilarity: 57.54,
   // courseSimilarity: 83,
   private: false,
@@ -52,6 +53,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const [friendStatusLoading, setFriendStatusLoading] = useState(true);
   const [numFriends, setNumFriends] = useState("");
   const [courses, setCourses] = useState([]);
+  const [inClass, setInClass] = useState([]);
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -67,6 +69,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       setNumFriends(`${res.length}`);
     });
     getCourses(route.params.id);
+    checkInClass();
     setRefreshing(false);
   };
 
@@ -151,6 +154,29 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     return friendIds;
   };
 
+  const checkInClass = () => {
+    const now = Timestamp.now().toDate();
+    const today = now.getDay() - 1;
+
+    for (let event of events[today].events) {
+      const startInfo = event.startInfo.toDate();
+      var startTime = new Date();
+      startTime.setHours(startInfo.getHours());
+      startTime.setMinutes(startInfo.getMinutes());
+
+      const endInfo = event.endInfo.toDate();
+      var endTime = new Date();
+      endTime.setHours(endInfo.getHours());
+      endTime.setMinutes(endInfo.getMinutes());
+
+      if (startTime <= now && endTime >= now) {
+        setInClass(true);
+        return;
+      }
+    }
+    setInClass(false);
+  };
+
   const addFriend = async () => {
     const userId = context.user.id;
     const friendId = user.id;
@@ -220,7 +246,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                 <View
                   style={[
                     styles.status,
-                    profile.inClass ? styles.inClass : styles.notInClass,
+                    inClass ? styles.inClass : styles.notInClass,
                   ]}
                 />
                 <Text
@@ -229,7 +255,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                     { color: Colors[colorScheme].secondaryText },
                   ]}
                 >
-                  {profile.inClass ? "In class" : "Not in class"}
+                  {inClass ? "In class" : "Not in class"}
                 </Text>
               </View>
               <View style={AppStyles.row}>

@@ -8,7 +8,14 @@ import {
 } from "react-native";
 import { User, sendEmailVerification } from "firebase/auth";
 import { auth, db } from "../firebase";
-import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  Timestamp,
+} from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -35,13 +42,14 @@ export default function Profile() {
   const [showEmailVerification, setShowEmailVerification] = useState(
     !auth.currentUser?.emailVerified
   );
+  const [inClass, setInClass] = useState(false);
 
   useEffect(() => {
     // if (!context.user && auth.currentUser) getUser(auth.currentUser.uid);
 
     if (auth.currentUser) {
       getUser(auth.currentUser.uid);
-      getCourses(context.user.id);
+      getCourses(context.user.id).then(checkInClass);
     }
 
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -50,6 +58,17 @@ export default function Profile() {
 
     return unsubscribe;
   }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await getUser(context.user.id);
+    await getCourses(context.user.id);
+    if (auth.currentUser)
+      setShowEmailVerification(!auth.currentUser.emailVerified);
+    console.log("emailVerified:", auth.currentUser?.emailVerified);
+    checkInClass();
+    setRefreshing(false);
+  };
 
   const getUser = async (id: string) => {
     const docRef = doc(db, "users", id);
@@ -74,18 +93,28 @@ export default function Profile() {
     setCourses(results);
   };
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await getUser(context.user.id);
-    await getCourses(context.user.id);
-    if (auth.currentUser)
-      setShowEmailVerification(!auth.currentUser.emailVerified);
-    console.log("emailVerified:", auth.currentUser?.emailVerified);
-    setRefreshing(false);
-  };
+  const checkInClass = () => {
+    const now = Timestamp.now().toDate();
+    const today = now.getDay() - 1;
 
-  // TODO: calculate inClass
-  const inClass = true;
+    for (let event of events[today].events) {
+      const startInfo = event.startInfo.toDate();
+      var startTime = new Date();
+      startTime.setHours(startInfo.getHours());
+      startTime.setMinutes(startInfo.getMinutes());
+
+      const endInfo = event.endInfo.toDate();
+      var endTime = new Date();
+      endTime.setHours(endInfo.getHours());
+      endTime.setMinutes(endInfo.getMinutes());
+
+      if (startTime <= now && endTime >= now) {
+        setInClass(true);
+        return;
+      }
+    }
+    setInClass(false);
+  };
 
   const showSendVerificationEmail = () => {
     return (

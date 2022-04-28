@@ -60,7 +60,7 @@ const events = [
         courseId: "none",
         startInfo: Timestamp.fromDate(new Date("March 30, 2022 11:00:00")),
         endInfo: Timestamp.fromDate(new Date("March 30, 2022 12:00:00")),
-        location: "Hewlett Teaching Center, Rm 201",
+        location: "Gates Information Sciences, Rm B1",
       },
       {
         title: "CS 194W Lecture",
