@@ -22,6 +22,7 @@ import { Text } from "./Themed";
 import { Timestamp } from "firebase/firestore";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { useIsMounted } from "../hooks/useIsMounted";
 
 export default function Calendar({ events }: { events: [] }) {
   const navigation = useNavigation();
@@ -61,7 +62,8 @@ export default function Calendar({ events }: { events: [] }) {
 
   const getCurrentTimeString = () => {
     const now = Timestamp.now().toDate();
-    return `${now.getHours() % 12}:${now.getMinutes()}`;
+    const minutes = `${now.getMinutes()}`.padStart(2, "0");
+    return `${now.getHours() % 12}:${minutes}`;
   };
 
   const getMarginTop = (time: Timestamp) => {
@@ -89,6 +91,21 @@ export default function Calendar({ events }: { events: [] }) {
       hourDiff * Layout.spacing.xxlarge +
       (minDiff * Layout.spacing.xxlarge) / 60
     );
+  };
+
+  /**
+   * The current time is close to a specified hour if it is within 8 minutes.
+   * This was calculated using the height of an hour (Layout.spacing.xxlarge)
+   * and the height of the time texts.
+   */
+  const currentTimeClose = (hour: number) => {
+    const now = Timestamp.now().toDate();
+    if (now.getHours() === hour - 1) {
+      return now.getMinutes() > 52;
+    } else if (now.getHours() === hour) {
+      return now.getMinutes() < 8;
+    }
+    return false;
   };
 
   const DayTab = forwardRef(({ day, i, onItemPress }, ref) => {
@@ -194,10 +211,9 @@ export default function Calendar({ events }: { events: [] }) {
   const Header = ({ data, scrollX, onItemPress }) => {
     const [measurements, setMeasurements] = useState([]);
     const containerRef = useRef();
+    const isMounted = useIsMounted();
 
     useEffect(() => {
-      if (measurements.length === data.length) return;
-
       let m = [];
       data.forEach((item) => {
         if (item.ref.current)
@@ -206,7 +222,8 @@ export default function Calendar({ events }: { events: [] }) {
             (x, y, width, height) => {
               if (width !== 0) m.push({ x, y, width, height });
 
-              if (m.length === data.length) setMeasurements(m);
+              if (m.length === data.length && isMounted.current)
+                setMeasurements(m);
             }
           );
       });
@@ -263,15 +280,19 @@ export default function Calendar({ events }: { events: [] }) {
             key={i}
           >
             <Text
-              style={{
-                color: Colors[colorScheme].secondaryText,
-                fontWeight: "600",
-                width: 45,
-                textAlign: "right",
-                paddingRight: 10,
-                fontSize: Layout.text.small,
-                backgroundColor: "transparent",
-              }}
+              style={[
+                {
+                  fontWeight: "600",
+                  width: 45,
+                  textAlign: "right",
+                  paddingRight: 10,
+                  fontSize: Layout.text.small,
+                  backgroundColor: "transparent",
+                },
+                currentTimeClose(time)
+                  ? { color: "transparent" }
+                  : { color: Colors[colorScheme].secondaryText },
+              ]}
             >
               {((time - 1) % 12) + 1} {time > 11 ? "PM" : "AM"}
             </Text>
@@ -299,7 +320,8 @@ export default function Calendar({ events }: { events: [] }) {
               AppStyles.row,
               {
                 position: "absolute",
-                marginTop: getMarginTop(Timestamp.now()),
+                // subtract 6 for height of text
+                marginTop: getMarginTop(Timestamp.now()) - 6,
               },
             ]}
           >
