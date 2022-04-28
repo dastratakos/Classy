@@ -80,7 +80,7 @@ export default function Search() {
         <View style={AppStyles.section}>
           {searchResults.map((result, i) => {
             if (result.id) {
-              return <FriendCard friend={friend} key={result.id} />;
+              return <FriendCard friend={result} key={result.id} />;
             }
 
             return (

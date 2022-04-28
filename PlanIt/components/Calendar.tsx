@@ -28,7 +28,11 @@ export default function Calendar({ events }: { events: [] }) {
   const colorScheme = useColorScheme();
 
   /* Create new data structure with ref property. */
-  const newEvents = events.map((item) => ({ ...item, ref: createRef() }));
+  const [newEvents, setNewEvents] = useState([]);
+
+  useEffect(() => {
+    setNewEvents(events.map((item) => ({ ...item, ref: createRef() })));
+  }, []);
 
   const { width } = Dimensions.get("screen");
   const dayWidth = width - 2 * Layout.spacing.medium;
@@ -36,11 +40,6 @@ export default function Calendar({ events }: { events: [] }) {
 
   const d = new Date();
   const today = d.getDay() - 1;
-
-  /* Default to selecting Monday if today is a weekend. */
-  const [selected, setSelected] = useState(
-    today >= 0 && today <= 4 ? today : 0
-  );
 
   const times = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
 
@@ -156,6 +155,15 @@ export default function Calendar({ events }: { events: [] }) {
       outputRange: measurements.map((_, i) => (today === i ? 1 : 0)),
     });
 
+    console.log("measurements:", measurements);
+    console.log("inputRange:", inputRange);
+    console.log(
+      "outputRange:",
+      measurements.map(
+        (measurement) => measurement.x + measurement.width / 2 - 15
+      )
+    );
+
     return (
       <>
         <Animated.View
@@ -188,16 +196,19 @@ export default function Calendar({ events }: { events: [] }) {
     const containerRef = useRef();
 
     useEffect(() => {
+      if (measurements.length === data.length) return;
+
       let m = [];
       data.forEach((item) => {
-        item.ref.current.measureLayout(
-          containerRef.current,
-          (x, y, width, height) => {
-            m.push({ x, y, width, height });
+        if (item.ref.current)
+          item.ref.current.measureLayout(
+            containerRef.current,
+            (x, y, width, height) => {
+              if (width !== 0) m.push({ x, y, width, height });
 
-            if (m.length === data.length) setMeasurements(m);
-          }
-        );
+              if (m.length === data.length) setMeasurements(m);
+            }
+          );
       });
     }, []);
 
@@ -216,17 +227,15 @@ export default function Calendar({ events }: { events: [] }) {
           ]}
           ref={containerRef}
         >
-          {data.map((item, i) => {
-            return (
-              <DayTab
-                key={i}
-                day={item.day[0]}
-                i={i}
-                ref={item.ref}
-                onItemPress={() => onItemPress(i)}
-              />
-            );
-          })}
+          {data.map((item, i) => (
+            <DayTab
+              key={i}
+              day={item.day[0]}
+              i={i}
+              ref={item.ref}
+              onItemPress={() => onItemPress(i)}
+            />
+          ))}
         </View>
       </View>
     );
@@ -276,52 +285,57 @@ export default function Calendar({ events }: { events: [] }) {
             />
           </View>
         ))}
-        <View
-          style={[
-            AppStyles.row,
-            { position: "absolute", marginTop: getMarginTop(Timestamp.now()) },
-          ]}
-        >
-          <Text
-            style={{
-              color: Colors.red,
-              fontWeight: "600",
-              width: 45,
-              textAlign: "right",
-              paddingRight: 10,
-              fontSize: Layout.text.small,
-              backgroundColor: "transparent",
-            }}
-          >
-            {getCurrentTimeString()}
-          </Text>
-          <View
-            style={{
-              flex: 1,
-              height: 1,
-              borderRadius: 1,
-              backgroundColor: Colors.red,
-            }}
-          />
-          <View
-            style={{
-              position: "absolute",
-              left: 45 - Layout.spacing.xsmall / 2,
-              height: Layout.spacing.xsmall,
-              width: Layout.spacing.xsmall,
-              borderRadius: Layout.spacing.xsmall / 2,
-              backgroundColor: Colors.red,
-            }}
-          />
-        </View>
       </View>
     );
   };
 
-  const Day = ({ events }) => {
+  const Day = ({ events, index }) => {
     return (
       <View style={{ width: dayWidth }}>
         <Grid />
+        {today === index && (
+          <View
+            style={[
+              AppStyles.row,
+              {
+                position: "absolute",
+                marginTop: getMarginTop(Timestamp.now()),
+              },
+            ]}
+          >
+            <Text
+              style={{
+                color: Colors.red,
+                fontWeight: "600",
+                width: 45,
+                textAlign: "right",
+                paddingRight: 10,
+                fontSize: Layout.text.small,
+                backgroundColor: "transparent",
+              }}
+            >
+              {getCurrentTimeString()}
+            </Text>
+            <View
+              style={{
+                flex: 1,
+                height: 1,
+                borderRadius: 1,
+                backgroundColor: Colors.red,
+              }}
+            />
+            <View
+              style={{
+                position: "absolute",
+                left: 45 - Layout.spacing.xsmall / 2,
+                height: Layout.spacing.xsmall,
+                width: Layout.spacing.xsmall,
+                borderRadius: Layout.spacing.xsmall / 2,
+                backgroundColor: Colors.red,
+              }}
+            />
+          </View>
+        )}
         {events.map((event, i) => {
           /* Handle overlapping events by indenting. */
           let leftIndent = 0;
@@ -371,7 +385,6 @@ export default function Calendar({ events }: { events: [] }) {
       ref.current.scrollToOffset({
         offset: itemIndex * dayWidth,
       });
-    setSelected(itemIndex);
   });
 
   return (
@@ -389,7 +402,9 @@ export default function Calendar({ events }: { events: [] }) {
           { useNativeDriver: false }
         )}
         bounces={false}
-        renderItem={({ item }) => <Day events={item.events} />}
+        renderItem={({ item, index }) => (
+          <Day events={item.events} index={index} />
+        )}
       />
     </>
   );
