@@ -12,6 +12,7 @@ import {
   doc,
   getDocs,
   query,
+  updateDoc,
   where,
   writeBatch,
 } from "firebase/firestore";
@@ -33,7 +34,6 @@ import { useNavigation } from "@react-navigation/core";
 export default function Settings() {
   const context = useContext(AppContext);
 
-  const [isPrivate, setIsPrivate] = useState(context.user.isPrivate);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -41,6 +41,22 @@ export default function Settings() {
 
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+
+  const handleChangeIsPrivate = (isPrivate: boolean) => {
+    context.setUser({
+      ...context.user,
+      isPrivate: isPrivate,
+    });
+
+    setUserDB(context.user.id);
+  };
+
+  const setUserDB = async (id: string) => {
+    const userRef = doc(db, "users", id);
+    await updateDoc(userRef, {
+      isPrivate: context.user.isPrivate
+    });
+  };
 
   const handleSignOut = () => {
     signOut(auth)
@@ -156,15 +172,15 @@ export default function Settings() {
       ]}
       contentContainerStyle={{ alignItems: "center" }}
     >
-      {isPrivate ? (
+      {context.user.isPrivate ? (
         <WideButton
           text="Switch to Public Account"
-          onPress={() => setIsPrivate(false)}
+          onPress={() => handleChangeIsPrivate(false)}
         />
       ) : (
         <WideButton
           text="Switch to Private Account"
-          onPress={() => setIsPrivate(true)}
+          onPress={() => handleChangeIsPrivate(true)}
         />
       )}
       <Separator />

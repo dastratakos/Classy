@@ -39,7 +39,7 @@ const profile = {
   // inClass: false,
   courseSimilarity: 57.54,
   // courseSimilarity: 83,
-  private: false,
+  // private: false,
 };
 
 export default function FriendProfile({ route }: FriendProfileProps) {
@@ -348,7 +348,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             }
           />
         </View>
-        {profile.private && !(friendStatus === "friends") ? null : (
+        {user.isPrivate && !(friendStatus === "friends") ? null : (
           <Pressable
             onPress={() => console.log("Course similarity pressed")}
             style={({ pressed }) => [
@@ -376,7 +376,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         )}
       </View>
       <Separator />
-      {profile.private && !(friendStatus === "friends") ? (
+      {user.isPrivate && !(friendStatus === "friends") ? (
         <View
           style={{ alignItems: "center", marginTop: Layout.spacing.xxlarge }}
         >

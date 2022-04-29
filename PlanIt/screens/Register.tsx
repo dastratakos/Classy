@@ -6,7 +6,7 @@ import {
 } from "react-native";
 import { Text, View } from "../components/Themed";
 import { auth, createUserWithEmailAndPassword, db } from "../firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, Timestamp } from "firebase/firestore";
 
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
@@ -41,6 +41,8 @@ export default function Register({ route }: RegisterProps) {
         const data = {
           id: uid,
           email,
+          createdAt: Timestamp.now(),
+          isPrivate: false,
         };
         setDoc(doc(db, "users", uid), data)
           .then(() => {

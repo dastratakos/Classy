@@ -168,24 +168,6 @@ export type Context = {
   setFriendIds: (arg0: string[]) => void;
 };
 
-// export type Context = {
-//   userName: string;
-//   userMajor: string;
-//   userGradYear: string;
-//   userInterests: string;
-//   userNumFriends: string;
-//   userInClass: boolean;
-//   userPrivate: boolean;
-//   setUserName: (arg0: string) => void;
-//   setUserMajor: (arg0: string) => void;
-//   setUserGradYear: (arg0: string) => void;
-//   setUserInterests: (arg0: string) => void;
-//   setUserPrivate: (arg0: boolean) => void;
-
-//   channel: undefined;
-//   setChannel: () => void;
-// };
-
 // Stream Chat
 
 type LocalAttachmentType = Record<string, unknown>;
