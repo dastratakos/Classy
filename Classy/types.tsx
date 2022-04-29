@@ -60,6 +60,7 @@ export type RootStackParamList = {
   Messages: undefined;
   ChannelScreen: undefined;
   ThreadScreen: { id: string };
+  ChannelDetails: undefined;
 
   Courses: undefined;
   Course: { id: string };
@@ -116,6 +117,7 @@ export type MessagesStackParamList = {
   Messages: undefined;
   ChannelScreen: undefined;
   ThreadScreen: { id: string };
+  ChannelDetails: undefined;
 
   Courses: undefined;
   Course: { id: string };

@@ -15,6 +15,7 @@ import Messages from "../screens/Messages";
 import { MessagesStackScreenProps } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useContext } from "react";
+import ChannelDetails from "../screens/ChannelDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,7 +28,6 @@ export default function MessagesStackNavigator() {
         name="Messages"
         component={Messages}
         options={({ navigation }: MessagesStackScreenProps<"Messages">) => ({
-          title: context.channel?.data?.name,
           headerRight: () => (
             <Pressable
               onPress={() => console.log("New Message pressed")}
@@ -43,12 +43,29 @@ export default function MessagesStackNavigator() {
       <Stack.Screen
         name="ChannelScreen"
         component={ChannelScreen}
-        options={{ title: "Channel" }}
+        options={({ navigation }: MessagesStackScreenProps<"Messages">) => ({
+          title: context.channel?.data?.name,
+          headerRight: () => (
+            <Pressable
+              onPress={() => navigation.navigate("ChannelDetails")}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1,
+              })}
+            >
+              <Icon name="info-circle" size={25} />
+            </Pressable>
+          ),
+        })}
       />
       <Stack.Screen
         name="Thread"
         component={ThreadScreen}
         options={{ title: "Thread" }}
+      />
+      <Stack.Screen
+        name="ChannelDetails"
+        component={ChannelDetails}
+        options={{ title: "Details" }}
       />
       {/* <Stack.Screen name="Courses" component={Courses} />
       <Stack.Screen name="Course" component={Course} />
