@@ -1,4 +1,4 @@
-import { Icon, Text, View } from "../components/Themed";
+import { ActivityIndicator, Icon, Text, View } from "../components/Themed";
 import {
   Pressable,
   Image,
@@ -38,7 +38,7 @@ export default function Profile() {
   const colorScheme = useColorScheme();
 
   const [courses, setCourses] = useState([] as Course[]);
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(true);
   const [showEmailVerification, setShowEmailVerification] = useState(
     !auth.currentUser?.emailVerified
   );
@@ -55,6 +55,8 @@ export default function Profile() {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) setShowEmailVerification(!user.emailVerified);
     });
+
+    setRefreshing(false);
 
     return unsubscribe;
   }, []);
@@ -148,6 +150,10 @@ export default function Profile() {
       </>
     );
   };
+
+  if (refreshing) {
+    return (<ActivityIndicator />)
+  }
 
   return (
     <ScrollView

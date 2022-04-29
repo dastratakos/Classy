@@ -29,11 +29,13 @@ export default function Calendar({ events }: { events: [] }) {
   const colorScheme = useColorScheme();
 
   /* Create new data structure with ref property. */
-  const [newEvents, setNewEvents] = useState([]);
 
-  useEffect(() => {
-    setNewEvents(events.map((item) => ({ ...item, ref: createRef() })));
-  }, []);
+  const newEvents = events.map((item) => ({ ...item, ref: createRef() }));
+  // const [newEvents, setNewEvents] = useState([]);
+
+  // useEffect(() => {
+  //   setNewEvents(events.map((item) => ({ ...item, ref: createRef() })));
+  // }, []);
 
   const { width } = Dimensions.get("screen");
   const dayWidth = width - 2 * Layout.spacing.medium;
