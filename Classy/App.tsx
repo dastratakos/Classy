@@ -20,13 +20,18 @@ export default function App() {
   /* Global variables. */
   const [user, setUser] = useState({} as User);
   const [friendIds, setFriendIds] = useState([] as string[]);
-  const [channel, setChannel] = useState(null);
+  const [channel, setChannel] = useState();
+  const [thread, setThread] = useState();
 
   const globalVariables = {
     user: user,
     setUser: setUser,
     friendIds: friendIds,
     setFriendIds: setFriendIds,
+    channel: channel,
+    setChannel: setChannel,
+    thread: thread,
+    setThread: setThread,
   };
 
   const isLoadingComplete = useCachedResources();
@@ -37,8 +42,10 @@ export default function App() {
       accent_blue: Colors.light.tint,
       accent_green: Colors.green,
       accent_red: Colors.red,
-      bg_gradient_end: "#F7F7F7",
-      bg_gradient_start: "#FCFCFC",
+      // bg_gradient_end: "#F7F7F7",
+      // bg_gradient_start: "#FCFCFC",
+      bg_gradient_end: Colors[colorScheme].background,
+      bg_gradient_start: Colors[colorScheme].background,
       black: Colors[colorScheme].text,
       blue_alice: "#E9F2FF",
       border: "#00000014", // 14 = 8% opacity; top: x=0, y=-1; bottom: x=0, y=1

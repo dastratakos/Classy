@@ -11,6 +11,7 @@ import {
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { Channel as ChannelType } from "stream-chat";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { MessageType } from "stream-chat-expo";
 
 declare global {
   namespace ReactNavigation {
@@ -57,7 +58,8 @@ export type RootStackParamList = {
   ResetPassword: undefined;
 
   Messages: undefined;
-  ChannelScreen: { channel: ChannelType };
+  ChannelScreen: undefined;
+  ThreadScreen: { id: string };
 
   Courses: undefined;
   Course: { id: string };
@@ -112,7 +114,8 @@ export type SearchStackScreenProps<Screen extends keyof SearchStackParamList> =
 
 export type MessagesStackParamList = {
   Messages: undefined;
-  ChannelScreen: { channel: ChannelType };
+  ChannelScreen: undefined;
+  ThreadScreen: { id: string };
 
   Courses: undefined;
   Course: { id: string };
@@ -137,12 +140,19 @@ export type RegisterProps = NativeStackScreenProps<
   RootStackParamList,
   "Register"
 >;
-export type ChannelScreenProps = NativeStackScreenProps<RootStackParamList, "ChannelScreen">;
+
 export type CourseProps = NativeStackScreenProps<RootStackParamList, "Course">;
+
+export type ThreadScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  "ThreadScreen"
+>;
+
 export type FriendsProps = NativeStackScreenProps<
   RootStackParamList,
   "Friends"
 >;
+
 export type FriendProfileProps = NativeStackScreenProps<
   RootStackParamList,
   "FriendProfile"
@@ -166,6 +176,10 @@ export type Context = {
   setUser: (arg0: User) => void;
   friendIds: string[];
   setFriendIds: (arg0: string[]) => void;
+  channel: ChannelType;
+  setChannel: (arg0: ChannelType) => void;
+  thread: undefined;
+  setThread: (arg0: MessageType) => void;
 };
 
 // Stream Chat

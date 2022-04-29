@@ -2,14 +2,23 @@ import { Channel, MessageInput, MessageList } from "stream-chat-expo";
 
 import { StyleSheet } from "react-native";
 import { Text } from "../components/Themed";
-import { ChannelScreenProps } from "../types";
+import { useNavigation } from "@react-navigation/core";
+import AppContext from "../context/Context";
+import { useContext } from "react";
 
-export default function ChannelScreen({ route }: ChannelScreenProps) {
-  if (!route.params.channel) return <Text>Channel Screen</Text>;
+export default function ChannelScreen() {
+  const context = useContext(AppContext);
+  const navigation = useNavigation();
+  if (!context.channel) return <Text>Channel Screen</Text>;
 
   return (
-    <Channel channel={route.params.channel}>
-      <MessageList />
+    <Channel channel={context.channel}>
+      <MessageList
+        onThreadSelect={(thread) => {
+          context.setThread(thread);
+          navigation.navigate("Thread", { id: context.channel.id });
+        }}
+      />
       <MessageInput />
     </Channel>
   );

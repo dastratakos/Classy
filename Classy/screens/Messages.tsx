@@ -7,8 +7,8 @@ import { useContext } from "react";
 import AppContext from "../context/Context";
 
 export default function Messages() {
-  const navigation = useNavigation();
   const context = useContext(AppContext);
+  const navigation = useNavigation();
 
   const filters = { members: { $in: [context.user.id] } };
   const sort = { last_message_at: -1 };
@@ -19,8 +19,10 @@ export default function Messages() {
       filters={filters}
       sort={sort}
       options={options}
-      onSelect={(channel: ChannelType) =>
-        navigation.navigate("ChannelScreen", { channel })
+      onSelect={(channel: ChannelType) => {
+        context.setChannel(channel);
+        navigation.navigate("ChannelScreen")
+      }
       }
     />
   );
