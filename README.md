@@ -52,4 +52,4 @@ Backend - Firebase
 
 
 ## Notes
-- make sure to run `expo install firebase` from the `PlanIt` directory.
+- make sure to run `expo install firebase` from the `Classy` directory.
