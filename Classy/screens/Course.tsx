@@ -1,6 +1,6 @@
 import * as WebBrowser from "expo-web-browser";
 
-import { ScrollView, StyleSheet } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 import { useCallback, useEffect, useState } from "react";
 
@@ -27,6 +27,7 @@ export default function Course({ route }: CourseProps) {
   const colorScheme = useColorScheme();
 
   const [course, setCourse] = useState({} as CourseType);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getCourse(route.params.id);
@@ -43,11 +44,14 @@ export default function Course({ route }: CourseProps) {
     if (docSnap.exists()) {
       console.log("data:", docSnap.data());
       setCourse(docSnap.data() as CourseType);
+      setIsLoading(false);
     } else {
       console.log(`Could not find course: ${id}`);
       alert("This course does not exist.");
     }
   };
+
+  if (isLoading) return <ActivityIndicator />
 
   return (
     <ScrollView
