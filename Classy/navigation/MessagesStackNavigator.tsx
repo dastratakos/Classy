@@ -73,9 +73,9 @@ export default function MessagesStackNavigator() {
         component={NewMessage}
         options={{ title: "New Message" }}
       />
-      {/* <Stack.Screen name="Courses" component={Courses} />
+      <Stack.Screen name="Courses" component={Courses} />
       <Stack.Screen name="Course" component={Course} />
-      <Stack.Screen name="Friends" component={Friends} /> */}
+      <Stack.Screen name="Friends" component={Friends} />
       <Stack.Screen
         name="FriendProfile"
         component={FriendProfile}
