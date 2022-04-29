@@ -16,6 +16,7 @@ import { MessagesStackScreenProps } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useContext } from "react";
 import ChannelDetails from "../screens/ChannelDetails";
+import NewMessage from "../screens/NewMessage";
 
 const Stack = createNativeStackNavigator();
 
@@ -30,7 +31,7 @@ export default function MessagesStackNavigator() {
         options={({ navigation }: MessagesStackScreenProps<"Messages">) => ({
           headerRight: () => (
             <Pressable
-              onPress={() => console.log("New Message pressed")}
+              onPress={() => navigation.navigate("NewMessage")}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
               })}
@@ -66,6 +67,11 @@ export default function MessagesStackNavigator() {
         name="ChannelDetails"
         component={ChannelDetails}
         options={{ title: "Details" }}
+      />
+      <Stack.Screen
+        name="NewMessage"
+        component={NewMessage}
+        options={{ title: "New Message" }}
       />
       {/* <Stack.Screen name="Courses" component={Courses} />
       <Stack.Screen name="Course" component={Course} />
