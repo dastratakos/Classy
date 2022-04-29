@@ -1,4 +1,4 @@
-import { ActivityIndicator, Icon, Text, View } from "../components/Themed";
+import { Icon, Text, View } from "../components/Themed";
 import {
   Pressable,
   Image,
@@ -150,10 +150,6 @@ export default function Profile() {
       </>
     );
   };
-
-  if (refreshing) {
-    return (<ActivityIndicator />)
-  }
 
   return (
     <ScrollView
