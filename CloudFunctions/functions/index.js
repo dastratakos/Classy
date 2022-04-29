@@ -5,6 +5,8 @@ const {parseString} = require("xml2js");
 const admin = require("firebase-admin");
 admin.initializeApp();
 
+const db = admin.firestore();
+
 const {AUTUMN, WINTER, SPRING, SUMMER} = require("./filters");
 
 const URL = "https://explorecourses.stanford.edu/";
@@ -14,24 +16,31 @@ exports.getAllCourses = functions.firestore
     .onCreate((snap, context) => {
       const academicYear = "2021-2022";
 
-      let schools = null;
-      getSchools(academicYear).then((res) => {
-        console.log("here");
-        schools = res;
-      });
+      const params = {
+        view: "xml",
+      };
+      if (academicYear) params.year = academicYear.replace(/-/g, "");
 
-      console.log("schools:", schools);
+      axios({method: "GET", url: URL, params})
+          .then((res) => {
+            const schools = parseXML(res.data).schools.school;
 
-      const filters = [AUTUMN, WINTER, SPRING, SUMMER];
+            const filters = [AUTUMN, WINTER, SPRING, SUMMER];
 
-      for (const school of schools) {
-        console.log("school:", school.$.name);
-        for (const dept of school.department) {
-          console.log("dept:", dept.$.name);
-          const code = dept.$.name;
-          getCoursesByDepartment(code, filters, academicYear);
-        }
-      }
+            for (const school of schools) {
+              // console.log("school:", school.$.name);
+              for (const dept of school.department) {
+                // console.log("dept:", dept.$.name);
+                const code = dept.$.name;
+                getCoursesByDepartment(code, filters, academicYear);
+              }
+            }
+          })
+          .catch((error) => {
+            console.log("Failed to query ExploreCourses");
+            console.log(error);
+            return null;
+          });
 
       return snap.ref.delete();
     });
@@ -93,19 +102,29 @@ const getCoursesByQuery = (query, filters, year=null) => {
   filters.forEach((f) => {
     params[f] = "on";
   });
-  if (year) params.academicYear = year;
+  if (year) params.academicYear = year.replace(/-/g, "");
 
   // console.log("params:", params);
 
   axios({method: "GET", url: URL + "search", params})
       .then((res) => {
-        console.log("data:", res.data);
-        const parsedData = parseXML(res.data);
+        // console.log("data:", res.data);
+        const courses = parseXML(res.data).courses.course;
         // console.log("parsed course:", JSON.stringify(parsedData, null, 2));
 
-        for (const course of parsedData.courses.course) {
-          console.log("course:", course.title);
-        }
+        courses.forEach((course) => {
+          const courseObj = {
+            code: course.subject[0] + " " + course.code[0],
+            title: course.title[0],
+            description: course.description[0],
+            gers: course.gers[0],
+          };
+
+          // TODO: administrativeInformation!!
+          // TODO: sections
+
+          db.collection("courses").add(courseObj);
+        });
       })
       .catch((error) => {
         console.log("Failed to query ExploreCourses");
