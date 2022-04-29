@@ -23,7 +23,7 @@ import {
   where,
 } from "firebase/firestore";
 import AppContext from "../context/Context";
-import { LoginProps } from "../types";
+import { LoginProps, User } from "../types";
 import { StreamChat } from "stream-chat";
 
 const STREAM_API_KEY = "y9tk9hsvsxqa";
@@ -38,15 +38,19 @@ export default function Login({ route }: LoginProps) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
-  const connectStreamChatUser = async (id: string, name: string) => {
-    const streamChatUser = { id, name };
+  const connectStreamChatUser = async (
+    id: string,
+    name: string,
+    photoUrl: string
+  ) => {
+    const streamChatUser = { id, name, image: photoUrl };
 
     await client.connectUser(
       streamChatUser,
       client.devToken(streamChatUser.id)
     );
-    // console.log("User connected:");
-    // console.log(streamChatUser);
+    console.log("User connected:");
+    console.log(streamChatUser);
 
     // const filter = { type: "messaging", members: { $in: [streamChatUser.id] } };
     // const sort = { last_message_at: -1 };
@@ -88,10 +92,9 @@ export default function Login({ route }: LoginProps) {
   }, []);
 
   const setUp = async (id: string) => {
-    const name = await getUser(id);
+    const user = await getUser(id);
     getFriendIds(id);
-    connectStreamChatUser(id, name);
-    // connectStreamChatUser(id, context.user.name);
+    connectStreamChatUser(id, user.name, user.photoUrl)
     navigation.reset({
       index: 0,
       routes: [{ name: "Root" }],
@@ -102,11 +105,15 @@ export default function Login({ route }: LoginProps) {
     const docRef = doc(db, "users", id);
     const docSnap = await getDoc(docRef);
 
+    console.log("user = ", docSnap.data());
+
     if (docSnap.exists()) {
-      context.setUser({ ...context.user, ...docSnap.data() });
-      return docSnap.data().name;
+      const user = { ...context.user, ...docSnap.data() };
+      context.setUser(user);
+      return user;
     } else {
       console.log(`Could not find user: ${id}`);
+      return {} as User;
     }
   };
 
