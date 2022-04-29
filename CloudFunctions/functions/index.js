@@ -1,45 +1,114 @@
-const functions = require("firebase-functions");
 
+const functions = require("firebase-functions");
+const axios = require("axios");
+const {parseString} = require("xml2js");
 const admin = require("firebase-admin");
 admin.initializeApp();
 
-// Take the text parameter passed to this HTTP endpoint and insert it into
-// Firestore under the path /messages/:documentId/original
-exports.addMessage = functions.https.onRequest(async (req, res) => {
-  // Grab the text parameter.
-  const original = req.query.text;
-  // Push the new message into Firestore using the Firebase Admin SDK.
-  const writeResult = await admin
-    .firestore()
-    .collection("messages")
-    .add({ original: original });
-  // Send back a message that we've successfully written the message
-  res.json({ result: `Message with ID: ${writeResult.id} added.` });
-});
+const {AUTUMN, WINTER, SPRING, SUMMER} = require("./filters");
 
-// Listens for new messages added to /messages/:documentId/original and creates an
-// uppercase version of the message to /messages/:documentId/uppercase
-exports.makeUppercase = functions.firestore
-  .document("/messages/{documentId}")
-  .onCreate((snap, context) => {
-    // Grab the current value of what was written to Firestore.
-    const original = snap.data().original;
+const URL = "https://explorecourses.stanford.edu/";
 
-    // Access the parameter `{documentId}` with `context.params`
-    functions.logger.log("Uppercasing", context.params.documentId, original);
+exports.getAllCourses = functions.firestore
+    .document("test/{docId}")
+    .onCreate((snap, context) => {
+      const academicYear = "2021-2022";
 
-    const uppercase = original.toUpperCase();
+      let schools = null;
+      getSchools(academicYear).then((res) => {
+        console.log("here");
+        schools = res;
+      });
 
-    // You must return a Promise when performing asynchronous tasks inside a Functions such as
-    // writing to Firestore.
-    // Setting an 'uppercase' field in Firestore document returns a Promise.
-    return snap.ref.set({ uppercase }, { merge: true });
+      console.log("schools:", schools);
+
+      const filters = [AUTUMN, WINTER, SPRING, SUMMER];
+
+      for (const school of schools) {
+        console.log("school:", school.$.name);
+        for (const dept of school.department) {
+          console.log("dept:", dept.$.name);
+          const code = dept.$.name;
+          getCoursesByDepartment(code, filters, academicYear);
+        }
+      }
+
+      return snap.ref.delete();
+    });
+
+/**
+ * Parses a string into an XML object.
+ * @param {string} data The data to parse.
+ * @return {Object} The XML object.
+ */
+function parseXML(data) {
+  let result = null;
+  parseString(data, (err, res) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    // console.log("parsed:", JSON.stringify(res, null, 2));
+    result = res;
   });
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+  return result;
+}
+
+/**
+ * Gets all of the schools for a particular year.
+ * @param {string} academicYear The year to search for (e.g. "2021-2022").
+ * @return {Object} An Object containing all the schools.
+ */
+function getSchools(academicYear=null) {
+  const params = {
+    view: "xml",
+  };
+  if (academicYear) params.year = academicYear.replace(/-/g, "");
+
+  return axios({method: "GET", url: URL, params})
+      .then((res) => {
+        return parseXML(res.data.schools.school);
+      })
+      .catch((error) => {
+        console.log("Failed to query ExploreCourses");
+        console.log(error);
+        return null;
+      });
+}
+
+const getCoursesByDepartment = (code, filters, year=null) => {
+  const newFilters = [...filters];
+  newFilters.push(`filter-departmentcode-${code}`);
+
+  return getCoursesByQuery(code, newFilters, year);
+};
+
+const getCoursesByQuery = (query, filters, year=null) => {
+  const params = {
+    view: "xml",
+    q: query,
+  };
+  params["filter-corusestatus-Active"] = "on";
+  filters.forEach((f) => {
+    params[f] = "on";
+  });
+  if (year) params.academicYear = year;
+
+  // console.log("params:", params);
+
+  axios({method: "GET", url: URL + "search", params})
+      .then((res) => {
+        console.log("data:", res.data);
+        const parsedData = parseXML(res.data);
+        // console.log("parsed course:", JSON.stringify(parsedData, null, 2));
+
+        for (const course of parsedData.courses.course) {
+          console.log("course:", course.title);
+        }
+      })
+      .catch((error) => {
+        console.log("Failed to query ExploreCourses");
+        console.log(error);
+      });
+};

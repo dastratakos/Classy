@@ -1,0 +1,1358 @@
+{
+  "courses": {
+    "course": [
+      {
+        "year": ["2021-2022"],
+        "subject": ["CHEM"],
+        "code": ["10"],
+        "title": ["Exploring Research and Problem Solving Across the Sciences"],
+        "description": [
+          "Development and practice of critical problem solving and study skills using a wide variety of scientific examples that illustrate the broad yet integrated nature of current research. Students will build a problem solving tool-kit and apply chemical and mathematical concepts to solve problems related to energy, climate change, water resources, medicine, and food &amp; nutrition. Note: course offered in August prior to start of fall quarter, and only Leland Scholar Program participants will register."
+        ],
+        "gers": [""],
+        "sections": [
+          {
+            "section": [
+              {
+                "classId": ["22892"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["10"],
+                "units": ["1"],
+                "sectionNumber": ["01"],
+                "component": ["LEC"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@58894625"]
+                  }
+                ],
+                "instructors": ["Schwartz Poehlmann, J. (PI)"],
+                "notes": [
+                  "Only Leland Scholar Program participants can register."
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "year": ["2021-2022"],
+        "subject": ["CHEM"],
+        "code": ["25N"],
+        "title": ["Science in the News"],
+        "description": [
+          "Preference to freshmen. Possible topics include: diseases such as avian flu, HIV, and malaria; environmental issues such as climate change, atmospheric pollution, and human population; energy sources in the future; evolution; stem cell research; nanotechnology; and drug development. Focus is on the scientific basis for these topics as a basis for intelligent discussion of societal and political implications. Sources include the popular media and scientific media for the nonspecialist, especially those available on the web."
+        ],
+        "gers": ["WAY-SMA"],
+        "sections": [
+          {
+            "section": [
+              {
+                "classId": ["22820"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["25N"],
+                "units": ["3"],
+                "sectionNumber": ["01"],
+                "component": ["ISF"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@6adbae44"]
+                  }
+                ],
+                "instructors": ["Andersen, H. (PI)"],
+                "notes": [
+                  "Introductory Seminar. Preference to first-year students; sophomores admitted if space available. Advance sign-up process and deadlines at http://introsems.stanford.edu."
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "year": ["2021-2022"],
+        "subject": ["CHEM"],
+        "code": ["29N"],
+        "title": ["Chemistry in the Kitchen"],
+        "description": [
+          "This course examines the chemistry relevant to food and drink preparation, both in homes and in restaurants, which makes what we consume more pleasurable. Good cooking is more often considered an art rather than a science, but a small bit of understanding goes a long way to make the preparation and consumption of food and drink more enjoyable. The intention is to have demonstrations and tastings as a part of every class meeting. We will examine some rather familiar items in this course: eggs, dairy products, meats, breads, vegetables, pastries, and carbonated beverages. We shall playfully explore the chemistry that turns food into meals. A high-school chemistry background is assumed; bring to class a good appetite and a healthy curiosity."
+        ],
+        "gers": ["WAY-SMA"],
+        "sections": [
+          {
+            "section": [
+              {
+                "classId": ["16250"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["29N"],
+                "units": [""],
+                "sectionNumber": ["05"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@2e2e74ef"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": [
+                  "Introductory Seminar. Preference to first-year students; sophomores admitted if space available. Advance sign-up process and deadlines at http://introsems.stanford.edu. Meets in Sapp room 202, laboratory for the activity; one day a week T, W, Th, or F."
+                ]
+              },
+              {
+                "classId": ["16247"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["29N"],
+                "units": [""],
+                "sectionNumber": ["02"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@20ac1e2f"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": [
+                  "Introductory Seminar. Preference to first-year students; sophomores admitted if space available. Advance sign-up process and deadlines at http://introsems.stanford.edu. Meets in Sapp room 202, laboratory for the activity; one day a week T, W, Th, or F."
+                ]
+              },
+              {
+                "classId": ["16248"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["29N"],
+                "units": [""],
+                "sectionNumber": ["03"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@3286dc71"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": [
+                  "Introductory Seminar. Preference to first-year students; sophomores admitted if space available. Advance sign-up process and deadlines at http://introsems.stanford.edu. Meets in Sapp room 202, laboratory for the activity; one day a week T, W, Th, or F."
+                ]
+              },
+              {
+                "classId": ["16249"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["29N"],
+                "units": [""],
+                "sectionNumber": ["04"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@598fdeb"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": [
+                  "Introductory Seminar. Preference to first-year students; sophomores admitted if space available. Advance sign-up process and deadlines at http://introsems.stanford.edu. Meets in Sapp room 202, laboratory for the activity; one day a week T, W, Th, or F."
+                ]
+              },
+              {
+                "classId": ["15829"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["29N"],
+                "units": ["3"],
+                "sectionNumber": ["01"],
+                "component": ["ISF"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@584c68bb"]
+                  }
+                ],
+                "instructors": ["Zare, R. (PI)"],
+                "notes": [
+                  "Introductory Seminar. Preference to first-year students; sophomores admitted if space available. Advance sign-up process and deadlines at http://introsems.stanford.edu. Meets in Sapp room 202, laboratory for the activity; one day a week T, W, Th, or F."
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "year": ["2021-2022"],
+        "subject": ["CHEM"],
+        "code": ["31A"],
+        "title": ["Chemical Principles I"],
+        "description": [
+          "31A is the first course in a two-quarter sequence designed to provide a robust foundation in key chemical principles for students with limited or no background in chemistry. The course engages students in group problem-solving activities throughout the class periods to deepen their ability to analyze and solve chemical problems. Students will also participate in one weekly laboratory activity that will immediately apply and expand upon classroom content. Labs and write-ups provide practice developing conceptual models that can explain qualitatively and quantitatively a wide range of chemical phenomena. The course will introduce a common language of dimensional analysis, stoichiometry, and molecular naming that enables students to write chemical reactions, quantify reaction yield, and calculate empirical and molecular formulas. Stoichiometry will be immediately reinforced through a specific study of gases and their properties. Students will also build a fundamental understanding of atomic and molecular structure by identifying interactions among nuclei, electrons, atoms and molecules. Through both lab and in-class exploration, students will learn to explain how these interactions determine the structures and properties of pure substances and mixtures using various bonding models including Lewis Dot, VSEPR, and Molecular Orbital Theory. Students will identify and quantitate the types and amounts of energy changes that accompany these interactions, phase changes, and chemical reactions, as they prepare to explore chemical dynamics in greater depth in 31B. Special emphasis will be placed on applying content and skills to real world applications such as estimating the carbon efficiency of fossil fuels, understanding hydrogen bonding and other interactions critical to DNA, and calculating the pressure exerted on a deep-sea diver. No prerequisites. All students who are interested in taking general chemistry at Stanford must take the Autumn 2021 General Chemistry Placement Test before the Autumn quarter begins, regardless of chemistry background."
+        ],
+        "gers": ["GER: DB-NatSci, WAY-SMA"],
+        "sections": [
+          {
+            "section": [
+              {
+                "classId": ["21717"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["25"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@18d148fb"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["22071"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["26"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@1cb07ac4"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["24491"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["27"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@5e85ab1c"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18850"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["21"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@653719c7"]
+                  }
+                ],
+                "instructors": ["Arens, J. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18849"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["20"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@7733030a"]
+                  }
+                ],
+                "instructors": ["Estrada Pabon, J. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18350"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["18"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@68ca3172"]
+                  }
+                ],
+                "instructors": ["Ai, H. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18302"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["08"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@1b64ba3c"]
+                  }
+                ],
+                "instructors": ["Tamakuwala, K. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18301"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["07"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@46c071b6"]
+                  }
+                ],
+                "instructors": ["Dunietz, E. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18300"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["06"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@29041137"]
+                  }
+                ],
+                "instructors": ["Du, S. (TA)"],
+                "notes": [""]
+              },
+              {
+                "classId": ["18299"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["05"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@10fcf4c4"]
+                  }
+                ],
+                "instructors": ["Gipson, R. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18298"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["04"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@2ef709bd"]
+                  }
+                ],
+                "instructors": ["Zhu, N. (PI)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18309"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["15"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@6b7f8014"]
+                  }
+                ],
+                "instructors": ["Estrada Pabon, J. (TA)"],
+                "notes": [""]
+              },
+              {
+                "classId": ["18310"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["16"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@62fbb9e5"]
+                  }
+                ],
+                "instructors": ["Heck, T. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18308"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["14"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@15d62baa"]
+                  }
+                ],
+                "instructors": ["Smith, J. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18305"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["11"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@3fa624c"]
+                  }
+                ],
+                "instructors": ["Smith, J. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18306"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["12"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@14923d07"]
+                  }
+                ],
+                "instructors": ["Arens, J. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18303"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["09"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@2b999ae1"]
+                  }
+                ],
+                "instructors": ["Du, S. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18316"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["17"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@f366f43"]
+                  }
+                ],
+                "instructors": ["Tamakuwala, K. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18351"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["19"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@5f0e84eb"]
+                  }
+                ],
+                "instructors": ["Zhu, N. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["21718"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["24"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@5af1e008"]
+                  }
+                ],
+                "instructors": ["Heck, T. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["21585"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["23"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@3d583725"]
+                  }
+                ],
+                "instructors": ["Gipson, R. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["21584"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["22"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@1a81bba"]
+                  }
+                ],
+                "instructors": ["Dunietz, E. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18307"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["13"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@2a2aeeb8"]
+                  }
+                ],
+                "instructors": ["Fajen, O. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["18304"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": [""],
+                "sectionNumber": ["10"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@7f0eaa55"]
+                  }
+                ],
+                "instructors": ["Fajen, O. (TA)"],
+                "notes": [""]
+              },
+              {
+                "classId": ["18295"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": ["5"],
+                "sectionNumber": ["01"],
+                "component": ["LEC"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@3935b8e"]
+                  }
+                ],
+                "instructors": [
+                  "Brown, N. (PI); Schwartz Poehlmann, J. (PI); Waymouth, R. (PI); Fernandez, D. (GP)"
+                ],
+                "notes": [
+                  "Enroll in one lecture time (section 01 or 02) plus mandatory lab section once a week.  Three evening exams are required: held on Wednesdays Oct. 6th, Oct. 27th, and Nov. 17th from 5:30-6:45pm. Please mark your calendar!."
+                ]
+              },
+              {
+                "classId": ["18296"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31A"],
+                "units": ["5"],
+                "sectionNumber": ["02"],
+                "component": ["LEC"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@42a7e58d"]
+                  }
+                ],
+                "instructors": [
+                  "Brown, N. (PI); Schwartz Poehlmann, J. (PI); Waymouth, R. (PI); Fernandez, D. (GP)"
+                ],
+                "notes": [
+                  "Enroll in one lecture time (section 01 or 02) plus mandatory lab section once a week.  Three evening exams are required: held on Wednesdays Oct. 6th, Oct. 27th, and Nov. 17th from 5:30-6:45pm. Please mark your calendar!."
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "year": ["2021-2022"],
+        "subject": ["CHEM"],
+        "code": ["31B"],
+        "title": ["Chemical Principles II"],
+        "description": [
+          "Chem 31B is the second course in this two-quarter sequence, therefore only students who have completed Chem 31A may enroll in 31B.  As with 31A, students will continue to engage in group problem-solving activities throughout class and participate in weekly laboratory activities. Labs and write-ups will allow students to more deeply explore and observe the different facets of chemical reactivity, including rates (kinetics), energetics (thermodynamics), and reversibility (equilibrium) of reactions. Through experimentation and discussion, students will determine what forces influence the rate of chemical reactions and learn how this can be applied to enzyme reactivity.  Students will quantify chemical concentrations during a reaction, and predict the direction in which a reaction will shift in order to achieve equilibrium, including solubility equilibria.  They will use these methods to estimate the possible levels of lead and other toxic metals in drinking water. Special emphasis will be placed on acid/base equilibria , allowing students to explore the role of buffers and antacids in our bodies, as well as ocean acidification and the impact on coral reefs. Students will then bring together concepts from both kinetics and equilibrium, in a deeper discussion of thermodynamics, to understand what ultimately influences the spontaneity of a reaction.  Students will build a relationship between free energy, temperature, and equilibrium constants to be able to calculate the free energy of a reaction and understand how processes in our body are coupled to harness excess free energy to do useful work.  Finally we will explore how we harness work from redox reactions, building both voltaic cells (i.e. batteries) and electrolytic cells in lab, and using reduction potentials to predict spontaneity and potential of a given reaction. We will look at the applications of redox chemistry in electric and fuel cell vehicles. The course's particular emphasis on understanding the driving forces of a reaction, especially the influence of thermodynamics versus kinetics, will prepare students for further study of predicting organic chemical reactivity and equilibria from structure in Chem 33. Prerequisite: Chem 31A."
+        ],
+        "gers": ["GER: DB-NatSci, WAY-SMA"],
+        "sections": [
+          {
+            "section": [
+              {
+                "classId": ["9489"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["04"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@3f059c4f"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["9490"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["05"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@3553d5f8"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["13083"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["22"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@2c85a7f7"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": ["Meets on two Monday holidays. Exception Granted."]
+              },
+              {
+                "classId": ["13082"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["21"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@5173a467"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": ["Meets on two Monday holidays. Exception Granted."]
+              },
+              {
+                "classId": ["13173"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["24"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@4207ade2"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": ["Meets on two Monday holidays. Exception Granted."]
+              },
+              {
+                "classId": ["13172"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["23"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@69d05c4f"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": ["Meets on two Monday holidays. Exception Granted."]
+              },
+              {
+                "classId": ["13985"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["25"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@686be49d"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": ["Meets on two Monday holidays. Exception Granted."]
+              },
+              {
+                "classId": ["15706"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["26"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@24f7356b"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": ["Meets on two Monday holidays. Exception Granted."]
+              },
+              {
+                "classId": ["9475"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": ["5"],
+                "sectionNumber": ["01"],
+                "component": ["LEC"],
+                "schedules": [
+                  {
+                    "schedule": [
+                      "crsearch.action.SectionSchedule@5b60e4aa",
+                      "crsearch.action.SectionSchedule@3039e9ad"
+                    ]
+                  }
+                ],
+                "instructors": [
+                  "Brown, N. (PI); Cegelski, L. (PI); Schwartz Poehlmann, J. (PI)"
+                ],
+                "notes": [
+                  "Enroll in one lecture time (section 01 or 02). Plus mandatory lab section once a week. W eve is for required mid-terms every third week. Exception Granted."
+                ]
+              },
+              {
+                "classId": ["9486"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": ["5"],
+                "sectionNumber": ["02"],
+                "component": ["LEC"],
+                "schedules": [
+                  {
+                    "schedule": [
+                      "crsearch.action.SectionSchedule@7c1bc3b",
+                      "crsearch.action.SectionSchedule@1a008dc5"
+                    ]
+                  }
+                ],
+                "instructors": [
+                  "Brown, N. (PI); Cegelski, L. (PI); Schwartz Poehlmann, J. (PI)"
+                ],
+                "notes": [
+                  "Enroll in one lecture time (section 01 or 02). Plus mandatory lab section once a week. W eve is for required mid-terms every third week."
+                ]
+              },
+              {
+                "classId": ["13081"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["20"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@46996f9b"]
+                  }
+                ],
+                "instructors": ["Arens, J. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["13080"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["19"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@39929264"]
+                  }
+                ],
+                "instructors": ["Fajen, O. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["9495"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["10"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@33b8d109"]
+                  }
+                ],
+                "instructors": ["Smith, J. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["9494"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["09"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@2d481c1e"]
+                  }
+                ],
+                "instructors": ["Schrock, M. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["9497"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["12"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@20205b9b"]
+                  }
+                ],
+                "instructors": ["Schrock, M. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["9496"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["11"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@d8cec49"]
+                  }
+                ],
+                "instructors": ["Dunietz, E. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["9488"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["03"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@78495468"]
+                  }
+                ],
+                "instructors": ["Estrada Pabon, J. (TA)"],
+                "notes": ["Meets in Sapp 201. Exception Granted."]
+              },
+              {
+                "classId": ["9502"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["17"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@150c1f93"]
+                  }
+                ],
+                "instructors": ["Francis, S. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["9503"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["18"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@37d2722a"]
+                  }
+                ],
+                "instructors": ["Tamakuwala, K. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["9498"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["13"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@5dd62e3d"]
+                  }
+                ],
+                "instructors": ["Smith, J. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["9499"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["14"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@6f0edbfb"]
+                  }
+                ],
+                "instructors": ["Arens, J. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["9500"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["15"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@1a0ba10e"]
+                  }
+                ],
+                "instructors": ["Tamakuwala, K. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["9501"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["16"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@3e6cd347"]
+                  }
+                ],
+                "instructors": ["Ai, H. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["9493"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["08"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@5227a571"]
+                  }
+                ],
+                "instructors": ["Zhu, N. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["9492"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["07"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@4bef7dcd"]
+                  }
+                ],
+                "instructors": ["Ai, H. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["9491"],
+                "term": ["2021-2022 Winter"],
+                "subject": ["CHEM"],
+                "code": ["31B"],
+                "units": [""],
+                "sectionNumber": ["06"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@c2ba66f"]
+                  }
+                ],
+                "instructors": ["Estrada Pabon, J. (TA)"],
+                "notes": ["Exception Granted."]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "year": ["2021-2022"],
+        "subject": ["CHEM"],
+        "code": ["31M"],
+        "title": ["Chemical Principles: From Molecules to Solids (MATSCI 31)"],
+        "description": [
+          "A one-quarter course for students who have taken chemistry previously. This course will introduce the basic chemical principles that dictate how and why reactions occur and the structure and properties of important molecules and extended solids that make up our world. As the Central Science, a knowledge of chemistry provides a deep understanding of concepts in fields ranging from materials, environmental science, and engineering to pharmacology and metabolism. Discussions of molecular structure will describe bonding models including Lewis structures, resonance, crystal-field theory, and molecular-orbital theory. We will reveal the chemistry of materials of different dimensionality, with emphasis on symmetry, bonding, and electronic structure of molecules and solids. We will also discuss the kinetics and thermodynamics that govern reactivity and dictate solubility and acid-base equilibria. A two-hour weekly laboratory section accompanies the course to introduce laboratory techniques and reiterate lecture concepts through hands-on activities. Specific discussions will include the structure, properties, and applications of molecules used in medicine, perovskites used in solar cells, and the dramatically different properties of materials with the same composition (for example: diamond, graphite, graphene). There will be three lectures and one two-hour laboratory session each week. The course will assume familiarity with stoichiometry, unit conversions, gas laws, and thermochemistry. All students who are interested in taking general chemistry at Stanford must take the Autumn 2021 General Chemistry Placement Test before the Autumn quarter begins, regardless of chemistry background.  Same as: MATSCI 31"
+        ],
+        "gers": ["GER: DB-NatSci, WAY-SMA"],
+        "sections": [
+          {
+            "section": [
+              {
+                "classId": ["24612"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": [""],
+                "sectionNumber": ["16"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@5405aa46"]
+                  }
+                ],
+                "instructors": [""],
+                "notes": [""]
+              },
+              {
+                "classId": ["24613"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": [""],
+                "sectionNumber": ["17"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@3b66819a"]
+                  }
+                ],
+                "instructors": ["Hong, N. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["24611"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": [""],
+                "sectionNumber": ["15"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@b57922e"]
+                  }
+                ],
+                "instructors": ["Nhan, B. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["24610"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": [""],
+                "sectionNumber": ["14"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@5a9e55f5"]
+                  }
+                ],
+                "instructors": ["Hage, R. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["23381"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": [""],
+                "sectionNumber": ["03"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@23b0837a"]
+                  }
+                ],
+                "instructors": ["Nhan, B. (TA)"],
+                "notes": ["Meets in Sapp 201."]
+              },
+              {
+                "classId": ["23382"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": [""],
+                "sectionNumber": ["04"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@2cd5acc7"]
+                  }
+                ],
+                "instructors": ["Francis, S. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["23383"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": [""],
+                "sectionNumber": ["05"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@1ba49d91"]
+                  }
+                ],
+                "instructors": ["Bell, B. (TA)"],
+                "notes": [""]
+              },
+              {
+                "classId": ["23385"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": [""],
+                "sectionNumber": ["07"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@33bd52ed"]
+                  }
+                ],
+                "instructors": ["Francis, S. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["23384"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": [""],
+                "sectionNumber": ["06"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@1431acb3"]
+                  }
+                ],
+                "instructors": ["Schrock, M. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["23387"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": [""],
+                "sectionNumber": ["09"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@15838966"]
+                  }
+                ],
+                "instructors": ["Schrock, M. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["23386"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": [""],
+                "sectionNumber": ["08"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@2af4d652"]
+                  }
+                ],
+                "instructors": ["Bell, B. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["23389"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": [""],
+                "sectionNumber": ["11"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@7307c3db"]
+                  }
+                ],
+                "instructors": ["Hage, R. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["23388"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": [""],
+                "sectionNumber": ["10"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@6acabd3c"]
+                  }
+                ],
+                "instructors": ["Sanchez, L. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["23391"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": [""],
+                "sectionNumber": ["13"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@630bc1ba"]
+                  }
+                ],
+                "instructors": ["Sanchez, L. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["23390"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": [""],
+                "sectionNumber": ["12"],
+                "component": ["LBS"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@6fc1cdcf"]
+                  }
+                ],
+                "instructors": ["Nhan, B. (TA)"],
+                "notes": ["Exception Granted."]
+              },
+              {
+                "classId": ["22781"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": ["5"],
+                "sectionNumber": ["01"],
+                "component": ["LEC"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@2215d2f7"]
+                  }
+                ],
+                "instructors": [
+                  "Karunadasa, H. (PI); Sibucao, K. (PI); Fernandez, D. (GP)"
+                ],
+                "notes": [""]
+              },
+              {
+                "classId": ["23643"],
+                "term": ["2021-2022 Autumn"],
+                "subject": ["CHEM"],
+                "code": ["31M"],
+                "units": ["5"],
+                "sectionNumber": ["02"],
+                "component": ["LEC"],
+                "schedules": [
+                  {
+                    "schedule": ["crsearch.action.SectionSchedule@1d09a8d4"]
+                  }
+                ],
+                "instructors": [
+                  "Karunadasa, H. (PI); Sibucao, K. (PI); Fernandez, D. (GP)"
+                ],
+                "notes": [""]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
