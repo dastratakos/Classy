@@ -7,12 +7,12 @@ export default {
     secondaryText: "#888",
     background: "#fff",
     secondaryBackground: "#eee",
-    tertiaryBackground: "#ccc",
+    tertiaryBackground: "#aaa",
     tint: tintColorLight,
     tabIconDefault: "#ccc",
     tabIconSelected: tintColorLight,
     border: "#000",
-    imagePlaceholder: "#ccc",
+    photoBackground: "#ccc",
   },
   dark: {
     text: "#fff",
@@ -24,7 +24,7 @@ export default {
     tabIconDefault: "#ccc",
     tabIconSelected: tintColorDark,
     border: "#fff",
-    imagePlaceholder: "#888",
+    photoBackground: "#888",
   },
   status: {
     notInClass: "#20E070",

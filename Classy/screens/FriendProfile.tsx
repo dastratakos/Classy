@@ -1,7 +1,6 @@
 import { FriendProfileProps, User } from "../types";
 import { Icon, Text, View } from "../components/Themed";
 import {
-  Image,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -28,6 +27,7 @@ import Calendar from "../components/Calendar";
 import Colors from "../constants/Colors";
 import CourseCard from "../components/CourseCard";
 import Layout from "../constants/Layout";
+import ProfilePhoto from "../components/ProfilePhoto";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
 import { db } from "../firebase";
@@ -246,25 +246,11 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       <View style={AppStyles.section}>
         <View style={AppStyles.row}>
           <View style={AppStyles.row}>
-            {user.photoUrl ? (
-              <Image
-                source={{ uri: user.photoUrl }}
-                style={[
-                  AppStyles.photoMedium,
-                  { marginRight: Layout.spacing.large },
-                ]}
-              />
-            ) : (
-              <View
-                style={[
-                  AppStyles.photoMedium,
-                  {
-                    marginRight: Layout.spacing.large,
-                    backgroundColor: Colors[colorScheme].imagePlaceholder,
-                  },
-                ]}
-              />
-            )}
+            <ProfilePhoto
+              url={user.photoUrl}
+              size={Layout.photo.medium}
+              style={{ marginRight: Layout.spacing.large }}
+            />
             <View>
               <Text style={styles.name}>{user.name}</Text>
               <View
@@ -396,7 +382,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                 StyleSheet.absoluteFill,
                 styles.similarityBar,
                 {
-                  backgroundColor: Colors[colorScheme].imagePlaceholder,
+                  backgroundColor: Colors[colorScheme].photoBackground,
                   width: `${courseSimilarity}%`,
                 },
               ]}

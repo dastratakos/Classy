@@ -32,7 +32,7 @@ export default function SearchBar({
       <View
         style={[
           styles.inputContainer,
-          { backgroundColor: Colors[colorScheme].imagePlaceholder },
+          { backgroundColor: Colors[colorScheme].photoBackground },
         ]}
       >
         <Icon name="search" size={20} />

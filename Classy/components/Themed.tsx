@@ -35,6 +35,7 @@ type ThemeProps = {
 type IconOtherProps = {
   name?: string;
   size?: number;
+  style?: Object;
 };
 
 export type TextProps = ThemeProps & DefaultText["props"];
@@ -61,10 +62,10 @@ export function View(props: ViewProps) {
 }
 
 export function Icon(props: IconProps) {
-  const { lightColor, darkColor, ...otherProps } = props;
+  const { lightColor, darkColor, style, ...otherProps } = props;
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
 
-  return <FontAwesome style={{ color }} {...otherProps} />;
+  return <FontAwesome style={[{ color }, style]} {...otherProps} />;
 }
 
 export function ActivityIndicator(props: ActivityIndicatorProps) {

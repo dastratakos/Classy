@@ -1,5 +1,5 @@
 import { Icon, Text, View } from "./Themed";
-import { Image, StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
@@ -8,6 +8,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import AppContext from "../context/Context";
 import { useContext } from "react";
+import ProfilePhoto from "./ProfilePhoto";
 
 export default function FriendCard({
   friend,
@@ -27,35 +28,16 @@ export default function FriendCard({
   return (
     <TouchableOpacity
       onPress={() => {
-        if (friend.id === context.user.id)
-          navigation.navigate("Profile");
-        else
-          navigation.navigate("FriendProfile", { id: friend.id });
+        if (friend.id === context.user.id) navigation.navigate("Profile");
+        else navigation.navigate("FriendProfile", { id: friend.id });
       }}
       style={[styles.container, { borderColor: Colors[colorScheme].border }]}
     >
-      {friend.photoUrl ? (
-        <Image
-          source={{ uri: friend.photoUrl }}
-          style={[
-            AppStyles.photoSmall,
-            {
-              marginRight: Layout.spacing.small,
-              backgroundColor: Colors[colorScheme].imagePlaceholder,
-            },
-          ]}
-        />
-      ) : (
-        <View
-          style={[
-            AppStyles.photoSmall,
-            {
-              marginRight: Layout.spacing.small,
-              backgroundColor: Colors[colorScheme].imagePlaceholder,
-            },
-          ]}
-        />
-      )}
+      <ProfilePhoto
+        url={friend.photoUrl}
+        size={Layout.photo.small}
+        style={{ marginRight: Layout.spacing.small }}
+      />
       <View style={styles.textContainer}>
         <Text style={styles.name} numberOfLines={1}>
           {friend.name}

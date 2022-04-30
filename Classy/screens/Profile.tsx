@@ -1,21 +1,21 @@
 import { Icon, Text, View } from "../components/Themed";
 import {
-  Pressable,
   Image,
+  Pressable,
   RefreshControl,
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { User, sendEmailVerification } from "firebase/auth";
-import { auth, db } from "../firebase";
 import {
+  Timestamp,
   collection,
   doc,
   getDoc,
   getDocs,
   query,
-  Timestamp,
 } from "firebase/firestore";
+import { User, sendEmailVerification } from "firebase/auth";
+import { auth, db } from "../firebase";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -25,12 +25,13 @@ import Calendar from "../components/Calendar";
 import Colors from "../constants/Colors";
 import { Course } from "../types";
 import Layout from "../constants/Layout";
+import ProfilePhoto from "../components/ProfilePhoto";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
 import WideButton from "../components/Buttons/WideButton";
+import events from "./dummyEvents";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import events from "./dummyEvents";
 
 export default function Profile() {
   const context = useContext(AppContext);
@@ -169,25 +170,11 @@ export default function Profile() {
       <View style={AppStyles.section}>
         <View style={AppStyles.row}>
           <View style={AppStyles.row}>
-            {context.user.photoUrl ? (
-              <Image
-                source={{ uri: context.user.photoUrl }}
-                style={[
-                  AppStyles.photoMedium,
-                  { marginRight: Layout.spacing.large },
-                ]}
-              />
-            ) : (
-              <View
-                style={[
-                  AppStyles.photoMedium,
-                  {
-                    marginRight: Layout.spacing.large,
-                    backgroundColor: Colors[colorScheme].imagePlaceholder,
-                  },
-                ]}
-              />
-            )}
+            <ProfilePhoto
+              url={context.user.photoUrl}
+              size={Layout.photo.medium}
+              style={{ marginRight: Layout.spacing.large }}
+            />
             <View>
               <Text style={styles.name}>{context.user.name}</Text>
               <View

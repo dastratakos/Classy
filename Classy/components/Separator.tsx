@@ -7,8 +7,8 @@ export default function Separator() {
   return (
     <View
       style={AppStyles.separator}
-      lightColor={Colors.light.imagePlaceholder}
-      darkColor={Colors.dark.imagePlaceholder}
+      lightColor={Colors.light.photoBackground}
+      darkColor={Colors.dark.photoBackground}
     />
   );
 }

@@ -14,7 +14,7 @@ export default {
     medium: 15,
     large: 25,
   },
-  image: {
+  photo: {
     small: 50,
     medium: 75,
     large: 100,

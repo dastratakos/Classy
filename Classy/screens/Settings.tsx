@@ -29,6 +29,7 @@ import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { SaveFormat } from "expo-image-manipulator";
+import ProfilePhoto from "../components/ProfilePhoto";
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -178,54 +179,12 @@ export default function Settings() {
       ]}
       contentContainerStyle={{ alignItems: "center" }}
     >
-      {uploading ? (
-        <View
-          style={[
-            AppStyles.photoXlarge,
-            {
-              marginBottom: Layout.spacing.medium,
-              backgroundColor: Colors[colorScheme].imagePlaceholder,
-            },
-          ]}
-        >
-          <ActivityIndicator size="large" />
-        </View>
-      ) : (
-        <>
-          {photoUrl ? (
-            <Pressable
-              onLongPress={() =>
-                Share.share({
-                  message: photoUrl,
-                  title: "Check out this photo",
-                  url: photoUrl,
-                })
-              }
-            >
-              <Image
-                source={{ uri: photoUrl }}
-                style={[
-                  AppStyles.photoXlarge,
-                  {
-                    marginBottom: Layout.spacing.medium,
-                    backgroundColor: Colors[colorScheme].imagePlaceholder,
-                  },
-                ]}
-              />
-            </Pressable>
-          ) : (
-            <View
-              style={[
-                AppStyles.photoXlarge,
-                {
-                  marginBottom: Layout.spacing.medium,
-                  backgroundColor: Colors[colorScheme].imagePlaceholder,
-                },
-              ]}
-            />
-          )}
-        </>
-      )}
+      <ProfilePhoto
+        url={photoUrl}
+        size={Layout.photo.xlarge}
+        style={{ marginBottom: Layout.spacing.medium }}
+        loading={uploading}
+      />
       <View style={AppStyles.row}>
         <View style={{ width: "48%" }}>
           <Button text="Choose profile photo" onPress={choosePhoto} />
