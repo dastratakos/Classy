@@ -18,8 +18,9 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
+import ActionSheet from "react-native-actionsheet";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
@@ -50,6 +51,17 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const [inClass, setInClass] = useState([]);
 
   const [refreshing, setRefreshing] = useState(false);
+
+  const actionSheetRef = useRef();
+
+  const baseActionSheetOptions = ["Block", "Copy profile URL", "Cancel"];
+
+  const friendActionSheetOptions = [
+    "Block",
+    "Remove friend",
+    "Copy profile URL",
+    "Cancel",
+  ];
 
   useEffect(() => {
     onRefresh();
@@ -122,6 +134,17 @@ export default function FriendProfile({ route }: FriendProfileProps) {
           setFriendStatus("request sent");
         else setFriendStatus("request received");
       } else {
+        // if (doc.data().status === "friends") {
+        //   const newActions = [...actionSheetOptions]
+        //   console.log(
+        //     "new actions:",
+        //     [...actionSheetOptions].splice(1, 0, "Remove friend")
+        //   );
+        //   setActionSheetOptions(
+        //     [...actionSheetOptions].splice(1, 0, "Remove friend")
+        //   );
+        // }
+
         setFriendStatus(doc.data().status);
       }
     });
@@ -202,6 +225,14 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     await updateDoc(docRef, { status: "friends" });
 
     setFriendStatus("friends");
+  };
+
+  const handleActionSheetOptionPressed = (index: number) => {
+    if (friendStatus === "friends") {
+      console.log(friendActionSheetOptions[index], "pressed");
+    } else {
+      console.log(baseActionSheetOptions[index], "pressed");
+    }
   };
 
   return (
@@ -296,7 +327,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                   }}
                 />
                 <Pressable
-                  onPress={() => console.log("Ellipsis pressed")}
+                  onPress={() => actionSheetRef.current?.show()}
                   style={({ pressed }) => [
                     styles.ellipsis,
                     { opacity: pressed ? 0.5 : 1 },
@@ -402,6 +433,21 @@ export default function FriendProfile({ route }: FriendProfileProps) {
           </View>
         </>
       )}
+      <ActionSheet
+        ref={actionSheetRef}
+        options={
+          friendStatus === "friends"
+            ? friendActionSheetOptions
+            : baseActionSheetOptions
+        }
+        cancelButtonIndex={
+          friendStatus === "friends"
+            ? friendActionSheetOptions.length - 1
+            : baseActionSheetOptions.length - 1
+        }
+        destructiveButtonIndex={0}
+        onPress={handleActionSheetOptionPressed}
+      />
     </ScrollView>
   );
 }
