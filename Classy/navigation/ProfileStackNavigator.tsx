@@ -12,6 +12,7 @@ import { ProfileStackScreenProps } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Icon } from "../components/Themed";
 import Quarters from "../screens/Quarters";
+import AddEditCourse from "../screens/AddEditCourse";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,7 +22,7 @@ export default function ProfileStackNavigator() {
       <Stack.Screen
         name="Profile"
         component={Profile}
-        getId={() => (new Date).getTime().toString()}
+        getId={() => new Date().getTime().toString()}
         options={({ navigation }: ProfileStackScreenProps<"Profile">) => ({
           title: "Profile",
           headerRight: () => (
@@ -40,18 +41,23 @@ export default function ProfileStackNavigator() {
       <Stack.Screen
         name="Course"
         component={Course}
-        getId={() => (new Date).getTime().toString()}
+        getId={() => new Date().getTime().toString()}
+      />
+      <Stack.Screen
+        name="AddEditCourse"
+        component={AddEditCourse}
+        options={{ title: "Add or Edit Course" }}
       />
       <Stack.Screen
         name="Friends"
         component={Friends}
-        getId={() => (new Date).getTime().toString()}
+        getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen
         name="FriendProfile"
         component={FriendProfile}
         options={{ title: "Friend Profile" }}
-        getId={() => (new Date).getTime().toString()}
+        getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen name="Quarters" component={Quarters} />
     </Stack.Navigator>
