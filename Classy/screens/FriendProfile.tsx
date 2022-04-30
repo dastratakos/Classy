@@ -8,13 +8,13 @@ import {
   StyleSheet,
 } from "react-native";
 import {
+  Timestamp,
   addDoc,
   collection,
   doc,
   getDoc,
   getDocs,
   query,
-  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -30,17 +30,11 @@ import Layout from "../constants/Layout";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
 import { db } from "../firebase";
+import events from "./dummyEvents";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
-import events from "./dummyEvents";
-
-const profile = {
-  // inClass: false,
-  courseSimilarity: 57.54,
-  // courseSimilarity: 83,
-  // private: false,
-};
+const courseSimilarity = 57.54;
 
 export default function FriendProfile({ route }: FriendProfileProps) {
   const navigation = useNavigation();
@@ -355,7 +349,9 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         </View>
         {user.isPrivate && !(friendStatus === "friends") ? null : (
           <Pressable
-            onPress={() => console.log("Course similarity pressed")}
+            onPress={() =>
+              navigation.navigate("CourseSimilarity", { id: route.params.id })
+            }
             style={({ pressed }) => [
               {
                 opacity: pressed ? 0.5 : 1,
@@ -370,12 +366,12 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                 styles.similarityBar,
                 {
                   backgroundColor: Colors[colorScheme].imagePlaceholder,
-                  width: `${profile.courseSimilarity}%`,
+                  width: `${courseSimilarity}%`,
                 },
               ]}
             />
             <Text style={styles.similarityText}>
-              {Math.round(profile.courseSimilarity)}% course similarity
+              {Math.round(courseSimilarity)}% course similarity
             </Text>
           </Pressable>
         )}

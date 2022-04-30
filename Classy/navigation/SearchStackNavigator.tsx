@@ -1,19 +1,18 @@
 import * as React from "react";
 
-import { ColorSchemeName, Pressable } from "react-native";
-
-import Colors from "../constants/Colors";
+import AddEditCourse from "../screens/AddEditCourse";
 import Course from "../screens/Course";
+import CourseSimilarity from "../screens/CourseSimilarity";
 import Courses from "../screens/Courses";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
-import Profile from "../screens/Profile";
-import Search from "../screens/Search";
-import { ProfileStackScreenProps } from "../types";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Icon } from "../components/Themed";
+import { Pressable } from "react-native";
+import Profile from "../screens/Profile";
+import { ProfileStackScreenProps } from "../types";
 import Quarters from "../screens/Quarters";
-import AddEditCourse from "../screens/AddEditCourse";
+import Search from "../screens/Search";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const Stack = createNativeStackNavigator();
 
@@ -64,6 +63,12 @@ export default function SearchStackNavigator() {
         component={FriendProfile}
         options={{ title: "Friend Profile" }}
         getId={() => new Date().getTime().toString()}
+      />
+      <Stack.Screen
+        name="CourseSimilarity"
+        component={CourseSimilarity}
+        getId={() => new Date().getTime().toString()}
+        options={{ title: "Course Similarity" }}
       />
       <Stack.Screen name="Quarters" component={Quarters} />
     </Stack.Navigator>

@@ -1,24 +1,23 @@
 import * as React from "react";
 
-import { ColorSchemeName, Pressable } from "react-native";
-
+import AddEditCourse from "../screens/AddEditCourse";
 import AppContext from "../context/Context";
+import ChannelDetails from "../screens/ChannelDetails";
 import ChannelScreen from "../screens/ChannelScreen";
-import Colors from "../constants/Colors";
 import Course from "../screens/Course";
+import CourseSimilarity from "../screens/CourseSimilarity";
 import Courses from "../screens/Courses";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
-import ThreadScreen from "../screens/ThreadScreen";
 import { Icon } from "../components/Themed";
 import Messages from "../screens/Messages";
 import { MessagesStackScreenProps } from "../types";
+import NewMessage from "../screens/NewMessage";
+import { Pressable } from "react-native";
+import Profile from "../screens/Profile";
+import ThreadScreen from "../screens/ThreadScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useContext } from "react";
-import ChannelDetails from "../screens/ChannelDetails";
-import NewMessage from "../screens/NewMessage";
-import Profile from "../screens/Profile";
-import AddEditCourse from "../screens/AddEditCourse";
 
 const Stack = createNativeStackNavigator();
 
@@ -105,6 +104,12 @@ export default function MessagesStackNavigator() {
         component={FriendProfile}
         getId={() => new Date().getTime().toString()}
         options={{ title: "Friend Profile" }}
+      />
+      <Stack.Screen
+        name="CourseSimilarity"
+        component={CourseSimilarity}
+        getId={() => new Date().getTime().toString()}
+        options={{ title: "Course Similarity" }}
       />
     </Stack.Navigator>
   );

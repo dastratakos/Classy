@@ -70,6 +70,7 @@ export type RootStackParamList = {
   Quarters: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
+  CourseSimilarity: { id: string };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
@@ -98,6 +99,7 @@ export type ProfileStackParamList = {
   Quarters: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
+  CourseSimilarity: { id: string };
 };
 
 export type ProfileStackScreenProps<
@@ -113,6 +115,7 @@ export type SearchStackParamList = {
   Quarters: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
+  CourseSimilarity: { id: string };
 };
 
 export type SearchStackScreenProps<Screen extends keyof SearchStackParamList> =
@@ -130,6 +133,7 @@ export type MessagesStackParamList = {
   AddEditCourse: { id: string };
   Friends: { id: string };
   FriendProfile: { id: string };
+  CourseSimilarity: { id: string };
 };
 
 export type MessagesStackScreenProps<
@@ -168,6 +172,11 @@ export type FriendsProps = NativeStackScreenProps<
 >;
 
 export type FriendProfileProps = NativeStackScreenProps<
+  RootStackParamList,
+  "FriendProfile"
+>;
+
+export type CourseSimilarityProps = NativeStackScreenProps<
   RootStackParamList,
   "FriendProfile"
 >;
