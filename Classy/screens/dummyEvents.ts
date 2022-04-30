@@ -4,20 +4,20 @@ const events = [
   {
     day: "Monday",
     events: [
-      {
-        title: "Overlapping event",
-        courseId: "none",
-        startInfo: Timestamp.fromDate(new Date("March 28, 2022 8:00:00")),
-        endInfo: Timestamp.fromDate(new Date("March 28, 2022 10:15:00")),
-        location: "Gates Information Sciences, Rm B1",
-      },
-      {
-        title: "Overlapping event",
-        courseId: "none",
-        startInfo: Timestamp.fromDate(new Date("March 28, 2022 10:00:00")),
-        endInfo: Timestamp.fromDate(new Date("March 28, 2022 18:15:00")),
-        location: "Gates Information Sciences, Rm B1",
-      },
+      // {
+      //   title: "Overlapping event",
+      //   courseId: "none",
+      //   startInfo: Timestamp.fromDate(new Date("March 28, 2022 8:00:00")),
+      //   endInfo: Timestamp.fromDate(new Date("March 28, 2022 10:15:00")),
+      //   location: "Gates Information Sciences, Rm B1",
+      // },
+      // {
+      //   title: "Overlapping event",
+      //   courseId: "none",
+      //   startInfo: Timestamp.fromDate(new Date("March 28, 2022 10:00:00")),
+      //   endInfo: Timestamp.fromDate(new Date("March 28, 2022 18:15:00")),
+      //   location: "Gates Information Sciences, Rm B1",
+      // },
       {
         title: "CS 194W Lecture",
         courseId: "211164",
@@ -25,13 +25,13 @@ const events = [
         endInfo: Timestamp.fromDate(new Date("March 28, 2022 13:15:00")),
         location: "Gates Information Sciences, Rm B1",
       },
-      {
-        title: "Overlapping event",
-        courseId: "none",
-        startInfo: Timestamp.fromDate(new Date("March 28, 2022 12:45:00")),
-        endInfo: Timestamp.fromDate(new Date("March 28, 2022 14:15:00")),
-        location: "Gates Information Sciences, Rm B1",
-      },
+      // {
+      //   title: "Overlapping event",
+      //   courseId: "none",
+      //   startInfo: Timestamp.fromDate(new Date("March 28, 2022 12:45:00")),
+      //   endInfo: Timestamp.fromDate(new Date("March 28, 2022 14:15:00")),
+      //   location: "Gates Information Sciences, Rm B1",
+      // },
       {
         title: "PSYC 135 Lecture",
         courseId: "none",

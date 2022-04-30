@@ -17,6 +17,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useContext } from "react";
 import ChannelDetails from "../screens/ChannelDetails";
 import NewMessage from "../screens/NewMessage";
+import Profile from "../screens/Profile";
 
 const Stack = createNativeStackNavigator();
 
@@ -73,12 +74,30 @@ export default function MessagesStackNavigator() {
         component={NewMessage}
         options={{ title: "New Message" }}
       />
-      <Stack.Screen name="Courses" component={Courses} />
-      <Stack.Screen name="Course" component={Course} />
-      <Stack.Screen name="Friends" component={Friends} />
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
+        getId={() => new Date().getTime().toString()}
+      />
+      <Stack.Screen
+        name="Courses"
+        component={Courses}
+        getId={() => new Date().getTime().toString()}
+      />
+      <Stack.Screen
+        name="Course"
+        component={Course}
+        getId={() => new Date().getTime().toString()}
+      />
+      <Stack.Screen
+        name="Friends"
+        component={Friends}
+        getId={() => new Date().getTime().toString()}
+      />
       <Stack.Screen
         name="FriendProfile"
         component={FriendProfile}
+        getId={() => new Date().getTime().toString()}
         options={{ title: "Friend Profile" }}
       />
     </Stack.Navigator>

@@ -21,6 +21,7 @@ export default function ProfileStackNavigator() {
       <Stack.Screen
         name="Profile"
         component={Profile}
+        getId={() => (new Date).getTime().toString()}
         options={({ navigation }: ProfileStackScreenProps<"Profile">) => ({
           title: "Profile",
           headerRight: () => (
@@ -39,18 +40,18 @@ export default function ProfileStackNavigator() {
       <Stack.Screen
         name="Course"
         component={Course}
-        getId={({ params }) => params.id}
+        getId={() => (new Date).getTime().toString()}
       />
       <Stack.Screen
         name="Friends"
         component={Friends}
-        getId={({ params }) => params.id}
+        getId={() => (new Date).getTime().toString()}
       />
       <Stack.Screen
         name="FriendProfile"
         component={FriendProfile}
         options={{ title: "Friend Profile" }}
-        getId={({ params }) => params.id}
+        getId={() => (new Date).getTime().toString()}
       />
       <Stack.Screen name="Quarters" component={Quarters} />
     </Stack.Navigator>

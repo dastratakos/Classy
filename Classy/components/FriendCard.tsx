@@ -6,6 +6,8 @@ import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import AppContext from "../context/Context";
+import { useContext } from "react";
 
 export default function FriendCard({
   friend,
@@ -18,12 +20,18 @@ export default function FriendCard({
     photoUrl: string;
   };
 }) {
+  const context = useContext(AppContext);
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate("FriendProfile", { id: friend.id })}
+      onPress={() => {
+        if (friend.id === context.user.id)
+          navigation.navigate("Profile");
+        else
+          navigation.navigate("FriendProfile", { id: friend.id });
+      }}
       style={[styles.container, { borderColor: Colors[colorScheme].border }]}
     >
       {friend.photoUrl ? (

@@ -63,6 +63,7 @@ export type RootStackParamList = {
   ChannelDetails: undefined;
   NewMessage: undefined;
 
+  Profile: undefined;
   Courses: undefined;
   Course: { id: string };
   Quarters: undefined;
