@@ -13,6 +13,7 @@ import { ProfileStackScreenProps } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Icon } from "../components/Themed";
 import Quarters from "../screens/Quarters";
+import AddEditCourse from "../screens/AddEditCourse";
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +48,11 @@ export default function SearchStackNavigator() {
         name="Course"
         component={Course}
         getId={() => new Date().getTime().toString()}
+      />
+      <Stack.Screen
+        name="AddEditCourse"
+        component={AddEditCourse}
+        options={{ title: "Add or Edit Course" }}
       />
       <Stack.Screen
         name="Friends"

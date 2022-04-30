@@ -66,6 +66,7 @@ export type RootStackParamList = {
   Profile: undefined;
   Courses: undefined;
   Course: { id: string };
+  AddEditCourse: { id: string };
   Quarters: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -93,6 +94,7 @@ export type ProfileStackParamList = {
   Profile: undefined;
   Courses: undefined;
   Course: { id: string };
+  AddEditCourse: { id: string };
   Quarters: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -107,6 +109,7 @@ export type SearchStackParamList = {
   Profile: undefined;
   Courses: undefined;
   Course: { id: string };
+  AddEditCourse: { id: string };
   Quarters: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -124,6 +127,7 @@ export type MessagesStackParamList = {
 
   Courses: undefined;
   Course: { id: string };
+  AddEditCourse: { id: string };
   Friends: { id: string };
   FriendProfile: { id: string };
 };
@@ -147,6 +151,11 @@ export type RegisterProps = NativeStackScreenProps<
 >;
 
 export type CourseProps = NativeStackScreenProps<RootStackParamList, "Course">;
+
+export type AddEditCourseProps = NativeStackScreenProps<
+  RootStackParamList,
+  "AddEditCourse"
+>;
 
 export type ThreadScreenProps = NativeStackScreenProps<
   RootStackParamList,

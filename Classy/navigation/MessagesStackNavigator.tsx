@@ -18,6 +18,7 @@ import { useContext } from "react";
 import ChannelDetails from "../screens/ChannelDetails";
 import NewMessage from "../screens/NewMessage";
 import Profile from "../screens/Profile";
+import AddEditCourse from "../screens/AddEditCourse";
 
 const Stack = createNativeStackNavigator();
 
@@ -88,6 +89,11 @@ export default function MessagesStackNavigator() {
         name="Course"
         component={Course}
         getId={() => new Date().getTime().toString()}
+      />
+      <Stack.Screen
+        name="AddEditCourse"
+        component={AddEditCourse}
+        options={{ title: "Add or Edit Course" }}
       />
       <Stack.Screen
         name="Friends"

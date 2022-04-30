@@ -17,6 +17,7 @@ import ReadMoreText from "../components/ReadMoreText";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import friendsData from "./friendsData";
+import { useNavigation } from "@react-navigation/core";
 
 const exploreCoursesLink =
   "https://explorecourses.stanford.edu/search?view=catalog&filter-coursestatus-Active=on&page=0&catalog=&academicYear=&q=";
@@ -24,6 +25,7 @@ const exploreCoursesLink =
 const cartaLink = "https://carta-beta.stanford.edu/course/";
 
 export default function Course({ route }: CourseProps) {
+  const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
   const [course, setCourse] = useState({} as CourseType);
@@ -51,7 +53,7 @@ export default function Course({ route }: CourseProps) {
     }
   };
 
-  if (isLoading) return <ActivityIndicator />
+  if (isLoading) return <ActivityIndicator />;
 
   return (
     <ScrollView
@@ -92,7 +94,9 @@ export default function Course({ route }: CourseProps) {
         </View>
         <WideButton
           text="Add to Courses"
-          onPress={() => console.log("Add to Courses pressed")}
+          onPress={() =>
+            navigation.navigate("AddEditCourse", { id: course.courseId })
+          }
         />
       </View>
       <Separator />
