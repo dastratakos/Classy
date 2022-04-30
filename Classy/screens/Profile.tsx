@@ -49,7 +49,7 @@ export default function Profile() {
 
     if (auth.currentUser) {
       getUser(auth.currentUser.uid);
-      getCourses(context.user.id).then(checkInClass);
+      getCourses(context.user.id).then(() => setInterval(checkInClass, 1000));
     }
 
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -98,6 +98,11 @@ export default function Profile() {
   const checkInClass = () => {
     const now = Timestamp.now().toDate();
     const today = now.getDay() - 1;
+
+    if (!events[today]) {
+      setInClass(false);
+      return;
+    }
 
     for (let event of events[today].events) {
       const startInfo = event.startInfo.toDate();

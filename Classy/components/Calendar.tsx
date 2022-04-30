@@ -29,13 +29,7 @@ export default function Calendar({ events }: { events: [] }) {
   const colorScheme = useColorScheme();
 
   /* Create new data structure with ref property. */
-
   const newEvents = events.map((item) => ({ ...item, ref: createRef() }));
-  // const [newEvents, setNewEvents] = useState([]);
-
-  // useEffect(() => {
-  //   setNewEvents(events.map((item) => ({ ...item, ref: createRef() })));
-  // }, []);
 
   const { width } = Dimensions.get("screen");
   const dayWidth = width - 2 * Layout.spacing.medium;
@@ -44,7 +38,14 @@ export default function Calendar({ events }: { events: [] }) {
   const d = new Date();
   const today = d.getDay() - 1;
 
+  // TODO: compute earliest and latest events for all days ahead of time
+  // earliest Stanford course is 6:00 AM and latest is 9:30 PM
   const times = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+  const [currTime, setCurrTime] = useState(Timestamp.now());
+
+  useEffect(() => {
+    setInterval(() => setCurrTime(Timestamp.now()), 1000);
+  }, []);
 
   const getTimeString = (startTime: Timestamp, endTime: Timestamp) => {
     var start = startTime.toDate().toLocaleString("en-US", {
@@ -62,8 +63,8 @@ export default function Calendar({ events }: { events: [] }) {
     return `${start} - ${end}`;
   };
 
-  const getCurrentTimeString = () => {
-    const now = Timestamp.now().toDate();
+  const getCurrTimeString = (currTime: Timestamp) => {
+    const now = currTime.toDate();
     const minutes = `${now.getMinutes()}`.padStart(2, "0");
     return `${now.getHours() % 12}:${minutes}`;
   };
@@ -100,8 +101,8 @@ export default function Calendar({ events }: { events: [] }) {
    * This was calculated using the height of an hour (Layout.spacing.xxlarge)
    * and the height of the time texts.
    */
-  const currentTimeClose = (hour: number) => {
-    const now = Timestamp.now().toDate();
+  const currentTimeClose = (currTime: Timestamp, hour: number) => {
+    const now = currTime.toDate();
     if (now.getHours() === hour - 1) {
       return now.getMinutes() > 52;
     } else if (now.getHours() === hour) {
@@ -157,31 +158,22 @@ export default function Calendar({ events }: { events: [] }) {
     );
   });
 
-  const Indicator = ({ measurements, scrollX }) => {
-    const inputRange = measurements.map((_, i) => i * dayWidth);
+  const Indicator = ({ scrollX }) => {
+    const inputRange = [0, 1, 2, 3, 4].map((i) => i * dayWidth);
     const indicatorLeft = scrollX.interpolate({
       inputRange,
-      outputRange: measurements.map(
-        (measurement) => measurement.x + measurement.width / 2 - 15
+      outputRange: [0, 1, 2, 3, 4].map(
+        (i) => (i * dayWidth) / 5 + dayWidth / 5 / 2 - 15
       ),
     });
     const regularOpacity = scrollX.interpolate({
       inputRange,
-      outputRange: measurements.map((_, i) => (today === i ? 0 : 1)),
+      outputRange: [0, 1, 2, 3, 4].map((i) => (today === i ? 0 : 1)),
     });
     const selectedOpacity = scrollX.interpolate({
       inputRange,
-      outputRange: measurements.map((_, i) => (today === i ? 1 : 0)),
+      outputRange: [0, 1, 2, 3, 4].map((i) => (today === i ? 1 : 0)),
     });
-
-    console.log("measurements:", measurements);
-    console.log("inputRange:", inputRange);
-    console.log(
-      "outputRange:",
-      measurements.map(
-        (measurement) => measurement.x + measurement.width / 2 - 15
-      )
-    );
 
     return (
       <>
@@ -211,31 +203,9 @@ export default function Calendar({ events }: { events: [] }) {
   };
 
   const Header = ({ data, scrollX, onItemPress }) => {
-    const [measurements, setMeasurements] = useState([]);
-    const containerRef = useRef();
-    const isMounted = useIsMounted();
-
-    useEffect(() => {
-      let m = [];
-      data.forEach((item) => {
-        if (item.ref.current)
-          item.ref.current.measureLayout(
-            containerRef.current,
-            (x, y, width, height) => {
-              if (width !== 0) m.push({ x, y, width, height });
-
-              if (m.length === data.length && isMounted.current)
-                setMeasurements(m);
-            }
-          );
-      });
-    }, []);
-
     return (
       <View>
-        {measurements.length > 0 && (
-          <Indicator measurements={measurements} scrollX={scrollX} />
-        )}
+        <Indicator scrollX={scrollX} />
         <View
           style={[
             AppStyles.row,
@@ -244,7 +214,6 @@ export default function Calendar({ events }: { events: [] }) {
               marginBottom: Layout.spacing.medium,
             },
           ]}
-          ref={containerRef}
         >
           {data.map((item, i) => (
             <DayTab
@@ -283,15 +252,8 @@ export default function Calendar({ events }: { events: [] }) {
           >
             <Text
               style={[
-                {
-                  fontWeight: "600",
-                  width: 45,
-                  textAlign: "right",
-                  paddingRight: 10,
-                  fontSize: Layout.text.small,
-                  backgroundColor: "transparent",
-                },
-                currentTimeClose(time)
+                styles.gridTimeText,
+                currentTimeClose(currTime, time)
                   ? { color: "transparent" }
                   : { color: Colors[colorScheme].secondaryText },
               ]}
@@ -299,12 +261,12 @@ export default function Calendar({ events }: { events: [] }) {
               {((time - 1) % 12) + 1} {time > 11 ? "PM" : "AM"}
             </Text>
             <View
-              style={{
-                flex: 1,
-                height: 1,
-                borderRadius: 1,
-                backgroundColor: Colors[colorScheme].secondaryText,
-              }}
+              style={[
+                styles.gridLine,
+                {
+                  backgroundColor: Colors[colorScheme].secondaryText,
+                },
+              ]}
             />
           </View>
         ))}
@@ -323,41 +285,15 @@ export default function Calendar({ events }: { events: [] }) {
               {
                 position: "absolute",
                 // subtract 6 for height of text
-                marginTop: getMarginTop(Timestamp.now()) - 6,
+                marginTop: getMarginTop(currTime) - 6,
               },
             ]}
           >
-            <Text
-              style={{
-                color: Colors.red,
-                fontWeight: "600",
-                width: 45,
-                textAlign: "right",
-                paddingRight: 10,
-                fontSize: Layout.text.small,
-                backgroundColor: "transparent",
-              }}
-            >
-              {getCurrentTimeString()}
+            <Text style={[styles.gridTimeText, { color: Colors.red }]}>
+              {getCurrTimeString(currTime)}
             </Text>
-            <View
-              style={{
-                flex: 1,
-                height: 1,
-                borderRadius: 1,
-                backgroundColor: Colors.red,
-              }}
-            />
-            <View
-              style={{
-                position: "absolute",
-                left: 45 - Layout.spacing.xsmall / 2,
-                height: Layout.spacing.xsmall,
-                width: Layout.spacing.xsmall,
-                borderRadius: Layout.spacing.xsmall / 2,
-                backgroundColor: Colors.red,
-              }}
-            />
+            <View style={[styles.gridLine, { backgroundColor: Colors.red }]} />
+            <View style={styles.currTimeDot} />
           </View>
         )}
         {events.map((event, i) => {
@@ -397,18 +333,17 @@ export default function Calendar({ events }: { events: [] }) {
   const ref = useRef();
 
   useEffect(() => {
-    if (ref && ref.current) {
-      ref.current.scrollToOffset({
-        offset: today * dayWidth,
-      });
-    }
+    /* Default to Monday if it's a weekend. */
+    const initialSelected = today >= 0 && today <= 4 ? today : 0;
+    ref?.current?.scrollToOffset({
+      offset: initialSelected * dayWidth,
+    });
   }, []);
 
   const onItemPress = useCallback((itemIndex) => {
-    if (ref && ref.current)
-      ref.current.scrollToOffset({
-        offset: itemIndex * dayWidth,
-      });
+    ref?.current?.scrollToOffset({
+      offset: itemIndex * dayWidth,
+    });
   });
 
   return (
@@ -448,5 +383,26 @@ const styles = StyleSheet.create({
     width: 30,
     borderRadius: 30 / 2,
     backgroundColor: "blue",
+  },
+  gridTimeText: {
+    fontWeight: "600",
+    width: 45,
+    textAlign: "right",
+    paddingRight: 10,
+    fontSize: Layout.text.small,
+    backgroundColor: "transparent",
+  },
+  gridLine: {
+    flex: 1,
+    height: 1,
+    borderRadius: 1,
+  },
+  currTimeDot: {
+    position: "absolute",
+    left: 45 - Layout.spacing.xsmall / 2,
+    height: Layout.spacing.xsmall,
+    width: Layout.spacing.xsmall,
+    borderRadius: Layout.spacing.xsmall / 2,
+    backgroundColor: Colors.red,
   },
 });

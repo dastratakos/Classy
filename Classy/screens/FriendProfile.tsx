@@ -69,7 +69,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       setNumFriends(`${res.length}`);
     });
     getCourses(route.params.id);
-    checkInClass();
+    setInterval(checkInClass, 1000);
     setRefreshing(false);
   };
 
@@ -157,6 +157,11 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const checkInClass = () => {
     const now = Timestamp.now().toDate();
     const today = now.getDay() - 1;
+
+    if (!events[today]) {
+      setInClass(false);
+      return;
+    }
 
     for (let event of events[today].events) {
       const startInfo = event.startInfo.toDate();
