@@ -5,18 +5,22 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../components/Themed";
+import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { auth, createUserWithEmailAndPassword, db } from "../firebase";
-import { doc, setDoc, Timestamp } from "firebase/firestore";
 
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
+import { RegisterProps } from "../types";
+import { StreamChat } from "stream-chat";
 import WideButton from "../components/Buttons/WideButton";
+import { sendEmailVerification } from "firebase/auth";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { useState } from "react";
-import { RegisterProps } from "../types";
-import { sendEmailVerification } from "firebase/auth";
+
+const STREAM_API_KEY = "y9tk9hsvsxqa";
+const client = StreamChat.getInstance(STREAM_API_KEY);
 
 export default function Register({ route }: RegisterProps) {
   const [email, setEmail] = useState(route.params?.email || "");
@@ -44,6 +48,7 @@ export default function Register({ route }: RegisterProps) {
           createdAt: Timestamp.now(),
           isPrivate: false,
         };
+        connectStreamChatUser(uid);
         setDoc(doc(db, "users", uid), data)
           .then(() => {
             // TODO: navigate to onboarding
@@ -57,6 +62,23 @@ export default function Register({ route }: RegisterProps) {
           });
       })
       .catch((error) => setErrorMessage(error.message));
+  };
+
+  const connectStreamChatUser = async (
+    id: string,
+    name?: string,
+    photoUrl?: string
+  ) => {
+    const streamChatUser = { id };
+    if (name) streamChatUser.name = name;
+    if (photoUrl) streamChatUser.photoUrl = photoUrl;
+
+    await client.connectUser(
+      streamChatUser,
+      client.devToken(streamChatUser.id)
+    );
+    console.log("User connected:");
+    console.log(streamChatUser);
   };
 
   return (

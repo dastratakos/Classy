@@ -90,8 +90,8 @@ export default function Friends({ route }: FriendsProps) {
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={AppStyles.section}>
-        {friends.map((friend, i) => (
-          <FriendCard friend={friend} key={i} />
+        {friends.map((friend) => (
+          <FriendCard friend={friend} key={friend.id} />
         ))}
       </View>
     </ScrollView>

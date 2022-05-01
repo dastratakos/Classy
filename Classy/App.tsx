@@ -21,6 +21,7 @@ export default function App() {
   const [user, setUser] = useState({} as User);
   const [friendIds, setFriendIds] = useState([] as string[]);
   const [channel, setChannel] = useState();
+  const [channelName, setChannelName] = useState();
   const [thread, setThread] = useState();
 
   const globalVariables = {
@@ -30,6 +31,8 @@ export default function App() {
     setFriendIds: setFriendIds,
     channel: channel,
     setChannel: setChannel,
+    channelName: channelName,
+    setChannelName: setChannelName,
     thread: thread,
     setThread: setThread,
   };

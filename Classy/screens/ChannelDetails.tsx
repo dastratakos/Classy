@@ -42,6 +42,7 @@ export default function ChannelDetails() {
           return (
             <FriendCard
               friend={{ ...member.user, photoUrl: member.user.image }}
+              key={member.user.id}
             />
           );
         })}

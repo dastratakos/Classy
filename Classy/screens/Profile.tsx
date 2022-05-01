@@ -169,13 +169,13 @@ export default function Profile() {
       {showEmailVerification && showSendVerificationEmail()}
       <View style={AppStyles.section}>
         <View style={AppStyles.row}>
-          <View style={AppStyles.row}>
+          <View style={[AppStyles.row, { flex: 1 }]}>
             <ProfilePhoto
               url={context.user.photoUrl}
               size={Layout.photo.medium}
               style={{ marginRight: Layout.spacing.large }}
             />
-            <View>
+            <View style={{ flexGrow: 1 }}>
               <Text style={styles.name}>{context.user.name}</Text>
               <View
                 style={[

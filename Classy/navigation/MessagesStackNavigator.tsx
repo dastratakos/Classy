@@ -46,7 +46,7 @@ export default function MessagesStackNavigator() {
         name="ChannelScreen"
         component={ChannelScreen}
         options={({ navigation }: MessagesStackScreenProps<"Messages">) => ({
-          title: context.channel?.data?.name,
+          title: context.channelName,
           headerRight: () => (
             <Pressable
               onPress={() => navigation.navigate("ChannelDetails")}

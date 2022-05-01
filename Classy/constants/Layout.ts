@@ -15,6 +15,7 @@ export default {
     large: 25,
   },
   photo: {
+    xsmall: 40,
     small: 50,
     medium: 75,
     large: 100,

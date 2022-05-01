@@ -108,8 +108,8 @@ export default function Course({ route }: CourseProps) {
               <Text style={styles.term}>
                 getTermString({termId}) ({friendsData[termId].length})
               </Text>
-              {friendsData[termId].map((friend, i) => (
-                <FriendCard friend={friend} key={i} />
+              {friendsData[termId].map((friend) => (
+                <FriendCard friend={friend} key={friend.id} />
               ))}
             </View>
           ))}

@@ -30,12 +30,15 @@ import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
+import { StreamChat } from "stream-chat";
 import { db } from "../firebase";
 import events from "./dummyEvents";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { async } from "@firebase/util";
 
-const courseSimilarity = 57.54;
+const STREAM_API_KEY = "y9tk9hsvsxqa";
+const client = StreamChat.getInstance(STREAM_API_KEY);
 
 export default function FriendProfile({ route }: FriendProfileProps) {
   const navigation = useNavigation();
@@ -134,17 +137,6 @@ export default function FriendProfile({ route }: FriendProfileProps) {
           setFriendStatus("request sent");
         else setFriendStatus("request received");
       } else {
-        // if (doc.data().status === "friends") {
-        //   const newActions = [...actionSheetOptions]
-        //   console.log(
-        //     "new actions:",
-        //     [...actionSheetOptions].splice(1, 0, "Remove friend")
-        //   );
-        //   setActionSheetOptions(
-        //     [...actionSheetOptions].splice(1, 0, "Remove friend")
-        //   );
-        // }
-
         setFriendStatus(doc.data().status);
       }
     });
@@ -227,6 +219,38 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     setFriendStatus("friends");
   };
 
+  const watchChannel = async (friendId: string) => {
+    /**
+     * The channelId for a direct message between two people is their user IDs
+     * separated by hyphens. The one that comes first alphabetically will be
+     * listed first.
+     */
+    let channelId;
+    if (friendId < context.user.id)
+      channelId = `${friendId}-${context.user.id}`;
+    else channelId = `${context.user.id}-${friendId}`;
+
+    const channel = client.channel("messaging", channelId, {
+      name: "Direct Message",
+      members: [context.user.id, friendId],
+    });
+
+    await channel.watch();
+
+    return channel;
+  };
+
+  const handleMessagePressed = async () => {
+    const channel = await watchChannel(user.id);
+    context.setChannel(channel);
+    context.setChannelName(channel.data.name);
+
+    navigation.navigate("MessagesStack", {
+      screen: "ChannelScreen",
+      initial: false,
+    });
+  };
+
   const handleActionSheetOptionPressed = (index: number) => {
     if (friendStatus === "friends") {
       console.log(friendActionSheetOptions[index], "pressed");
@@ -245,13 +269,13 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     >
       <View style={AppStyles.section}>
         <View style={AppStyles.row}>
-          <View style={AppStyles.row}>
+          <View style={[AppStyles.row, { flex: 1 }]}>
             <ProfilePhoto
               url={user.photoUrl}
               size={Layout.photo.medium}
               style={{ marginRight: Layout.spacing.large }}
             />
-            <View>
+            <View style={{ flexGrow: 1 }}>
               <Text style={styles.name}>{user.name}</Text>
               <View
                 style={[
@@ -274,7 +298,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                   {inClass ? "In class" : "Not in class"}
                 </Text>
               </View>
-              <View style={AppStyles.row}>
+              <View style={[AppStyles.row, { justifyContent: "flex-start" }]}>
                 {friendStatusLoading ? (
                   <View style={{ marginRight: Layout.spacing.small }}>
                     <Button
@@ -306,12 +330,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                     )}
                   </>
                 )}
-                <Button
-                  text="Message"
-                  onPress={() => {
-                    navigation.navigate("MessagesStack");
-                  }}
-                />
+                <Button text="Message" onPress={handleMessagePressed} />
                 <Pressable
                   onPress={() => actionSheetRef.current?.show()}
                   style={({ pressed }) => [
@@ -383,12 +402,12 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                 styles.similarityBar,
                 {
                   backgroundColor: Colors[colorScheme].photoBackground,
-                  width: `${courseSimilarity}%`,
+                  width: `${57.54}%`,
                 },
               ]}
             />
             <Text style={styles.similarityText}>
-              {Math.round(courseSimilarity)}% course similarity
+              {Math.round(57.54)}% course similarity
             </Text>
           </Pressable>
         )}

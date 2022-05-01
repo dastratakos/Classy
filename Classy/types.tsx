@@ -201,6 +201,8 @@ export type Context = {
   setFriendIds: (arg0: string[]) => void;
   channel: ChannelType;
   setChannel: (arg0: ChannelType) => void;
+  channelName: string;
+  setChannelName: (arg0: string) => void;
   thread: undefined;
   setThread: (arg0: MessageType) => void;
 };

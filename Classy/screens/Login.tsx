@@ -4,27 +4,27 @@ import {
   StyleSheet,
   TextInput,
 } from "react-native";
+import { LoginProps, User } from "../types";
 import { Text, View } from "../components/Themed";
 import { auth, db, signInWithEmailAndPassword } from "../firebase";
-import { useContext, useEffect, useState } from "react";
-
-import AppStyles from "../styles/AppStyles";
-import Colors from "../constants/Colors";
-import Layout from "../constants/Layout";
-import WideButton from "../components/Buttons/WideButton";
-import useColorScheme from "../hooks/useColorScheme";
-import { useNavigation } from "@react-navigation/core";
 import {
-  onSnapshot,
   collection,
   doc,
   getDoc,
+  onSnapshot,
   query,
   where,
 } from "firebase/firestore";
+import { useContext, useEffect, useState } from "react";
+
 import AppContext from "../context/Context";
-import { LoginProps, User } from "../types";
+import AppStyles from "../styles/AppStyles";
+import Colors from "../constants/Colors";
+import Layout from "../constants/Layout";
 import { StreamChat } from "stream-chat";
+import WideButton from "../components/Buttons/WideButton";
+import useColorScheme from "../hooks/useColorScheme";
+import { useNavigation } from "@react-navigation/core";
 
 const STREAM_API_KEY = "y9tk9hsvsxqa";
 const client = StreamChat.getInstance(STREAM_API_KEY);
@@ -51,29 +51,6 @@ export default function Login({ route }: LoginProps) {
     );
     console.log("User connected:");
     console.log(streamChatUser);
-
-    // const filter = { type: "messaging", members: { $in: [streamChatUser.id] } };
-    // const sort = { last_message_at: -1 };
-
-    // const channels = await client.queryChannels(filter, sort, {
-    //   watch: true, // this is the default
-    //   state: true,
-    // });
-
-    // channels.map((channel) => {
-    //   console.log(channel.data.name, channel.cid);
-    // });
-
-    // Create a channel
-    // const channel = client.channel("messaging", "cs194w-team4", {
-    //   name: "CS 194W Team 4",
-    // });
-    // await channel.addMembers(["grace"], {
-    //   text: "Grace Alwan joined the channel.",
-    //   user_id: "grace",
-    // });
-    // const channel = client.channel("messaging", "cs194w-team4");
-    // await channel.watch();
   };
 
   /* Check if user is signed in. */
@@ -94,7 +71,7 @@ export default function Login({ route }: LoginProps) {
   const setUp = async (id: string) => {
     const user = await getUser(id);
     getFriendIds(id);
-    connectStreamChatUser(id, user.name, user.photoUrl)
+    connectStreamChatUser(id, user.name, user.photoUrl);
     navigation.reset({
       index: 0,
       routes: [{ name: "Root" }],
@@ -164,7 +141,7 @@ export default function Login({ route }: LoginProps) {
     >
       <KeyboardAvoidingView style={styles.keyboardContainer} behavior="padding">
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Plan-It</Text>
+          <Text style={styles.title}>Classy</Text>
         </View>
         <Text style={AppStyles.errorText}>{errorMessage}</Text>
         <View style={styles.inputContainer}>

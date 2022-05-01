@@ -50,6 +50,7 @@ export default function Courses() {
             numFriends={"0"}
             // emphasize={result.taking}
             emphasize={false}
+            // TODO: change key to courseId
             key={i}
           />
         ))}
