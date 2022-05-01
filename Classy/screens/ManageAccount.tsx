@@ -112,6 +112,8 @@ export default function Settings() {
       return;
     }
 
+    // TODO: need to figure out how to handle messages
+
     signInWithEmailAndPassword(
       auth,
       auth.currentUser?.email || "",
@@ -163,6 +165,8 @@ export default function Settings() {
       })
       .catch((error) => setErrorMessage(error.message));
   };
+
+  // TODO: include notifications setting
 
   return (
     <ScrollView

@@ -192,6 +192,7 @@ export type User = {
   interests: string;
   isPrivate: boolean;
   photoUrl: string;
+  expoPushToken: string;
 };
 
 export type Context = {

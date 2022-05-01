@@ -1,4 +1,4 @@
-import { FriendProfileProps, User } from "../types";
+import { Course, FriendProfileProps, User } from "../types";
 import { Icon, Text, View } from "../components/Themed";
 import {
   Pressable,
@@ -50,8 +50,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const [friendDocId, setFriendDocId] = useState("");
   const [friendStatusLoading, setFriendStatusLoading] = useState(true);
   const [numFriends, setNumFriends] = useState("");
-  const [courses, setCourses] = useState([]);
-  const [inClass, setInClass] = useState([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [inClass, setInClass] = useState<boolean>(false);
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -191,6 +191,29 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     setInClass(false);
   };
 
+  const sendPushNotification = async (
+    expoPushToken: string,
+    body: string = ""
+  ) => {
+    const message = {
+      to: expoPushToken,
+      sound: "default",
+      title: "Classy",
+      body: body,
+      data: {},
+    };
+
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+  };
+
   const addFriend = async () => {
     const userId = context.user.id;
     const friendId = user.id;
@@ -209,6 +232,12 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 
     setFriendStatus("request sent");
 
+    if (user.expoPushToken)
+      sendPushNotification(
+        user.expoPushToken,
+        `${context.user.name} sent you a friend request`
+      );
+
     console.log("Friend request send with ID:", docRef.id);
   };
 
@@ -217,6 +246,12 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     await updateDoc(docRef, { status: "friends" });
 
     setFriendStatus("friends");
+
+    if (user.expoPushToken)
+      sendPushNotification(
+        user.expoPushToken,
+        `${context.user.name} accepted your friend request`
+      );
   };
 
   const watchChannel = async (friendId: string) => {

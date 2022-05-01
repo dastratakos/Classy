@@ -1,6 +1,8 @@
+import * as Notifications from "expo-notifications";
+
 import { Icon, Text, View } from "../components/Themed";
 import {
-  Image,
+  Platform,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -13,6 +15,7 @@ import {
   getDoc,
   getDocs,
   query,
+  updateDoc,
 } from "firebase/firestore";
 import { User, sendEmailVerification } from "firebase/auth";
 import { auth, db } from "../firebase";
@@ -23,6 +26,7 @@ import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Calendar from "../components/Calendar";
 import Colors from "../constants/Colors";
+import Constants from "expo-constants";
 import { Course } from "../types";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
@@ -155,6 +159,46 @@ export default function Profile() {
         <Separator />
       </>
     );
+  };
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((expoPushToken) => {
+      context.setUser({ ...context.user, expoPushToken });
+      const userRef = doc(db, "users", context.user.id);
+      updateDoc(userRef, { expoPushToken });
+    });
+  }, []);
+
+  const registerForPushNotificationsAsync = async () => {
+    let expoPushToken;
+    if (Constants.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+      expoPushToken = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(expoPushToken);
+    } else {
+      alert("Must use physical device for Push Notifications");
+    }
+
+    if (Platform.OS === "android") {
+      Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    return expoPushToken;
   };
 
   return (
