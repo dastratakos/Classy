@@ -23,10 +23,16 @@ export default function FriendCard({
 }) {
   const context = useContext(AppContext);
   const navigation = useNavigation();
-  // const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme();
 
   return (
-    <View style={[styles.container, styles.boxShadow]}>
+    <View
+      style={[
+        styles.container,
+        styles.boxShadow,
+        { backgroundColor: Colors[colorScheme].cardBackground },
+      ]}
+    >
       <TouchableOpacity
         onPress={() => {
           if (friend.id === context.user.id) navigation.navigate("Profile");
@@ -65,7 +71,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   boxShadow: {
-    shadowColor: "#000",
+    shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,

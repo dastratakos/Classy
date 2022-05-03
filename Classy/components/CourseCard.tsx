@@ -20,7 +20,13 @@ export default function CourseCard({
   const colorScheme = useColorScheme();
 
   return (
-    <View style={[styles.container, styles.boxShadow]}>
+    <View
+      style={[
+        styles.container,
+        styles.boxShadow,
+        { backgroundColor: Colors[colorScheme].cardBackground },
+      ]}
+    >
       <TouchableOpacity
         onPress={() => navigation.navigate("Course", { id: course.courseId })}
         style={styles.innerContainer}
@@ -54,7 +60,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   boxShadow: {
-    shadowColor: "#000",
+    shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -63,11 +69,11 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
   },
   textContainer: {
     flex: 1,
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
   },
   cardTitle: {
     fontSize: Layout.text.xlarge,
@@ -83,12 +89,12 @@ const styles = StyleSheet.create({
     width: Layout.photo.small,
     borderRadius: Layout.radius.small,
     marginLeft: Layout.spacing.small,
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
   },
   numberText: {
     fontSize: Layout.text.xlarge,
   },
   friendsText: {
     fontSize: Layout.text.medium,
-  }
+  },
 });
