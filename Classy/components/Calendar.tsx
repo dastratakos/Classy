@@ -66,7 +66,7 @@ export default function Calendar({ events }: { events: [] }) {
   const getCurrTimeString = (currTime: Timestamp) => {
     const now = currTime.toDate();
     const minutes = `${now.getMinutes()}`.padStart(2, "0");
-    return `${now.getHours() % 12}:${minutes}`;
+    return `${((now.getHours() - 1) % 12) + 1}:${minutes}`;
   };
 
   const getMarginTop = (time: Timestamp) => {
