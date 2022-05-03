@@ -7,11 +7,12 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
-import FriendCard from "../components/FriendCard";
 import SearchBar from "../components/SearchBar";
 import useColorScheme from "../hooks/useColorScheme";
 import Layout from "../constants/Layout";
-import CourseCard from "../components/CourseCard";
+import TabView from "../components/TabView";
+import CourseList from "../components/CourseList";
+import FriendList from "../components/FriendList";
 
 export default function Search() {
   const context = useContext(AppContext);
@@ -19,7 +20,8 @@ export default function Search() {
 
   const [searchPhrase, setSearchPhrase] = useState("");
   const [focused, setFocused] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
+  const [peopleSearchResults, setPeopleSearchResults] = useState([]);
+  const [courseSearchResults, setCourseSearchResults] = useState([]);
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -36,21 +38,24 @@ export default function Search() {
     // );
     const q = query(collection(db, "users"));
 
-    const results = [];
+    const people = [];
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      if (doc.id !== context.user.id) results.push(doc.data());
+      if (doc.id !== context.user.id) people.push(doc.data());
     });
-    // setSearchResults(results);
+    setPeopleSearchResults([...people]);
 
     const q2 = query(collection(db, "courses"));
 
-    const results2 = [];
+    const courses = [];
     const querySnapshot2 = await getDocs(q2);
     querySnapshot2.forEach((doc) => {
-      results2.push(doc.data());
+      courses.push(doc.data());
     });
-    setSearchResults([...results, ...results2]);
+    setCourseSearchResults([...courses]);
+
+    // console.log("people:", people)
+    // console.log("courses:", courses)
   };
 
   const onRefresh = async () => {
@@ -58,6 +63,17 @@ export default function Search() {
     searchDb(searchPhrase);
     setRefreshing(false);
   };
+
+  const tabs = [
+    {
+      label: "People",
+      component: <FriendList friends={peopleSearchResults} />,
+    },
+    {
+      label: "Courses",
+      component: <CourseList courses={courseSearchResults} />,
+    },
+  ];
 
   return (
     <View style={{ flex: 1 }}>
@@ -78,22 +94,7 @@ export default function Search() {
         }
       >
         <View style={AppStyles.section}>
-          {searchResults.map((result, i) => {
-            if (result.id) {
-              return <FriendCard friend={result} key={result.id} />;
-            }
-
-            return (
-              <CourseCard
-                course={result}
-                // numFriends={result.numFriends}
-                numFriends={"0"}
-                // emphasize={result.taking}
-                emphasize={false}
-                key={result.courseId}
-              />
-            );
-          })}
+          <TabView tabs={tabs} />
         </View>
       </ScrollView>
     </View>
