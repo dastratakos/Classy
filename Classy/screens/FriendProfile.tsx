@@ -26,16 +26,18 @@ import Button from "../components/Buttons/Button";
 import Calendar from "../components/Calendar";
 import Colors from "../constants/Colors";
 import CourseCard from "../components/CourseCard";
+import CourseList from "../components/CourseList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
 import { StreamChat } from "stream-chat";
+import TabView from "../components/TabView";
+import { async } from "@firebase/util";
 import { db } from "../firebase";
 import events from "./dummyEvents";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { async } from "@firebase/util";
 
 const STREAM_API_KEY = "y9tk9hsvsxqa";
 const client = StreamChat.getInstance(STREAM_API_KEY);
@@ -294,6 +296,17 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     }
   };
 
+  const tabs = [
+    {
+      label: "Calendar",
+      component: <Calendar events={events} />,
+    },
+    {
+      label: "Courses",
+      component: <CourseList courses={courses} />,
+    },
+  ];
+
   return (
     <ScrollView
       style={{ backgroundColor: Colors[colorScheme].background }}
@@ -450,28 +463,15 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       <Separator />
       {user.isPrivate && !(friendStatus === "friends") ? (
         <View
-          style={{ alignItems: "center", marginTop: Layout.spacing.xxlarge }}
+          style={{ alignItems: "center", marginTop: Layout.spacing.xxxlarge }}
         >
           <Icon name="lock" size={100} />
           <Text>This user is private</Text>
         </View>
       ) : (
-        <>
-          <View style={AppStyles.section}>
-            {courses.map((course, i) => (
-              <CourseCard
-                course={course}
-                numFriends={"0"}
-                emphasize={false}
-                key={i}
-              />
-            ))}
-          </View>
-          <Separator />
-          <View style={AppStyles.section}>
-            <Calendar events={events} />
-          </View>
-        </>
+        <View style={AppStyles.section}>
+          <TabView tabs={tabs} />
+        </View>
       )}
       <ActionSheet
         ref={actionSheetRef}

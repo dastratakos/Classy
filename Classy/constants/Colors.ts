@@ -48,6 +48,7 @@ export default {
   },
   lightRed: palette.lightRed,
   red: palette.red,
+  deepRed: palette.deepRed,
   green: palette.green,
   lightBlue: palette.lightBlue,
   black: palette.black,

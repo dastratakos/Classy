@@ -25,6 +25,7 @@ import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Calendar from "../components/Calendar";
+import CourseList from "../components/CourseList";
 import Colors from "../constants/Colors";
 import Constants from "expo-constants";
 import { Course } from "../types";
@@ -36,6 +37,7 @@ import WideButton from "../components/Buttons/WideButton";
 import events from "./dummyEvents";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import TabView from "../components/TabView";
 
 export default function Profile() {
   const context = useContext(AppContext);
@@ -201,6 +203,17 @@ export default function Profile() {
     return expoPushToken;
   };
 
+  const tabs = [
+    {
+      label: "Calendar",
+      component: <Calendar events={events} />,
+    },
+    {
+      label: "Courses",
+      component: <CourseList courses={courses} />,
+    },
+  ];
+
   return (
     <ScrollView
       style={{ backgroundColor: Colors[colorScheme].background }}
@@ -283,14 +296,10 @@ export default function Profile() {
             }
           />
         </View>
-        <WideButton
-          text={"View Courses"}
-          onPress={() => navigation.navigate("Courses")}
-        />
       </View>
       <Separator />
       <View style={AppStyles.section}>
-        <Calendar events={events} />
+        <TabView tabs={tabs} />
       </View>
     </ScrollView>
   );

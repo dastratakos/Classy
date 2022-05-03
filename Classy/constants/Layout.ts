@@ -28,7 +28,8 @@ export default {
     medium: 15,
     large: 20,
     xlarge: 30,
-    xxlarge: 50,
+    xxlarge: 40,
+    xxxlarge: 50,
   },
   text: {
     small: 10,

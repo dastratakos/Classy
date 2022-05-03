@@ -6,6 +6,7 @@ import Layout from "../constants/Layout";
 import { useNavigation } from "@react-navigation/core";
 import useColorScheme from "../hooks/useColorScheme";
 import { Course } from "../types";
+import AppStyles from "../styles/AppStyles";
 
 export default function CourseCard({
   course,
@@ -23,7 +24,7 @@ export default function CourseCard({
     <View
       style={[
         styles.container,
-        styles.boxShadow,
+        AppStyles.boxShadow,
         { backgroundColor: Colors[colorScheme].cardBackground },
       ]}
     >
@@ -58,14 +59,6 @@ const styles = StyleSheet.create({
     borderRadius: Layout.radius.medium,
     marginVertical: Layout.spacing.small,
     width: "100%",
-  },
-  boxShadow: {
-    shadowColor: Colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-
-    elevation: 5,
   },
   innerContainer: {
     flexDirection: "row",

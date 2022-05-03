@@ -70,14 +70,14 @@ export default function Calendar({ events }: { events: [] }) {
   };
 
   const getMarginTop = (time: Timestamp) => {
-    const offset = Layout.spacing.medium + Layout.spacing.xxlarge / 2;
+    const offset = Layout.spacing.medium + Layout.spacing.xxxlarge / 2;
     const t = time.toDate();
     const hourDiff = t.getHours() - times[0];
 
     return (
       offset +
-      hourDiff * Layout.spacing.xxlarge +
-      (t.getMinutes() * Layout.spacing.xxlarge) / 60
+      hourDiff * Layout.spacing.xxxlarge +
+      (t.getMinutes() * Layout.spacing.xxxlarge) / 60
     );
   };
 
@@ -91,14 +91,14 @@ export default function Calendar({ events }: { events: [] }) {
     const minDiff = endMinutes - startMinutes;
 
     return (
-      hourDiff * Layout.spacing.xxlarge +
-      (minDiff * Layout.spacing.xxlarge) / 60
+      hourDiff * Layout.spacing.xxxlarge +
+      (minDiff * Layout.spacing.xxxlarge) / 60
     );
   };
 
   /**
    * The current time is close to a specified hour if it is within 8 minutes.
-   * This was calculated using the height of an hour (Layout.spacing.xxlarge)
+   * This was calculated using the height of an hour (Layout.spacing.xxxlarge)
    * and the height of the time texts.
    */
   const currentTimeClose = (currTime: Timestamp, hour: number) => {
@@ -244,7 +244,7 @@ export default function Calendar({ events }: { events: [] }) {
             style={[
               AppStyles.row,
               {
-                height: Layout.spacing.xxlarge,
+                height: Layout.spacing.xxxlarge,
                 backgroundColor: "transparent",
               },
             ]}

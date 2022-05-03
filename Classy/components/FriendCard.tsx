@@ -29,7 +29,7 @@ export default function FriendCard({
     <View
       style={[
         styles.container,
-        styles.boxShadow,
+        AppStyles.boxShadow,
         { backgroundColor: Colors[colorScheme].cardBackground },
       ]}
     >
@@ -69,14 +69,6 @@ const styles = StyleSheet.create({
     borderRadius: Layout.radius.medium,
     marginVertical: Layout.spacing.small,
     width: "100%",
-  },
-  boxShadow: {
-    shadowColor: Colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-
-    elevation: 5,
   },
   innerContainer: {
     flexDirection: "row",
