@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Layout.spacing.small,
     flex: 1,
     borderRadius: Layout.radius.small,
-    backgroundColor: Colors.lightred,
+    backgroundColor: Colors.lightRed,
     overflow: "hidden",
   },
   titleText: {
