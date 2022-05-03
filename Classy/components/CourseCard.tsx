@@ -3,8 +3,6 @@ import { Text, View } from "./Themed";
 
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
-import Navigation from "../navigation";
-import SquareButton from "./Buttons/SquareButton";
 import { useNavigation } from "@react-navigation/core";
 import useColorScheme from "../hooks/useColorScheme";
 import { Course } from "../types";
@@ -22,55 +20,75 @@ export default function CourseCard({
   const colorScheme = useColorScheme();
 
   return (
-    <TouchableOpacity
-      onPress={() => navigation.navigate("Course", { id: course.courseId })}
-      style={[styles.container, { borderColor: Colors[colorScheme].border }]}
-    >
-      <View style={styles.textContainer}>
-        <Text style={styles.code}>
-          {course.code}
-          {emphasize ? " ⭐️" : null}
-        </Text>
-        <Text style={styles.title}>{course.title}</Text>
-        <Text style={styles.units}>
-          {course.unitsMin}
-          {course.unitsMin === course.unitsMax
-            ? ""
-            : `-${course.unitsMax}`}{" "}
-          units
-        </Text>
-      </View>
-      <SquareButton
-        num={numFriends}
-        text={"friend" + (numFriends !== "1" ? "s" : "")}
-        onPress={() => console.log("Square button pressed")}
-        pressable={false}
-      />
-    </TouchableOpacity>
+    <View style={[styles.container, styles.boxShadow]}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Course", { id: course.courseId })}
+        style={styles.innerContainer}
+      >
+        <View style={styles.textContainer}>
+          <Text style={styles.cardTitle}>
+            {course.code}
+            {emphasize ? " ⭐️" : null}
+          </Text>
+          <Text style={styles.cardSubtitle} numberOfLines={1}>
+            {course.title}
+          </Text>
+        </View>
+        <View style={styles.numFriendsContainer}>
+          <Text style={styles.numberText}>{numFriends}</Text>
+          <Text style={styles.friendsText}>
+            {"friend" + (numFriends !== "1" ? "s" : "")}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: Layout.spacing.medium,
+    paddingHorizontal: Layout.spacing.medium,
+    paddingVertical: Layout.spacing.small,
     borderRadius: Layout.radius.medium,
-    borderWidth: 1,
     marginVertical: Layout.spacing.small,
     width: "100%",
   },
+  boxShadow: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+  },
+  innerContainer: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
   textContainer: {
-    justifyContent: "space-between",
+    flex: 1,
+    backgroundColor: "transparent"
   },
-  code: {
-    fontSize: Layout.text.large,
-    fontWeight: "500",
+  cardTitle: {
+    fontSize: Layout.text.xlarge,
+    // fontWeight: "500",
   },
-  title: {
+  cardSubtitle: {
     fontSize: Layout.text.medium,
   },
-  units: {
-    // TODO: change font color
+  numFriendsContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: Layout.photo.small,
+    width: Layout.photo.small,
+    borderRadius: Layout.radius.small,
+    marginLeft: Layout.spacing.small,
+    backgroundColor: "transparent"
   },
+  numberText: {
+    fontSize: Layout.text.xlarge,
+  },
+  friendsText: {
+    fontSize: Layout.text.medium,
+  }
 });

@@ -1,4 +1,4 @@
-import { Icon, Text, View } from "./Themed";
+import { Text, View } from "./Themed";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
 import AppStyles from "../styles/AppStyles";
@@ -23,81 +23,68 @@ export default function FriendCard({
 }) {
   const context = useContext(AppContext);
   const navigation = useNavigation();
-  const colorScheme = useColorScheme();
+  // const colorScheme = useColorScheme();
 
   return (
-    <TouchableOpacity
-      onPress={() => {
-        if (friend.id === context.user.id) navigation.navigate("Profile");
-        else navigation.navigate("FriendProfile", { id: friend.id });
-      }}
-      style={[styles.container, { borderColor: Colors[colorScheme].border }]}
-    >
-      <ProfilePhoto
-        url={friend.photoUrl}
-        size={Layout.photo.small}
-        style={{ marginRight: Layout.spacing.small }}
-      />
-      <View style={styles.textContainer}>
-        <Text style={styles.name} numberOfLines={1}>
-          {friend.name}
-        </Text>
-        {/* Major */}
-        {friend.major ? (
-          <View style={AppStyles.row}>
-            <View style={styles.iconWrapper}>
-              <Icon name="pencil" size={25} />
-            </View>
-            <Text style={styles.aboutText} numberOfLines={1}>
+    <View style={[styles.container, styles.boxShadow]}>
+      <TouchableOpacity
+        onPress={() => {
+          if (friend.id === context.user.id) navigation.navigate("Profile");
+          else navigation.navigate("FriendProfile", { id: friend.id });
+        }}
+        style={styles.innerContainer}
+      >
+        <ProfilePhoto
+          url={friend.photoUrl}
+          size={Layout.photo.small}
+          style={{ marginRight: Layout.spacing.small }}
+        />
+        <View style={styles.textContainer}>
+          <Text style={styles.cardTitle} numberOfLines={1}>
+            {friend.name}
+          </Text>
+          {friend.major || friend.gradYear ? (
+            <Text style={styles.cardSubtitle} numberOfLines={1}>
               {friend.major}
-            </Text>
-          </View>
-        ) : null}
-        {/* Graduation Year */}
-        {friend.gradYear ? (
-          <View style={AppStyles.row}>
-            <View style={styles.iconWrapper}>
-              <Icon name="graduation-cap" size={25} />
-            </View>
-            <Text style={styles.aboutText} numberOfLines={1}>
+              {friend.major && friend.gradYear ? " | " : null}
               {friend.gradYear}
             </Text>
-          </View>
-        ) : null}
-      </View>
-    </TouchableOpacity>
+          ) : null}
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: Layout.spacing.medium,
+    paddingHorizontal: Layout.spacing.medium,
+    paddingVertical: Layout.spacing.small,
     borderRadius: Layout.radius.medium,
-    borderWidth: 1,
     marginVertical: Layout.spacing.small,
     width: "100%",
   },
+  boxShadow: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+  },
+  innerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   textContainer: {
     flex: 1,
+    backgroundColor: "transparent",
   },
-  aboutText: {
-    flex: 1,
+  cardTitle: {
+    fontSize: Layout.text.xlarge,
+    // fontWeight: "500",
   },
-  name: {
-    fontSize: Layout.text.large,
-    fontWeight: "500",
-  },
-  title: {
+  cardSubtitle: {
     fontSize: Layout.text.medium,
-  },
-  units: {
-    // TODO: change font color
-  },
-  iconWrapper: {
-    width: 30,
-    marginRight: 15,
-    alignItems: "center",
   },
 });
