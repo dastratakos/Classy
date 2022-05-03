@@ -68,7 +68,7 @@ export default function TabView({ tabs }) {
       </View>
       {/* {tabs[selectedId].component} */}
       {tabs.map((tab, i) => (
-        <>{selectedId == i && tabs[selectedId].component}</>
+        <View key={i}>{selectedId == i && tabs[selectedId].component}</View>
       ))}
     </>
   );
