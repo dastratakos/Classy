@@ -4,9 +4,10 @@ import time
 import xml.etree.ElementTree as ET
 
 from classes import Course
+import filters
 
 
-class Connection():
+class CourseConnection():
 
     URL = "https://explorecourses.stanford.edu/"
 
@@ -78,15 +79,55 @@ class Connection():
                 f.write(courses)
 
         return courses
-    
-    def download_all_courses(self, dir: str = "data"):
-        """ Downloads all active courses from ExploreCourses and saves the data to
-        the specified directory.
+
+    def get_schools(self, academic_year: str = None):
+        """
+        Gets all schools within the university.
 
         Args:
-            dir (str, optional):  The directory to save data to. Defaults to "data".
+            academic_year (Optional[str]): The academic year within which to 
+                                           retrive schools from (e.g.
+                                           "2021-2022"). Defaults to None.
+
+        Returns:
+            List[School]: The schools contained within the university.
+
         """
-        print("Downloading all courses...")
+
+        payload = {
+            "view": "xml",
+            "year": academic_year.replace('-', '')
+        }
+        res = self.session.get(self.URL, params=payload)
+
+        root = ET.fromstring(res.content)
+        schools = root.findall(".//school")
+
+        ret = []
+        for school in schools:
+            s = {"name": school.get("name")}
+            depts = []
+            for dept in school.findall("department"):
+                depts.append({
+                    "longname": dept.get("longname"),
+                    "name": dept.get("name"),
+                })
+            s["departments"] = depts
+            ret.append(s)
+
+        return ret
+
+    def download_all_courses_by_year(self, year, dir: str = "data"):
+        """ Downloads all active courses from ExploreCourses for the given year
+        and saves the data to the specified directory.
+
+        Args:
+            year (str):           The year of courses to download (e.g.
+                                  "2021-2022")
+            dir (str, optional):  The directory to save data to. Defaults to
+                                  "data".
+        """
+        print(f"Downloading all {year} courses...")
 
         total_start = time.time()
 
@@ -100,45 +141,66 @@ class Connection():
 
         # Get all courses for 2021-2022
         all_courses = []
-        year = "2021-2022"
         for school in self.get_schools(year):
             start = time.time()
+            name = school["name"]
+            departments = school["departments"]
 
-            for dept in school.departments:
+            for dept in school["departments"]:
                 courses = self.download_courses_from_connection(
-                    school, dept.code, *filters_list, year=year, dir=dir)
+                    name, dept["name"], *filters_list, year=year, dir=f"{dir}/{year}")
                 all_courses.extend(courses)
 
             end = time.time()
-            print(f"({end - start:.2f} s) {school}: {len(school.departments)}")
+            print(
+                f"({end - start:.2f} s) {name}: {len(departments)}, {len(all_courses)}")
 
         total_end = time.time()
         print(f"Total time: {total_end - total_start:.2f} s")
         print(f"Total courses: {len(all_courses)}\n")
-        
-    def get_all_courses_from_downloads(dir: str = "data"):
+
+    def get_all_courses_from_downloads(self, dir: str = "data"):
         print("Getting all courses from downloads...")
 
         total_start = time.time()
 
-        all_courses = []
+        all_courses = {}
 
-        for school in sorted(os.listdir(dir)):
-            if os.path.isfile(os.path.join(dir, school)):
+        for year in sorted(os.listdir(dir)):
+            year_dir = os.path.join(dir, year)
+            if os.path.isfile(year_dir):
                 continue
 
-            start = time.time()
+            year_start = time.time()
 
-            departments = sorted(os.listdir(os.path.join(dir, school)))
+            schools = sorted(os.listdir(year_dir))
+            for school in schools:
+                school_dir = os.path.join(year_dir, school)
+                if os.path.isfile(school_dir):
+                    continue
 
-            for dept in departments:
-                with open(f"{dir}/{school}/{dept}") as f:
-                    root = ET.fromstring(f.read())
-                    courses = root.findall(".//course")
-                    all_courses.extend([Course(course) for course in courses])
+                school_start = time.time()
 
-            end = time.time()
-            print(f"({end - start:.2f} s) {school}: {len(departments)}")
+                departments = sorted(os.listdir(school_dir))
+                for dept in departments:
+                    with open(f"{school_dir}/{dept}") as f:
+                        root = ET.fromstring(f.read())
+                        courses = root.findall(".//course")
+
+                        for course in courses:
+                            c = Course(course)
+                            if c.courseId in all_courses:
+                                all_courses[c.courseId] = all_courses[c.courseId] + c
+                            else:
+                                all_courses[c.courseId] = c
+
+                school_end = time.time()
+                print(
+                    f"({school_end - school_start:.2f} s) {school}: {len(departments)}")
+
+            year_end = time.time()
+            print(
+                f"({year_end - year_start:.2f} s) {year}: {len(schools)} schools, {len(all_courses)} total courses\n")
 
         total_end = time.time()
         print(f"Total time: {total_end - total_start:.2f} s")
