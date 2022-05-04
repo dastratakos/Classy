@@ -33,7 +33,7 @@ export default function CourseCard({
         style={styles.innerContainer}
       >
         <View style={styles.textContainer}>
-          <Text style={styles.cardTitle}>
+          <Text style={styles.cardTitle} numberOfLines={1}>
             {course.code}
             {emphasize ? " ⭐️" : null}
           </Text>
