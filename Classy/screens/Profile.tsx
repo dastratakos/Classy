@@ -16,6 +16,7 @@ import {
   getDocs,
   query,
   updateDoc,
+  limit,
 } from "firebase/firestore";
 import { User, sendEmailVerification } from "firebase/auth";
 import { auth, db } from "../firebase";
@@ -92,7 +93,7 @@ export default function Profile() {
 
   const getCourses = async (id: string) => {
     // TODO: use id to query for specific courses
-    const q = query(collection(db, "courses"));
+    const q = query(collection(db, "courses"), limit(5));
 
     const results = [];
     const querySnapshot = await getDocs(q);

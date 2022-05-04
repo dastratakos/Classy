@@ -9,7 +9,7 @@ export default function CourseList({ courses }: { courses: Course[] }) {
           course={course}
           numFriends={"0"}
           emphasize={false}
-          key={i}
+          // key={i}
           key={course.courseId}
         />
       ))}

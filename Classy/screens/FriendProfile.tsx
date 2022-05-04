@@ -16,6 +16,7 @@ import {
   query,
   updateDoc,
   where,
+  limit,
 } from "firebase/firestore";
 import { useContext, useEffect, useRef, useState } from "react";
 
@@ -86,7 +87,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 
   const getCourses = async (id: string) => {
     // TODO: use id to query for specific courses
-    const q = query(collection(db, "courses"));
+    const q = query(collection(db, "courses"), limit(5));
 
     const results = [];
     const querySnapshot = await getDocs(q);

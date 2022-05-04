@@ -19,7 +19,8 @@ export default function TabView({ tabs }) {
       <Animated.View
         style={{
           position: "absolute",
-          backgroundColor: Colors.red,
+          // backgroundColor: Colors.red,
+          backgroundColor: Colors[colorScheme].tertiaryBackground,
           height: Layout.spacing.xxlarge,
           borderRadius: Layout.spacing.xlarge,
           width: tabWidth,

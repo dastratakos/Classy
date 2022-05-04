@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, RefreshControl } from "react-native";
 import { Text, View } from "../components/Themed";
 import { auth, db } from "../firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, limit, query, where } from "firebase/firestore";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
@@ -36,7 +36,7 @@ export default function Search() {
     //   collection(db, "users"),
     //   where("keywords", "array-contains", search)
     // );
-    const q = query(collection(db, "users"));
+    const q = query(collection(db, "users"), limit(25));
 
     const people = [];
     const querySnapshot = await getDocs(q);
@@ -45,7 +45,7 @@ export default function Search() {
     });
     setPeopleSearchResults([...people]);
 
-    const q2 = query(collection(db, "courses"));
+    const q2 = query(collection(db, "courses"), limit(25));
 
     const courses = [];
     const querySnapshot2 = await getDocs(q2);

@@ -39,9 +39,7 @@ export default function Course({ route }: CourseProps) {
     console.log("getting course:", id);
 
     const docRef = doc(db, "courses", `${id}`);
-    console.log("hi");
     const docSnap = await getDoc(docRef);
-    console.log("mel");
 
     if (docSnap.exists()) {
       console.log("data:", docSnap.data());
