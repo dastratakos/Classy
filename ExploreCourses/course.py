@@ -1,7 +1,9 @@
 import copy
 from datetime import datetime
+import html
 import os
 from pprint import pprint
+from typing import List
 import xml.etree.ElementTree as ET
 
 
@@ -12,46 +14,118 @@ class Course():
         Constructs a new Course from an XML element.
 
         Args:
-            elem (Element): The course's XML element.
+            elem (Element): The course"s XML element.
         """
 
         self.courseId = int(elem.findtext(".//courseId"))
 
         self.latestYear = elem.findtext("year")
         self.code = [elem.findtext("subject") + " " + elem.findtext("code")]
-        self.title = elem.findtext("title")
-        self.description = elem.findtext("description")
+        self.title = self.clean_title(elem.findtext("title"))
+        self.description = html.unescape(elem.findtext("description"))
         self.gers = elem.findtext("gers").split(", ")
-        self.repeatable = (True if elem.findtext("repeatable") == "true"
-                           else False if elem.findtext("repeatable") == "true"
-                           else None)
-        self.grading = elem.findtext("grading")
+        self.repeatable = elem.findtext("repeatable")
         self.unitsMin = int(elem.findtext("unitsMin"))
         self.unitsMax = int(elem.findtext("unitsMax"))
-        self.remote = (True if elem.findtext("remote") == "true"
-                       else False if elem.findtext("remote") == "false"
-                       else None)
+        self.remote = elem.findtext("remote")
 
         """ administrativeInformation sub-tag """
         self.effectiveStatus = elem.findtext(".//effectiveStatus")
-        # self.active = (True if elem.findtext(".//effectiveStatus") == "A"
-        #                else False if elem.findtext(".//effectiveStatus") == "I"
-        #                else None)
         self.academicGroup = [elem.findtext(".//academicGroup")]
         self.academicOrganization = [elem.findtext(".//academicOrganization")]
-        self.academicCareer = elem.findtext(".//academicCareer")
-        self.finalExamFlag = (True if elem.findtext(".//finalExamFlag") == "Y"
-                              else False if elem.findtext(".//finalExamFlag") == "N"
-                              else None)
+        self.academicCareer = [elem.findtext(".//academicCareer")]
+        self.finalExamFlag = elem.findtext(".//finalExamFlag")
         self.maxUnitsRepeat = int(elem.findtext(".//maxUnitsRepeat"))
         self.maxTimesRepeat = int(elem.findtext(".//maxTimesRepeat"))
 
         """ term sub-collection """
-        self.terms = self.construct_terms(elem.find("sections"))
+        grading = self.construct_grading(elem.findtext("grading"))
+        self.terms = self.construct_terms(elem.find("sections"), grading)
 
-    def construct_terms(self, sections: ET.Element):
-        # TODO: construct self.terms dictionary mapping termIds to Terms
+    def is_code(self, string):
+        """ Checks if a string is a course code (e.g. "CS 194W").
 
+        Args:
+            string (string): The string to check.
+
+        Returns:
+            boolean: True if string is a code, false otherwise.
+        """
+
+        pieces = string.split()
+
+        return (len(pieces) == 2 and
+                pieces[0].isupper() and
+                pieces[1][0].isnumeric())
+
+    def clean_title(self, t):
+        """ Removes cross-listed course codes from the title.
+
+        Args:
+            title (string): The original title
+
+        Returns:
+            string: The cleaned title
+        """
+        title = t.strip()
+        if title[-1] == ")":
+            index = title.rfind("(")
+            text = title[index + 1: -1]
+            codes = text.split(", ")
+            if codes and self.is_code(codes[0]):
+                title = title[:index]
+
+        if t == title:
+            return title
+        else:
+            return self.clean_title(title)
+
+    def construct_grading(self, grading):
+        simple_grading = {
+            "Credit/No Credit",
+            "GSB Letter Graded",
+            "GSB Pass/Fail",
+            "GSB Student Option LTR/PF",
+            "Letter (ABCD/NP)"
+            "Medical Option (Med-Ltr-CR/NC)",
+            "Medical Satisfactory/No Credit",
+            "Satisfactory/No Credit",
+            "TGR",
+        }
+
+        if grading in simple_grading:
+            return [grading]
+        elif grading == "Letter or Credit/No Credit":
+            return ["Letter (ABCD/NP)", "Credit/No Credit"]
+        elif grading == "Law Mixed H/P/R/F or MP/R/F":
+            return ["Law Honors/Pass/Restricted Credit/Fail",
+                    "Law Mandatory Pass/Restricted credit/Fail"]
+        elif grading == "Law Honors/Pass/Restrd Cr/Fail":
+            return ["Law Honors/Pass/Restricted Credit/Fail"]
+        elif grading == "Law Mandatory P/R/F":
+            return ["Law Mandatory Pass/Restricted credit/Fail"]
+        elif grading == "Medical School MD Grades":
+            return ["Medical School +/- Option"]
+        elif grading == "RO Satisfactory/Unsatisfactory":
+            return ["Satisfactory/No Credit"]
+
+        # unknown grading basis
+        return [grading]
+
+    def construct_terms(self, sections: ET.Element, grading: List[str]):
+        """ Constructs the terms from the sections element by combining sections
+        within the same quarter.
+        
+        The grading parameter is necessary since the grading basis for a course
+        may change year to year.
+
+        Args:
+            sections (ET.Element):  The sections to parse
+            grading (List[str]):    The grading basis for this year
+
+        Returns:
+            dictionary:  Dictionary mapping terms to Lists of sections.
+        """
         terms = {}
 
         for section in sections:
@@ -80,9 +154,10 @@ class Course():
                     f"{endDate} {endTime}", "%b %d, %Y %I:%M:%S %p")
 
             sec = {
-                "termId": section.findtext("termId"),
+                "termId": int(section.findtext("termId")),
                 "sectionNumber": section.findtext("sectionNumber"),
                 "component": section.findtext("component"),
+                "grading": grading,
 
                 "startInfo": startInfo,
                 "endInfo": endInfo,
@@ -134,6 +209,16 @@ class Course():
                 new_course.academicGroup.append(old_course.academicGroup[i])
                 new_course.academicOrganization.append(
                     old_course.academicOrganization[i])
+                new_course.academicCareer.append(old_course.academicCareer[i])
+
+        new_course.academicGroup = [x for _, x in sorted(
+            zip(new_course.code, new_course.academicGroup))]
+        new_course.academicOrganization = [x for _, x in sorted(
+            zip(new_course.code, new_course.academicOrganization))]
+        new_course.academicCareer = [x for _, x in sorted(
+            zip(new_course.code, new_course.academicCareer))]
+        new_course.code = sorted(new_course.code)
+
         for term, sections in old_course.terms.items():
             if term not in new_course.terms:
                 new_course.terms[term] = sections
@@ -143,17 +228,17 @@ class Course():
     def __str__(self):
         """
         Returns a string representation of the Course that includes the 
-        course's subject, code, and full title.
+        course"s subject, code, and full title.
 
         """
 
-        ret = f"({self.courseId}) {self.code}: {self.title}\n"
+        ret = f"{self.code}: {self.title}\n"
 
+        ret += f"courseId: {self.courseId}\n"
         ret += f"latestYear: {self.latestYear}\n"
         ret += f"description: {self.description}\n"
         ret += f"gers: {self.gers}\n"
         ret += f"repeatable: {self.repeatable}\n"
-        ret += f"grading: {self.grading}\n"
         ret += f"unitsMin: {self.unitsMin}\n"
         ret += f"unitsMax: {self.unitsMax}\n"
         ret += f"remote: {self.remote}\n"
@@ -164,20 +249,21 @@ class Course():
         ret += f"finalExamFlag: {self.finalExamFlag}\n"
         ret += f"maxUnitsRepeat: {self.maxUnitsRepeat}\n"
         ret += f"maxTimesRepeat: {self.maxTimesRepeat}\n"
-        ret += f"terms: {pprint(self.terms)}\n"
+        
+        pprint(self.terms)
 
         return ret
 
 
 if __name__ == "__main__":
     dups = []
-    for course in sorted(os.listdir("duplicates")):
+    for course in sorted(os.listdir("duplicates"), reverse=True):
         tree = ET.parse(f"duplicates/{course}")
         course = tree.getroot()
         dups.append(Course(course))
-        
-    print(dups[0] + dups[1])
-    print(dups[0])
-    print(dups[1])
 
-    # Create two courses with same courseId, then add them together
+    print(dups[0] + dups[1] + dups[2])
+
+    tree = ET.parse("test/ME-104B.xml")
+    course = tree.getroot()
+    print(Course(course))

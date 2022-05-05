@@ -1,9 +1,10 @@
 import os
+from pprint import pprint
 import requests
 import time
 import xml.etree.ElementTree as ET
 
-from classes import Course
+from course import Course
 import filters
 
 
@@ -159,7 +160,7 @@ class CourseConnection():
         print(f"Total time: {total_end - total_start:.2f} s")
         print(f"Total courses: {len(all_courses)}\n")
 
-    def get_all_courses_from_downloads(self, dir: str = "data"):
+    def get_all_courses_from_downloads(self, dir: str = "data", only_2022: bool = False):
         print("Getting all courses from downloads...")
 
         total_start = time.time()
@@ -167,9 +168,15 @@ class CourseConnection():
         all_courses = {}
 
         for year in sorted(os.listdir(dir)):
+
+            if only_2022:
+                year = "2021-2022"
+
             year_dir = os.path.join(dir, year)
             if os.path.isfile(year_dir):
                 continue
+
+            print(year)
 
             year_start = time.time()
 
@@ -201,6 +208,9 @@ class CourseConnection():
             year_end = time.time()
             print(
                 f"({year_end - year_start:.2f} s) {year}: {len(schools)} schools, {len(all_courses)} total courses\n")
+
+            if only_2022:
+                return all_courses
 
         total_end = time.time()
         print(f"Total time: {total_end - total_start:.2f} s")

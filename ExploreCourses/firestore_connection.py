@@ -3,6 +3,7 @@ from pprint import pprint
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+from tqdm import tqdm
 
 
 class FirestoreConnection:
@@ -31,7 +32,6 @@ class FirestoreConnection:
             u"description": course.description,
             u"gers": course.gers,
             u"repeatable": course.repeatable,
-            u"grading": course.grading,
             u"unitsMin": course.unitsMin,
             u"unitsMax": course.unitsMax,
             u"remote": course.remote,
@@ -56,3 +56,36 @@ class FirestoreConnection:
             term_ref = course_ref.collection(
                 u"terms").document(f"{termId}")
             term_ref.set(term_data)
+
+    def add_courses(self, all_courses):
+
+        for i, course in tqdm(enumerate(all_courses.values())):
+            if i % 500 == 0:
+                batch = self.db.batch()
+
+            data = {
+                u"courseId": course.courseId,
+                u"code": course.code,
+                u"title": course.title,
+                u"latestYear": course.latestYear,
+                u"description": course.description,
+                u"gers": course.gers,
+                u"repeatable": course.repeatable,
+                u"unitsMin": course.unitsMin,
+                u"unitsMax": course.unitsMax,
+                u"remote": course.remote,
+                u"effectiveStatus": course.effectiveStatus,
+                u"academicGroup": course.academicGroup,
+                u"academicOrganization": course.academicOrganization,
+                u"academicCareer": course.academicCareer,
+                u"finalExamFlag": course.finalExamFlag,
+                u"maxUnitsRepeat": course.maxUnitsRepeat,
+                u"maxTimesRepeat": course.maxTimesRepeat,
+            }
+
+            course_ref = self.db.collection(u"courses").document(
+                f"{course.courseId}")
+            batch.set(course_ref, data)
+            
+            if i % 500 == 449 or i == len(all_courses) - 1:
+                batch.commit()

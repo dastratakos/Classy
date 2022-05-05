@@ -1,6 +1,7 @@
 import FriendCard from "./FriendCard";
 
 export default function FriendList({ friends }) {
+  // TODO: use FlatList
   return (
     <>
       {friends.map((friend) => (

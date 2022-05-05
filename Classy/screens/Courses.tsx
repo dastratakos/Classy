@@ -43,6 +43,7 @@ export default function Courses() {
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={AppStyles.section}>
+        // TODO: use FlatList
         {courses.map((course, i) => (
           <CourseCard
             course={course}

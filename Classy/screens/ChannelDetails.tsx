@@ -38,6 +38,7 @@ export default function ChannelDetails() {
           <Text>TODO: change group photo</Text>
         )}
         <Text style={styles.title}>Members</Text>
+        // TODO: use FlatList
         {members.map((member) => {
           return (
             <FriendCard

@@ -35,7 +35,7 @@ export default function Course({ route }: CourseProps) {
     getCourse(route.params.id);
   }, []);
 
-  const getCourse = async (id: string) => {
+  const getCourse = async (id: number) => {
     console.log("getting course:", id);
 
     const docRef = doc(db, "courses", `${id}`);
@@ -46,8 +46,8 @@ export default function Course({ route }: CourseProps) {
       setCourse(docSnap.data() as CourseType);
       setIsLoading(false);
     } else {
-      console.log(`Could not find course: ${id}`);
-      alert("This course does not exist.");
+      console.log(`Could not find course: ${id}.`);
+      alert(`Could not find course: ${id}.`);
     }
   };
 
@@ -59,9 +59,8 @@ export default function Course({ route }: CourseProps) {
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={AppStyles.section}>
-        <Text style={styles.title}>
-          {course.code}: {course.title}
-        </Text>
+        <Text style={styles.title}>{course.code.join(", ")}</Text>
+        <Text style={styles.title}>{course.title}</Text>
         <Text style={styles.unitsWays}>
           Units: {course.unitsMin}
           {course.unitsMin === course.unitsMax ? "" : `-${course.unitsMax}`},
@@ -86,7 +85,7 @@ export default function Course({ route }: CourseProps) {
           <View style={{ width: "48%" }}>
             <Button
               text="Carta"
-              onPress={() => handleCartaPress(course.code)}
+              onPress={() => handleCartaPress(course.code[0])}
             />
           </View>
         </View>
@@ -101,11 +100,13 @@ export default function Course({ route }: CourseProps) {
       <View style={styles.friendsSection}>
         <Text style={styles.friendsHeader}>Friends</Text>
         <View style={AppStyles.section}>
+          // TODO: use SectionList?
           {Object.keys(friendsData).map((termId) => (
             <View key={termId}>
               <Text style={styles.term}>
                 getTermString({termId}) ({friendsData[termId].length})
               </Text>
+              // TODO: use FriendList
               {friendsData[termId].map((friend) => (
                 <FriendCard friend={friend} key={friend.id} />
               ))}

@@ -12,6 +12,7 @@ import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { Channel as ChannelType } from "stream-chat";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MessageType } from "stream-chat-expo";
+import { Timestamp } from "firebase/firestore";
 
 declare global {
   namespace ReactNavigation {
@@ -20,30 +21,50 @@ declare global {
 }
 
 export type Course = {
-  year: string;
-  subject: string;
-  code: string;
-  courseId: string;
-  title: string;
+  academicCareer: string;
+  academicGroup: string[];
+  academicOrganization: string[];
+  code: string[];
+  courseId: number;
   description: string;
-  gers: string;
-  repeatable: boolean;
-  grading: string;
-  unitsMin: number;
+  effectiveStatus: string;
+  finalExamFlag: string;
+  gers: string[];
+  grading: string[];
+  latestYear: string;
+  maxTimesRepeat: number;
+  maxUnitsRepeat: number;
+  remote: string;
+  repeatable: string;
+  title: string;
   unitsMax: number;
-  remote: boolean;
-  administrativeInformation: {
-    courseId: number;
-    effectiveStatus: string;
-    offerNumber: string;
-    academicGroup: string;
-    academicOrganization: string;
-    academicCareer: string;
-    finalExamFlag: boolean;
-    maxUnitsRepeat: number;
-    maxTimesRepeat: number;
-  };
+  unitsMin: number;
 };
+
+export type Term = {
+  schedules: Schedule[];
+  students: string[];
+}
+
+export type Schedule = {
+  component: string;
+  days: string[];
+  endInfo: Timestamp;
+  instructors: Instructor[];
+  location: string;
+  sectionNumber: string;
+  startInfo: Timestamp;
+  termId: number;
+}
+
+export type Instructor = {
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  name: string;
+  role: string;
+  sunet: string;
+}
 
 export type RootStackParamList = {
   AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;
@@ -65,8 +86,8 @@ export type RootStackParamList = {
 
   Profile: undefined;
   Courses: undefined;
-  Course: { id: string };
-  AddEditCourse: { id: string };
+  Course: { id: number };
+  AddEditCourse: { id: number };
   Quarters: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -94,8 +115,8 @@ export type ProfileStackParamList = {
 
   Profile: undefined;
   Courses: undefined;
-  Course: { id: string };
-  AddEditCourse: { id: string };
+  Course: { id: number };
+  AddEditCourse: { id: number };
   Quarters: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -110,8 +131,8 @@ export type SearchStackParamList = {
   Search: undefined;
   Profile: undefined;
   Courses: undefined;
-  Course: { id: string };
-  AddEditCourse: { id: string };
+  Course: { id: number };
+  AddEditCourse: { id: number };
   Quarters: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -129,8 +150,8 @@ export type MessagesStackParamList = {
   NewMessage: undefined;
 
   Courses: undefined;
-  Course: { id: string };
-  AddEditCourse: { id: string };
+  Course: { id: number };
+  AddEditCourse: { id: number };
   Friends: { id: string };
   FriendProfile: { id: string };
   CourseSimilarity: { id: string };

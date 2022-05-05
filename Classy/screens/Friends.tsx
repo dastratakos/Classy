@@ -90,6 +90,7 @@ export default function Friends({ route }: FriendsProps) {
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={AppStyles.section}>
+        // TODO: use FlatList
         {friends.map((friend) => (
           <FriendCard friend={friend} key={friend.id} />
         ))}
