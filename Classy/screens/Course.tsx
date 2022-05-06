@@ -28,28 +28,28 @@ export default function Course({ route }: CourseProps) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
-  const [course, setCourse] = useState({} as CourseType);
-  const [isLoading, setIsLoading] = useState(true);
+  const [course, setCourse] = useState(route.params.course);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    getCourse(route.params.id);
-  }, []);
+  // useEffect(() => {
+  //   getCourse(route.params.id);
+  // }, []);
 
-  const getCourse = async (id: number) => {
-    console.log("getting course:", id);
+  // const getCourse = async (id: number) => {
+  //   console.log("getting course:", id);
 
-    const docRef = doc(db, "courses", `${id}`);
-    const docSnap = await getDoc(docRef);
+  //   const docRef = doc(db, "courses", `${id}`);
+  //   const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
-      console.log("data:", docSnap.data());
-      setCourse(docSnap.data() as CourseType);
-      setIsLoading(false);
-    } else {
-      console.log(`Could not find course: ${id}.`);
-      alert(`Could not find course: ${id}.`);
-    }
-  };
+  //   if (docSnap.exists()) {
+  //     console.log("data:", docSnap.data());
+  //     setCourse(docSnap.data() as CourseType);
+  //     setIsLoading(false);
+  //   } else {
+  //     console.log(`Could not find course: ${id}.`);
+  //     alert(`Could not find course: ${id}.`);
+  //   }
+  // };
 
   if (isLoading) return <ActivityIndicator />;
 
@@ -97,7 +97,7 @@ export default function Course({ route }: CourseProps) {
         />
       </View>
       <Separator />
-      <View style={styles.friendsSection}>
+      {/* <View style={styles.friendsSection}>
         <Text style={styles.friendsHeader}>Friends</Text>
         <View style={AppStyles.section}>
           // TODO: use SectionList?
@@ -113,7 +113,7 @@ export default function Course({ route }: CourseProps) {
             </View>
           ))}
         </View>
-      </View>
+      </View> */}
     </ScrollView>
   );
 }

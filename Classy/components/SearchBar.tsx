@@ -16,13 +16,13 @@ export default function SearchBar({
   placeholder,
   focused,
   searchPhrase,
-  setSearchPhrase,
+  onChangeText,
   setFocused,
 }: {
   placeholder: string;
   focused: boolean;
   searchPhrase: string;
-  setSearchPhrase: (arg0: string) => void;
+  onChangeText: (arg0: string) => void;
   setFocused: (arg0: boolean) => void;
 }) {
   const colorScheme = useColorScheme();
@@ -40,13 +40,13 @@ export default function SearchBar({
           style={styles.input}
           placeholder={placeholder}
           value={searchPhrase}
-          onChangeText={setSearchPhrase}
+          onChangeText={onChangeText}
           onFocus={() => {
             setFocused(true);
           }}
         />
         {focused && (
-          <Pressable onPress={() => setSearchPhrase("")}>
+          <Pressable onPress={() => onChangeText("")}>
             <Icon name="close" size={20} />
           </Pressable>
         )}

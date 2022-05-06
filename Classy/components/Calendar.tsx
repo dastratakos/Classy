@@ -320,7 +320,8 @@ export default function Calendar({ events }: { events: [] }) {
               height={getHeight(event.startInfo, event.endInfo)}
               leftIndent={leftIndent}
               onPress={() =>
-                navigation.navigate("Course", { id: event.courseId })
+                console.log("need to pass in full course here")
+                // navigation.navigate("Course", { id: event.courseId })
               }
               key={i}
             />

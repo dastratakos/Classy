@@ -87,7 +87,7 @@ export type RootStackParamList = {
 
   Profile: undefined;
   Courses: undefined;
-  Course: { id: number };
+  Course: { course: Course };
   AddEditCourse: { id: number };
   Quarters: undefined;
   Friends: { id: string };
@@ -116,7 +116,7 @@ export type ProfileStackParamList = {
 
   Profile: undefined;
   Courses: undefined;
-  Course: { id: number };
+  Course: { course: Course };
   AddEditCourse: { id: number };
   Quarters: undefined;
   Friends: { id: string };
@@ -132,7 +132,7 @@ export type SearchStackParamList = {
   Search: undefined;
   Profile: undefined;
   Courses: undefined;
-  Course: { id: number };
+  Course: { course: Course };
   AddEditCourse: { id: number };
   Quarters: undefined;
   Friends: { id: string };
@@ -151,7 +151,7 @@ export type MessagesStackParamList = {
   NewMessage: undefined;
 
   Courses: undefined;
-  Course: { id: number };
+  Course: { course: Course };
   AddEditCourse: { id: number };
   Friends: { id: string };
   FriendProfile: { id: string };

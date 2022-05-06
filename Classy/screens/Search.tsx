@@ -1,8 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, RefreshControl } from "react-native";
 import { Text, View } from "../components/Themed";
-import { auth, db } from "../firebase";
-import { collection, getDocs, limit, query, where } from "firebase/firestore";
+import { db } from "../firebase";
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
@@ -13,6 +20,7 @@ import Layout from "../constants/Layout";
 import TabView from "../components/TabView";
 import CourseList from "../components/CourseList";
 import FriendList from "../components/FriendList";
+import { Course } from "../types";
 
 export default function Search() {
   const context = useContext(AppContext);
@@ -21,46 +29,52 @@ export default function Search() {
   const [searchPhrase, setSearchPhrase] = useState("");
   const [focused, setFocused] = useState(false);
   const [peopleSearchResults, setPeopleSearchResults] = useState([]);
-  const [courseSearchResults, setCourseSearchResults] = useState([]);
+  const [courseSearchResults, setCourseSearchResults] = useState(
+    [] as Course[]
+  );
 
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    searchDb(searchPhrase);
+    const searchPeople = async () => {
+      const q = query(collection(db, "users"), orderBy("name"), limit(15));
+
+      const people = [];
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        if (doc.id !== context.user.id) people.push(doc.data());
+      });
+      setPeopleSearchResults([...people]);
+    };
+    searchPeople();
+    searchCourses(searchPhrase);
   }, []);
 
-  const searchDb = async (search: string) => {
-    // TODO: use search queries
+  const searchCourses = async (search: string) => {
+    if (search === "") {
+      setCourseSearchResults([]);
+      return;
+    }
+
     // TODO: pagination
-    // const q = query(
-    //   collection(db, "users"),
-    //   where("keywords", "array-contains", search)
-    // );
-    const q = query(collection(db, "users"), limit(15));
+    const q2 = query(
+      collection(db, "courses"),
+      where("keywords", "array-contains", search.toLowerCase().trim()),
+      orderBy("code"),
+      limit(3)
+    );
 
-    const people = [];
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      if (doc.id !== context.user.id) people.push(doc.data());
-    });
-    setPeopleSearchResults([...people]);
-
-    const q2 = query(collection(db, "courses"), limit(15));
-
-    const courses = [];
+    const courses: Course[] = [];
     const querySnapshot2 = await getDocs(q2);
     querySnapshot2.forEach((doc) => {
-      courses.push(doc.data());
+      courses.push(doc.data() as Course);
     });
     setCourseSearchResults([...courses]);
-
-    // console.log("people:", people)
-    // console.log("courses:", courses)
   };
 
   const onRefresh = async () => {
     setRefreshing(true);
-    searchDb(searchPhrase);
+    searchCourses(searchPhrase);
     setRefreshing(false);
   };
 
@@ -81,7 +95,11 @@ export default function Search() {
         <SearchBar
           placeholder="Search courses or people..."
           searchPhrase={searchPhrase}
-          setSearchPhrase={setSearchPhrase}
+          onChangeText={(text) => {
+            console.log("new text =", text)
+            setSearchPhrase(text);
+            searchCourses(text);
+          }}
           focused={focused}
           setFocused={setFocused}
         />

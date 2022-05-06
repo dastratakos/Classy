@@ -29,12 +29,12 @@ export default function CourseCard({
       ]}
     >
       <TouchableOpacity
-        onPress={() => navigation.navigate("Course", { id: course.courseId })}
+        onPress={() => navigation.navigate("Course", { course })}
         style={styles.innerContainer}
       >
         <View style={styles.textContainer}>
           <Text style={styles.cardTitle} numberOfLines={1}>
-            {course.code}
+            {course.code.join(", ")}
             {emphasize ? " ⭐️" : null}
           </Text>
           <Text style={styles.cardSubtitle} numberOfLines={1}>
