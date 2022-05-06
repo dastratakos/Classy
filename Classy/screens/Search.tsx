@@ -36,7 +36,7 @@ export default function Search() {
     //   collection(db, "users"),
     //   where("keywords", "array-contains", search)
     // );
-    const q = query(collection(db, "users"), limit(25));
+    const q = query(collection(db, "users"), limit(15));
 
     const people = [];
     const querySnapshot = await getDocs(q);
@@ -45,7 +45,7 @@ export default function Search() {
     });
     setPeopleSearchResults([...people]);
 
-    const q2 = query(collection(db, "courses"), limit(25));
+    const q2 = query(collection(db, "courses"), limit(15));
 
     const courses = [];
     const querySnapshot2 = await getDocs(q2);

@@ -31,6 +31,7 @@ export type Course = {
   finalExamFlag: string;
   gers: string[];
   grading: string[];
+  keywords: string[];
   latestYear: string;
   maxTimesRepeat: number;
   maxUnitsRepeat: number;

@@ -1,3 +1,4 @@
+from calendar import c
 import copy
 from datetime import datetime
 import html
@@ -37,6 +38,10 @@ class Course():
         self.finalExamFlag = elem.findtext(".//finalExamFlag")
         self.maxUnitsRepeat = int(elem.findtext(".//maxUnitsRepeat"))
         self.maxTimesRepeat = int(elem.findtext(".//maxTimesRepeat"))
+
+        """ keywords for search """
+        self.keywords = self.generate_keywords(
+            self.courseId, self.code, self.title)
 
         """ term sub-collection """
         grading = self.construct_grading(elem.findtext("grading"))
@@ -115,7 +120,7 @@ class Course():
     def construct_terms(self, sections: ET.Element, grading: List[str]):
         """ Constructs the terms from the sections element by combining sections
         within the same quarter.
-        
+
         The grading parameter is necessary since the grading basis for a course
         may change year to year.
 
@@ -192,6 +197,31 @@ class Course():
 
         return instructor
 
+    def generate_keywords(self, courseId, c, t):
+        def generate_substrings(string):
+            substrings = []
+            pieces = string.split(" ")
+            for i in range(len(pieces)):
+                substr = ""
+                for word in pieces[i:]:
+                    for ch in word:
+                        substr += ch
+                        substrings.append(substr)
+                    substr += " "
+            return substrings
+                    
+        keywords = [str(courseId)]
+
+        codes = [x.lower() for x in c] + \
+                [x.lower().replace(" ", "") for x in c]
+        for code in codes:
+            keywords.extend(generate_substrings(code))
+
+        title = t.lower()
+        keywords.extend(generate_substrings(title))
+
+        return sorted(list(set(keywords)))
+
     def __add__(self, course):
         if self.courseId != course.courseId:
             return None
@@ -218,6 +248,9 @@ class Course():
         new_course.academicCareer = [x for _, x in sorted(
             zip(new_course.code, new_course.academicCareer))]
         new_course.code = sorted(new_course.code)
+
+        new_course.keywords = sorted(list(
+            set(old_course.keywords + new_course.keywords)))
 
         for term, sections in old_course.terms.items():
             if term not in new_course.terms:
@@ -249,21 +282,30 @@ class Course():
         ret += f"finalExamFlag: {self.finalExamFlag}\n"
         ret += f"maxUnitsRepeat: {self.maxUnitsRepeat}\n"
         ret += f"maxTimesRepeat: {self.maxTimesRepeat}\n"
-        
+        ret += f"keywords: {self.keywords}\n"
+
         pprint(self.terms)
 
         return ret
 
 
 if __name__ == "__main__":
-    dups = []
-    for course in sorted(os.listdir("duplicates"), reverse=True):
-        tree = ET.parse(f"duplicates/{course}")
-        course = tree.getroot()
-        dups.append(Course(course))
+    # dups = []
+    # for course in sorted(os.listdir("duplicates"), reverse=True):
+    #     tree = ET.parse(f"duplicates/{course}")
+    #     course = tree.getroot()
+    #     dups.append(Course(course))
 
-    print(dups[0] + dups[1] + dups[2])
+    # combo = dups[0] + dups[1] + dups[2]
+
+    # print(combo)
+    # pprint(sorted(combo.keywords))
 
     tree = ET.parse("test/ME-104B.xml")
     course = tree.getroot()
-    print(Course(course))
+    c = Course(course)
+    print(c)
+    pprint(sorted(c.keywords))
+
+    # print("generate_keywords:")
+    # pprint(c.generate_keywords(210741, ["ME 104B"], "Designing Your Life"))
