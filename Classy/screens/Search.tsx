@@ -96,7 +96,6 @@ export default function Search() {
           placeholder="Search courses or people..."
           searchPhrase={searchPhrase}
           onChangeText={(text) => {
-            console.log("new text =", text)
             setSearchPhrase(text);
             searchCourses(text);
           }}

@@ -1,4 +1,5 @@
 import {
+  Animated,
   Button,
   Keyboard,
   Pressable,
@@ -11,6 +12,7 @@ import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import useColorScheme from "../hooks/useColorScheme";
+import { useRef, useState } from "react";
 
 export default function SearchBar({
   placeholder,
@@ -27,12 +29,20 @@ export default function SearchBar({
 }) {
   const colorScheme = useColorScheme();
 
+  const searchBarWidth = Layout.window.width - 2 * Layout.spacing.medium;
+  const buttonWidth = 72; // hard-coded width of "Cancel" button
+
+  const width = useRef(new Animated.Value(searchBarWidth)).current;
+
   return (
     <View style={AppStyles.row}>
-      <View
+      <Animated.View
         style={[
           styles.inputContainer,
-          { backgroundColor: Colors[colorScheme].photoBackground },
+          {
+            backgroundColor: Colors[colorScheme].photoBackground,
+            width,
+          },
         ]}
       >
         <Icon name="search" size={20} />
@@ -40,28 +50,46 @@ export default function SearchBar({
           style={styles.input}
           placeholder={placeholder}
           value={searchPhrase}
-          onChangeText={onChangeText}
+          onChangeText={(text) => {
+            onChangeText(text);
+          }}
           onFocus={() => {
             setFocused(true);
+            Animated.timing(width, {
+              toValue: searchBarWidth - buttonWidth,
+              duration: 200,
+              useNativeDriver: false,
+            }).start();
           }}
         />
-        {focused && (
+        {focused && searchPhrase != "" && (
           <Pressable onPress={() => onChangeText("")}>
             <Icon name="close" size={20} />
           </Pressable>
         )}
-      </View>
-      {focused && (
-        <View>
-          <Button
-            title="Cancel"
-            onPress={() => {
-              Keyboard.dismiss();
-              setFocused(false);
-            }}
-          ></Button>
-        </View>
-      )}
+      </Animated.View>
+      <Animated.View
+        style={{
+          opacity: width.interpolate({
+            inputRange: [searchBarWidth - buttonWidth, searchBarWidth],
+            outputRange: [1, 0],
+          }),
+        }}
+      >
+        <Button
+          title="Cancel"
+          onPress={() => {
+            Keyboard.dismiss();
+            onChangeText("");
+            setFocused(false);
+            Animated.timing(width, {
+              toValue: searchBarWidth,
+              duration: 200,
+              useNativeDriver: false,
+            }).start();
+          }}
+        />
+      </Animated.View>
     </View>
   );
 }
@@ -72,7 +100,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderRadius: 15,
     alignItems: "center",
-    flex: 1,
   },
   input: {
     flex: 1,
