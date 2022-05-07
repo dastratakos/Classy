@@ -18,6 +18,7 @@ import {
   updateDoc,
   limit,
   where,
+  orderBy,
 } from "firebase/firestore";
 import { User, sendEmailVerification } from "firebase/auth";
 import { auth, db } from "../firebase";
@@ -98,7 +99,8 @@ export default function Profile() {
     const q = query(
       collection(db, "enrollments"),
       where("userId", "==", id),
-      where("termId", "==", termId)
+      where("termId", "==", termId),
+      orderBy("code")
     );
 
     const results = [];

@@ -62,7 +62,7 @@ export default function SearchBar({
             }).start();
           }}
         />
-        {focused && searchPhrase != "" && (
+        {focused && searchPhrase !== "" && (
           <Pressable onPress={() => onChangeText("")}>
             <Icon name="close" size={20} />
           </Pressable>

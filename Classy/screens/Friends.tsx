@@ -70,7 +70,7 @@ export default function Friends({ route }: FriendsProps) {
         getUser(id).then((res) => {
           if (res) friendsList.push(res);
           count++;
-          if (count == friendIds.length) resolve(null);
+          if (count === friendIds.length) resolve(null);
         });
       });
     });

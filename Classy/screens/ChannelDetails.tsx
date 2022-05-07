@@ -34,11 +34,9 @@ export default function ChannelDetails() {
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={AppStyles.section}>
-        {members.length > 1 && (
-          <Text>TODO: change group photo</Text>
-        )}
+        {members.length > 1 ? <Text>TODO: change group photo</Text> : null}
         <Text style={styles.title}>Members</Text>
-        // TODO: use FlatList
+        {/* TODO: use FlatList */}
         {members.map((member) => {
           return (
             <FriendCard
@@ -47,9 +45,7 @@ export default function ChannelDetails() {
             />
           );
         })}
-        {members.length > 1 && (
-          <Text>TODO: Leave chat</Text>
-        )}
+        {members.length > 1 ? <Text>TODO: Leave chat</Text> : null}
       </View>
     </ScrollView>
   );

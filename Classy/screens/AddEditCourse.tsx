@@ -38,10 +38,9 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
   const [selectedUnits, setSelectedUnits] = useState(course.unitsMin);
   const [grading, setGrading] = useState(
     context.selectedTerm && terms[`${context.selectedTerm}`]
-      ? terms[`${context.selectedTerm}`].schedules[0].grading[0]
+      ? terms[`${context.selectedTerm}`][0].grading[0]
       : ""
   );
-  const [schedules, setSchedules] = useState([]);
   const [selectedScheduleIndices, setSelectedScheduleIndices] = useState(
     new Set<number>()
   );
@@ -57,13 +56,21 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
       const res = {};
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-        res[`${doc.id}`] = doc.data();
+        let resSchedules = doc.data().schedules;
+        resSchedules.sort(
+          (a: Schedule, b: Schedule) => a.sectionNumber > b.sectionNumber
+        );
+        let resStudents = doc.data().students;
+
+        res[`${doc.id}`] = resSchedules;
       });
       setTerms({ ...res });
 
       const currentTermId = getCurrentTermId();
       if (currentTermId in res) {
         context.setSelectedTerm(currentTermId);
+        if (terms[`${context.selectedTerm}`])
+          setGrading(terms[`${context.selectedTerm}`][0].grading[0]);
       } else {
         context.setSelectedTerm("");
       }
@@ -76,12 +83,6 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
 
   const Schedules = () => {
     if (context.selectedTerm === "") return null;
-
-    let schedulesList = terms[`${context.selectedTerm}`].schedules;
-    schedulesList.sort(
-      (a: Schedule, b: Schedule) => a.sectionNumber > b.sectionNumber
-    );
-    setSchedules(schedulesList);
 
     const handleScheduleSelected = (i: number) => {
       let newSet = new Set(selectedScheduleIndices);
@@ -97,17 +98,19 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
           marginBottom: Layout.buttonHeight.medium + Layout.spacing.medium,
         }}
       >
-        {schedules.map((schedule: Schedule, i: number) => (
-          <ScheduleCard
-            schedule={schedule}
-            key={i}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              handleScheduleSelected(i);
-            }}
-            emphasized={selectedScheduleIndices.has(i)}
-          />
-        ))}
+        {terms[`${context.selectedTerm}`].map(
+          (schedule: Schedule, i: number) => (
+            <ScheduleCard
+              schedule={schedule}
+              key={i}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                handleScheduleSelected(i);
+              }}
+              emphasized={selectedScheduleIndices.has(i)}
+            />
+          )
+        )}
       </View>
     );
   };
@@ -120,8 +123,11 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
     setDoneLoading(true);
 
     let schedulesList: Schedule[] = [];
-    selectedScheduleIndices.forEach((i) => schedulesList.push(schedules[i]));
+    selectedScheduleIndices.forEach((i) =>
+      schedulesList.push(terms[`${context.selectedTerm}`][i])
+    );
 
+    /* 1. Create doc in enrollments collection. */
     const data = {
       code: course.code,
       courseId: course.courseId,
@@ -135,13 +141,27 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
 
     await addDoc(collection(db, "enrollments"), data);
 
-    // TODO: need to check if that field exists in the user terms
+    /* 2. Update number of units in user doc in users collection. */
+    // TODO: need to check if that field exists in the user terms?
     const year = termIdToYear(context.selectedTerm);
-    const key = `terms.${year}.${context.selectedTerm}`;
-    let updateData = {};
-    updateData[key] = increment(selectedUnits);
+    const termKey = `terms.${year}.${context.selectedTerm}`;
+    let userData = {};
+    userData[termKey] = increment(selectedUnits);
 
-    await updateDoc(doc(db, "users", context.user.id), updateData);
+    await updateDoc(doc(db, "users", context.user.id), userData);
+
+    /* 3. Updates students list for that term in courses collection. */
+    const studentsKey = `students.${context.user.id}`;
+    let courseData = {};
+    courseData[studentsKey] = true;
+    await updateDoc(
+      doc(
+        doc(db, "courses", `${course.courseId}`),
+        "terms",
+        context.selectedTerm
+      ),
+      courseData
+    );
 
     setDoneLoading(false);
     navigation.goBack();
@@ -162,7 +182,7 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
             <Text>Quarter</Text>
             <Button
               text={
-                context.selectedTerm != ""
+                context.selectedTerm !== ""
                   ? termIdToName(context.selectedTerm)
                   : "Select"
               }
@@ -171,6 +191,7 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
                   terms: Object.keys(terms),
                 })
               }
+              emphasized={context.selectedTerm !== ""}
             />
           </View>
           <View style={styles.row}>
@@ -180,7 +201,10 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
                 { length: course.unitsMax - course.unitsMin + 1 },
                 (_, i) => i + course.unitsMin
               ).map((numUnits) => (
-                <View style={{ marginLeft: Layout.spacing.small }}>
+                <View
+                  style={{ marginLeft: Layout.spacing.small }}
+                  key={numUnits}
+                >
                   <SquareButton
                     num=""
                     text={`${numUnits}`}
@@ -206,7 +230,7 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
             >
               {context.selectedTerm && terms[`${context.selectedTerm}`] ? (
                 <>
-                  {terms[`${context.selectedTerm}`].schedules[0].grading.map(
+                  {terms[`${context.selectedTerm}`][0].grading.map(
                     (grad, i) => (
                       <Button
                         text={grad}
@@ -232,14 +256,26 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
       </ScrollView>
       <View style={styles.ctaContainer}>
         <View style={{ width: "48%" }}>
-          <Button text="Cancel" onPress={() => navigation.goBack()} />
+          <Button
+            text="Cancel"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              navigation.goBack();
+            }}
+          />
         </View>
         <View style={{ width: "48%" }}>
           <Button
             text="Done"
             onPress={addEnrollmentDB}
-            emphasized={true}
+            disabled={
+              !context.selectedTerm ||
+              !selectedUnits ||
+              !grading ||
+              !selectedScheduleIndices.size
+            }
             loading={doneLoading}
+            emphasized={true}
           />
         </View>
       </View>

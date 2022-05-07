@@ -16,8 +16,8 @@ export default function FriendCard({
   friend: {
     id: string;
     name: string;
-    major: string;
-    gradYear: string;
+    major?: string;
+    gradYear?: string;
     photoUrl: string;
   };
 }) {

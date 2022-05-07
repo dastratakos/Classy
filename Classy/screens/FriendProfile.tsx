@@ -17,6 +17,7 @@ import {
   updateDoc,
   where,
   limit,
+  orderBy,
 } from "firebase/firestore";
 import { useContext, useEffect, useRef, useState } from "react";
 
@@ -88,7 +89,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     const q = query(
       collection(db, "enrollments"),
       where("userId", "==", id),
-      where("termId", "==", termId)
+      where("termId", "==", termId),
+      orderBy("code")
     );
 
     const results = [];
@@ -292,6 +294,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   };
 
   const handleActionSheetOptionPressed = (index: number) => {
+    // TODO: fill in logic
     if (friendStatus === "friends") {
       console.log(friendActionSheetOptions[index], "pressed");
     } else {
