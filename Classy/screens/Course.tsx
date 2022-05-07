@@ -1,3 +1,4 @@
+import * as Haptics from "expo-haptics";
 import * as WebBrowser from "expo-web-browser";
 
 import {
@@ -119,7 +120,10 @@ export default function Course({ route }: CourseProps) {
         <View style={{ flexGrow: 1 }}>
           <Button
             text="Add to Courses"
-            onPress={() => navigation.navigate("AddEditCourse", { course })}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              navigation.navigate("AddEditCourse", { course });
+            }}
             emphasized={true}
           />
         </View>

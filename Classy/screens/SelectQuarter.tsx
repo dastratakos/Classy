@@ -1,16 +1,18 @@
+import * as Haptics from "expo-haptics";
+
 import { ScrollView, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
+import { termIdToQuarterName, termIdToYear } from "../utils";
+import { useContext, useEffect, useState } from "react";
 
+import AppContext from "../context/Context";
+import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
+import { SelectQuarterProps } from "../types";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import AppStyles from "../styles/AppStyles";
-import { useContext, useEffect, useState } from "react";
-import AppContext from "../context/Context";
-import { termIdToQuarterName, termIdToYear } from "../utils";
-import { SelectQuarterProps } from "../types";
 
 export default function SelectQuarter({ route }: SelectQuarterProps) {
   const navigation = useNavigation();
@@ -64,6 +66,9 @@ export default function SelectQuarter({ route }: SelectQuarterProps) {
                         <Button
                           text={`${termIdToQuarterName(termId)}`}
                           onPress={() => {
+                            Haptics.impactAsync(
+                              Haptics.ImpactFeedbackStyle.Medium
+                            );
                             context.setSelectedTerm(termId);
                             navigation.goBack();
                           }}

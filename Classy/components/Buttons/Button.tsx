@@ -1,5 +1,5 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
-import { ActivityIndicator, Text, View } from "../Themed";
+import { ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View } from "../Themed";
 
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";

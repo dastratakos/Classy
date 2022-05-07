@@ -1,3 +1,5 @@
+import * as Haptics from "expo-haptics";
+
 import { Animated, FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, View } from "./Themed";
 
@@ -32,6 +34,7 @@ export default function TabView({ tabs }) {
   };
 
   const selectTab = (i: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setSelectedId(i);
     Animated.spring(translateValue, {
       toValue: i * tabWidth + Layout.spacing.xsmall,

@@ -1,18 +1,28 @@
+import * as Haptics from "expo-haptics";
+
 import { ActivityIndicator, Text, View } from "../components/Themed";
+import { AddEditCourseProps, Schedule } from "../types";
 import { ScrollView, StyleSheet } from "react-native";
-import { collection, doc, getDocs, query } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  increment,
+  query,
+  updateDoc,
+} from "firebase/firestore";
+import { getCurrentTermId, termIdToName, termIdToYear } from "../utils";
 import { useContext, useEffect, useState } from "react";
 
-import { AddEditCourseProps, Schedule } from "../types";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
-import ScheduleCard from "../components/ScheduleCard";
-import SquareButton from "../components/Buttons/SquareButton";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
+import ScheduleCard from "../components/ScheduleCard";
+import SquareButton from "../components/Buttons/SquareButton";
 import { db } from "../firebase";
-import { getCurrentTermId, termIdToName } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
@@ -26,9 +36,17 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
   const [terms, setTerms] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedUnits, setSelectedUnits] = useState(course.unitsMin);
-  const [selectedScheduleIndices, setSelectedScheduleIndices] = useState(
-    new Set()
+  const [grading, setGrading] = useState(
+    context.selectedTerm && terms[`${context.selectedTerm}`]
+      ? terms[`${context.selectedTerm}`].schedules[0].grading[0]
+      : ""
   );
+  const [schedules, setSchedules] = useState([]);
+  const [selectedScheduleIndices, setSelectedScheduleIndices] = useState(
+    new Set<number>()
+  );
+
+  const [doneLoading, setDoneLoading] = useState(false);
 
   useEffect(() => {
     const getTerms = async () => {
@@ -41,8 +59,6 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
       querySnapshot.forEach((doc) => {
         res[`${doc.id}`] = doc.data();
       });
-      // console.log("terms:", res);
-      // console.log(res["1222"]);
       setTerms({ ...res });
 
       const currentTermId = getCurrentTermId();
@@ -61,37 +77,74 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
   const Schedules = () => {
     if (context.selectedTerm === "") return null;
 
-    let schedules = terms[`${context.selectedTerm}`].schedules;
-    schedules.sort(
+    let schedulesList = terms[`${context.selectedTerm}`].schedules;
+    schedulesList.sort(
       (a: Schedule, b: Schedule) => a.sectionNumber > b.sectionNumber
     );
+    setSchedules(schedulesList);
 
     const handleScheduleSelected = (i: number) => {
-      console.log(`Schedule ${i} pressed: ${schedules[i].sectionNumber}`);
       let newSet = new Set(selectedScheduleIndices);
       if (newSet.has(i)) newSet.delete(i);
       else newSet.add(i);
-      console.log(newSet);
 
       setSelectedScheduleIndices(newSet);
     };
 
     return (
-      <>
+      <View
+        style={{
+          marginBottom: Layout.buttonHeight.medium + Layout.spacing.medium,
+        }}
+      >
         {schedules.map((schedule: Schedule, i: number) => (
           <ScheduleCard
             schedule={schedule}
             key={i}
-            onPress={() => handleScheduleSelected(i)}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              handleScheduleSelected(i);
+            }}
             emphasized={selectedScheduleIndices.has(i)}
           />
         ))}
-      </>
+      </View>
     );
   };
 
   const addEnrollmentDB = async () => {
-    console.log("new enrollment:");
+    // TODO: error handling
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    setDoneLoading(true);
+
+    let schedulesList: Schedule[] = [];
+    selectedScheduleIndices.forEach((i) => schedulesList.push(schedules[i]));
+
+    const data = {
+      code: course.code,
+      courseId: course.courseId,
+      grading: grading,
+      schedules: schedulesList,
+      termId: context.selectedTerm,
+      title: course.title,
+      units: selectedUnits,
+      userId: context.user.id,
+    };
+
+    await addDoc(collection(db, "enrollments"), data);
+
+    // TODO: need to check if that field exists in the user terms
+    const year = termIdToYear(context.selectedTerm);
+    const key = `terms.${year}.${context.selectedTerm}`;
+    let updateData = {};
+    updateData[key] = increment(selectedUnits);
+
+    await updateDoc(doc(db, "users", context.user.id), updateData);
+
+    setDoneLoading(false);
+    navigation.goBack();
   };
 
   if (loading) return <ActivityIndicator />;
@@ -131,12 +184,44 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
                   <SquareButton
                     num=""
                     text={`${numUnits}`}
-                    onPress={() => setSelectedUnits(numUnits)}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                      setSelectedUnits(numUnits);
+                    }}
                     size={Layout.buttonHeight.medium}
                     emphasized={selectedUnits === numUnits}
                   />
                 </View>
               ))}
+            </View>
+          </View>
+          <View>
+            <Text>Grading basis</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                marginVertical: Layout.spacing.medium,
+                justifyContent: "space-evenly",
+              }}
+            >
+              {context.selectedTerm && terms[`${context.selectedTerm}`] ? (
+                <>
+                  {terms[`${context.selectedTerm}`].schedules[0].grading.map(
+                    (grad, i) => (
+                      <Button
+                        text={grad}
+                        onPress={() => {
+                          Haptics.impactAsync(
+                            Haptics.ImpactFeedbackStyle.Medium
+                          );
+                          setGrading(grad);
+                        }}
+                        emphasized={grading === grad}
+                      />
+                    )
+                  )}
+                </>
+              ) : null}
             </View>
           </View>
           <View>
@@ -150,7 +235,12 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
           <Button text="Cancel" onPress={() => navigation.goBack()} />
         </View>
         <View style={{ width: "48%" }}>
-          <Button text="Done" onPress={addEnrollmentDB} emphasized={true} />
+          <Button
+            text="Done"
+            onPress={addEnrollmentDB}
+            emphasized={true}
+            loading={doneLoading}
+          />
         </View>
       </View>
     </>
