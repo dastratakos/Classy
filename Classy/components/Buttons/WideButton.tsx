@@ -4,6 +4,7 @@ import { Text, View } from "../Themed";
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
 import useColorScheme from "../../hooks/useColorScheme";
+import AppStyles from "../../styles/AppStyles";
 
 export default function WideButton({
   text,
@@ -15,21 +16,25 @@ export default function WideButton({
   const colorScheme = useColorScheme();
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[styles.container, { borderColor: Colors[colorScheme].border }]}
-    >
-      <Text>{text}</Text>
-    </TouchableOpacity>
+    <View style={styles.container}>
+      <TouchableOpacity
+        onPress={onPress}
+        style={styles.innerContainer}
+      >
+        <Text>{text}</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
+    ...AppStyles.boxShadow,
     padding: Layout.spacing.small,
     width: "100%",
-    borderWidth: 1,
     borderRadius: Layout.radius.small,
   },
+  innerContainer: {
+    alignItems: "center"
+  }
 });

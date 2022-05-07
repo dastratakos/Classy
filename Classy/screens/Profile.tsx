@@ -38,6 +38,7 @@ import events from "./dummyEvents";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import TabView from "../components/TabView";
+import { getCurrentTermId, termIdToFullName } from "../utils";
 
 export default function Profile() {
   const context = useContext(AppContext);
@@ -291,14 +292,21 @@ export default function Profile() {
           <SquareButton
             num={`${context.friendIds.length}`}
             text={"friend" + (context.friendIds.length === 1 ? "" : "s")}
-            onPress={() =>
-              navigation.navigate("Friends", { id: context.user.id })
-            }
+            onPress={() => navigation.navigate("MyFriends")}
           />
         </View>
       </View>
       <Separator />
       <View style={AppStyles.section}>
+        <View style={[AppStyles.row, { marginBottom: Layout.spacing.medium }]}>
+          <Text style={styles.term}>
+            {termIdToFullName(getCurrentTermId())}
+          </Text>
+          <Button
+            text="View All"
+            onPress={() => navigation.navigate("MyQuarters")}
+          />
+        </View>
         <TabView tabs={tabs} />
       </View>
     </ScrollView>
@@ -336,5 +344,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Layout.spacing.small,
     right: Layout.spacing.medium,
+  },
+  term: {
+    fontSize: Layout.text.large,
   },
 });

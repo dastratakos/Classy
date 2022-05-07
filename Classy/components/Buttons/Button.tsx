@@ -4,6 +4,7 @@ import { Text, View } from "../Themed";
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
 import useColorScheme from "../../hooks/useColorScheme";
+import AppStyles from "../../styles/AppStyles";
 
 export default function Button({
   text,
@@ -18,28 +19,27 @@ export default function Button({
 
   if (!pressable)
     return (
-      <View
-        style={[styles.container, { borderColor: Colors[colorScheme].border }]}
-      >
+      <View style={styles.container}>
         <Text>{text}</Text>
       </View>
     );
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[styles.container, { borderColor: Colors[colorScheme].border }]}
-    >
-      <Text>{text}</Text>
-    </TouchableOpacity>
+    <View style={styles.container}>
+      <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
+        <Text>{text}</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
+    ...AppStyles.boxShadow,
     padding: Layout.spacing.small,
-    borderWidth: 1,
     borderRadius: Layout.radius.small,
   },
+  innerContainer: {
+    alignItems: "center"
+  }
 });

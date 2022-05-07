@@ -10,9 +10,10 @@ import { Icon } from "../components/Themed";
 import { Pressable } from "react-native";
 import Profile from "../screens/Profile";
 import { ProfileStackScreenProps } from "../types";
-import Quarters from "../screens/Quarters";
+import MyQuarters from "../screens/MyQuarters";
 import Search from "../screens/Search";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import MyFriends from "../screens/MyFriends";
 
 const Stack = createNativeStackNavigator();
 
@@ -54,6 +55,12 @@ export default function SearchStackNavigator() {
         options={{ title: "Add or Edit Course" }}
       />
       <Stack.Screen
+        name="MyFriends"
+        component={MyFriends}
+        getId={() => new Date().getTime().toString()}
+        options={{ title: "Friends" }}
+      />
+      <Stack.Screen
         name="Friends"
         component={Friends}
         getId={() => new Date().getTime().toString()}
@@ -70,7 +77,11 @@ export default function SearchStackNavigator() {
         getId={() => new Date().getTime().toString()}
         options={{ title: "Course Similarity" }}
       />
-      <Stack.Screen name="Quarters" component={Quarters} />
+      <Stack.Screen
+        name="MyQuarters"
+        component={MyQuarters}
+        options={{ title: "Quarters" }}
+      />
     </Stack.Navigator>
   );
 }

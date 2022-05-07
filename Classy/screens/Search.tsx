@@ -57,7 +57,7 @@ export default function Search() {
     }
 
     // TODO: pagination
-    const q2 = query(
+    const q = query(
       collection(db, "courses"),
       where("keywords", "array-contains", search.toLowerCase().trim()),
       orderBy("code"),
@@ -65,8 +65,8 @@ export default function Search() {
     );
 
     const courses: Course[] = [];
-    const querySnapshot2 = await getDocs(q2);
-    querySnapshot2.forEach((doc) => {
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
       courses.push(doc.data() as Course);
     });
     setCourseSearchResults([...courses]);

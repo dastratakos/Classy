@@ -1,5 +1,5 @@
-import { ActivityIndicator, Text, View } from "../components/Themed";
-import { FriendsProps, User } from "../types";
+import { ActivityIndicator, View } from "../components/Themed";
+import { User } from "../types";
 import { ScrollView, StyleSheet } from "react-native";
 import {
   collection,
@@ -9,24 +9,32 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
+import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import { db } from "../firebase";
 import useColorScheme from "../hooks/useColorScheme";
 import FriendList from "../components/FriendList";
+import TabView from "../components/TabView";
 
-export default function Friends({ route }: FriendsProps) {
+export default function MyFriends() {
   const colorScheme = useColorScheme();
+  const context = useContext(AppContext);
 
   const [friends, setFriends] = useState([] as User[]);
+  const [requests, setRequests] = useState([] as User[]);
 
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getFriendIds(route.params.id).then((res) => {
+    getFriendIds(context.user.id).then((res) => {
       getFriendsFromIds(res).then((res2) => setFriends(res2));
+      setIsLoading(false);
+    });
+    getRequestIds(context.user.id).then((res) => {
+      getFriendsFromIds(res).then((res2) => setRequests(res2));
       setIsLoading(false);
     });
   }, []);
@@ -36,6 +44,26 @@ export default function Friends({ route }: FriendsProps) {
       collection(db, "friends"),
       where(`ids.${id}`, "==", true),
       where("status", "==", "friends")
+    );
+    const friendIds = [] as string[];
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      for (let key in doc.data().ids) {
+        if (key !== id) {
+          friendIds.push(key);
+          return;
+        }
+      }
+    });
+    return friendIds;
+  };
+
+  const getRequestIds = async (id: string) => {
+    const q = query(
+      collection(db, "friends"),
+      where(`ids.${id}`, "==", true),
+      where(`requesterId.${id}`, "==", false),
+      where("status", "==", "requests")
     );
     const friendIds = [] as string[];
     const querySnapshot = await getDocs(q);
@@ -83,13 +111,24 @@ export default function Friends({ route }: FriendsProps) {
 
   if (isLoading) return <ActivityIndicator />;
 
+  const tabs = [
+    {
+      label: "Friends",
+      component: <FriendList friends={friends} />,
+    },
+    {
+      label: "Requests",
+      component: <FriendList friends={requests} />,
+    },
+  ];
+
   return (
     <ScrollView
       style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={AppStyles.section}>
-        <FriendList friends={friends} />
+        <TabView tabs={tabs} />
       </View>
     </ScrollView>
   );

@@ -86,10 +86,11 @@ export type RootStackParamList = {
   NewMessage: undefined;
 
   Profile: undefined;
-  Courses: undefined;
+  Courses: { termId: string };
   Course: { course: Course };
-  AddEditCourse: { id: number };
-  Quarters: undefined;
+  AddEditCourse: { course: Course };
+  MyQuarters: undefined;
+  MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
   CourseSimilarity: { id: string };
@@ -115,10 +116,11 @@ export type ProfileStackParamList = {
   ManageAccount: undefined;
 
   Profile: undefined;
-  Courses: undefined;
+  Courses: { termId: string };
   Course: { course: Course };
-  AddEditCourse: { id: number };
-  Quarters: undefined;
+  AddEditCourse: { course: Course };
+  MyQuarters: undefined;
+  MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
   CourseSimilarity: { id: string };
@@ -131,10 +133,11 @@ export type ProfileStackScreenProps<
 export type SearchStackParamList = {
   Search: undefined;
   Profile: undefined;
-  Courses: undefined;
+  Courses: { termId: string };
   Course: { course: Course };
-  AddEditCourse: { id: number };
-  Quarters: undefined;
+  AddEditCourse: { course: Course };
+  MyQuarters: undefined;
+  MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
   CourseSimilarity: { id: string };
@@ -150,9 +153,10 @@ export type MessagesStackParamList = {
   ChannelDetails: undefined;
   NewMessage: undefined;
 
-  Courses: undefined;
+  Courses: { termId: string };
   Course: { course: Course };
-  AddEditCourse: { id: number };
+  AddEditCourse: { course: Course };
+  MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
   CourseSimilarity: { id: string };
@@ -200,7 +204,12 @@ export type FriendProfileProps = NativeStackScreenProps<
 
 export type CourseSimilarityProps = NativeStackScreenProps<
   RootStackParamList,
-  "FriendProfile"
+  "CourseSimilarity"
+>;
+
+export type CoursesProps = NativeStackScreenProps<
+  RootStackParamList,
+  "Courses"
 >;
 
 // Context
@@ -215,6 +224,7 @@ export type User = {
   isPrivate: boolean;
   photoUrl: string;
   expoPushToken: string;
+  terms: Object;
 };
 
 export type Context = {

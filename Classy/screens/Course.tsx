@@ -1,7 +1,12 @@
 import * as WebBrowser from "expo-web-browser";
 
-import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
-import { Text, View } from "../components/Themed";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
+import { Icon, Text, View } from "../components/Themed";
 import { useCallback, useEffect, useState } from "react";
 
 import AppStyles from "../styles/AppStyles";
@@ -54,50 +59,45 @@ export default function Course({ route }: CourseProps) {
   if (isLoading) return <ActivityIndicator />;
 
   return (
-    <ScrollView
-      style={{ backgroundColor: Colors[colorScheme].background }}
-      contentContainerStyle={{ alignItems: "center" }}
-    >
-      <View style={AppStyles.section}>
-        <Text style={styles.title}>{course.code.join(", ")}</Text>
-        <Text style={styles.title}>{course.title}</Text>
-        <Text style={styles.unitsWays}>
-          Units: {course.unitsMin}
-          {course.unitsMin === course.unitsMax ? "" : `-${course.unitsMax}`},
-          GERS: {course.gers || "None"}
-        </Text>
-        <ReadMoreText text={course.description} />
-        <View
-          style={[
-            AppStyles.row,
-            {
-              justifyContent: "space-between",
-              marginVertical: Layout.spacing.medium,
-            },
-          ]}
-        >
-          <View style={{ width: "48%" }}>
-            <Button
-              text="Explore Courses"
-              onPress={() => handleExplorePress(course.courseId)}
-            />
-          </View>
-          <View style={{ width: "48%" }}>
-            <Button
-              text="Carta"
-              onPress={() => handleCartaPress(course.code[0])}
-            />
+    <>
+      <ScrollView
+        style={{ backgroundColor: Colors[colorScheme].background }}
+        contentContainerStyle={{ alignItems: "center" }}
+      >
+        <View style={AppStyles.section}>
+          <Text style={styles.title}>{course.code.join(", ")}</Text>
+          <Text style={styles.title}>{course.title}</Text>
+          <Text style={styles.unitsWays}>
+            Units: {course.unitsMin}
+            {course.unitsMin === course.unitsMax ? "" : `-${course.unitsMax}`},
+            GERS: {course.gers || "None"}
+          </Text>
+          <ReadMoreText text={course.description} />
+          <View
+            style={[
+              AppStyles.row,
+              {
+                justifyContent: "space-between",
+                marginVertical: Layout.spacing.medium,
+              },
+            ]}
+          >
+            <View style={{ width: "48%" }}>
+              <Button
+                text="Explore Courses"
+                onPress={() => handleExplorePress(course.courseId)}
+              />
+            </View>
+            <View style={{ width: "48%" }}>
+              <Button
+                text="Carta"
+                onPress={() => handleCartaPress(course.code[0])}
+              />
+            </View>
           </View>
         </View>
-        <WideButton
-          text="Add to Courses"
-          onPress={() =>
-            navigation.navigate("AddEditCourse", { id: course.courseId })
-          }
-        />
-      </View>
-      <Separator />
-      {/* <View style={styles.friendsSection}>
+        <Separator />
+        {/* <View style={styles.friendsSection}>
         <Text style={styles.friendsHeader}>Friends</Text>
         <View style={AppStyles.section}>
           // TODO: use SectionList?
@@ -114,7 +114,28 @@ export default function Course({ route }: CourseProps) {
           ))}
         </View>
       </View> */}
-    </ScrollView>
+      </ScrollView>
+      <View style={styles.ctaContainer}>
+        <View style={{ flexGrow: 1 }}>
+          <Button
+            text="Add to Courses"
+            onPress={() =>
+              navigation.navigate("AddEditCourse", { course })
+            }
+          />
+        </View>
+        <Pressable
+          onPress={() => console.log("Course favorited")}
+          style={{
+            marginLeft: Layout.spacing.medium,
+            borderRadius: Layout.radius.small,
+            borderWidth: 1,
+          }}
+        >
+          <Icon name="star-o" size={25} />
+        </Pressable>
+      </View>
+    </>
   );
 }
 
@@ -151,5 +172,13 @@ const styles = StyleSheet.create({
   term: {
     fontSize: Layout.text.medium,
     fontWeight: "500",
+  },
+  ctaContainer: {
+    ...AppStyles.row,
+    position: "absolute",
+    bottom: Layout.spacing.medium,
+    left: Layout.spacing.medium,
+    right: Layout.spacing.medium,
+    backgroundColor: "transparent",
   },
 });

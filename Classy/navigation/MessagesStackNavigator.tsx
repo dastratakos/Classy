@@ -18,6 +18,7 @@ import Profile from "../screens/Profile";
 import ThreadScreen from "../screens/ThreadScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useContext } from "react";
+import MyFriends from "../screens/MyFriends";
 
 const Stack = createNativeStackNavigator();
 
@@ -93,6 +94,12 @@ export default function MessagesStackNavigator() {
         name="AddEditCourse"
         component={AddEditCourse}
         options={{ title: "Add or Edit Course" }}
+      />
+      <Stack.Screen
+        name="MyFriends"
+        component={MyFriends}
+        getId={() => new Date().getTime().toString()}
+        options={{ title: "Friends" }}
       />
       <Stack.Screen
         name="Friends"

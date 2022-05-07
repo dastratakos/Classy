@@ -4,6 +4,7 @@ import { Text, View } from "../Themed";
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
 import useColorScheme from "../../hooks/useColorScheme";
+import AppStyles from "../../styles/AppStyles";
 
 export default function SquareButton({
   num,
@@ -20,34 +21,33 @@ export default function SquareButton({
 
   if (!pressable)
     return (
-      <View
-        style={[styles.container, { borderColor: Colors[colorScheme].border }]}
-      >
+      <View style={styles.container}>
         <Text style={styles.number}>{num}</Text>
         <Text style={styles.text}>{text}</Text>
       </View>
     );
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[styles.container, { borderColor: Colors[colorScheme].border }]}
-    >
-      <Text style={styles.number}>{num}</Text>
-      <Text style={styles.text}>{text}</Text>
-    </TouchableOpacity>
+    <View style={styles.container}>
+      <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
+        <Text style={styles.number}>{num}</Text>
+        <Text style={styles.text}>{text}</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    justifyContent: "center",
+    ...AppStyles.boxShadow,
     padding: Layout.spacing.xxsmall,
-    borderWidth: 1,
     height: 70,
     width: 70,
     borderRadius: Layout.radius.small,
+    justifyContent: "center",
+  },
+  innerContainer: {
+    alignItems: "center",
   },
   number: {
     fontSize: Layout.text.large,
