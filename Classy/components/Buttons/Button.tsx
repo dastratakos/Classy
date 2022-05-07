@@ -26,6 +26,7 @@ export default function Button({
       <View
         style={[
           styles.container,
+          styles.containerLoading,
           { backgroundColor: Colors[colorScheme].tertiaryBackground },
         ]}
       >
@@ -89,4 +90,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  containerLoading: {
+    padding: Layout.spacing.small,
+    alignItems: "center",
+    justifyContent: "center",
+  }
 });

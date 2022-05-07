@@ -37,6 +37,7 @@ import { db } from "../firebase";
 import events from "./dummyEvents";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { getCurrentTermId } from "../utils";
 
 const STREAM_API_KEY = "y9tk9hsvsxqa";
 const client = StreamChat.getInstance(STREAM_API_KEY);
@@ -78,14 +79,17 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     getFriendIds(route.params.id).then((res) => {
       setNumFriends(`${res.length}`);
     });
-    getCourses(route.params.id);
+    getCoursesForTerm(route.params.id, getCurrentTermId());
     setInterval(checkInClass, 1000);
     setRefreshing(false);
   };
 
-  const getCourses = async (id: string) => {
-    // TODO: use id to query for specific courses
-    const q = query(collection(db, "courses"), limit(5));
+  const getCoursesForTerm = async (id: string, termId: string) => {
+    const q = query(
+      collection(db, "enrollments"),
+      where("userId", "==", id),
+      where("termId", "==", termId)
+    );
 
     const results = [];
     const querySnapshot = await getDocs(q);
@@ -383,7 +387,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                   style={({ pressed }) => [
                     styles.ellipsis,
                     { opacity: pressed ? 0.5 : 1 },
-                    { borderColor: Colors[colorScheme].text },
+                    { backgroundColor: Colors[colorScheme].cardBackground },
                   ]}
                 >
                   <Icon name="ellipsis-h" size={25} />
@@ -439,9 +443,10 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             style={({ pressed }) => [
               {
                 opacity: pressed ? 0.5 : 1,
+                backgroundColor: Colors[colorScheme].cardBackground,
               },
+              AppStyles.boxShadow,
               styles.similarityContainer,
-              { borderColor: Colors[colorScheme].text },
             ]}
           >
             <View
@@ -516,11 +521,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   ellipsis: {
+    ...AppStyles.boxShadow,
     marginLeft: Layout.spacing.small,
     height: 40,
     width: 40,
     borderRadius: 40 / 2,
-    borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -533,7 +538,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   similarityContainer: {
-    borderWidth: 1,
     borderRadius: Layout.radius.small,
     paddingVertical: Layout.spacing.small,
     marginTop: Layout.spacing.medium,

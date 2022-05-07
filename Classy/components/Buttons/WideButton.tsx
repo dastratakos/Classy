@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     ...AppStyles.boxShadow,
     padding: Layout.spacing.small,
     width: "100%",
-    borderRadius: Layout.radius.small,
+    borderRadius: Layout.radius.medium,
     alignItems: "center",
     justifyContent: "center",
     height: Layout.buttonHeight.medium,

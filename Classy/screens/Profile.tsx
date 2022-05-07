@@ -17,6 +17,7 @@ import {
   query,
   updateDoc,
   limit,
+  where,
 } from "firebase/firestore";
 import { User, sendEmailVerification } from "firebase/auth";
 import { auth, db } from "../firebase";
@@ -57,7 +58,9 @@ export default function Profile() {
 
     if (auth.currentUser) {
       getUser(auth.currentUser.uid);
-      getCourses(context.user.id).then(() => setInterval(checkInClass, 1000));
+      getCoursesForTerm(context.user.id, getCurrentTermId()).then(() =>
+        setInterval(checkInClass, 1000)
+      );
     }
 
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -72,7 +75,7 @@ export default function Profile() {
   const onRefresh = async () => {
     setRefreshing(true);
     await getUser(context.user.id);
-    await getCourses(context.user.id);
+    await getCoursesForTerm(context.user.id, getCurrentTermId());
     if (auth.currentUser)
       setShowEmailVerification(!auth.currentUser.emailVerified);
     console.log("emailVerified:", auth.currentUser?.emailVerified);
@@ -91,9 +94,12 @@ export default function Profile() {
     }
   };
 
-  const getCourses = async (id: string) => {
-    // TODO: use id to query for specific courses
-    const q = query(collection(db, "courses"), limit(5));
+  const getCoursesForTerm = async (id: string, termId: string) => {
+    const q = query(
+      collection(db, "enrollments"),
+      where("userId", "==", id),
+      where("termId", "==", termId)
+    );
 
     const results = [];
     const querySnapshot = await getDocs(q);

@@ -28,7 +28,6 @@ export default function Courses({ route }: CoursesProps) {
   }, []);
 
   const getCoursesForTerm = async (id: string, termId: string) => {
-    // TODO: use id to query for specific courses
     const q = query(
       collection(db, "enrollments"),
       where("userId", "==", id),
