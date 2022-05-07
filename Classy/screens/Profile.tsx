@@ -166,9 +166,11 @@ export default function Profile() {
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((expoPushToken) => {
-      context.setUser({ ...context.user, expoPushToken });
-      const userRef = doc(db, "users", context.user.id);
-      updateDoc(userRef, { expoPushToken });
+      if (expoPushToken) {
+        context.setUser({ ...context.user, expoPushToken });
+        const userRef = doc(db, "users", context.user.id);
+        updateDoc(userRef, { expoPushToken });
+      }
     });
   }, []);
 
@@ -292,6 +294,7 @@ export default function Profile() {
           <SquareButton
             num={`${context.friendIds.length}`}
             text={"friend" + (context.friendIds.length === 1 ? "" : "s")}
+            size={Layout.buttonHeight.large}
             onPress={() => navigation.navigate("MyFriends")}
           />
         </View>

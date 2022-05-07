@@ -351,7 +351,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                     <Button
                       text="Loading"
                       onPress={() => console.log("Loading pressed")}
-                      pressable={false}
+                      disabled={true}
                     />
                   </View>
                 ) : (
@@ -366,7 +366,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                         <Button
                           text="Requested"
                           onPress={() => console.log("Requested pressed")}
-                          pressable={false}
+                          disabled={true}
                         />
                       </View>
                     )}
@@ -425,6 +425,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
           <SquareButton
             num={numFriends}
             text={"friend" + (numFriends === "1" ? "" : "s")}
+            size={Layout.buttonHeight.large}
             onPress={() =>
               navigation.navigate("Friends", { id: route.params.id })
             }

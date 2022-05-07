@@ -11,14 +11,7 @@ import { useNavigation } from "@react-navigation/core";
 import AppStyles from "../styles/AppStyles";
 import { useContext, useEffect, useState } from "react";
 import AppContext from "../context/Context";
-import { termIdStringToQuarterName } from "../utils";
-
-const quarters = {
-  "2018-19": [0, 0, 0, 0],
-  "2019-20": [15, 15, 20, 0],
-  "2020-21": [5, 19, 19, 0],
-  "2021-22": [13, 12, 13, 0],
-};
+import { termIdToQuarterName } from "../utils";
 
 export default function MyQuarters() {
   const navigation = useNavigation();
@@ -36,6 +29,7 @@ export default function MyQuarters() {
         <View style={AppStyles.section}>
           {Object.entries(context.user.terms)
             .sort()
+            .reverse()
             .map(([year, terms]) => (
               <View style={styles.yearContainer} key={year}>
                 <Text style={styles.year}>{year}</Text>
@@ -50,7 +44,7 @@ export default function MyQuarters() {
                       return (
                         <View style={styles.termButton} key={termId}>
                           <Button
-                            text={`${termIdStringToQuarterName(
+                            text={`${termIdToQuarterName(
                               termId
                             )} (${numUnits})`}
                             onPress={() =>
@@ -103,6 +97,7 @@ export default function MyQuarters() {
                 // updateQuartersDBs();
                 setEditMode(false);
               }}
+              emphasized={true}
             />
           </>
         ) : (

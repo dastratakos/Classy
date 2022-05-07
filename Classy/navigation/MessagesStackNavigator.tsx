@@ -19,6 +19,7 @@ import ThreadScreen from "../screens/ThreadScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useContext } from "react";
 import MyFriends from "../screens/MyFriends";
+import MyQuarters from "../screens/MyQuarters";
 
 const Stack = createNativeStackNavigator();
 
@@ -117,6 +118,11 @@ export default function MessagesStackNavigator() {
         component={CourseSimilarity}
         getId={() => new Date().getTime().toString()}
         options={{ title: "Course Similarity" }}
+      />
+      <Stack.Screen
+        name="MyQuarters"
+        component={MyQuarters}
+        options={{ title: "Quarters" }}
       />
     </Stack.Navigator>
   );

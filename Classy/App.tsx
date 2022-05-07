@@ -23,18 +23,21 @@ export default function App() {
   const [channel, setChannel] = useState();
   const [channelName, setChannelName] = useState();
   const [thread, setThread] = useState();
+  const [selectedTerm, setSelectedTerm] = useState("");
 
   const globalVariables = {
-    user: user,
-    setUser: setUser,
-    friendIds: friendIds,
-    setFriendIds: setFriendIds,
-    channel: channel,
-    setChannel: setChannel,
-    channelName: channelName,
-    setChannelName: setChannelName,
-    thread: thread,
-    setThread: setThread,
+    user,
+    setUser,
+    friendIds,
+    setFriendIds,
+    channel,
+    setChannel,
+    channelName,
+    setChannelName,
+    thread,
+    setThread,
+    selectedTerm,
+    setSelectedTerm,
   };
 
   const isLoadingComplete = useCachedResources();

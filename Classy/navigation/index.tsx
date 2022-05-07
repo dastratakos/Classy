@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ColorSchemeName, Pressable } from "react-native";
+import { ColorSchemeName } from "react-native";
 import {
   DarkTheme,
   DefaultTheme,
@@ -9,17 +9,14 @@ import {
 import {
   RootStackParamList,
   RootTabParamList,
-  RootTabScreenProps,
 } from "../types";
 
 import Colors from "../constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import LinkingConfiguration from "./LinkingConfiguration";
-import Login from "../screens/Login";
 import MessagesStackNavigator from "./MessagesStackNavigator";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import ProfileStackNavigator from "./ProfileStackNavigator";
-import Search from "../screens/Search";
 import Settings from "../screens/Settings";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -27,6 +24,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import AuthStackNavigator from "./AuthStackNavigator";
 import ManageAccount from "../screens/ManageAccount";
 import SearchStackNavigator from "./SearchStackNavigator";
+import SelectQuarter from "../screens/SelectQuarter";
 
 /**
  * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
@@ -75,6 +73,11 @@ function RootNavigator() {
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="Settings" component={Settings} />
         <Stack.Screen name="ManageAccount" component={ManageAccount} />
+        <Stack.Screen
+          name="SelectQuarter"
+          component={SelectQuarter}
+          options={{ title: "Select Quarter" }}
+        />
       </Stack.Group>
     </Stack.Navigator>
   );

@@ -1,6 +1,6 @@
 import {
   Animated,
-  Button,
+  Button as RNButton,
   Keyboard,
   Pressable,
   StyleSheet,
@@ -76,7 +76,7 @@ export default function SearchBar({
           }),
         }}
       >
-        <Button
+        <RNButton
           title="Cancel"
           onPress={() => {
             Keyboard.dismiss();

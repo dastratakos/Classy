@@ -119,21 +119,23 @@ export default function Course({ route }: CourseProps) {
         <View style={{ flexGrow: 1 }}>
           <Button
             text="Add to Courses"
-            onPress={() =>
-              navigation.navigate("AddEditCourse", { course })
-            }
+            onPress={() => navigation.navigate("AddEditCourse", { course })}
+            emphasized={true}
           />
         </View>
-        <Pressable
-          onPress={() => console.log("Course favorited")}
-          style={{
-            marginLeft: Layout.spacing.medium,
-            borderRadius: Layout.radius.small,
-            borderWidth: 1,
-          }}
-        >
-          <Icon name="star-o" size={25} />
-        </Pressable>
+        <View style={styles.favoriteButton}>
+          <Pressable
+            onPress={() => console.log("Course favorited")}
+            style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+          >
+            <Icon
+              name="star-o"
+              size={25}
+              lightColor={Colors[colorScheme].tint}
+              darkColor={Colors[colorScheme].tint}
+            />
+          </Pressable>
+        </View>
       </View>
     </>
   );
@@ -180,5 +182,14 @@ const styles = StyleSheet.create({
     left: Layout.spacing.medium,
     right: Layout.spacing.medium,
     backgroundColor: "transparent",
+  },
+  favoriteButton: {
+    ...AppStyles.boxShadow,
+    marginLeft: Layout.spacing.small,
+    borderRadius: Layout.radius.medium,
+    height: Layout.buttonHeight.medium,
+    width: Layout.buttonHeight.medium,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

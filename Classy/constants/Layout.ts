@@ -38,4 +38,8 @@ export default {
     xlarge: 22,
     xxlarge: 26,
   },
+  buttonHeight: {
+    medium: 40,
+    large: 70,
+  },
 };

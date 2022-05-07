@@ -33,6 +33,9 @@ const styles = StyleSheet.create({
     padding: Layout.spacing.small,
     width: "100%",
     borderRadius: Layout.radius.small,
+    alignItems: "center",
+    justifyContent: "center",
+    height: Layout.buttonHeight.medium,
   },
   innerContainer: {
     alignItems: "center"

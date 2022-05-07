@@ -45,7 +45,7 @@ export type Course = {
 export type Term = {
   schedules: Schedule[];
   students: string[];
-}
+};
 
 export type Schedule = {
   component: string;
@@ -56,7 +56,7 @@ export type Schedule = {
   sectionNumber: string;
   startInfo: Timestamp;
   termId: number;
-}
+};
 
 export type Instructor = {
   firstName: string;
@@ -65,7 +65,7 @@ export type Instructor = {
   name: string;
   role: string;
   sunet: string;
-}
+};
 
 export type RootStackParamList = {
   AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;
@@ -90,6 +90,7 @@ export type RootStackParamList = {
   Course: { course: Course };
   AddEditCourse: { course: Course };
   MyQuarters: undefined;
+  SelectQuarter: { terms: string[] };
   MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -120,6 +121,7 @@ export type ProfileStackParamList = {
   Course: { course: Course };
   AddEditCourse: { course: Course };
   MyQuarters: undefined;
+  SelectQuarter: { terms: string[] };
   MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -137,6 +139,7 @@ export type SearchStackParamList = {
   Course: { course: Course };
   AddEditCourse: { course: Course };
   MyQuarters: undefined;
+  SelectQuarter: { terms: string[] };
   MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -212,6 +215,11 @@ export type CoursesProps = NativeStackScreenProps<
   "Courses"
 >;
 
+export type SelectQuarterProps = NativeStackScreenProps<
+  RootStackParamList,
+  "SelectQuarter"
+>;
+
 // Context
 
 export type User = {
@@ -238,6 +246,8 @@ export type Context = {
   setChannelName: (arg0: string) => void;
   thread: undefined;
   setThread: (arg0: MessageType) => void;
+  selectedTerm: string;
+  setSelectedTerm: (arg0: string) => void;
 };
 
 // Stream Chat

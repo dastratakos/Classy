@@ -48,12 +48,12 @@ export const termIdToFullName = (termId: string) => {
   return name;
 };
 
-export const termIdStringToYear = (termId: string) => {
+export const termIdToYear = (termId: string) => {
   const year = Math.floor(parseInt(termId) / 10) + 1900;
   return `${year - 1}-${year % 100}`;
 }
 
-export const termIdStringToQuarterName = (termId: string) => {
+export const termIdToQuarterName = (termId: string) => {
   const quarter = parseInt(termId) % 10;
   if (quarter === 2) {
     return "Aut";

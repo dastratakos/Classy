@@ -9,29 +9,52 @@ import AppStyles from "../../styles/AppStyles";
 export default function SquareButton({
   num,
   text,
+  size = Layout.spacing.large,
   onPress,
+  emphasized = false,
   pressable = true,
 }: {
-  num: string;
-  text: string;
-  onPress: () => void;
+  num?: string;
+  text?: string;
+  size?: number;
+  onPress?: () => void;
+  emphasized?: boolean;
   pressable?: boolean;
 }) {
   const colorScheme = useColorScheme();
 
   if (!pressable)
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { height: size, width: size }]}>
         <Text style={styles.number}>{num}</Text>
         <Text style={styles.text}>{text}</Text>
       </View>
     );
 
+  if (emphasized)
+    return (
+      <View
+        style={[
+          styles.container,
+          {
+            height: size,
+            width: size,
+            backgroundColor: Colors[colorScheme].tint,
+          },
+        ]}
+      >
+        <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
+          {num && num !== "" ? <Text style={styles.number}>{num}</Text> : null}
+          {text && text !== "" ? <Text style={styles.text}>{text}</Text> : null}
+        </TouchableOpacity>
+      </View>
+    );
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { height: size, width: size }]}>
       <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
-        <Text style={styles.number}>{num}</Text>
-        <Text style={styles.text}>{text}</Text>
+        {num && num !== "" ? <Text style={styles.number}>{num}</Text> : null}
+        {text && text !== "" ? <Text style={styles.text}>{text}</Text> : null}
       </TouchableOpacity>
     </View>
   );
@@ -40,13 +63,11 @@ export default function SquareButton({
 const styles = StyleSheet.create({
   container: {
     ...AppStyles.boxShadow,
-    padding: Layout.spacing.xxsmall,
-    height: 70,
-    width: 70,
-    borderRadius: Layout.radius.small,
+    borderRadius: Layout.radius.medium,
     justifyContent: "center",
   },
   innerContainer: {
+    justifyContent: "center",
     alignItems: "center",
   },
   number: {
