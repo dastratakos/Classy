@@ -35,7 +35,6 @@ export default function SelectQuarter({ route }: SelectQuarterProps) {
         }
         quartersObj[`${year}`][`${termId}`] = true;
       }
-      console.log("quartersObj:", quartersObj);
       setQuarters({ ...quartersObj });
     };
     buildQuarters();

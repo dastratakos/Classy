@@ -25,7 +25,16 @@ export default function SquareButton({
 
   if (!pressable)
     return (
-      <View style={[styles.container, { height: size, width: size }]}>
+      <View
+        style={[
+          styles.container,
+          {
+            height: size,
+            width: size,
+            backgroundColor: Colors[colorScheme].cardBackground,
+          },
+        ]}
+      >
         <Text style={styles.number}>{num}</Text>
         <Text style={styles.text}>{text}</Text>
       </View>
@@ -44,14 +53,35 @@ export default function SquareButton({
         ]}
       >
         <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
-          {num && num !== "" ? <Text style={styles.number}>{num}</Text> : null}
-          {text && text !== "" ? <Text style={styles.text}>{text}</Text> : null}
+          {num && num !== "" ? (
+            <Text
+              style={[styles.number, { color: Colors[colorScheme].background }]}
+            >
+              {num}
+            </Text>
+          ) : null}
+          {text && text !== "" ? (
+            <Text
+              style={[styles.text, { color: Colors[colorScheme].background }]}
+            >
+              {text}
+            </Text>
+          ) : null}
         </TouchableOpacity>
       </View>
     );
 
   return (
-    <View style={[styles.container, { height: size, width: size }]}>
+    <View
+      style={[
+        styles.container,
+        {
+          height: size,
+          width: size,
+          backgroundColor: Colors[colorScheme].cardBackground,
+        },
+      ]}
+    >
       <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
         {num && num !== "" ? <Text style={styles.number}>{num}</Text> : null}
         {text && text !== "" ? <Text style={styles.text}>{text}</Text> : null}

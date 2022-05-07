@@ -22,7 +22,7 @@ import { Text } from "./Themed";
 import { Timestamp } from "firebase/firestore";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { useIsMounted } from "../hooks/useIsMounted";
+import { getTimeString } from "../utils";
 
 export default function Calendar({ events }: { events: [] }) {
   const navigation = useNavigation();
@@ -46,22 +46,6 @@ export default function Calendar({ events }: { events: [] }) {
   useEffect(() => {
     setInterval(() => setCurrTime(Timestamp.now()), 1000);
   }, []);
-
-  const getTimeString = (startTime: Timestamp, endTime: Timestamp) => {
-    var start = startTime.toDate().toLocaleString("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    });
-
-    var end = endTime.toDate().toLocaleString("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    });
-
-    return `${start} - ${end}`;
-  };
 
   const getCurrTimeString = (currTime: Timestamp) => {
     const now = currTime.toDate();
@@ -314,13 +298,17 @@ export default function Calendar({ events }: { events: [] }) {
           return (
             <CalendarEvent
               title={event.title}
-              time={getTimeString(event.startInfo, event.endInfo)}
+              time={
+                getTimeString(event.startInfo) +
+                " " +
+                getTimeString(event.endInfo)
+              }
               location={event.location}
               marginTop={getMarginTop(event.startInfo)}
               height={getHeight(event.startInfo, event.endInfo)}
               leftIndent={leftIndent}
-              onPress={() =>
-                console.log("need to pass in full course here")
+              onPress={
+                () => console.log("need to pass in full course here")
                 // navigation.navigate("Course", { id: event.courseId })
               }
               key={i}

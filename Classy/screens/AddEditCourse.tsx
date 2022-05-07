@@ -3,10 +3,11 @@ import { ScrollView, StyleSheet } from "react-native";
 import { collection, doc, getDocs, query } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 
-import { AddEditCourseProps } from "../types";
+import { AddEditCourseProps, Schedule } from "../types";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
+import ScheduleCard from "../components/ScheduleCard";
 import SquareButton from "../components/Buttons/SquareButton";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
@@ -25,6 +26,9 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
   const [terms, setTerms] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedUnits, setSelectedUnits] = useState(course.unitsMin);
+  const [selectedScheduleIndices, setSelectedScheduleIndices] = useState(
+    new Set()
+  );
 
   useEffect(() => {
     const getTerms = async () => {
@@ -37,7 +41,8 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
       querySnapshot.forEach((doc) => {
         res[`${doc.id}`] = doc.data();
       });
-      console.log("terms:", res);
+      // console.log("terms:", res);
+      // console.log(res["1222"]);
       setTerms({ ...res });
 
       const currentTermId = getCurrentTermId();
@@ -52,6 +57,42 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
 
     getTerms();
   }, []);
+
+  const Schedules = () => {
+    if (context.selectedTerm === "") return null;
+
+    let schedules = terms[`${context.selectedTerm}`].schedules;
+    schedules.sort(
+      (a: Schedule, b: Schedule) => a.sectionNumber > b.sectionNumber
+    );
+
+    const handleScheduleSelected = (i: number) => {
+      console.log(`Schedule ${i} pressed: ${schedules[i].sectionNumber}`);
+      let newSet = new Set(selectedScheduleIndices);
+      if (newSet.has(i)) newSet.delete(i);
+      else newSet.add(i);
+      console.log(newSet);
+
+      setSelectedScheduleIndices(newSet);
+    };
+
+    return (
+      <>
+        {schedules.map((schedule: Schedule, i: number) => (
+          <ScheduleCard
+            schedule={schedule}
+            key={i}
+            onPress={() => handleScheduleSelected(i)}
+            emphasized={selectedScheduleIndices.has(i)}
+          />
+        ))}
+      </>
+    );
+  };
+
+  const addEnrollmentDB = async () => {
+    console.log("new enrollment:");
+  };
 
   if (loading) return <ActivityIndicator />;
 
@@ -98,16 +139,9 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
               ))}
             </View>
           </View>
-          <View style={styles.row}>
+          <View>
             <Text>Class times</Text>
-            {/* {context.selectedTerm !== "" ? (
-              <Text>{terms[`${context.selectedTerm}`][0].component}</Text>
-              <>
-                {terms[`${context.selectedTerm}`].map((sched) => {
-                  <Text>{sched.component}</Text>;
-                })}
-              </>
-            ) : null} */}
+            <Schedules />
           </View>
         </View>
       </ScrollView>
@@ -116,14 +150,7 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
           <Button text="Cancel" onPress={() => navigation.goBack()} />
         </View>
         <View style={{ width: "48%" }}>
-          <Button
-            text="Done"
-            onPress={() => {
-              console.log("Done pressed");
-              // addEnrollmentDB();
-            }}
-            emphasized={true}
-          />
+          <Button text="Done" onPress={addEnrollmentDB} emphasized={true} />
         </View>
       </View>
     </>

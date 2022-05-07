@@ -29,7 +29,7 @@ export default function Button({
           { backgroundColor: Colors[colorScheme].tertiaryBackground },
         ]}
       >
-        <Text style={{color: Colors[colorScheme].secondaryText}}>{text}</Text>
+        <Text style={{ color: Colors[colorScheme].secondaryText }}>{text}</Text>
       </View>
     );
 
@@ -54,13 +54,18 @@ export default function Button({
         ]}
       >
         <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
-          <Text>{text}</Text>
+          <Text style={{ color: Colors[colorScheme].background }}>{text}</Text>
         </TouchableOpacity>
       </View>
     );
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme].cardBackground },
+      ]}
+    >
       <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
         <Text>{text}</Text>
       </TouchableOpacity>

@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export const getCurrentTermId = () => {
   const now = new Date();
   const year = now.getFullYear();
@@ -51,7 +53,7 @@ export const termIdToFullName = (termId: string) => {
 export const termIdToYear = (termId: string) => {
   const year = Math.floor(parseInt(termId) / 10) + 1900;
   return `${year - 1}-${year % 100}`;
-}
+};
 
 export const termIdToQuarterName = (termId: string) => {
   const quarter = parseInt(termId) % 10;
@@ -64,5 +66,45 @@ export const termIdToQuarterName = (termId: string) => {
   } else if (quarter === 8) {
     return "Sum";
   }
-  return ""
-}
+  return "";
+};
+
+export const componentToName = (component: string) => {
+  const map = {
+    LEC: "Lecture",
+    SEM: "Seminar",
+    DIS: "Discussion Section",
+    LAB: "Laboratory",
+    LBS: "Lab Section",
+    ACT: "Activity",
+    CAS: "Case Study",
+    COL: "Colloquium",
+    WKS: "Workshop",
+    INS: "Independent Study",
+    IDS: "Intro Dial, Sophomore",
+    ISF: "Intro Sem, Freshman",
+    ISS: "Intro Sem, Sophomore",
+    ITR: "Internship",
+    API: "Arts Intensive Program",
+    LNG: "Language",
+    CLK: "Clerkship",
+    PRA: "Practicum",
+    PRC: "Practicum",
+    RES: "Research",
+    SCS: "Sophomore College",
+    "T/D": "Thesis/Dissertation",
+  };
+
+  if (component in map) return map[component];
+
+  return component;
+};
+
+export const getTimeString = (timestamp: Timestamp, timeZone: string = "America/Los_Angeles") => {
+  return timestamp.toDate().toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+    timeZone: timeZone
+  });
+};
