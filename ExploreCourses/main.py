@@ -47,7 +47,7 @@ if __name__ == "__main__":
     """
     Step 2: Load all courses into dictionary of Course objects.
     """
-    all_courses = load_courses(from_pkl=True)
+    # all_courses = load_courses(from_pkl=True)
 
     """
     Step 3: Create a FirestoreConnection object and upload each course.
@@ -58,6 +58,7 @@ if __name__ == "__main__":
     # firestore_connection.read_data(collection="users")
     # firestore_connection.add_courses(all_courses)
     # firestore_connection.add_terms(all_courses)
+    # firestore_connection.add_keywords_to_users()
     
     # while True:
     #     search = input("Enter a search word: ")

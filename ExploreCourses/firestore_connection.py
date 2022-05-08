@@ -1,4 +1,5 @@
 from pprint import pprint
+from unicodedata import name
 
 import firebase_admin
 from firebase_admin import credentials
@@ -153,3 +154,32 @@ class FirestoreConnection:
         for doc in docs:
             print(
                 f"({doc.id}) {doc.to_dict()['code']}: {doc.to_dict()['title']}")
+
+    def add_keywords_to_users(self):
+        def generate_substrings(string):
+            substrings = []
+            pieces = string.split(" ")
+            for i in range(len(pieces)):
+                substr = ""
+                for word in pieces[i:]:
+                    for ch in word:
+                        substr += ch
+                        substrings.append(substr)
+                    substr += " "
+            return substrings
+
+        users_ref = self.db.collection(u"users")
+        docs = users_ref.stream()
+
+        for doc in docs:
+            id = doc.id
+            name = doc.to_dict()['name']
+
+            keywords = generate_substrings(name.lower())
+            
+            data = {
+                u"keywords": keywords,
+            }
+            
+            user_ref = self.db.collection(u"users").document(f"{id}")
+            user_ref.update(data)
