@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { ScrollView, StyleSheet, RefreshControl } from "react-native";
-import { Text, View } from "../components/Themed";
+import { View } from "../components/Themed";
 import { db } from "../firebase";
 import {
   collection,
@@ -16,7 +16,6 @@ import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import SearchBar from "../components/SearchBar";
 import useColorScheme from "../hooks/useColorScheme";
-import Layout from "../constants/Layout";
 import TabView from "../components/TabView";
 import CourseList from "../components/CourseList";
 import FriendList from "../components/FriendList";
@@ -34,11 +33,6 @@ export default function Search() {
   );
 
   const [refreshing, setRefreshing] = useState(false);
-
-  useEffect(() => {
-    searchPeople(searchPhrase);
-    searchCourses(searchPhrase);
-  }, []);
 
   const searchPeople = async (search: string) => {
     if (search === "") {
