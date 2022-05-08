@@ -45,7 +45,7 @@ export default function SearchBar({
           },
         ]}
       >
-        <Icon name="search" size={20} />
+        <Icon name="search" size={Layout.icon.small} />
         <TextInput
           style={styles.input}
           placeholder={placeholder}
@@ -67,7 +67,7 @@ export default function SearchBar({
             style={{ paddingVertical: 8 }}
             onPress={() => onChangeText("")}
           >
-            <Icon name="close" size={20} />
+            <Icon name="close" size={Layout.icon.small} />
           </Pressable>
         )}
       </Animated.View>

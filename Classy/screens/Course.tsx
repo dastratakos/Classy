@@ -132,7 +132,7 @@ export default function Course({ route }: CourseProps) {
           >
             <Icon
               name="star-o"
-              size={25}
+              size={Layout.icon.medium}
               lightColor={Colors[colorScheme].tint}
               darkColor={Colors[colorScheme].tint}
             />

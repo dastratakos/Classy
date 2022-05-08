@@ -22,6 +22,7 @@ import AuthStackNavigator from "./AuthStackNavigator";
 import ManageAccount from "../screens/ManageAccount";
 import SearchStackNavigator from "./SearchStackNavigator";
 import SelectQuarter from "../screens/SelectQuarter";
+import Layout from "../constants/Layout";
 
 /**
  * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
@@ -138,7 +139,7 @@ function TabBarIcon(props: {
 }) {
   return (
     <FontAwesome
-      size={30}
+      size={Layout.icon.large}
       style={{ marginBottom: -3, marginHorizontal: -3 }}
       {...props}
     />

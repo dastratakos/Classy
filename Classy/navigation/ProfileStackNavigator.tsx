@@ -11,6 +11,7 @@ import { ProfileStackScreenProps } from "../types";
 import MyQuarters from "../screens/MyQuarters";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MyFriends from "../screens/MyFriends";
+import Layout from "../constants/Layout";
 
 const Stack = createNativeStackNavigator();
 
@@ -30,7 +31,7 @@ export default function ProfileStackNavigator() {
                 opacity: pressed ? 0.5 : 1,
               })}
             >
-              <Icon name="gear" size={25} />
+              <Icon name="gear" size={Layout.icon.medium} />
             </Pressable>
           ),
         })}

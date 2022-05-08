@@ -20,6 +20,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useContext } from "react";
 import MyFriends from "../screens/MyFriends";
 import MyQuarters from "../screens/MyQuarters";
+import Layout from "../constants/Layout";
 
 const Stack = createNativeStackNavigator();
 
@@ -39,7 +40,7 @@ export default function MessagesStackNavigator() {
                 opacity: pressed ? 0.5 : 1,
               })}
             >
-              <Icon name="edit" size={25} />
+              <Icon name="edit" size={Layout.icon.medium} />
             </Pressable>
           ),
         })}
@@ -56,7 +57,7 @@ export default function MessagesStackNavigator() {
                 opacity: pressed ? 0.5 : 1,
               })}
             >
-              <Icon name="info-circle" size={25} />
+              <Icon name="info-circle" size={Layout.icon.medium} />
             </Pressable>
           ),
         })}

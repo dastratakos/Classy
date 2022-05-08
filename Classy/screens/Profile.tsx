@@ -164,7 +164,7 @@ export default function Profile() {
               },
             ]}
           >
-            <Icon name="close" size={20} />
+            <Icon name="close" size={Layout.icon.small} />
           </Pressable>
         </View>
         <Separator />
@@ -275,7 +275,7 @@ export default function Profile() {
             {context.user.major ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon name="pencil" size={25} />
+                  <Icon name="pencil" size={Layout.icon.medium} />
                 </View>
                 <Text style={styles.aboutText}>{context.user.major}</Text>
               </View>
@@ -284,7 +284,7 @@ export default function Profile() {
             {context.user.gradYear ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon name="graduation-cap" size={25} />
+                  <Icon name="graduation-cap" size={Layout.icon.medium} />
                 </View>
                 <Text style={styles.aboutText}>{context.user.gradYear}</Text>
               </View>
@@ -293,7 +293,7 @@ export default function Profile() {
             {context.user.interests ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon name="puzzle-piece" size={25} />
+                  <Icon name="puzzle-piece" size={Layout.icon.medium} />
                 </View>
                 <Text style={styles.aboutText}>{context.user.interests}</Text>
               </View>

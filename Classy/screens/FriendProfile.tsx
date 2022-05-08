@@ -551,7 +551,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                     { backgroundColor: Colors[colorScheme].cardBackground },
                   ]}
                 >
-                  <Icon name="ellipsis-h" size={25} />
+                  <Icon name="ellipsis-h" size={Layout.icon.medium} />
                 </Pressable>
               </View>
             </View>
@@ -563,7 +563,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             {user.major ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon name="pencil" size={25} />
+                  <Icon name="pencil" size={Layout.icon.medium} />
                 </View>
                 <Text style={styles.aboutText}>{user.major}</Text>
               </View>
@@ -572,7 +572,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             {user.gradYear ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon name="graduation-cap" size={25} />
+                  <Icon name="graduation-cap" size={Layout.icon.medium} />
                 </View>
                 <Text style={styles.aboutText}>{user.gradYear}</Text>
               </View>
@@ -581,7 +581,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             {user.interests ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon name="puzzle-piece" size={25} />
+                  <Icon name="puzzle-piece" size={Layout.icon.medium} />
                 </View>
                 <Text style={styles.aboutText}>{user.interests}</Text>
               </View>

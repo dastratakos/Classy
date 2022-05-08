@@ -53,7 +53,7 @@ export default function MyQuarters() {
                             <View style={styles.minusButton}>
                               <Icon
                                 name="minus-circle"
-                                size={25}
+                                size={Layout.icon.medium}
                                 lightColor={Colors.deepRed}
                                 darkColor={Colors.deepRed}
                               />

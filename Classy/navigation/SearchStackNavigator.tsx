@@ -14,6 +14,7 @@ import MyQuarters from "../screens/MyQuarters";
 import Search from "../screens/Search";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MyFriends from "../screens/MyFriends";
+import Layout from "../constants/Layout";
 
 const Stack = createNativeStackNavigator();
 
@@ -34,7 +35,7 @@ export default function SearchStackNavigator() {
                 opacity: pressed ? 0.5 : 1,
               })}
             >
-              <Icon name="gear" size={25} />
+              <Icon name="gear" size={Layout.icon.medium} />
             </Pressable>
           ),
         })}
