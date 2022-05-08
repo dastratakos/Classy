@@ -7,17 +7,17 @@ import {
 import { Text, View } from "../components/Themed";
 import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { auth, createUserWithEmailAndPassword, db } from "../firebase";
+import { useContext, useState } from "react";
 
+import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import { RegisterProps } from "../types";
-import { StreamChat } from "stream-chat";
 import WideButton from "../components/Buttons/WideButton";
 import { sendEmailVerification } from "firebase/auth";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { useState } from "react";
 
 export default function Register({ route }: RegisterProps) {
   const [email, setEmail] = useState(route.params?.email || "");
@@ -27,6 +27,7 @@ export default function Register({ route }: RegisterProps) {
 
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+  const context = useContext(AppContext);
 
   const createUser = async () => {
     if (password !== confirmPassword) {

@@ -1,6 +1,5 @@
 import * as Haptics from "expo-haptics";
 
-import { Course, FriendProfileProps, User } from "../types";
 import { ActivityIndicator, Icon, Text, View } from "../components/Themed";
 import {
   Alert,
@@ -9,19 +8,21 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
+import { Course, FriendProfileProps, User } from "../types";
 import {
   Timestamp,
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
+  orderBy,
   query,
   updateDoc,
   where,
-  orderBy,
-  deleteDoc,
 } from "firebase/firestore";
+import { getCurrentTermId, sendPushNotification } from "../utils";
 import { useContext, useEffect, useRef, useState } from "react";
 
 import ActionSheet from "react-native-actionsheet";
@@ -35,13 +36,11 @@ import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
-import { StreamChat } from "stream-chat";
 import TabView from "../components/TabView";
 import { db } from "../firebase";
 import events from "./dummyEvents";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { getCurrentTermId, sendPushNotification } from "../utils";
 
 export default function FriendProfile({ route }: FriendProfileProps) {
   const navigation = useNavigation();

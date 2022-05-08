@@ -21,7 +21,6 @@ import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
-import { StreamChat } from "stream-chat";
 import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
