@@ -1,5 +1,5 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { Text, View } from "./Themed";
+import { Icon, Text, View } from "./Themed";
 import { componentToName, getTimeString } from "../utils";
 
 import AppStyles from "../styles/AppStyles";
@@ -11,11 +11,11 @@ import useColorScheme from "../hooks/useColorScheme";
 export default function ScheduleCard({
   schedule,
   onPress,
-  emphasized,
+  selected,
 }: {
   schedule: Schedule;
   onPress: () => void;
-  emphasized?: boolean;
+  selected?: boolean;
 }) {
   const colorScheme = useColorScheme();
 
@@ -25,21 +25,35 @@ export default function ScheduleCard({
         onPress={onPress}
         style={[
           styles.innerContainer,
-          {
-            backgroundColor: emphasized
-              ? Colors[colorScheme].tint
-              : Colors[colorScheme].cardBackground,
-          },
+          { backgroundColor: Colors[colorScheme].cardBackground },
         ]}
       >
-        <Text style={styles.cardTitle} numberOfLines={1}>
-          {schedule.sectionNumber} {componentToName(schedule.component)}
-        </Text>
-        <Text style={styles.cardSubtitle} numberOfLines={1}>
-          {schedule.days.join(", ")}{" "}
-          {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
-          {getTimeString(schedule.endInfo, "Africa/Casablanca")}
-        </Text>
+        <View style={AppStyles.row}>
+          <View style={styles.textContainer}>
+            <Text style={styles.cardTitle} numberOfLines={1}>
+              {schedule.sectionNumber} {componentToName(schedule.component)}
+            </Text>
+            <Text style={styles.cardSubtitle} numberOfLines={1}>
+              {schedule.days.join(", ")}{" "}
+              {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
+              {getTimeString(schedule.endInfo, "Africa/Casablanca")}
+            </Text>
+          </View>
+          <Icon
+            name={selected ? "check-circle" : "circle-o"}
+            size={Layout.icon.medium}
+            lightColor={
+              selected
+                ? Colors[colorScheme].tint
+                : Colors[colorScheme].tertiaryBackground
+            }
+            darkColor={
+              selected
+                ? Colors[colorScheme].tint
+                : Colors[colorScheme].tertiaryBackground
+            }
+          />
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -62,5 +76,9 @@ const styles = StyleSheet.create({
   },
   cardSubtitle: {
     fontSize: Layout.text.medium,
+  },
+  textContainer: {
+    flex: 1,
+    marginRight: Layout.spacing.small,
   },
 });

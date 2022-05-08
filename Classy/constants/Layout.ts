@@ -21,6 +21,9 @@ export default {
     large: 100,
     xlarge: 150,
   },
+  icon: {
+    medium: 25,
+  },
   spacing: {
     xxsmall: 3,
     xsmall: 5,

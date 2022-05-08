@@ -107,7 +107,7 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 handleScheduleSelected(i);
               }}
-              emphasized={selectedScheduleIndices.has(i)}
+              selected={selectedScheduleIndices.has(i)}
             />
           )
         )}
