@@ -124,7 +124,7 @@ export default function Course({ route }: CourseProps) {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               navigation.navigate("AddEditCourse", { course });
             }}
-            emphasized={true}
+            emphasized
           />
         </View>
         <View style={styles.favoriteButton}>

@@ -490,7 +490,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                   <View style={{ marginRight: Layout.spacing.small }}>
                     <Button
                       onPress={() => console.log("Loading pressed")}
-                      loading={true}
+                      loading
                     />
                   </View>
                 ) : (
@@ -507,7 +507,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                             addFriend();
                           }}
                           disabled={addFriendDisabled}
-                          emphasized={true}
+                          emphasized
                         />
                       </View>
                     )}
@@ -529,7 +529,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                             );
                             acceptRequest();
                           }}
-                          emphasized={true}
+                          emphasized
                         />
                       </View>
                     )}

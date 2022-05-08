@@ -97,7 +97,7 @@ export default function MyQuarters() {
                 // updateQuartersDBs();
                 setEditMode(false);
               }}
-              emphasized={true}
+              emphasized
             />
           </>
         ) : (

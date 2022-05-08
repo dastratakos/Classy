@@ -1,14 +1,11 @@
-import * as ImagePicker from "expo-image-picker";
+import * as Haptics from "expo-haptics";
 import * as ImageManipulator from "expo-image-manipulator";
+import * as ImagePicker from "expo-image-picker";
 
 import {
-  ActivityIndicator,
-  Image,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
-  Share,
   StyleSheet,
   TextInput,
 } from "react-native";
@@ -16,20 +13,20 @@ import { Text, View } from "../components/Themed";
 import { auth, db, storage } from "../firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 
+import ActionSheet from "react-native-actionsheet";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
+import ProfilePhoto from "../components/ProfilePhoto";
+import { SaveFormat } from "expo-image-manipulator";
 import Separator from "../components/Separator";
-import { StatusBar } from "expo-status-bar";
 import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { SaveFormat } from "expo-image-manipulator";
-import ProfilePhoto from "../components/ProfilePhoto";
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -42,7 +39,18 @@ export default function Settings() {
   const [gradYear, setGradYear] = useState(context.user.gradYear || "");
   const [interests, setInterests] = useState(context.user.interests || "");
 
+  const [saveDisabled, setSaveDisabled] = useState(true);
+
   const [uploading, setUploading] = useState(false);
+
+  const actionSheetRef = useRef();
+
+  const actionSheetOptions = [
+    "Remove current photo",
+    "Choose from library",
+    "Take photo",
+    "Cancel",
+  ];
 
   const handleSavePress = () => {
     context.setUser({
@@ -104,6 +112,8 @@ export default function Settings() {
   const handleImagePicked = async (
     pickerResult: ImagePicker.ImagePickerResult
   ) => {
+    console.log(pickerResult);
+
     try {
       setUploading(true);
 
@@ -118,6 +128,7 @@ export default function Settings() {
 
         const uploadUrl = await uploadImageAsync(compressedImage.uri);
         setPhotoUrl(uploadUrl);
+        setSaveDisabled(false);
 
         context.setUser({
           ...context.user,
@@ -128,7 +139,7 @@ export default function Settings() {
       }
     } catch (error) {
       console.log(error);
-      alert("Failed to upload photo");
+      alert("Failed to upload photo. Please try again");
     } finally {
       setUploading(false);
     }
@@ -143,8 +154,6 @@ export default function Settings() {
       quality: 0,
       // base64: true,
     });
-
-    console.log(pickerResult);
 
     handleImagePicked(pickerResult);
   };
@@ -166,9 +175,19 @@ export default function Settings() {
       quality: 0.5,
     });
 
-    console.log(pickerResult);
-
     handleImagePicked(pickerResult);
+  };
+
+  const handleActionSheetOptionPressed = (index: number) => {
+    const action = actionSheetOptions[index];
+    if (action === "Remove current photo") {
+      setPhotoUrl("");
+      setSaveDisabled(false);
+    } else if (action === "Choose from library") {
+      choosePhoto();
+    } else if (action === "Take photo") {
+      takePhoto();
+    }
   };
 
   return (
@@ -185,14 +204,13 @@ export default function Settings() {
         style={{ marginBottom: Layout.spacing.medium }}
         loading={uploading}
       />
-      <View style={AppStyles.row}>
-        <View style={{ width: "48%" }}>
-          <Button text="Choose profile photo" onPress={choosePhoto} />
-        </View>
-        <View style={{ width: "48%" }}>
-          <Button text="Take profile photo" onPress={takePhoto} />
-        </View>
-      </View>
+      <Button
+        text="Change profile photo"
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          actionSheetRef.current?.show();
+        }}
+      />
       <Separator />
       <KeyboardAvoidingView style={styles.inputContainer} behavior="padding">
         <View style={AppStyles.row}>
@@ -202,7 +220,10 @@ export default function Settings() {
           <TextInput
             placeholder="Name"
             value={name}
-            onChangeText={(text) => setName(text)}
+            onChangeText={(text) => {
+              setName(text);
+              setSaveDisabled(false);
+            }}
             style={[styles.input, { color: Colors[colorScheme].text }]}
             autoCapitalize="words"
             textContentType="name"
@@ -215,7 +236,10 @@ export default function Settings() {
           <TextInput
             placeholder="Major"
             value={major}
-            onChangeText={(text) => setMajor(text)}
+            onChangeText={(text) => {
+              setMajor(text);
+              setSaveDisabled(false);
+            }}
             style={[styles.input, { color: Colors[colorScheme].text }]}
             autoCapitalize="words"
           />
@@ -227,7 +251,10 @@ export default function Settings() {
           <TextInput
             placeholder="Graduation Year"
             value={gradYear}
-            onChangeText={(text) => setGradYear(text)}
+            onChangeText={(text) => {
+              setGradYear(text);
+              setSaveDisabled(false);
+            }}
             style={[styles.input, { color: Colors[colorScheme].text }]}
             autoCapitalize="words"
           />
@@ -239,7 +266,10 @@ export default function Settings() {
           <TextInput
             placeholder="Clubs & Interests"
             value={interests}
-            onChangeText={(text) => setInterests(text)}
+            onChangeText={(text) => {
+              setInterests(text);
+              setSaveDisabled(false);
+            }}
             style={[styles.input, { color: Colors[colorScheme].text }]}
             autoCapitalize="sentences"
           />
@@ -266,12 +296,22 @@ export default function Settings() {
           <Button text="Cancel" onPress={() => navigation.goBack()} />
         </View>
         <View style={{ width: "48%" }}>
-          <Button text="Save Changes" onPress={handleSavePress} />
+          <Button
+            text="Save Changes"
+            onPress={handleSavePress}
+            disabled={saveDisabled}
+            emphasized
+          />
         </View>
       </View>
 
-      {/* Use a light status bar on iOS to account for the black space above the modal */}
-      <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+      <ActionSheet
+        ref={actionSheetRef}
+        options={actionSheetOptions}
+        cancelButtonIndex={actionSheetOptions.length - 1}
+        destructiveButtonIndex={0}
+        onPress={handleActionSheetOptionPressed}
+      />
     </ScrollView>
   );
 }

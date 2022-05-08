@@ -275,7 +275,7 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
               !selectedScheduleIndices.size
             }
             loading={doneLoading}
-            emphasized={true}
+            emphasized
           />
         </View>
       </View>
