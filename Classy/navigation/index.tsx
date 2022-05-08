@@ -6,10 +6,7 @@ import {
   DefaultTheme,
   NavigationContainer,
 } from "@react-navigation/native";
-import {
-  RootStackParamList,
-  RootTabParamList,
-} from "../types";
+import { RootStackParamList, RootTabParamList } from "../types";
 
 import Colors from "../constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
@@ -139,5 +136,11 @@ function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;
 }) {
-  return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
+  return (
+    <FontAwesome
+      size={30}
+      style={{ marginBottom: -3, marginHorizontal: -3 }}
+      {...props}
+    />
+  );
 }

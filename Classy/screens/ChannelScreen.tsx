@@ -1,10 +1,9 @@
 import { Channel, MessageInput, MessageList } from "stream-chat-expo";
 
 import { StyleSheet } from "react-native";
-import { Text } from "../components/Themed";
 import { useNavigation } from "@react-navigation/core";
 import AppContext from "../context/Context";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 
 export default function ChannelScreen() {
   const context = useContext(AppContext);
@@ -18,7 +17,7 @@ export default function ChannelScreen() {
         (member) => member.user?.id !== context.user.id
       );
       if (filteredMembers.length === 1) {
-        context.setChannelName(filteredMembers[0].user.name)
+        context.setChannelName(filteredMembers[0].user.name);
       }
     };
 

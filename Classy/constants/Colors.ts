@@ -28,6 +28,7 @@ export default {
     tabIconSelected: palette.lightBlue,
     border: palette.black,
     photoBackground: palette.lightLightGray,
+    overlay: "#00000088",
   },
   dark: {
     text: palette.white,
@@ -41,6 +42,7 @@ export default {
     tabIconSelected: palette.white,
     border: palette.white,
     photoBackground: palette.gray,
+    overlay: "#FFFFFF88",
   },
   status: {
     notInClass: palette.green,
