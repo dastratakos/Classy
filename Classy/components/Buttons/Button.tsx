@@ -13,7 +13,7 @@ export default function Button({
   loading = false,
   emphasized = false,
 }: {
-  text: string;
+  text?: string;
   onPress?: () => void;
   disabled?: boolean;
   loading?: boolean;
@@ -39,7 +39,10 @@ export default function Button({
       <View
         style={[
           styles.container,
-          { backgroundColor: Colors[colorScheme].secondaryBackground },
+          {
+            backgroundColor: Colors[colorScheme].secondaryBackground,
+            width: Layout.buttonHeight.medium,
+          },
         ]}
       >
         <ActivityIndicator />
@@ -94,5 +97,5 @@ const styles = StyleSheet.create({
     padding: Layout.spacing.small,
     alignItems: "center",
     justifyContent: "center",
-  }
+  },
 });

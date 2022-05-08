@@ -1,6 +1,9 @@
+import * as Haptics from "expo-haptics";
+
 import { Course, FriendProfileProps, User } from "../types";
-import { Icon, Text, View } from "../components/Themed";
+import { ActivityIndicator, Icon, Text, View } from "../components/Themed";
 import {
+  Alert,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -16,8 +19,8 @@ import {
   query,
   updateDoc,
   where,
-  limit,
   orderBy,
+  deleteDoc,
 } from "firebase/firestore";
 import { useContext, useEffect, useRef, useState } from "react";
 
@@ -38,7 +41,7 @@ import { db } from "../firebase";
 import events from "./dummyEvents";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { getCurrentTermId } from "../utils";
+import { getCurrentTermId, sendPushNotification } from "../utils";
 
 const STREAM_API_KEY = "y9tk9hsvsxqa";
 const client = StreamChat.getInstance(STREAM_API_KEY);
@@ -57,6 +60,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const [inClass, setInClass] = useState<boolean>(false);
 
   const [refreshing, setRefreshing] = useState(false);
+  const [messageButtonLoading, setMessageButtonLoading] = useState(false);
+  const [addFriendDisabled, setAddFriendDisabled] = useState(false);
 
   const actionSheetRef = useRef();
 
@@ -68,6 +73,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     "Copy profile URL",
     "Cancel",
   ];
+
+  const blockedActionSheetOptions = ["Unblock", "Copy profile URL", "Cancel"];
 
   useEffect(() => {
     onRefresh();
@@ -131,20 +138,30 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 
     // default status
     setFriendStatus("not friends");
+    setFriendDocId("");
 
     const querySnapshot = await getDocs(q);
-    // TODO: check that this has 0 or 1 doc
-    querySnapshot.forEach((doc) => {
-      console.log("doc.data():", doc.data());
-      setFriendDocId(doc.id);
 
-      if (doc.data().status === "requested") {
-        console.log("hi,", doc.data().requesterId[context.user.id]);
-        if (doc.data().requesterId[context.user.id])
+    querySnapshot.forEach((res) => {
+      /* Delete any extra friendship documents. */
+      if (friendStatus !== "not friends") {
+        deleteDoc(doc(db, "friends", res.id));
+        return;
+      }
+
+      console.log("friendship:", res.data());
+      setFriendDocId(res.id);
+
+      if (res.data().status === "requested") {
+        if (res.data().requesterId[context.user.id])
           setFriendStatus("request sent");
         else setFriendStatus("request received");
+      } else if (res.data().status === "blocked") {
+        if (res.data().requesterId[context.user.id])
+          setFriendStatus("block sent");
+        else setFriendStatus("block received");
       } else {
-        setFriendStatus(doc.data().status);
+        setFriendStatus(res.data().status);
       }
     });
 
@@ -198,29 +215,6 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     setInClass(false);
   };
 
-  const sendPushNotification = async (
-    expoPushToken: string,
-    body: string = ""
-  ) => {
-    const message = {
-      to: expoPushToken,
-      sound: "default",
-      title: "Classy",
-      body: body,
-      data: {},
-    };
-
-    await fetch("https://exp.host/--/api/v2/push/send", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Accept-encoding": "gzip, deflate",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(message),
-    });
-  };
-
   const addFriend = async () => {
     const userId = context.user.id;
     const friendId = user.id;
@@ -238,14 +232,14 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     });
 
     setFriendStatus("request sent");
+    console.log("Friend request send with ID:", docRef.id);
+    setFriendDocId(docRef.id);
 
     if (user.expoPushToken)
       sendPushNotification(
         user.expoPushToken,
         `${context.user.name} sent you a friend request`
       );
-
-    console.log("Friend request send with ID:", docRef.id);
   };
 
   const acceptRequest = async () => {
@@ -260,6 +254,109 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         `${context.user.name} accepted your friend request`
       );
   };
+
+  const deleteFriendship = async () => {
+    setFriendStatus("not friends");
+
+    const docRef = doc(db, "friends", friendDocId);
+    await deleteDoc(docRef);
+
+    setFriendDocId("");
+  };
+
+  const blockUser = async () => {
+    setFriendStatus("block sent");
+
+    const userId = context.user.id;
+    const friendId = user.id;
+
+    if (friendDocId) {
+      const docRef = doc(db, "friends", friendDocId);
+
+      await updateDoc(docRef, {
+        requesterId: {
+          [userId]: true,
+          [friendId]: false,
+        },
+        status: "blocked",
+      });
+    } else {
+      const docRef = await addDoc(collection(db, "friends"), {
+        ids: {
+          [userId]: true,
+          [friendId]: true,
+        },
+        requesterId: {
+          [userId]: true,
+          [friendId]: false,
+        },
+        status: "blocked",
+      });
+
+      setFriendDocId(docRef.id);
+      console.log("User blocked with doc ID:", docRef.id);
+    }
+  };
+
+  const cancelFriendRequestAlert = () =>
+    Alert.alert("Cancel friend request", "Are you sure?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: deleteFriendship,
+      },
+    ]);
+
+  const removeFriendAlert = () =>
+    Alert.alert(
+      "Remove friend",
+      `Are you sure? You will have to request ${user.name} again.`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: deleteFriendship,
+        },
+      ]
+    );
+
+  const blockAlert = () =>
+    Alert.alert(
+      "Block user",
+      `${user.name} will no longer be able to see your profile, send you a friend request, or message you.`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: blockUser,
+        },
+      ]
+    );
+
+  const unblockAlert = () =>
+    Alert.alert(
+      "Unblock user",
+      `${user.name} will be able to see your profile, send you a friend request, and message you.`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: deleteFriendship,
+        },
+      ]
+    );
 
   const watchChannel = async (friendId: string) => {
     /**
@@ -283,10 +380,15 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   };
 
   const handleMessagePressed = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    setMessageButtonLoading(true);
+
     const channel = await watchChannel(user.id);
     context.setChannel(channel);
     context.setChannelName(channel.data.name);
 
+    setMessageButtonLoading(false);
     navigation.navigate("MessagesStack", {
       screen: "ChannelScreen",
       initial: false,
@@ -294,11 +396,29 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   };
 
   const handleActionSheetOptionPressed = (index: number) => {
-    // TODO: fill in logic
     if (friendStatus === "friends") {
-      console.log(friendActionSheetOptions[index], "pressed");
+      const action = friendActionSheetOptions[index];
+      if (action === "Block") {
+        blockAlert();
+      } else if (action === "Remove friend") {
+        removeFriendAlert();
+      } else if (action === "Copy profile URL") {
+        console.log("Copy profile URL pressed");
+      }
+    } else if (friendStatus === "block sent") {
+      const action = blockedActionSheetOptions[index];
+      if (action === "Unblock") {
+        unblockAlert();
+      } else if (action === "Copy profile URL") {
+        console.log("Copy profile URL pressed");
+      }
     } else {
-      console.log(baseActionSheetOptions[index], "pressed");
+      const action = baseActionSheetOptions[index];
+      if (action === "Block") {
+        blockAlert();
+      } else if (action === "Copy profile URL") {
+        console.log("Copy profile URL pressed");
+      }
     }
   };
 
@@ -312,6 +432,23 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       component: <CourseList courses={courses} />,
     },
   ];
+
+  if (friendStatus === "block received") {
+    return (
+      <ScrollView
+        style={{ backgroundColor: Colors[colorScheme].background }}
+        contentContainerStyle={{ alignItems: "center" }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <View style={styles.notFoundContainer}>
+          <Text style={styles.uhOhText}>Uh oh!</Text>
+          <Text>User not found</Text>
+        </View>
+      </ScrollView>
+    );
+  }
 
   return (
     <ScrollView
@@ -356,37 +493,62 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                 {friendStatusLoading ? (
                   <View style={{ marginRight: Layout.spacing.small }}>
                     <Button
-                      text="Loading"
                       onPress={() => console.log("Loading pressed")}
-                      disabled={true}
+                      loading={true}
                     />
                   </View>
                 ) : (
                   <>
                     {friendStatus === "not friends" && (
                       <View style={{ marginRight: Layout.spacing.small }}>
-                        <Button text="Add Friend" onPress={addFriend} />
+                        <Button
+                          text="Add Friend"
+                          onPress={() => {
+                            setAddFriendDisabled(true);
+                            Haptics.impactAsync(
+                              Haptics.ImpactFeedbackStyle.Medium
+                            );
+                            addFriend();
+                          }}
+                          disabled={addFriendDisabled}
+                          emphasized={true}
+                        />
                       </View>
                     )}
                     {friendStatus === "request sent" && (
                       <View style={{ marginRight: Layout.spacing.small }}>
                         <Button
                           text="Requested"
-                          onPress={() => console.log("Requested pressed")}
-                          disabled={true}
+                          onPress={cancelFriendRequestAlert}
                         />
                       </View>
                     )}
                     {friendStatus === "request received" && (
                       <View style={{ marginRight: Layout.spacing.small }}>
-                        <Button text="Accept request" onPress={acceptRequest} />
+                        <Button
+                          text="Accept request"
+                          onPress={() => {
+                            Haptics.impactAsync(
+                              Haptics.ImpactFeedbackStyle.Medium
+                            );
+                            acceptRequest();
+                          }}
+                          emphasized={true}
+                        />
                       </View>
                     )}
                   </>
                 )}
-                <Button text="Message" onPress={handleMessagePressed} />
+                <Button
+                  text="Message"
+                  onPress={handleMessagePressed}
+                  loading={messageButtonLoading}
+                />
                 <Pressable
-                  onPress={() => actionSheetRef.current?.show()}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    actionSheetRef.current?.show();
+                  }}
                   style={({ pressed }) => [
                     styles.ellipsis,
                     { opacity: pressed ? 0.5 : 1 },
@@ -433,9 +595,10 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             num={numFriends}
             text={"friend" + (numFriends === "1" ? "" : "s")}
             size={Layout.buttonHeight.large}
-            onPress={() =>
-              navigation.navigate("Friends", { id: route.params.id })
-            }
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              navigation.navigate("Friends", { id: route.params.id });
+            }}
           />
         </View>
         {user.isPrivate && !(friendStatus === "friends") ? null : (
@@ -486,11 +649,15 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         options={
           friendStatus === "friends"
             ? friendActionSheetOptions
+            : friendStatus === "block sent"
+            ? blockedActionSheetOptions
             : baseActionSheetOptions
         }
         cancelButtonIndex={
           friendStatus === "friends"
             ? friendActionSheetOptions.length - 1
+            : friendStatus === "block sent"
+            ? blockedActionSheetOptions.length - 1
             : baseActionSheetOptions.length - 1
         }
         destructiveButtonIndex={0}
@@ -501,6 +668,17 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 }
 
 const styles = StyleSheet.create({
+  notFoundContainer: {
+    flex: 1,
+    marginTop: Layout.window.width / 3,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  uhOhText: {
+    fontSize: Layout.text.xxlarge,
+    fontWeight: "500",
+    marginBottom: Layout.spacing.small,
+  },
   name: {
     fontSize: Layout.text.xlarge,
   },
