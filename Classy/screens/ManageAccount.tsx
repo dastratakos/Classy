@@ -1,6 +1,5 @@
 import {
   KeyboardAvoidingView,
-  Platform,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -21,12 +20,11 @@ import { useContext, useState } from "react";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
+import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import Separator from "../components/Separator";
-import { StatusBar } from "expo-status-bar";
 import { Text } from "../components/Themed";
-import WideButton from "../components/Buttons/WideButton";
 import { signInWithEmailAndPassword } from "../firebase";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
@@ -54,7 +52,7 @@ export default function Settings() {
   const setUserDB = async (id: string) => {
     const userRef = doc(db, "users", id);
     await updateDoc(userRef, {
-      isPrivate: context.user.isPrivate
+      isPrivate: context.user.isPrivate,
     });
   };
 
@@ -177,14 +175,16 @@ export default function Settings() {
       contentContainerStyle={{ alignItems: "center" }}
     >
       {context.user.isPrivate ? (
-        <WideButton
+        <Button
           text="Switch to Public Account"
           onPress={() => handleChangeIsPrivate(false)}
+          wide
         />
       ) : (
-        <WideButton
+        <Button
           text="Switch to Private Account"
           onPress={() => handleChangeIsPrivate(true)}
+          wide
         />
       )}
       <Separator />
@@ -250,14 +250,11 @@ export default function Settings() {
           secureTextEntry
         />
       </KeyboardAvoidingView>
-      <WideButton text="Change Password" onPress={handleUpdatePassword} />
+      <Button text="Change Password" onPress={handleUpdatePassword} wide />
       <Separator />
-      <WideButton text="Delete Account" onPress={handleDeleteUserAndData} />
+      <Button text="Delete Account" onPress={handleDeleteUserAndData} wide />
       <Separator />
-      <WideButton text="Log Out" onPress={handleSignOut} />
-
-      {/* Use a light status bar on iOS to account for the black space above the modal */}
-      <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+      <Button text="Log Out" onPress={handleSignOut} wide />
     </ScrollView>
   );
 }
@@ -273,7 +270,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: Layout.spacing.medium,
     paddingVertical: Layout.spacing.small,
     borderRadius: Layout.spacing.small,
-    // marginVertical: Layout.spacing.medium,
     marginVertical: Layout.spacing.small,
   },
 });

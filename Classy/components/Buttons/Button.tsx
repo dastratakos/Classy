@@ -12,12 +12,14 @@ export default function Button({
   disabled = false,
   loading = false,
   emphasized = false,
+  wide = false,
 }: {
   text?: string;
   onPress?: () => void;
   disabled?: boolean;
   loading?: boolean;
   emphasized?: boolean;
+  wide?: boolean;
 }) {
   const colorScheme = useColorScheme();
 
@@ -28,6 +30,7 @@ export default function Button({
           styles.container,
           styles.containerLoading,
           { backgroundColor: Colors[colorScheme].tertiaryBackground },
+          wide ? { width: "100%" } : null,
         ]}
       >
         <Text style={{ color: Colors[colorScheme].secondaryText }}>{text}</Text>
@@ -41,7 +44,7 @@ export default function Button({
           styles.container,
           {
             backgroundColor: Colors[colorScheme].secondaryBackground,
-            width: Layout.buttonHeight.medium,
+            width: wide ? "100%" : Layout.buttonHeight.medium,
           },
         ]}
       >
@@ -55,6 +58,7 @@ export default function Button({
         style={[
           styles.container,
           { backgroundColor: Colors[colorScheme].tint },
+          wide ? { width: "100%" } : null,
         ]}
       >
         <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
@@ -68,6 +72,7 @@ export default function Button({
       style={[
         styles.container,
         { backgroundColor: Colors[colorScheme].cardBackground },
+        wide ? { width: "100%" } : null,
       ]}
     >
       <TouchableOpacity onPress={onPress} style={styles.innerContainer}>

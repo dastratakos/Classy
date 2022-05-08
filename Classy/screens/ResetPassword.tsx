@@ -9,7 +9,6 @@ import { Text, View } from "../components/Themed";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
-import WideButton from "../components/Buttons/WideButton";
 import { auth } from "../firebase";
 import { sendPasswordResetEmail } from "firebase/auth";
 import useColorScheme from "../hooks/useColorScheme";
@@ -61,7 +60,7 @@ export default function ResetPassword() {
         </View>
         <View style={{ height: Layout.spacing.large }} />
 
-        <WideButton text="Reset Password" onPress={resetPassword} />
+        <Button text="Reset Password" onPress={resetPassword} wide />
       </KeyboardAvoidingView>
       <View
         style={[

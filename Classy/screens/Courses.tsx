@@ -1,20 +1,19 @@
 import { ScrollView, StyleSheet } from "react-native";
-
-import Colors from "../constants/Colors";
-import CourseCard from "../components/CourseCard";
-import Layout from "../constants/Layout";
 import { Text, View } from "../components/Themed";
-import WideButton from "../components/Buttons/WideButton";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { useContext, useEffect, useState } from "react";
+
+import AppContext from "../context/Context";
+import AppStyles from "../styles/AppStyles";
+import Button from "../components/Buttons/Button";
+import Colors from "../constants/Colors";
+import CourseList from "../components/CourseList";
+import { CoursesProps } from "../types";
+import Layout from "../constants/Layout";
+import { db } from "../firebase";
+import { termIdToFullName } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import AppStyles from "../styles/AppStyles";
-import { useContext, useEffect, useState } from "react";
-import AppContext from "../context/Context";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../firebase";
-import { CoursesProps } from "../types";
-import CourseList from "../components/CourseList";
-import { termIdToFullName } from "../utils";
 
 export default function Courses({ route }: CoursesProps) {
   const navigation = useNavigation();
@@ -56,9 +55,10 @@ export default function Courses({ route }: CoursesProps) {
         </View>
       </ScrollView>
       <View style={styles.ctaContainer}>
-        <WideButton
+        <Button
           text={"View All Quarters"}
           onPress={() => navigation.navigate("MyQuarters")}
+          wide
         />
       </View>
     </>

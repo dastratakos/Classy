@@ -1,5 +1,5 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { Text, View } from "../Themed";
+import { ActivityIndicator, Text, View } from "../Themed";
 
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
@@ -11,19 +11,21 @@ export default function SquareButton({
   text,
   size = Layout.spacing.large,
   onPress,
+  disabled = false,
+  loading = false,
   emphasized = false,
-  pressable = true,
 }: {
   num?: string;
   text?: string;
   size?: number;
   onPress?: () => void;
+  disabled?: boolean;
+  loading?: boolean;
   emphasized?: boolean;
-  pressable?: boolean;
 }) {
   const colorScheme = useColorScheme();
 
-  if (!pressable)
+  if (disabled)
     return (
       <View
         style={[
@@ -31,12 +33,28 @@ export default function SquareButton({
           {
             height: size,
             width: size,
-            backgroundColor: Colors[colorScheme].cardBackground,
+            backgroundColor: Colors[colorScheme].tertiaryBackground,
           },
         ]}
       >
         <Text style={styles.number}>{num}</Text>
         <Text style={styles.text}>{text}</Text>
+      </View>
+    );
+
+  if (loading)
+    return (
+      <View
+        style={[
+          styles.container,
+          {
+            height: size,
+            width: size,
+            backgroundColor: Colors[colorScheme].secondaryBackground,
+          },
+        ]}
+      >
+        <ActivityIndicator />
       </View>
     );
 
@@ -97,6 +115,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   innerContainer: {
+    height: "100%",
+    width: "100%",
+    borderRadius: Layout.radius.medium,
     justifyContent: "center",
     alignItems: "center",
   },

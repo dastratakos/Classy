@@ -14,10 +14,10 @@ import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import { RegisterProps } from "../types";
-import WideButton from "../components/Buttons/WideButton";
 import { sendEmailVerification } from "firebase/auth";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import Button from "../components/Buttons/Button";
 
 export default function Register({ route }: RegisterProps) {
   const [email, setEmail] = useState(route.params?.email || "");
@@ -145,7 +145,7 @@ export default function Register({ route }: RegisterProps) {
           />
           <View style={{ height: Layout.spacing.large }} />
 
-          <WideButton text="Register" onPress={createUser} />
+          <Button text="Register" onPress={createUser} wide />
         </View>
       </KeyboardAvoidingView>
       <View

@@ -24,7 +24,6 @@ import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import { SaveFormat } from "expo-image-manipulator";
 import Separator from "../components/Separator";
-import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
@@ -286,9 +285,10 @@ export default function Settings() {
         </View>
       </KeyboardAvoidingView>
       <Separator />
-      <WideButton
+      <Button
         text="Manage Account"
         onPress={() => navigation.navigate("ManageAccount")}
+        wide
       />
       <Separator />
       <View style={AppStyles.row}>
