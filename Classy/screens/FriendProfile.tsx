@@ -43,9 +43,6 @@ import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { getCurrentTermId, sendPushNotification } from "../utils";
 
-const STREAM_API_KEY = "y9tk9hsvsxqa";
-const client = StreamChat.getInstance(STREAM_API_KEY);
-
 export default function FriendProfile({ route }: FriendProfileProps) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -369,7 +366,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       channelId = `${friendId}-${context.user.id}`;
     else channelId = `${context.user.id}-${friendId}`;
 
-    const channel = client.channel("messaging", channelId, {
+    const channel = context.streamClient.channel("messaging", channelId, {
       name: "Direct Message",
       members: [context.user.id, friendId],
     });

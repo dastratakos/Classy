@@ -240,6 +240,8 @@ export type Context = {
   setUser: (arg0: User) => void;
   friendIds: string[];
   setFriendIds: (arg0: string[]) => void;
+  streamClient: StreamChatGenerics;
+  setStreamClient: (arg0: StreamChatGenerics) => void;
   channel: ChannelType;
   setChannel: (arg0: ChannelType) => void;
   channelName: string;

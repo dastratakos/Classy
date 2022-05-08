@@ -14,12 +14,14 @@ import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 
 const STREAM_API_KEY = "y9tk9hsvsxqa";
-const client = StreamChat.getInstance(STREAM_API_KEY);
 
 export default function App() {
   /* Global variables. */
   const [user, setUser] = useState({} as User);
   const [friendIds, setFriendIds] = useState([] as string[]);
+  const [streamClient, setStreamClient] = useState(
+    StreamChat.getInstance(STREAM_API_KEY)
+  );
   const [channel, setChannel] = useState();
   const [channelName, setChannelName] = useState();
   const [thread, setThread] = useState();
@@ -30,6 +32,8 @@ export default function App() {
     setUser,
     friendIds,
     setFriendIds,
+    streamClient,
+    setStreamClient,
     channel,
     setChannel,
     channelName,
@@ -48,8 +52,6 @@ export default function App() {
       accent_blue: Colors.light.tint,
       accent_green: Colors.green,
       accent_red: Colors.red,
-      // bg_gradient_end: "#F7F7F7",
-      // bg_gradient_start: "#FCFCFC",
       bg_gradient_end: Colors[colorScheme].background,
       bg_gradient_start: Colors[colorScheme].background,
       black: Colors[colorScheme].text,
@@ -74,7 +76,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    return () => client.disconnectUser();
+    return () => streamClient.disconnectUser();
   }, []);
 
   if (!isLoadingComplete) {
@@ -82,7 +84,7 @@ export default function App() {
   } else {
     return (
       <OverlayProvider value={{ style: theme }}>
-        <Chat client={client}>
+        <Chat client={streamClient}>
           <AppContext.Provider value={globalVariables}>
             <SafeAreaProvider>
               <Navigation colorScheme={colorScheme} />

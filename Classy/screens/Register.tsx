@@ -19,9 +19,6 @@ import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { useState } from "react";
 
-const STREAM_API_KEY = "y9tk9hsvsxqa";
-const client = StreamChat.getInstance(STREAM_API_KEY);
-
 export default function Register({ route }: RegisterProps) {
   const [email, setEmail] = useState(route.params?.email || "");
   const [password, setPassword] = useState("");
@@ -73,9 +70,9 @@ export default function Register({ route }: RegisterProps) {
     if (name) streamChatUser.name = name;
     if (photoUrl) streamChatUser.photoUrl = photoUrl;
 
-    await client.connectUser(
+    await context.streamClient.connectUser(
       streamChatUser,
-      client.devToken(streamChatUser.id)
+      context.streamClient.devToken(streamChatUser.id)
     );
     console.log("User connected:");
     console.log(streamChatUser);

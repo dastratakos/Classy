@@ -26,9 +26,6 @@ import WideButton from "../components/Buttons/WideButton";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
-const STREAM_API_KEY = "y9tk9hsvsxqa";
-const client = StreamChat.getInstance(STREAM_API_KEY);
-
 export default function Login({ route }: LoginProps) {
   const [email, setEmail] = useState(route.params?.email || "");
   const [password, setPassword] = useState("");
@@ -45,9 +42,9 @@ export default function Login({ route }: LoginProps) {
   ) => {
     const streamChatUser = { id, name, image: photoUrl };
 
-    await client.connectUser(
+    await context.streamClient.connectUser(
       streamChatUser,
-      client.devToken(streamChatUser.id)
+      context.streamClient.devToken(streamChatUser.id)
     );
     console.log("User connected:");
     console.log(streamChatUser);
