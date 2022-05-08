@@ -203,11 +203,9 @@ class Course():
             pieces = string.split(" ")
             for i in range(len(pieces)):
                 substr = ""
-                for word in pieces[i:]:
-                    for ch in word:
-                        substr += ch
-                        substrings.append(substr)
-                    substr += " "
+                for ch in " ".join(pieces[i:]):
+                    substr += ch
+                    substrings.append(substr)
             return substrings
                     
         keywords = [str(courseId)]
@@ -307,5 +305,5 @@ if __name__ == "__main__":
     print(c)
     pprint(sorted(c.keywords))
 
-    # print("generate_keywords:")
-    # pprint(c.generate_keywords(210741, ["ME 104B"], "Designing Your Life"))
+    print("generate_keywords:")
+    pprint(c.generate_keywords(210741, ["ME 104B"], "Designing Your Life"))

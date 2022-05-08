@@ -1,5 +1,18 @@
 import { Timestamp } from "firebase/firestore";
 
+export const generateSubstrings = (text: string) => {
+  let substrings: string[] = [];
+  const pieces = text.toLowerCase().split(" ");
+  for (let i = 0; i < pieces.length; i++) {
+    let substr = "";
+    for (let ch of pieces.slice(i).join(" ")) {
+      substr += ch;
+      substrings.push(substr);
+    }
+  }
+  return substrings;
+};
+
 export const sendPushNotification = async (
   expoPushToken: string,
   body: string = ""
@@ -123,11 +136,14 @@ export const componentToName = (component: string) => {
   return component;
 };
 
-export const getTimeString = (timestamp: Timestamp, timeZone: string = "America/Los_Angeles") => {
+export const getTimeString = (
+  timestamp: Timestamp,
+  timeZone: string = "America/Los_Angeles"
+) => {
   return timestamp.toDate().toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
-    timeZone: timeZone
+    timeZone: timeZone,
   });
 };

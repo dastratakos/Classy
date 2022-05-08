@@ -26,6 +26,7 @@ import { SaveFormat } from "expo-image-manipulator";
 import Separator from "../components/Separator";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { generateSubstrings } from "../utils";
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -73,7 +74,10 @@ export default function Settings() {
       gradYear,
       interests,
       photoUrl,
+      keywords: generateSubstrings(name),
     });
+
+    await context.streamClient.updateUser({ id, name });
   };
 
   /**

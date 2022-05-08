@@ -12,7 +12,7 @@ import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import useColorScheme from "../hooks/useColorScheme";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 export default function SearchBar({
   placeholder,
@@ -63,7 +63,10 @@ export default function SearchBar({
           }}
         />
         {focused && searchPhrase !== "" && (
-          <Pressable onPress={() => onChangeText("")}>
+          <Pressable
+            style={{ paddingVertical: 8 }}
+            onPress={() => onChangeText("")}
+          >
             <Icon name="close" size={20} />
           </Pressable>
         )}
@@ -96,13 +99,13 @@ export default function SearchBar({
 
 const styles = StyleSheet.create({
   inputContainer: {
-    padding: 10,
+    paddingHorizontal: 10,
     flexDirection: "row",
     borderRadius: 15,
     alignItems: "center",
   },
   input: {
     flex: 1,
-    marginLeft: 10,
+    padding: 10,
   },
 });

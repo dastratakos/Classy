@@ -36,19 +36,31 @@ export default function Search() {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    const searchPeople = async () => {
-      const q = query(collection(db, "users"), orderBy("name"), limit(15));
-
-      const people = [];
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        if (doc.id !== context.user.id) people.push(doc.data());
-      });
-      setPeopleSearchResults([...people]);
-    };
-    searchPeople();
+    searchPeople(searchPhrase);
     searchCourses(searchPhrase);
   }, []);
+
+  const searchPeople = async (search: string) => {
+    if (search === "") {
+      setPeopleSearchResults([]);
+      return;
+    }
+
+    // TODO: pagination
+    const q = query(
+      collection(db, "users"),
+      where("keywords", "array-contains", search.toLowerCase()),
+      orderBy("name"),
+      limit(3)
+    );
+
+    const people = [];
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      if (doc.id !== context.user.id) people.push(doc.data());
+    });
+    setPeopleSearchResults([...people]);
+  };
 
   const searchCourses = async (search: string) => {
     if (search === "") {
@@ -74,6 +86,7 @@ export default function Search() {
 
   const onRefresh = async () => {
     setRefreshing(true);
+    searchPeople(searchPhrase);
     searchCourses(searchPhrase);
     setRefreshing(false);
   };
@@ -97,6 +110,7 @@ export default function Search() {
           searchPhrase={searchPhrase}
           onChangeText={(text) => {
             setSearchPhrase(text);
+            searchPeople(text);
             searchCourses(text);
           }}
           focused={focused}

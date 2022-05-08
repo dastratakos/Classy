@@ -161,11 +161,9 @@ class FirestoreConnection:
             pieces = string.split(" ")
             for i in range(len(pieces)):
                 substr = ""
-                for word in pieces[i:]:
-                    for ch in word:
-                        substr += ch
-                        substrings.append(substr)
-                    substr += " "
+                for ch in " ".join(pieces[i:]):
+                    substr += ch
+                    substrings.append(substr)
             return substrings
 
         users_ref = self.db.collection(u"users")
@@ -176,10 +174,10 @@ class FirestoreConnection:
             name = doc.to_dict()['name']
 
             keywords = generate_substrings(name.lower())
-            
+
             data = {
                 u"keywords": keywords,
             }
-            
+
             user_ref = self.db.collection(u"users").document(f"{id}")
             user_ref.update(data)
