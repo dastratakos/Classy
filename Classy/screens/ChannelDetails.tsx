@@ -59,44 +59,52 @@ export default function ChannelDetails() {
       const state = await context.channel.watch();
       setGroupName(state.channel.name);
       setPhotoUrl(state.channel.photoUrl);
-      const filteredMembers = state.members.filter((member) => {
-        console.log("role:", member.role);
-        if (member.user.id === context.user.id) {
-          setRole(member.role);
-          return false;
+
+      let membersList = state.members;
+      if (state.channel.name === "Direct Message") {
+        /* Direct Message. */
+        membersList = state.members.filter(
+          (member) => member.user.id === context.user.id
+        );
+      } else {
+        /* Group Chat. */
+        membersList.forEach((member) => {
+          if (member.user.id === context.user.id) setRole(member.role);
+        });
+
+        console.log("photoUrl:", state.channel.photoUrl);
+        if (membersList.length > 1) {
+          /* Get two users and display both images. */
+          const photo0: string = membersList[0].user.image;
+          const photo1: string = membersList[1].user.image;
+          setPhotoUrls([photo0, photo1]);
         }
-        return true;
-      });
-      console.log("photoUrl:", state.channel.photoUrl);
-      if (filteredMembers.length > 1) {
-        /* Get two users and display both images. */
-        const photo0: string = filteredMembers[0].user.image;
-        const photo1: string = filteredMembers[1].user.image;
-        setPhotoUrls([photo0, photo1]);
+        if (!state.channel.photoUrl && membersList.length === 1) {
+          setPhotoUrl(membersList[0].user.image);
+        }
+        setMembers(membersList);
+
+        const memberConstraints = [
+          where(`members.${context.user.id}`, "==", true),
+        ];
+        membersList.forEach((member) => {
+          memberConstraints.push(
+            where(`members.${member.user.id}`, "==", true)
+          );
+        });
+
+        const q = query(
+          collection(db, "channels"),
+          ...memberConstraints,
+          where("memberCount", "==", Object.keys(state.members).length)
+        );
+
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          setChannelId(doc.id);
+          console.log(`Found existing channel doc: ${doc.id}`);
+        });
       }
-      if (!state.channel.photoUrl && filteredMembers.length === 1) {
-        setPhotoUrl(filteredMembers[0].user.image);
-      }
-      setMembers(filteredMembers);
-
-      const memberConstraints = [
-        where(`members.${context.user.id}`, "==", true),
-      ];
-      filteredMembers.forEach((member) => {
-        memberConstraints.push(where(`members.${member.user.id}`, "==", true));
-      });
-
-      const q = query(
-        collection(db, "channels"),
-        ...memberConstraints,
-        where("memberCount", "==", Object.keys(state.members).length)
-      );
-
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        setChannelId(doc.id);
-        console.log(`Found existing channel doc: ${doc.id}`);
-      });
     };
 
     getState();
@@ -351,7 +359,11 @@ export default function ChannelDetails() {
         {members.map((member) => {
           return (
             <FriendCard
-              friend={{ ...member.user, photoUrl: member.user.image }}
+              friend={{
+                ...member.user,
+                major: member.role,
+                photoUrl: member.user.image,
+              }}
               key={member.user.id}
             />
           );
