@@ -22,6 +22,12 @@ export default function Messages() {
   const options = { limit: 20, messages_limit: 30 };
 
   const CustomAvatar = ({ channel }: { channel: ChannelType }) => {
+    if (channel.data?.photoUrl) {
+      return (
+        <ProfilePhoto url={channel.data?.photoUrl} size={Layout.photo.xsmall} />
+      );
+    }
+
     let photoUrl = channel.data?.image;
     const filteredMembers = Object.values(channel.state.members).filter(
       (member) => member.user?.id !== context.user.id

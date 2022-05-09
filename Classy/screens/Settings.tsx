@@ -131,7 +131,6 @@ export default function Settings() {
 
         const uploadUrl = await uploadImageAsync(compressedImage.uri);
         setPhotoUrl(uploadUrl);
-        setSaveDisabled(false);
 
         context.setUser({
           ...context.user,
