@@ -116,8 +116,6 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
   };
 
   const addEnrollmentDB = async () => {
-    // TODO: error handling
-
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     setDoneLoading(true);

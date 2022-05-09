@@ -321,12 +321,12 @@ export default function ChannelDetails() {
             />
           );
         })}
-        {members.length > 1 ? (
+        {/* {members.length > 1 ? (
           <>
             <Separator />
             <Text>TODO: Leave chat</Text>
           </>
-        ) : null}
+        ) : null} */}
       </View>
 
       <ActionSheet

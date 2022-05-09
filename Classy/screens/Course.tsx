@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Icon, Text, View } from "../components/Themed";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
@@ -18,10 +18,21 @@ import Layout from "../constants/Layout";
 import Separator from "../components/Separator";
 import useColorScheme from "../hooks/useColorScheme";
 import ReadMoreText from "../components/ReadMoreText";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import friendsData from "./friendsData";
 import { useNavigation } from "@react-navigation/core";
+import AppContext from "../context/Context";
+import { G } from "react-native-svg";
 
 const exploreCoursesLink =
   "https://explorecourses.stanford.edu/search?view=catalog&filter-coursestatus-Active=on&page=0&catalog=&academicYear=&q=";
@@ -30,9 +41,11 @@ const cartaLink = "https://carta-beta.stanford.edu/course/";
 
 export default function Course({ route }: CourseProps) {
   const navigation = useNavigation();
+  const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
   const [course, setCourse] = useState(route.params.course);
+  const [favorited, setFavorited] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // useEffect(() => {
@@ -54,6 +67,52 @@ export default function Course({ route }: CourseProps) {
   //     alert(`Could not find course: ${id}.`);
   //   }
   // };
+
+  useEffect(() => {
+    const getFavorited = async (id: number) => {
+      const q = query(
+        collection(db, "favorites"),
+        where("courseId", "==", id),
+        where("userId", "==", context.user.id)
+      );
+
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        setFavorited(true);
+      });
+    };
+
+    getFavorited(route.params.course.courseId);
+  }, []);
+
+  const handleFavoritePressed = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (!favorited) {
+      setFavorited(true);
+
+      const data = {
+        code: course.code,
+        courseId: course.courseId,
+        title: course.title,
+        userId: context.user.id,
+      };
+
+      await addDoc(collection(db, "favorites"), data);
+    } else {
+      setFavorited(false);
+
+      const q = query(
+        collection(db, "favorites"),
+        where("courseId", "==", course.courseId),
+        where("userId", "==", context.user.id)
+      );
+
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((res) => {
+        deleteDoc(doc(db, "favorites", res.id));
+      });
+    }
+  };
 
   if (isLoading) return <ActivityIndicator />;
 
@@ -125,13 +184,16 @@ export default function Course({ route }: CourseProps) {
             emphasized
           />
         </View>
-        <View style={styles.favoriteButton}>
+        <View style={styles.favoriteButtonContainer}>
           <Pressable
-            onPress={() => console.log("Course favorited")}
-            style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+            onPress={handleFavoritePressed}
+            style={({ pressed }) => [
+              styles.favoriteButton,
+              { opacity: pressed ? 0.5 : 1 },
+            ]}
           >
             <Icon
-              name="star-o"
+              name={favorited ? "star" : "star-o"}
               size={Layout.icon.medium}
               lightColor={Colors[colorScheme].tint}
               darkColor={Colors[colorScheme].tint}
@@ -185,12 +247,19 @@ const styles = StyleSheet.create({
     right: Layout.spacing.medium,
     backgroundColor: "transparent",
   },
-  favoriteButton: {
+  favoriteButtonContainer: {
     ...AppStyles.boxShadow,
     marginLeft: Layout.spacing.small,
     borderRadius: Layout.radius.medium,
     height: Layout.buttonHeight.medium,
     width: Layout.buttonHeight.medium,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  favoriteButton: {
+    borderRadius: Layout.radius.medium,
+    height: "100%",
+    width: "100%",
     justifyContent: "center",
     alignItems: "center",
   },
