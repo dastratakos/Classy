@@ -105,8 +105,7 @@ export default function NewMessage() {
     /**
      * For a group chat with 3 or more people, we will create a Firestore object
      * in the "channels" collection to represent it. The channelId will be the
-     * id of the corresponding Firestore doc. We will also store photoURL in the
-     * doc when one is added.
+     * id of the corresponding Firestore doc.
      */
     const memberConstraints = [where(`members.${context.user.id}`, "==", true)];
     Object.keys(members).forEach((id) => {
