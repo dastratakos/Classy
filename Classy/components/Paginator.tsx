@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    height: Layout.spacing.xxxlarge,
+    marginBottom: Layout.spacing.xxlarge,
   },
   dot: {
     height: 10,

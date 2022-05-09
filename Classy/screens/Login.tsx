@@ -181,7 +181,7 @@ export default function Login({ route }: LoginProps) {
         </View>
         <View style={{ height: Layout.spacing.large }} />
 
-        <Button text="Log In" onPress={signIn} wide />
+        <Button text="Log In" onPress={signIn} emphasized wide />
       </KeyboardAvoidingView>
       <View
         style={[

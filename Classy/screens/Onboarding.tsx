@@ -1,24 +1,61 @@
 import { Animated, FlatList, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { useContext, useEffect, useRef, useState } from "react";
+import { doc, updateDoc } from "firebase/firestore";
+import { useContext, useRef, useState } from "react";
 
+import AddProfileDetails from "../components/Onboarding/AddProfileDetails";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
-import CourseList from "../components/CourseList";
-import Layout from "../constants/Layout";
-import { db } from "../firebase";
-import { getCurrentTermId, termIdToFullName } from "../utils";
+import Paginator from "../components/Paginator";
+import PlanClasses from "../components/Onboarding/PlanClasses";
+import { SafeAreaView } from "react-native-safe-area-context";
+import SearchForPeerOrClass from "../components/Onboarding/SearchForPeerOrClass";
+import TakeClasses from "../components/Onboarding/TakeClasses";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Paginator from "../components/Paginator";
+import { db } from "../firebase";
+import { generateSubstrings } from "../utils";
 
 export default function Onboarding() {
   const navigation = useNavigation();
+  const context = useContext(AppContext);
   const colorScheme = useColorScheme();
+
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [name, setName] = useState("");
+  const [major, setMajor] = useState("");
+  const [startYear, setStartYear] = useState(2018); // TODO: compute these values
+  const [endYear, setEndYear] = useState(2022);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const updateUserDB = async () => {
+    if (name === "") {
+      setErrorMessage("Please enter your name");
+      return;
+    } else if (startYear > endYear) {
+      setErrorMessage("Start year cannot be after the end year");
+      return;
+    }
+
+    const data = {
+      name,
+      major,
+      photoUrl,
+      keywords: generateSubstrings(name),
+      // startYear,
+      // endYear,
+    };
+
+    updateDoc(doc(db, "users", context.user.id), data);
+    context.setUser({ ...context.user, ...data });
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Root" }],
+    });
+  };
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -38,42 +75,25 @@ export default function Onboarding() {
     }
   };
 
-  const AddProfileDetails = () => {
-    return (
-      <View style={styles.screenContainer}>
-        <Text>Add profile details</Text>
-      </View>
-    );
-  };
-
-  const PlanClasses = () => {
-    return (
-      <View style={styles.screenContainer}>
-        <Text>Plan classes</Text>
-      </View>
-    );
-  };
-
-  const TakeClasses = () => {
-    return (
-      <View style={styles.screenContainer}>
-        <Text>Take classes with friends</Text>
-      </View>
-    );
-  };
-
-  const SearchForPeerOrClass = () => {
-    return (
-      <View style={styles.screenContainer}>
-        <Text>Search for any peer or class</Text>
-      </View>
-    );
-  };
-
   const screens = [
     {
       id: 0,
-      component: <AddProfileDetails />,
+      component: (
+        <AddProfileDetails
+          photoUrl={photoUrl}
+          setPhotoUrl={setPhotoUrl}
+          name={name}
+          setName={setName}
+          major={major}
+          setMajor={setMajor}
+          startYear={startYear}
+          setStartYear={setStartYear}
+          endYear={endYear}
+          setEndYear={setEndYear}
+          errorMessage={errorMessage}
+          setErrorMessage={setErrorMessage}
+        />
+      ),
     },
     {
       id: 1,
@@ -111,27 +131,17 @@ export default function Onboarding() {
           ref={slidesRef}
         />
       </View>
-      <View
-        style={[AppStyles.section, { flex: 1, backgroundColor: "lightgreen" }]}
-      >
+      <View style={[AppStyles.section, { flex: 1 }]}>
         <Paginator data={screens} scrollX={scrollX} />
         <Button
           text={currentIndex < screens.length - 1 ? "Next" : "Get started"}
-          onPress={scrollTo}
+          onPress={currentIndex < screens.length - 1 ? scrollTo : updateUserDB}
           emphasized
+          wide
         />
       </View>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  screenContainer: {
-    width: Layout.window.width,
-    backgroundColor: "pink",
-  },
-  title: {
-    marginTop: Layout.spacing.xlarge,
-    fontSize: Layout.text.xlarge,
-  },
-});
+const styles = StyleSheet.create({});

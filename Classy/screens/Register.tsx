@@ -46,9 +46,12 @@ export default function Register({ route }: RegisterProps) {
           createdAt: Timestamp.now(),
           isPrivate: false,
         };
+
         connectStreamChatUser(uid);
         setDoc(doc(db, "users", uid), data)
           .then(() => {
+            const user = { ...context.user, ...data };
+            context.setUser(user);
             navigation.navigate("Onboarding");
           })
           .catch((error) => {
@@ -141,7 +144,7 @@ export default function Register({ route }: RegisterProps) {
           />
           <View style={{ height: Layout.spacing.large }} />
 
-          <Button text="Register" onPress={createUser} wide />
+          <Button text="Register" onPress={createUser} emphasized wide />
         </View>
       </KeyboardAvoidingView>
       <View

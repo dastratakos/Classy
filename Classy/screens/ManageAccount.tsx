@@ -155,7 +155,7 @@ export default function Settings() {
                 .then(() => {
                   navigation.reset({
                     index: 0,
-                    routes: [{ name: "Root" }],
+                    routes: [{ name: "AuthStack" }],
                   });
                 })
                 .catch((error) => setErrorMessage(error.message));
