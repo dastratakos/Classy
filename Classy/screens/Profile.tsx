@@ -27,10 +27,10 @@ import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Calendar from "../components/Calendar";
-import CourseList from "../components/CourseList";
+import EnrollmentList from "../components/EnrollmentList";
 import Colors from "../constants/Colors";
 import Constants from "expo-constants";
-import { Course } from "../types";
+import { Enrollment } from "../types";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import Separator from "../components/Separator";
@@ -46,7 +46,7 @@ export default function Profile() {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
-  const [courses, setCourses] = useState([] as Course[]);
+  const [enrollments, setEnrollments] = useState([] as Enrollment[]);
   const [refreshing, setRefreshing] = useState(true);
   const [showEmailVerification, setShowEmailVerification] = useState(
     !auth.currentUser?.emailVerified
@@ -58,7 +58,7 @@ export default function Profile() {
 
     if (auth.currentUser) {
       getUser(auth.currentUser.uid);
-      getCoursesForTerm(context.user.id, getCurrentTermId()).then(() =>
+      getEnrollmentsForTerm(context.user.id, getCurrentTermId()).then(() =>
         setInterval(checkInClass, 1000)
       );
     }
@@ -75,7 +75,7 @@ export default function Profile() {
   const onRefresh = async () => {
     setRefreshing(true);
     await getUser(context.user.id);
-    await getCoursesForTerm(context.user.id, getCurrentTermId());
+    await getEnrollmentsForTerm(context.user.id, getCurrentTermId());
     if (auth.currentUser)
       setShowEmailVerification(!auth.currentUser.emailVerified);
     console.log("emailVerified:", auth.currentUser?.emailVerified);
@@ -94,7 +94,7 @@ export default function Profile() {
     }
   };
 
-  const getCoursesForTerm = async (id: string, termId: string) => {
+  const getEnrollmentsForTerm = async (id: string, termId: string) => {
     const q = query(
       collection(db, "enrollments"),
       where("userId", "==", id),
@@ -107,7 +107,7 @@ export default function Profile() {
     querySnapshot.forEach((doc) => {
       results.push(doc.data());
     });
-    setCourses(results);
+    setEnrollments(results);
   };
 
   const checkInClass = () => {
@@ -220,7 +220,7 @@ export default function Profile() {
     },
     {
       label: "Courses",
-      component: <CourseList courses={courses} />,
+      component: <EnrollmentList enrollments={enrollments} />,
     },
   ];
 

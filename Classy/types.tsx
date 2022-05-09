@@ -42,6 +42,17 @@ export type Course = {
   unitsMin: number;
 };
 
+export type Enrollment = {
+  code: string[];
+  courseId: number;
+  grading: string; // Chosen grading basis
+  schedules: Schedule[]; // Chosen schedules
+  termId: string; // Chosen termId
+  title: string;
+  units: number; // Chosen number of units
+  userId: string;
+};
+
 export type Term = {
   schedules: Schedule[];
   students: string[];
@@ -51,6 +62,7 @@ export type Schedule = {
   component: string;
   days: string[];
   endInfo: Timestamp;
+  grading: string;
   instructors: Instructor[];
   location: string;
   sectionNumber: string;
