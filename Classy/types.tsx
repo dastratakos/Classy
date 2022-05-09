@@ -86,6 +86,7 @@ export type RootStackParamList = {
   NewMessage: undefined;
 
   Profile: undefined;
+  Favorites: undefined;
   Courses: { termId: string };
   Course: { course: Course };
   AddEditCourse: { course: Course };
@@ -117,6 +118,7 @@ export type ProfileStackParamList = {
   ManageAccount: undefined;
 
   Profile: undefined;
+  Favorites: undefined;
   Courses: { termId: string };
   Course: { course: Course };
   AddEditCourse: { course: Course };
@@ -135,6 +137,7 @@ export type ProfileStackScreenProps<
 export type SearchStackParamList = {
   Search: undefined;
   Profile: undefined;
+  Favorites: undefined;
   Courses: { termId: string };
   Course: { course: Course };
   AddEditCourse: { course: Course };

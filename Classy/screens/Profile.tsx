@@ -265,6 +265,11 @@ export default function Profile() {
                   {inClass ? "In class" : "Not in class"}
                 </Text>
               </View>
+              <Button
+                text="Edit Profile"
+                onPress={() => navigation.navigate("Settings")}
+                wide
+              />
             </View>
           </View>
         </View>
@@ -305,9 +310,6 @@ export default function Profile() {
             onPress={() => navigation.navigate("MyFriends")}
           />
         </View>
-      </View>
-      <Separator />
-      <View style={AppStyles.section}>
         <View style={[AppStyles.row, { marginBottom: Layout.spacing.medium }]}>
           <Text style={styles.term}>
             {termIdToFullName(getCurrentTermId())}
@@ -317,6 +319,9 @@ export default function Profile() {
             onPress={() => navigation.navigate("MyQuarters")}
           />
         </View>
+      </View>
+      <Separator />
+      <View style={AppStyles.section}>
         <TabView tabs={tabs} />
       </View>
     </ScrollView>

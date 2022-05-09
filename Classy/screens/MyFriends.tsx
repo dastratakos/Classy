@@ -63,7 +63,7 @@ export default function MyFriends() {
       collection(db, "friends"),
       where(`ids.${id}`, "==", true),
       where(`requesterId.${id}`, "==", false),
-      where("status", "==", "requests")
+      where("status", "==", "requested")
     );
     const friendIds = [] as string[];
     const querySnapshot = await getDocs(q);

@@ -140,10 +140,10 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 
     querySnapshot.forEach((res) => {
       /* Delete any extra friendship documents. */
-      if (friendStatus !== "not friends") {
-        deleteDoc(doc(db, "friends", res.id));
-        return;
-      }
+      // if (friendStatus !== "not friends") {
+      //   deleteDoc(doc(db, "friends", res.id));
+      //   return;
+      // }
 
       console.log("friendship:", res.data());
       setFriendDocId(res.id);
@@ -253,6 +253,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 
   const deleteFriendship = async () => {
     setFriendStatus("not friends");
+    setAddFriendDisabled(false);
 
     const docRef = doc(db, "friends", friendDocId);
     await deleteDoc(docRef);

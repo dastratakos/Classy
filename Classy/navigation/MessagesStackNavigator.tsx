@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import { MessagesStackScreenProps, ProfileStackScreenProps } from "../types";
+
 import AddEditCourse from "../screens/AddEditCourse";
 import AppContext from "../context/Context";
 import ChannelDetails from "../screens/ChannelDetails";
@@ -7,20 +9,21 @@ import ChannelScreen from "../screens/ChannelScreen";
 import Course from "../screens/Course";
 import CourseSimilarity from "../screens/CourseSimilarity";
 import Courses from "../screens/Courses";
+import Favorites from "../screens/Favorites";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
 import { Icon } from "../components/Themed";
+import Layout from "../constants/Layout";
 import Messages from "../screens/Messages";
-import { MessagesStackScreenProps } from "../types";
+import MyFriends from "../screens/MyFriends";
+import MyQuarters from "../screens/MyQuarters";
 import NewMessage from "../screens/NewMessage";
 import { Pressable } from "react-native";
 import Profile from "../screens/Profile";
+import Settings from "../screens/Settings";
 import ThreadScreen from "../screens/ThreadScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useContext } from "react";
-import MyFriends from "../screens/MyFriends";
-import MyQuarters from "../screens/MyQuarters";
-import Layout from "../constants/Layout";
 
 const Stack = createNativeStackNavigator();
 
@@ -80,6 +83,29 @@ export default function MessagesStackNavigator() {
       <Stack.Screen
         name="Profile"
         component={Profile}
+        getId={() => new Date().getTime().toString()}
+        options={({ navigation }: ProfileStackScreenProps<"Profile">) => ({
+          title: "Profile",
+          headerRight: () => (
+            <Pressable
+              onPress={() => navigation.navigate("Favorites")}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1,
+              })}
+            >
+              <Icon name="star" size={Layout.icon.medium} />
+            </Pressable>
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="Favorites"
+        component={Favorites}
+        getId={() => new Date().getTime().toString()}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={Settings}
         getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen

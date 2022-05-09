@@ -14,7 +14,6 @@ import LinkingConfiguration from "./LinkingConfiguration";
 import MessagesStackNavigator from "./MessagesStackNavigator";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import ProfileStackNavigator from "./ProfileStackNavigator";
-import Settings from "../screens/Settings";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import useColorScheme from "../hooks/useColorScheme";
@@ -69,7 +68,6 @@ function RootNavigator() {
         options={{ title: "Oops!" }}
       />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
-        <Stack.Screen name="Settings" component={Settings} />
         <Stack.Screen name="ManageAccount" component={ManageAccount} />
         <Stack.Screen
           name="SelectQuarter"
