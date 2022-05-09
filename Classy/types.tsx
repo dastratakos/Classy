@@ -89,6 +89,7 @@ export type RootStackParamList = {
 
   Login: { email?: string } | undefined;
   Register: { email?: string } | undefined;
+  Onboarding: undefined;
   ResetPassword: undefined;
 
   Home: undefined;
@@ -190,6 +191,7 @@ export type HomeStackScreenProps<Screen extends keyof HomeStackParamList> =
 export type AuthStackParamList = {
   Login: undefined;
   Register: undefined;
+  Onboarding: undefined;
 };
 
 export type AuthStackScreenProps<Screen extends keyof AuthStackParamList> =

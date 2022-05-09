@@ -49,11 +49,7 @@ export default function Register({ route }: RegisterProps) {
         connectStreamChatUser(uid);
         setDoc(doc(db, "users", uid), data)
           .then(() => {
-            // TODO: navigate to onboarding
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "Root" }],
-            });
+            navigation.navigate("Onboarding");
           })
           .catch((error) => {
             setErrorMessage(error);

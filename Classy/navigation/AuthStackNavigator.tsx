@@ -1,10 +1,10 @@
 import * as React from "react";
 
-import { AuthStackScreenProps } from "../types";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "../screens/Login";
+import Onboarding from "../screens/Onboarding";
 import Register from "../screens/Register";
 import ResetPassword from "../screens/ResetPassword";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,6 +17,11 @@ export default function AuthStackNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen name="Register" component={Register} />
+      <Stack.Screen
+        name="Onboarding"
+        component={Onboarding}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen
         name="ResetPassword"
         component={ResetPassword}
