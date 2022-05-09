@@ -1,5 +1,5 @@
 # Classy
-<img src=images/logo.jpeg width=300 />
+<img src=images/logo.png width=300 />
 
 ## Project Synopsis
 Our project aims to create a space where undergraduates can compare schedules and share courses they are currently and are planning on taking. We want to be the social middle ground between [ExploreCourses](https://explorecourses.stanford.edu) and [Carta](https://carta-beta.stanford.edu), allowing users to clearly visualize what their and their peers' schedules will look like. 
