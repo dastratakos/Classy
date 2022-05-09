@@ -26,7 +26,8 @@ import Separator from "../components/Separator";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { storage } from "../firebase";
+import { db, storage } from "../firebase";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 export default function ChannelDetails() {
   const context = useContext(AppContext);
@@ -34,6 +35,8 @@ export default function ChannelDetails() {
   const navigation = useNavigation();
 
   const [members, setMembers] = useState([]);
+  const [role, setRole] = useState("");
+  const [channelId, setChannelId] = useState("");
   const [groupName, setGroupName] = useState("");
   const [saveLoading, setSaveLoading] = useState(false);
   const [saveDisabled, setSaveDisabled] = useState(true);
@@ -56,9 +59,14 @@ export default function ChannelDetails() {
       const state = await context.channel.watch();
       setGroupName(state.channel.name);
       setPhotoUrl(state.channel.photoUrl);
-      const filteredMembers = state.members.filter(
-        (member) => member.user.id !== context.user.id
-      );
+      const filteredMembers = state.members.filter((member) => {
+        console.log("role:", member.role);
+        if (member.user.id === context.user.id) {
+          setRole(member.role);
+          return false;
+        }
+        return true;
+      });
       console.log("photoUrl:", state.channel.photoUrl);
       if (filteredMembers.length > 1) {
         /* Get two users and display both images. */
@@ -70,6 +78,25 @@ export default function ChannelDetails() {
         setPhotoUrl(filteredMembers[0].user.image);
       }
       setMembers(filteredMembers);
+
+      const memberConstraints = [
+        where(`members.${context.user.id}`, "==", true),
+      ];
+      filteredMembers.forEach((member) => {
+        memberConstraints.push(where(`members.${member.user.id}`, "==", true));
+      });
+
+      const q = query(
+        collection(db, "channels"),
+        ...memberConstraints,
+        where("memberCount", "==", Object.keys(state.members).length)
+      );
+
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        setChannelId(doc.id);
+        console.log(`Found existing channel doc: ${doc.id}`);
+      });
     };
 
     getState();
@@ -168,7 +195,7 @@ export default function ChannelDetails() {
       xhr.send(null);
     });
 
-    const fileRef = ref(storage, `${context.user.id}/profilePhoto.jpg`);
+    const fileRef = ref(storage, `${channelId}/profilePhoto.jpg`);
     const result = await uploadBytes(fileRef, blob)
       .then(() => console.log("Successfully uploaded bytes"))
       .catch((error) => console.log(error.message));
@@ -263,13 +290,21 @@ export default function ChannelDetails() {
         {members.length > 1 ? (
           <>
             <RenderPhoto />
-            <Button
-              text="Change group photo"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                actionSheetRef.current?.show();
-              }}
-            />
+            {role === "owner" ? (
+              <Button
+                text="Change group photo"
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  if (channelId) {
+                    actionSheetRef.current?.show();
+                  } else {
+                    alert(
+                      "Sorry, we are unable to change the group photo right now"
+                    );
+                  }
+                }}
+              />
+            ) : null}
             <Separator />
             <KeyboardAvoidingView
               style={styles.inputContainer}

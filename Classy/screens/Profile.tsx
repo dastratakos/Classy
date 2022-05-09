@@ -16,7 +16,6 @@ import {
   getDocs,
   query,
   updateDoc,
-  limit,
   where,
   orderBy,
 } from "firebase/firestore";
