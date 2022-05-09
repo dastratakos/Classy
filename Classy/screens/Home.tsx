@@ -8,22 +8,21 @@ import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import CourseList from "../components/CourseList";
-import { CoursesProps } from "../types";
 import Layout from "../constants/Layout";
 import { db } from "../firebase";
-import { termIdToFullName } from "../utils";
+import { getCurrentTermId, termIdToFullName } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
-export default function Courses({ route }: CoursesProps) {
+export default function Home() {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
 
-  const [courses, setCourses] = useState([]);
+  const [enrollments, setEnrollments] = useState([]);
 
   useEffect(() => {
-    getEnrollmentsForTerm(context.user.id, route.params.termId);
+    getEnrollmentsForTerm(context.user.id, getCurrentTermId());
   }, []);
 
   const getEnrollmentsForTerm = async (id: string, termId: string) => {
@@ -38,30 +37,19 @@ export default function Courses({ route }: CoursesProps) {
     querySnapshot.forEach((doc) => {
       results.push(doc.data());
     });
-    setCourses(results);
+    setEnrollments(results);
   };
 
   return (
-    <>
-      <ScrollView
-        style={{ backgroundColor: Colors[colorScheme].background }}
-        contentContainerStyle={{ alignItems: "center" }}
-      >
-        <Text style={styles.title}>
-          {termIdToFullName(route.params.termId)}
-        </Text>
-        <View style={AppStyles.section}>
-          <CourseList courses={courses} />
-        </View>
-      </ScrollView>
-      <View style={styles.ctaContainer}>
-        <Button
-          text={"View All Quarters"}
-          onPress={() => navigation.navigate("MyQuarters")}
-          wide
-        />
+    <ScrollView
+      style={{ backgroundColor: Colors[colorScheme].background }}
+      contentContainerStyle={{ alignItems: "center" }}
+    >
+      <Text style={styles.title}>{termIdToFullName(getCurrentTermId())}</Text>
+      <View style={AppStyles.section}>
+        <Text>TODO: HomeCards with enrollments data</Text>
       </View>
-    </>
+    </ScrollView>
   );
 }
 
@@ -69,13 +57,5 @@ const styles = StyleSheet.create({
   title: {
     marginTop: Layout.spacing.xlarge,
     fontSize: Layout.text.xlarge,
-  },
-  ctaContainer: {
-    ...AppStyles.row,
-    position: "absolute",
-    bottom: Layout.spacing.medium,
-    left: Layout.spacing.medium,
-    right: Layout.spacing.medium,
-    backgroundColor: "transparent",
   },
 });

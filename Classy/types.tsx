@@ -81,7 +81,7 @@ export type Instructor = {
 
 export type RootStackParamList = {
   AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;
-  MessagesStack: NavigatorScreenParams<MessagesStackParamList> | undefined;
+  HomeStack: NavigatorScreenParams<HomeStackParamList> | undefined;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Settings: undefined;
   ManageAccount: undefined;
@@ -90,6 +90,8 @@ export type RootStackParamList = {
   Login: { email?: string } | undefined;
   Register: { email?: string } | undefined;
   ResetPassword: undefined;
+
+  Home: undefined;
 
   Messages: undefined;
   ChannelScreen: undefined;
@@ -114,8 +116,8 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>;
 
 export type RootTabParamList = {
-  MessagesStack: NavigatorScreenParams<MessagesStackParamList> | undefined;
-  SearchStack: NavigatorScreenParams<MessagesStackParamList> | undefined;
+  HomeStack: NavigatorScreenParams<HomeStackParamList> | undefined;
+  SearchStack: NavigatorScreenParams<SearchStackParamList> | undefined;
   ProfileStack: NavigatorScreenParams<ProfileStackParamList> | undefined;
 };
 
@@ -164,7 +166,9 @@ export type SearchStackParamList = {
 export type SearchStackScreenProps<Screen extends keyof SearchStackParamList> =
   NativeStackScreenProps<SearchStackParamList>;
 
-export type MessagesStackParamList = {
+export type HomeStackParamList = {
+  Home: undefined;
+
   Messages: undefined;
   ChannelScreen: undefined;
   ThreadScreen: { id: string };
@@ -180,9 +184,8 @@ export type MessagesStackParamList = {
   CourseSimilarity: { id: string };
 };
 
-export type MessagesStackScreenProps<
-  Screen extends keyof MessagesStackParamList
-> = NativeStackScreenProps<MessagesStackParamList>;
+export type HomeStackScreenProps<Screen extends keyof HomeStackParamList> =
+  NativeStackScreenProps<HomeStackParamList>;
 
 export type AuthStackParamList = {
   Login: undefined;

@@ -11,7 +11,7 @@ import { RootStackParamList, RootTabParamList } from "../types";
 import Colors from "../constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import LinkingConfiguration from "./LinkingConfiguration";
-import MessagesStackNavigator from "./MessagesStackNavigator";
+import HomeStackNavigator from "./HomeStackNavigator";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import ProfileStackNavigator from "./ProfileStackNavigator";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -96,13 +96,13 @@ function BottomTabNavigator() {
       }}
     >
       <BottomTab.Screen
-        name="MessagesStack"
-        component={MessagesStackNavigator}
+        name="HomeStack"
+        component={HomeStackNavigator}
         options={{
-          title: "Messages",
+          title: "Home",
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="comments" color={color} />
+            <TabBarIcon name="home" color={color} />
           ),
         }}
       />

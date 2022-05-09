@@ -83,12 +83,12 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     getFriendIds(route.params.id).then((res) => {
       setNumFriends(`${res.length}`);
     });
-    getCoursesForTerm(route.params.id, getCurrentTermId());
+    getEnrollmentsForTerm(route.params.id, getCurrentTermId());
     setInterval(checkInClass, 1000);
     setRefreshing(false);
   };
 
-  const getCoursesForTerm = async (id: string, termId: string) => {
+  const getEnrollmentsForTerm = async (id: string, termId: string) => {
     const q = query(
       collection(db, "enrollments"),
       where("userId", "==", id),
@@ -386,7 +386,11 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     context.setChannelName(channel.data.name);
 
     setMessageButtonLoading(false);
-    navigation.navigate("MessagesStack", {
+    navigation.navigate("HomeStack", {
+      screen: "Messages",
+      initial: false,
+    });
+    navigation.navigate("HomeStack", {
       screen: "ChannelScreen",
       initial: false,
     });

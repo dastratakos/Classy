@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { MessagesStackScreenProps, ProfileStackScreenProps } from "../types";
+import { HomeStackScreenProps, ProfileStackScreenProps } from "../types";
 
 import AddEditCourse from "../screens/AddEditCourse";
 import AppContext from "../context/Context";
@@ -12,6 +12,7 @@ import Courses from "../screens/Courses";
 import Favorites from "../screens/Favorites";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
+import Home from "../screens/Home";
 import { Icon } from "../components/Themed";
 import Layout from "../constants/Layout";
 import Messages from "../screens/Messages";
@@ -27,15 +28,31 @@ import { useContext } from "react";
 
 const Stack = createNativeStackNavigator();
 
-export default function MessagesStackNavigator() {
+export default function HomeStackNavigator() {
   const context = useContext(AppContext);
 
   return (
-    <Stack.Navigator initialRouteName="Messages">
+    <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen
+        name="Home"
+        component={Home}
+        options={({ navigation }: HomeStackScreenProps<"Home">) => ({
+          headerRight: () => (
+            <Pressable
+              onPress={() => navigation.navigate("Messages")}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1,
+              })}
+            >
+              <Icon name="comments" size={Layout.icon.medium} />
+            </Pressable>
+          ),
+        })}
+      />
       <Stack.Screen
         name="Messages"
         component={Messages}
-        options={({ navigation }: MessagesStackScreenProps<"Messages">) => ({
+        options={({ navigation }: HomeStackScreenProps<"Messages">) => ({
           headerRight: () => (
             <Pressable
               onPress={() => navigation.navigate("NewMessage")}
@@ -51,7 +68,7 @@ export default function MessagesStackNavigator() {
       <Stack.Screen
         name="ChannelScreen"
         component={ChannelScreen}
-        options={({ navigation }: MessagesStackScreenProps<"Messages">) => ({
+        options={({ navigation }: HomeStackScreenProps<"Messages">) => ({
           title: context.channelName,
           headerRight: () => (
             <Pressable
