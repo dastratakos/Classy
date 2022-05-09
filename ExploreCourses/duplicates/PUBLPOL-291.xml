@@ -1,0 +1,129 @@
+<course>
+    <year>2021-2022</year>
+    <subject>PUBLPOL</subject>
+    <code>291</code>
+    <title>Theories of Change in Global Health (INTLPOL 291, SOMGEN 207)</title>
+    <description>Organizations dedicated to improving global health deploy various approaches ranging from efforts to improve economic conditions, health systems, and technology to policy change and advocacy. This course critically evaluates 15 common theories of change that underlay global health interventions. Students will review and discuss examples of both success and failure of each theory of change drawn from journal articles from various disciplines. This seminar is appropriate for graduate students of any discipline who are interested in considering the range of approaches and their likely utility when considering a specific global health problem in a particular location. Upper-class undergraduates who have completed rigorous related coursework and who are willing to commit the preparatory time are welcome. Our discussions benefit greatly from diverse perspectives. Sign up for 3 unit credits to participate in the seminar or 4 units to participate in the seminar and complete a project that provides an opportunity to apply these ideas to a global health problem of your interest.</description>
+    <gers></gers>
+    <repeatable>false</repeatable>
+    <grading>Medical Option (Med-Ltr-CR/NC)</grading>
+    <unitsMin>3</unitsMin>
+    <unitsMax>4</unitsMax>
+    <remote>false</remote>
+    <learningObjectives>
+        
+    </learningObjectives>
+    <sections>
+        
+            <section>
+                <classId>29399</classId>
+                <term>2021-2022 Spring</term>
+                <termId>1226</termId>
+                <subject>PUBLPOL</subject>
+                <code>291</code>
+                <units>3-4</units>
+                <sectionNumber>01</sectionNumber>
+                <component>SEM</component>
+                <numEnrolled>2</numEnrolled>
+                <maxEnrolled>28</maxEnrolled>
+                <numWaitlist>0</numWaitlist>
+                <maxWaitlist>0</maxWaitlist>
+                <enrollStatus>Open</enrollStatus>
+                <addConsent>N</addConsent>
+                <dropConsent>N</dropConsent>
+                <instructionMode>P</instructionMode>
+                <courseId>217048</courseId>
+                <schedules>
+                    
+                        <schedule>
+                            
+                            <startDate>Mar 28, 2022</startDate>
+                            <endDate>Jun 1, 2022</endDate>
+                            <startTime>2:45:00 PM</startTime>
+                            <endTime>4:45:00 PM</endTime>
+                            <location>Li Ka Shing Center, room 208</location>
+                            <days>
+                                
+                                
+                                Tuesday
+                                
+                                Thursday
+                                
+                                
+                            </days>
+                            <instructors>
+                                
+                                    <instructor>
+                                        <name>Luby, S.</name>
+                                        <firstName>Stephen</firstName>
+                                        <middleName>P</middleName>
+                                        <lastName>Luby</lastName>
+                                        <sunet>sluby</sunet>
+                                        <role>PI</role>
+                                    </instructor>
+                                
+                            </instructors>
+                        </schedule>
+                    
+                </schedules>
+                <currentClassSize>2</currentClassSize>
+                <maxClassSize>28</maxClassSize>
+                <currentWaitlistSize>0</currentWaitlistSize>
+                <maxWaitlistSize>0</maxWaitlistSize>
+                <notes></notes>
+                <attributes>
+                    
+                        
+                            <attribute>
+                                <name>NQTR</name>
+                                <value>SPR</value>
+                                <description>Spring</description>
+                                <catalogPrint>true</catalogPrint>
+                                <schedulePrint>false</schedulePrint>
+                            </attribute>
+                        
+                    
+                </attributes>
+            </section>
+        
+    </sections>
+    <administrativeInformation>
+        <courseId>217048</courseId>
+        <effectiveStatus>A</effectiveStatus>
+        <offerNumber>3</offerNumber>
+        <academicGroup>MED</academicGroup>
+        <academicOrganization>PUBLICPOL</academicOrganization>
+        <academicCareer>GR</academicCareer>
+        <finalExamFlag>N</finalExamFlag>
+        <catalogPrint>Y</catalogPrint>
+        <schedulePrint>Y</schedulePrint>
+        <maxUnitsRepeat>4</maxUnitsRepeat>
+        <maxTimesRepeat>1</maxTimesRepeat>
+    </administrativeInformation>
+    <attributes>
+        
+            
+                <attribute>
+                    <name>NQTR</name>
+                    <value>SPR</value>
+                    <description>Spring</description>
+                    <catalogPrint>true</catalogPrint>
+                    <schedulePrint>false</schedulePrint>
+                </attribute>
+            
+        
+    </attributes>
+    <tags>
+        
+        <tag>
+            <organization>HUMRTS</organization>
+            <name>foundations</name>
+        </tag>
+        
+        <tag>
+            <organization>HUMRTS</organization>
+            <name>issues</name>
+        </tag>
+        
+    </tags>
+</course>
