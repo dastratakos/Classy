@@ -1,5 +1,6 @@
 import { Channel, MessageInput, MessageList } from "stream-chat-expo";
 
+import { Text } from "../components/Themed";
 import { StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import AppContext from "../context/Context";
@@ -12,7 +13,7 @@ export default function ChannelScreen() {
   useEffect(() => {
     const getState = async () => {
       const state = await context.channel.watch();
-      console.log("members:", state.members);
+      // console.log("members:", state.members);
       const filteredMembers = state.members.filter(
         (member) => member.user?.id !== context.user.id
       );
@@ -25,7 +26,10 @@ export default function ChannelScreen() {
   }, []);
 
   return (
-    <Channel channel={context.channel}>
+    <Channel
+      channel={context.channel}
+      hideStickyDateHeader
+    >
       <MessageList
         onThreadSelect={(thread) => {
           context.setThread(thread);

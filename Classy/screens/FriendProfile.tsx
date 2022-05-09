@@ -354,7 +354,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       ]
     );
 
-  const watchChannel = async (friendId: string) => {
+  const createDirectMessage = async (friendId: string) => {
     /**
      * The channelId for a direct message between two people is their user IDs
      * separated by hyphens. The one that comes first alphabetically will be
@@ -380,7 +380,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 
     setMessageButtonLoading(true);
 
-    const channel = await watchChannel(user.id);
+    const channel = await createDirectMessage(user.id);
     context.setChannel(channel);
     context.setChannelName(channel.data.name);
 

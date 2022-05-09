@@ -71,6 +71,8 @@ export default function Settings() {
           photoUrl: "",
         });
 
+        context.streamClient.disconnect();
+
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],

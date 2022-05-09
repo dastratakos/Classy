@@ -1,5 +1,8 @@
-import { ScrollView, StyleSheet } from "react-native";
+import * as Haptics from "expo-haptics";
+
+import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 import {
+  addDoc,
   collection,
   getDocs,
   limit,
@@ -12,12 +15,14 @@ import { useContext, useState } from "react";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
-import FriendList from "../components/FriendList";
-import SearchBar from "../components/SearchBar";
+import SelectableFriendCard from "../components/SelectableFriendCard";
+import SimpleSearchBar from "../components/SimpleSearchBar";
 import { View } from "../components/Themed";
 import { db } from "../firebase";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import Button from "../components/Buttons/Button";
+import Layout from "../constants/Layout";
 
 export default function NewMessage() {
   const context = useContext(AppContext);
@@ -26,9 +31,11 @@ export default function NewMessage() {
 
   const [searchPhrase, setSearchPhrase] = useState("");
   const [focused, setFocused] = useState(false);
+  const [members, setMembers] = useState({});
   const [peopleSearchResults, setPeopleSearchResults] = useState([]);
 
   const [refreshing, setRefreshing] = useState(false);
+  const [chatButtonLoading, setChatButtonLoading] = useState(false);
 
   const searchPeople = async (search: string) => {
     if (search === "") {
@@ -58,10 +65,118 @@ export default function NewMessage() {
     setRefreshing(false);
   };
 
+  const handleFriendPressed = (friend) => {
+    setSearchPhrase("");
+    let newMembers = { ...members };
+    if (friend.id in members) {
+      delete newMembers[`${friend.id}`];
+    } else {
+      newMembers[`${friend.id}`] = friend;
+    }
+    setMembers(newMembers);
+  };
+
+  const createDirectMessage = async (friendId: string) => {
+    console.log("Creating direct message");
+
+    /**
+     * The channelId for a direct message between two people is their user IDs
+     * separated by hyphens. The one that comes first alphabetically will be
+     * listed first.
+     */
+    let channelId;
+    if (friendId < context.user.id)
+      channelId = `${friendId}-${context.user.id}`;
+    else channelId = `${context.user.id}-${friendId}`;
+
+    const channel = context.streamClient.channel("messaging", channelId, {
+      name: "Direct Message",
+      members: [context.user.id, friendId],
+    });
+
+    await channel.watch();
+
+    return channel;
+  };
+
+  const createGroupChat = async () => {
+    console.log("Creating group chat");
+
+    /**
+     * For a group chat with 3 or more people, we will create a Firestore object
+     * in the "channels" collection to represent it. The channelId will be the
+     * id of the corresponding Firestore doc. We will also store photoURL in the
+     * doc when one is added.
+     */
+    const memberConstraints = [where(`members.${context.user.id}`, "==", true)];
+    Object.keys(members).forEach((id) => {
+      memberConstraints.push(where(`members.${id}`, "==", true));
+    });
+
+    const q = query(
+      collection(db, "channels"),
+      ...memberConstraints,
+      where("memberCount", "==", Object.keys(members).length + 1)
+    );
+
+    let channelId = "";
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      channelId = doc.id;
+      console.log(`Found existing channel doc: ${doc.id}`);
+    });
+
+    if (channelId === "") {
+      let membersObj = {};
+      membersObj[`${context.user.id}`] = true;
+      Object.keys(members).forEach((id) => {
+        membersObj[`${id}`] = true;
+      });
+      const data = {
+        members: membersObj,
+        memberCount: Object.keys(membersObj).length,
+      };
+
+      const doc = await addDoc(collection(db, "channels"), data);
+      channelId = doc.id;
+      console.log(`Created new channel doc: ${doc.id}`);
+    }
+
+    const channel = context.streamClient.channel("messaging", channelId, {
+      name: "New group chat",
+      members: [...Object.keys(members), context.user.id],
+    });
+
+    await channel.watch();
+
+    return channel;
+  };
+
+  const handleChatPressed = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    setChatButtonLoading(true);
+
+    let channel;
+    if (Object.keys(members).length === 1) {
+      channel = await createDirectMessage(Object.keys(members)[0]);
+    } else {
+      channel = await createGroupChat();
+    }
+    context.setChannel(channel);
+    context.setChannelName(channel.data.name);
+
+    setChatButtonLoading(false);
+
+    navigation.popToTop();
+    navigation.navigate("ChannelScreen");
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View style={AppStyles.section}>
-        <SearchBar
+        <SimpleSearchBar
           placeholder="Search people..."
           searchPhrase={searchPhrase}
           onChangeText={(text) => {
@@ -79,8 +194,39 @@ export default function NewMessage() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <View style={AppStyles.section}>
-          <FriendList friends={peopleSearchResults} />
+        <View style={[AppStyles.section, { alignItems: "center" }]}>
+          <View style={{ width: "50%", marginBottom: Layout.spacing.medium }}>
+            <Button
+              text="Chat"
+              onPress={handleChatPressed}
+              loading={chatButtonLoading}
+              disabled={Object.keys(members).length === 0}
+              emphasized
+            />
+          </View>
+          {searchPhrase === "" ? (
+            <>
+              {Object.values(members).map((friend) => (
+                <SelectableFriendCard
+                  friend={friend}
+                  onPress={() => handleFriendPressed(friend)}
+                  selected={friend.id in members}
+                  key={friend.id}
+                />
+              ))}
+            </>
+          ) : (
+            <>
+              {peopleSearchResults.map((friend) => (
+                <SelectableFriendCard
+                  friend={friend}
+                  onPress={() => handleFriendPressed(friend)}
+                  selected={friend.id in members}
+                  key={friend.id}
+                />
+              ))}
+            </>
+          )}
         </View>
       </ScrollView>
     </View>

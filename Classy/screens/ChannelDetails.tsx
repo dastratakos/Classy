@@ -18,7 +18,7 @@ export default function ChannelDetails() {
   useEffect(() => {
     const getState = async () => {
       const state = await context.channel.watch();
-      console.log("members:", state.members);
+      // console.log("members:", state.members);
       const filteredMembers = state.members.filter(
         (member) => member.user.id !== context.user.id
       );
