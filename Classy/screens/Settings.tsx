@@ -324,12 +324,12 @@ const styles = StyleSheet.create({
   container: {
     padding: Layout.spacing.medium,
   },
+  inputContainer: {
+    width: "100%",
+  },
   field: {
     width: "40%",
     paddingRight: Layout.spacing.large,
-  },
-  inputContainer: {
-    width: "100%",
   },
   input: {
     paddingVertical: Layout.spacing.xsmall,
