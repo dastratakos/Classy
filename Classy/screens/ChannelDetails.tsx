@@ -264,7 +264,7 @@ export default function ChannelDetails() {
           <>
             <RenderPhoto />
             <Button
-              text="Change profile photo"
+              text="Change group photo"
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 actionSheetRef.current?.show();
