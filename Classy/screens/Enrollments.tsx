@@ -49,7 +49,7 @@ export default function Enrollments({ route }: EnrollmentsProps) {
       <View style={styles.ctaContainer}>
         <Button
           text={"View All Quarters"}
-          onPress={() => navigation.navigate("Quarters", { user })}
+          onPress={() => navigation.goBack()}
           wide
         />
       </View>
