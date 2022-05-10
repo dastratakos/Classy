@@ -15,10 +15,10 @@ export default StyleSheet.create({
     padding: Layout.spacing.medium,
   },
   separator: {
-    marginVertical: Layout.spacing.large,
+    marginVertical: Layout.spacing.small,
     height: 2,
     borderRadius: 1,
-    width: "80%",
+    width: "90%",
   },
   errorText: {
     alignSelf: "center",

@@ -9,7 +9,12 @@ import Layout from "../constants/Layout";
 import useColorScheme from "../hooks/useColorScheme";
 import { useState } from "react";
 
-export default function TabView({ tabs }) {
+export default function TabView({ 
+  tabs,
+  selectedStyle, 
+}: {
+  selectedStyle?: Object
+}) {
   const colorScheme = useColorScheme();
 
   const [selectedId, setSelectedId] = useState(0);
@@ -19,7 +24,7 @@ export default function TabView({ tabs }) {
   const Indicator = () => {
     return (
       <Animated.View
-        style={{
+        style={[{
           position: "absolute",
           // backgroundColor: Colors.red,
           backgroundColor: Colors[colorScheme].tertiaryBackground,
@@ -28,7 +33,7 @@ export default function TabView({ tabs }) {
           width: tabWidth,
 
           transform: [{ translateX: translateValue }],
-        }}
+        }, selectedStyle]}
       />
     );
   };

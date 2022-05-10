@@ -174,7 +174,7 @@ export default function EditCourse({ route }: EditCourseProps) {
             </View>
           </View>
 
-          <View>
+          <View style={styles.gradingBasisWrap}>
             <Text style={styles.subheading}>Grading basis</Text>
             <View
               style={{
@@ -257,4 +257,7 @@ const styles = StyleSheet.create({
   subheading: {
     fontSize: Layout.text.large,
   },
+  gradingBasisWrap: {
+    paddingTop: Layout.spacing.large
+  }
 });

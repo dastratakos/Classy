@@ -1,6 +1,6 @@
 import * as Notifications from "expo-notifications";
 
-import { Icon, Text, View } from "../components/Themed";
+import { Icon, Icon2, Text, View } from "../components/Themed";
 import {
   Platform,
   Pressable,
@@ -204,13 +204,13 @@ export default function Profile() {
       }
     >
       {/* TODO: this needs to refresh to go away if we are verified */}
-      {showEmailVerification && showSendVerificationEmail()}
+      {/* {showEmailVerification && showSendVerificationEmail()} */}
       <View style={AppStyles.section}>
         <View style={AppStyles.row}>
           <View style={[AppStyles.row, { flex: 1 }]}>
             <ProfilePhoto
               url={context.user.photoUrl}
-              size={Layout.photo.medium}
+              size={Layout.photo.large}
               style={{ marginRight: Layout.spacing.large }}
             />
             <View style={{ flexGrow: 1 }}>
@@ -250,7 +250,7 @@ export default function Profile() {
             {context.user.major ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon name="pencil" size={Layout.icon.medium} />
+                  <Icon2 name="pencil" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{context.user.major}</Text>
               </View>
@@ -259,7 +259,7 @@ export default function Profile() {
             {context.user.gradYear ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon name="graduation-cap" size={Layout.icon.medium} />
+                  <Icon2 name="graduation" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{context.user.gradYear}</Text>
               </View>
@@ -268,7 +268,7 @@ export default function Profile() {
             {context.user.interests ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon name="puzzle-piece" size={Layout.icon.medium} />
+                  <Icon2 name="puzzle" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{context.user.interests}</Text>
               </View>
@@ -281,19 +281,22 @@ export default function Profile() {
             onPress={() => navigation.navigate("MyFriends")}
           />
         </View>
-        <View style={[AppStyles.row, { marginBottom: Layout.spacing.medium }]}>
+        <View style={[AppStyles.row]}>
           <Text style={styles.term}>
             {termIdToFullName(getCurrentTermId())}
           </Text>
           <Button
-            text="View All"
+            text="View All Quarters"
             onPress={() => navigation.navigate("MyQuarters")}
           />
         </View>
+        
+        
+        
       </View>
-      <Separator />
+      <Separator  />
       <View style={AppStyles.section}>
-        <TabView tabs={tabs} />
+        <TabView tabs={tabs} selectedStyle={{backgroundColor: Colors.pink}} />
       </View>
     </ScrollView>
   );
@@ -325,6 +328,7 @@ const styles = StyleSheet.create({
     width: 30,
     marginRight: 15,
     alignItems: "center",
+    marginBottom: Layout.spacing.xsmall,
   },
   closeButton: {
     position: "absolute",
@@ -333,5 +337,6 @@ const styles = StyleSheet.create({
   },
   term: {
     fontSize: Layout.text.large,
+    fontWeight: "500"
   },
 });
