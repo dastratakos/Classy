@@ -326,6 +326,7 @@ export default function Calendar({ events }: { events: [] }) {
     const initialSelected = today >= 0 && today <= 4 ? today : 0;
     ref?.current?.scrollToOffset({
       offset: initialSelected * dayWidth,
+      animated: false,
     });
   }, []);
 
