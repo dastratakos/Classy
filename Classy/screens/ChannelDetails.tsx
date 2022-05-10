@@ -16,7 +16,6 @@ import ActionSheet from "react-native-actionsheet";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
-import { Channel as ChannelType } from "stream-chat";
 import Colors from "../constants/Colors";
 import FriendCard from "../components/FriendCard";
 import Layout from "../constants/Layout";
@@ -25,9 +24,9 @@ import { SaveFormat } from "expo-image-manipulator";
 import Separator from "../components/Separator";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { db, storage } from "../firebase";
+import { db } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import { uploadImage } from "../services/storage";
 
 export default function ChannelDetails() {
   const context = useContext(AppContext);
@@ -182,38 +181,6 @@ export default function ChannelDetails() {
     setSaveDisabled(true);
   };
 
-  /**
-   * Image functions from
-   * https://github.com/expo/examples/blob/master/with-firebase-storage-upload/App.js
-   */
-  const uploadImageAsync = async (uri: string) => {
-    // Why are we using XMLHttpRequest? See:
-    // https://github.com/expo/expo/issues/2402#issuecomment-443726662
-    const blob: Blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function () {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function (e) {
-        console.log(e);
-        reject(new TypeError("Network request failed"));
-      };
-      xhr.responseType = "blob";
-      xhr.open("GET", uri, true);
-      xhr.send(null);
-    });
-
-    const fileRef = ref(storage, `${channelId}/profilePhoto.jpg`);
-    const result = await uploadBytes(fileRef, blob)
-      .then(() => console.log("Successfully uploaded bytes"))
-      .catch((error) => console.log(error.message));
-
-    // We're done with the blob, close and release it
-    blob.close();
-
-    return await getDownloadURL(fileRef);
-  };
-
   const handleImagePicked = async (
     pickerResult: ImagePicker.ImagePickerResult
   ) => {
@@ -231,7 +198,10 @@ export default function ChannelDetails() {
 
         console.log("compressed image:", compressedImage);
 
-        const uploadUrl = await uploadImageAsync(compressedImage.uri);
+        const uploadUrl = await uploadImage(
+          `${channelId}/groupPhoto.jpg`,
+          compressedImage.uri
+        );
         setPhotoUrl(uploadUrl);
 
         await context.channel.updatePartial({ set: { photoUrl: uploadUrl } });

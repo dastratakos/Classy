@@ -10,9 +10,6 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../components/Themed";
-import { auth, db, storage } from "../firebase";
-import { doc, updateDoc } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useContext, useRef, useState } from "react";
 
 import ActionSheet from "react-native-actionsheet";
@@ -24,9 +21,13 @@ import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import { SaveFormat } from "expo-image-manipulator";
 import Separator from "../components/Separator";
+import { User } from "../types";
+import { auth } from "../firebase";
+import { generateSubstrings } from "../utils";
+import { updateUser } from "../services/user";
+import { uploadImage } from "../services/storage";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { generateSubstrings } from "../utils";
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -53,63 +54,25 @@ export default function Settings() {
   ];
 
   const handleSavePress = () => {
-    context.setUser({
+    const newUser: User = {
       ...context.user,
-      name,
-      major,
-      gradYear,
-      interests,
-    });
-
-    setUserDB(context.user.id);
-
-    navigation.goBack();
-  };
-
-  const setUserDB = async (id: string) => {
-    const userRef = doc(db, "users", id);
-    await updateDoc(userRef, {
       name,
       major,
       gradYear,
       interests,
       photoUrl,
       keywords: generateSubstrings(name),
+    };
+
+    context.setUser(newUser);
+    updateUser(context.user.id, newUser);
+    context.streamClient.updateUser({
+      id: context.user.id,
+      name,
+      image: photoUrl,
     });
 
-    await context.streamClient.updateUser({ id, name });
-  };
-
-  /**
-   * Image functions from
-   * https://github.com/expo/examples/blob/master/with-firebase-storage-upload/App.js
-   */
-  const uploadImageAsync = async (uri: string) => {
-    // Why are we using XMLHttpRequest? See:
-    // https://github.com/expo/expo/issues/2402#issuecomment-443726662
-    const blob: Blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function () {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function (e) {
-        console.log(e);
-        reject(new TypeError("Network request failed"));
-      };
-      xhr.responseType = "blob";
-      xhr.open("GET", uri, true);
-      xhr.send(null);
-    });
-
-    const fileRef = ref(storage, `${context.user.id}/profilePhoto.jpg`);
-    const result = await uploadBytes(fileRef, blob)
-      .then(() => console.log("Successfully uploaded bytes"))
-      .catch((error) => console.log(error.message));
-
-    // We're done with the blob, close and release it
-    blob.close();
-
-    return await getDownloadURL(fileRef);
+    navigation.goBack();
   };
 
   const handleImagePicked = async (
@@ -129,15 +92,25 @@ export default function Settings() {
 
         console.log("compressed image:", compressedImage);
 
-        const uploadUrl = await uploadImageAsync(compressedImage.uri);
+        const uploadUrl = await uploadImage(
+          `${context.user.id}/profilePhoto.jpg`,
+          compressedImage.uri
+        );
         setPhotoUrl(uploadUrl);
 
-        context.setUser({
+        const newUser = {
           ...context.user,
           photoUrl,
-        });
+        };
+        context.setUser(newUser);
 
-        setUserDB(context.user.id);
+        updateUser(context.user.id, newUser);
+
+        context.streamClient.updateUser({
+          id: context.user.id,
+          name,
+          image: photoUrl,
+        });
       }
     } catch (error) {
       console.log(error);

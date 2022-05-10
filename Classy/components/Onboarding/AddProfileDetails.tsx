@@ -9,8 +9,6 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../Themed";
-import { storage } from "../../firebase";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useContext, useRef, useState } from "react";
 
 import ActionSheet from "react-native-actionsheet";
@@ -22,6 +20,7 @@ import Layout from "../../constants/Layout";
 import ProfilePhoto from "../ProfilePhoto";
 import { SaveFormat } from "expo-image-manipulator";
 import useColorScheme from "../../hooks/useColorScheme";
+import { uploadImage } from "../../services/storage";
 
 export default function AddProfileDetails({
   photoUrl,
@@ -64,38 +63,6 @@ export default function AddProfileDetails({
     "Cancel",
   ];
 
-  /**
-   * Image functions from
-   * https://github.com/expo/examples/blob/master/with-firebase-storage-upload/App.js
-   */
-  const uploadImageAsync = async (uri: string) => {
-    // Why are we using XMLHttpRequest? See:
-    // https://github.com/expo/expo/issues/2402#issuecomment-443726662
-    const blob: Blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function () {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function (e) {
-        console.log(e);
-        reject(new TypeError("Network request failed"));
-      };
-      xhr.responseType = "blob";
-      xhr.open("GET", uri, true);
-      xhr.send(null);
-    });
-
-    const fileRef = ref(storage, `${context.user.id}/profilePhoto.jpg`);
-    const result = await uploadBytes(fileRef, blob)
-      .then(() => console.log("Successfully uploaded bytes"))
-      .catch((error) => console.log(error.message));
-
-    // We're done with the blob, close and release it
-    blob.close();
-
-    return await getDownloadURL(fileRef);
-  };
-
   const handleImagePicked = async (
     pickerResult: ImagePicker.ImagePickerResult
   ) => {
@@ -113,7 +80,10 @@ export default function AddProfileDetails({
 
         console.log("compressed image:", compressedImage);
 
-        const uploadUrl = await uploadImageAsync(compressedImage.uri);
+        const uploadUrl = await uploadImage(
+          `${context.user.id}/profilePhoto.jpg`,
+          compressedImage.uri
+        );
         setPhotoUrl(uploadUrl);
 
         context.setUser({

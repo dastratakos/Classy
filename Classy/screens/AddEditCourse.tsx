@@ -3,16 +3,7 @@ import * as Haptics from "expo-haptics";
 import { ActivityIndicator, Text, View } from "../components/Themed";
 import { AddEditCourseProps, Schedule } from "../types";
 import { ScrollView, StyleSheet } from "react-native";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDocs,
-  increment,
-  query,
-  updateDoc,
-} from "firebase/firestore";
-import { getCurrentTermId, termIdToName, termIdToYear } from "../utils";
+import { getCurrentTermId, termIdToName } from "../utils";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -22,9 +13,9 @@ import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import ScheduleCard from "../components/ScheduleCard";
 import SquareButton from "../components/Buttons/SquareButton";
-import { db } from "../firebase";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { addEnrollment, getCourseTerms } from "../services/courses";
 
 export default function AddEditCourse({ route }: AddEditCourseProps) {
   const context = useContext(AppContext);
@@ -48,29 +39,15 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
   const [doneLoading, setDoneLoading] = useState(false);
 
   useEffect(() => {
-    const getTerms = async () => {
-      const q = query(
-        collection(doc(db, "courses", `${course.courseId}`), "terms")
-      );
-
-      const res = {};
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        let resSchedules = doc.data().schedules;
-        resSchedules.sort(
-          (a: Schedule, b: Schedule) => a.sectionNumber > b.sectionNumber
-        );
-        let resStudents = doc.data().students;
-
-        res[`${doc.id}`] = resSchedules;
-      });
+    const loadScreen = async () => {
+      const res = await getCourseTerms(course.courseId);
       setTerms({ ...res });
 
       const currentTermId = getCurrentTermId();
       if (currentTermId in res) {
         context.setSelectedTerm(currentTermId);
-        if (terms[`${context.selectedTerm}`])
-          setGrading(terms[`${context.selectedTerm}`][0].grading[0]);
+        if (res[`${currentTermId}`])
+          setGrading(res[`${currentTermId}`][0].grading[0]);
       } else {
         context.setSelectedTerm("");
       }
@@ -78,7 +55,7 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
       setLoading(false);
     };
 
-    getTerms();
+    loadScreen();
   }, []);
 
   const Schedules = () => {
@@ -102,7 +79,7 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
           (schedule: Schedule, i: number) => (
             <ScheduleCard
               schedule={schedule}
-              key={i}
+              key={`${i}`}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 handleScheduleSelected(i);
@@ -115,50 +92,24 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
     );
   };
 
-  const addEnrollmentDB = async () => {
+  const handleDonePressed = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     setDoneLoading(true);
 
+    /* Build schedulesList. */
     let schedulesList: Schedule[] = [];
     selectedScheduleIndices.forEach((i) =>
       schedulesList.push(terms[`${context.selectedTerm}`][i])
     );
 
-    /* 1. Create doc in enrollments collection. */
-    const data = {
-      code: course.code,
-      courseId: course.courseId,
-      grading: grading,
-      schedules: schedulesList,
-      termId: context.selectedTerm,
-      title: course.title,
-      units: selectedUnits,
-      userId: context.user.id,
-    };
-
-    await addDoc(collection(db, "enrollments"), data);
-
-    /* 2. Update number of units in user doc in users collection. */
-    // TODO: need to check if that field exists in the user terms?
-    const year = termIdToYear(context.selectedTerm);
-    const termKey = `terms.${year}.${context.selectedTerm}`;
-    let userData = {};
-    userData[termKey] = increment(selectedUnits);
-
-    await updateDoc(doc(db, "users", context.user.id), userData);
-
-    /* 3. Updates students list for that term in courses collection. */
-    const studentsKey = `students.${context.user.id}`;
-    let courseData = {};
-    courseData[studentsKey] = true;
-    await updateDoc(
-      doc(
-        doc(db, "courses", `${course.courseId}`),
-        "terms",
-        context.selectedTerm
-      ),
-      courseData
+    await addEnrollment(
+      course,
+      grading,
+      schedulesList,
+      context.selectedTerm,
+      selectedUnits,
+      context.user.id
     );
 
     setDoneLoading(false);
@@ -265,7 +216,7 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
         <View style={{ width: "48%" }}>
           <Button
             text="Done"
-            onPress={addEnrollmentDB}
+            onPress={handleDonePressed}
             disabled={
               !context.selectedTerm ||
               !selectedUnits ||

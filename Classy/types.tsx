@@ -253,6 +253,7 @@ export type User = {
   photoUrl: string;
   expoPushToken: string;
   terms: Object;
+  keywords: string[];
 };
 
 export type Context = {
