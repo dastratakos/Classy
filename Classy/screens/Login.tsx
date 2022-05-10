@@ -4,17 +4,9 @@ import {
   StyleSheet,
   TextInput,
 } from "react-native";
-import { LoginProps, User } from "../types";
+import { LoginProps } from "../types";
 import { Text, View } from "../components/Themed";
-import { auth, db, signInWithEmailAndPassword } from "../firebase";
-import {
-  collection,
-  doc,
-  getDoc,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { auth, signInWithEmailAndPassword } from "../firebase";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -24,6 +16,8 @@ import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { getUser } from "../services/users";
+import { getFriendIds } from "../services/friends";
 
 export default function Login({ route }: LoginProps) {
   const [email, setEmail] = useState(route.params?.email || "");
@@ -66,47 +60,14 @@ export default function Login({ route }: LoginProps) {
 
   const setUp = async (id: string) => {
     const user = await getUser(id);
-    getFriendIds(id);
-    connectStreamChatUser(id, user.name, user.photoUrl);
+    const newUser = { ...context.user, ...user };
+    context.setUser(newUser)
+
+    context.setFriendIds(await getFriendIds(id));
+    connectStreamChatUser(id, newUser.name, newUser.photoUrl);
     navigation.reset({
       index: 0,
       routes: [{ name: "Root" }],
-    });
-  };
-
-  const getUser = async (id: string) => {
-    const docRef = doc(db, "users", id);
-    const docSnap = await getDoc(docRef);
-
-    console.log("user = ", docSnap.data());
-
-    if (docSnap.exists()) {
-      const user = { ...context.user, ...docSnap.data() };
-      context.setUser(user);
-      return user;
-    } else {
-      console.log(`Could not find user: ${id}`);
-      return {} as User;
-    }
-  };
-
-  const getFriendIds = async (id: string) => {
-    const q = query(
-      collection(db, "friends"),
-      where(`ids.${id}`, "==", true),
-      where("status", "==", "friends")
-    );
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const friendIds = [] as string[];
-      querySnapshot.forEach((doc) => {
-        for (let key in doc.data().ids) {
-          if (key !== id) {
-            friendIds.push(key);
-            return;
-          }
-        }
-      });
-      context.setFriendIds(friendIds);
     });
   };
 

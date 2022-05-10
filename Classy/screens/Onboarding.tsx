@@ -1,6 +1,5 @@
 import { Animated, FlatList, Image, StyleSheet } from "react-native";
-import { Text, View } from "../components/Themed";
-import { doc, updateDoc } from "firebase/firestore";
+import { View } from "../components/Themed";
 import { useContext, useRef, useState } from "react";
 
 import AddProfileDetails from "../components/Onboarding/AddProfileDetails";
@@ -12,10 +11,10 @@ import Paginator from "../components/Paginator";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { db } from "../firebase";
 import { generateSubstrings } from "../utils";
 import OnboardingInfo from "../components/Onboarding/OnboardingInfo";
 import Layout from "../constants/Layout";
+import { updateUser } from "../services/users";
 
 export default function Onboarding() {
   const navigation = useNavigation();
@@ -47,7 +46,7 @@ export default function Onboarding() {
       // endYear,
     };
 
-    updateDoc(doc(db, "users", context.user.id), data);
+    updateUser(context.user.id, data)
     context.setUser({ ...context.user, ...data });
 
     navigation.reset({

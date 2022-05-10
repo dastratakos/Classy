@@ -5,19 +5,19 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../components/Themed";
-import { Timestamp, doc, setDoc } from "firebase/firestore";
-import { auth, createUserWithEmailAndPassword, db } from "../firebase";
+import { auth, createUserWithEmailAndPassword } from "../firebase";
 import { useContext, useState } from "react";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
+import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import { RegisterProps } from "../types";
 import { sendEmailVerification } from "firebase/auth";
+import { setUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import Button from "../components/Buttons/Button";
 
 export default function Register({ route }: RegisterProps) {
   const [email, setEmail] = useState(route.params?.email || "");
@@ -40,23 +40,15 @@ export default function Register({ route }: RegisterProps) {
         if (auth.currentUser) sendEmailVerification(auth.currentUser);
 
         const uid = response.user.uid;
-        const data = {
-          id: uid,
-          email,
-          createdAt: Timestamp.now(),
-          isPrivate: false,
-        };
 
         connectStreamChatUser(uid);
-        setDoc(doc(db, "users", uid), data)
-          .then(() => {
-            const user = { ...context.user, ...data };
-            context.setUser(user);
-            navigation.navigate("Onboarding");
-          })
-          .catch((error) => {
-            setErrorMessage(error);
-          });
+        setUser(uid, email);
+
+        context.setUser({
+          ...context.user,
+          ...{ id: uid, email, isPrivate: false },
+        });
+        navigation.navigate("Onboarding");
       })
       .catch((error) => setErrorMessage(error.message));
   };

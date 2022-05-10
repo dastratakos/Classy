@@ -1,6 +1,6 @@
 import * as Haptics from "expo-haptics";
 
-import { ActivityIndicator, Icon, Text, View } from "../components/Themed";
+import { Icon, Text, View } from "../components/Themed";
 import {
   Alert,
   Pressable,
@@ -9,19 +9,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Course, FriendProfileProps, User } from "../types";
-import {
-  Timestamp,
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  orderBy,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import { getCurrentTermId, sendPushNotification } from "../utils";
 import { useContext, useEffect, useRef, useState } from "react";
 
@@ -37,8 +25,18 @@ import ProfilePhoto from "../components/ProfilePhoto";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
 import TabView from "../components/TabView";
-import { db } from "../firebase";
 import events from "./dummyEvents";
+import { getEnrollmentsForTerm } from "../services/enrollments";
+import {
+  acceptRequest,
+  addFriend,
+  blockUser,
+  blockUserWithDoc,
+  deleteFriendship,
+  getFriendIds,
+  getFriendStatus,
+} from "../services/friends";
+import { getUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
@@ -78,109 +76,18 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    getUser(route.params.id);
-    getFriendStatus(route.params.id);
+    setUser(await getUser(route.params.id));
+    const res = await getFriendStatus(context.user.id, route.params.id);
+    setFriendStatus(res.friendStatus);
+    setFriendDocId(res.friendDocId);
     getFriendIds(route.params.id).then((res) => {
       setNumFriends(`${res.length}`);
     });
-    getEnrollmentsForTerm(route.params.id, getCurrentTermId());
+    setCourses(
+      await getEnrollmentsForTerm(route.params.id, getCurrentTermId())
+    );
     setInterval(checkInClass, 1000);
     setRefreshing(false);
-  };
-
-  const getEnrollmentsForTerm = async (id: string, termId: string) => {
-    const q = query(
-      collection(db, "enrollments"),
-      where("userId", "==", id),
-      where("termId", "==", termId),
-      orderBy("code")
-    );
-
-    const results = [];
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      results.push(doc.data());
-    });
-    setCourses(results);
-  };
-
-  const getUser = async (id: string) => {
-    const docRef = doc(db, "users", id);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      setUser(docSnap.data() as User);
-    } else {
-      console.log(`Could not find user: ${id}`);
-      alert("This account does not exist.");
-    }
-  };
-
-  const getFriendStatus = async (id: string) => {
-    /**
-     * Possible friend statuses:
-     *   - not friends
-     *   - request sent (you sent this friend a request)
-     *   - request received (you received a request from this friend)
-     *   - friends
-     */
-    setFriendStatusLoading(true);
-
-    const q = query(
-      collection(db, "friends"),
-      where(`ids.${id}`, "==", true),
-      where(`ids.${context.user.id}`, "==", true)
-    );
-
-    // default status
-    setFriendStatus("not friends");
-    setFriendDocId("");
-
-    const querySnapshot = await getDocs(q);
-
-    querySnapshot.forEach((res) => {
-      /* Delete any extra friendship documents. */
-      // if (friendStatus !== "not friends") {
-      //   deleteDoc(doc(db, "friends", res.id));
-      //   return;
-      // }
-
-      console.log("friendship:", res.data());
-      setFriendDocId(res.id);
-
-      if (res.data().status === "requested") {
-        if (res.data().requesterId[context.user.id])
-          setFriendStatus("request sent");
-        else setFriendStatus("request received");
-      } else if (res.data().status === "blocked") {
-        if (res.data().requesterId[context.user.id])
-          setFriendStatus("block sent");
-        else setFriendStatus("block received");
-      } else {
-        setFriendStatus(res.data().status);
-      }
-    });
-
-    setFriendStatusLoading(false);
-  };
-
-  const getFriendIds = async (id: string) => {
-    const q = query(
-      collection(db, "friends"),
-      where(`ids.${id}`, "==", true),
-      where("status", "==", "friends")
-    );
-    const friendIds = [] as string[];
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      for (let key in doc.data().ids) {
-        if (key !== id) {
-          friendIds.push(key);
-          return;
-        }
-      }
-    });
-    return friendIds;
   };
 
   const checkInClass = () => {
@@ -211,88 +118,45 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     setInClass(false);
   };
 
-  const addFriend = async () => {
-    const userId = context.user.id;
-    const friendId = user.id;
-
-    const docRef = await addDoc(collection(db, "friends"), {
-      ids: {
-        [userId]: true,
-        [friendId]: true,
-      },
-      requesterId: {
-        [userId]: true,
-        [friendId]: false,
-      },
-      status: "requested",
-    });
+  const handleAddFriend = async () => {
+    setAddFriendDisabled(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     setFriendStatus("request sent");
-    console.log("Friend request send with ID:", docRef.id);
-    setFriendDocId(docRef.id);
+    setFriendDocId(await addFriend(context.user.id, user.id));
 
-    if (user.expoPushToken)
-      sendPushNotification(
-        user.expoPushToken,
-        `${context.user.name} sent you a friend request`
-      );
+    sendPushNotification(
+      user.expoPushToken,
+      `${context.user.name} sent you a friend request`
+    );
   };
 
-  const acceptRequest = async () => {
-    const docRef = doc(db, "friends", friendDocId);
-    await updateDoc(docRef, { status: "friends" });
+  const handleAcceptRequest = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     setFriendStatus("friends");
+    acceptRequest(friendDocId);
 
-    if (user.expoPushToken)
-      sendPushNotification(
-        user.expoPushToken,
-        `${context.user.name} accepted your friend request`
-      );
+    sendPushNotification(
+      user.expoPushToken,
+      `${context.user.name} accepted your friend request`
+    );
   };
 
-  const deleteFriendship = async () => {
+  const handleDeleteFriendship = async () => {
     setFriendStatus("not friends");
     setAddFriendDisabled(false);
 
-    const docRef = doc(db, "friends", friendDocId);
-    await deleteDoc(docRef);
+    deleteFriendship(friendDocId);
 
     setFriendDocId("");
   };
 
-  const blockUser = async () => {
+  const handleBlockUser = async () => {
     setFriendStatus("block sent");
 
-    const userId = context.user.id;
-    const friendId = user.id;
-
-    if (friendDocId) {
-      const docRef = doc(db, "friends", friendDocId);
-
-      await updateDoc(docRef, {
-        requesterId: {
-          [userId]: true,
-          [friendId]: false,
-        },
-        status: "blocked",
-      });
-    } else {
-      const docRef = await addDoc(collection(db, "friends"), {
-        ids: {
-          [userId]: true,
-          [friendId]: true,
-        },
-        requesterId: {
-          [userId]: true,
-          [friendId]: false,
-        },
-        status: "blocked",
-      });
-
-      setFriendDocId(docRef.id);
-      console.log("User blocked with doc ID:", docRef.id);
-    }
+    if (friendDocId) blockUserWithDoc(context.user.id, user.id, friendDocId);
+    else blockUser(context.user.id, user.id);
   };
 
   const cancelFriendRequestAlert = () =>
@@ -303,7 +167,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       },
       {
         text: "OK",
-        onPress: deleteFriendship,
+        onPress: handleDeleteFriendship,
       },
     ]);
 
@@ -318,7 +182,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         },
         {
           text: "OK",
-          onPress: deleteFriendship,
+          onPress: handleDeleteFriendship,
         },
       ]
     );
@@ -334,7 +198,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         },
         {
           text: "OK",
-          onPress: blockUser,
+          onPress: handleBlockUser,
         },
       ]
     );
@@ -350,7 +214,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         },
         {
           text: "OK",
-          onPress: deleteFriendship,
+          onPress: handleDeleteFriendship,
         },
       ]
     );
@@ -504,13 +368,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                       <View style={{ marginRight: Layout.spacing.small }}>
                         <Button
                           text="Add Friend"
-                          onPress={() => {
-                            setAddFriendDisabled(true);
-                            Haptics.impactAsync(
-                              Haptics.ImpactFeedbackStyle.Medium
-                            );
-                            addFriend();
-                          }}
+                          onPress={handleAddFriend}
                           disabled={addFriendDisabled}
                           emphasized
                         />
@@ -528,12 +386,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                       <View style={{ marginRight: Layout.spacing.small }}>
                         <Button
                           text="Accept request"
-                          onPress={() => {
-                            Haptics.impactAsync(
-                              Haptics.ImpactFeedbackStyle.Medium
-                            );
-                            acceptRequest();
-                          }}
+                          onPress={handleAcceptRequest}
                           emphasized
                         />
                       </View>

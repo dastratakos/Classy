@@ -24,9 +24,8 @@ import { SaveFormat } from "expo-image-manipulator";
 import Separator from "../components/Separator";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { db } from "../firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { uploadImage } from "../services/storage";
+import { getChannelId } from "../services/messages";
 
 export default function ChannelDetails() {
   const context = useContext(AppContext);
@@ -63,8 +62,9 @@ export default function ChannelDetails() {
       if (state.channel.name === "Direct Message") {
         /* Direct Message. */
         membersList = state.members.filter(
-          (member) => member.user.id === context.user.id
+          (member) => member.user.id !== context.user.id
         );
+        setMembers(membersList);
       } else {
         /* Group Chat. */
         membersList.forEach((member) => {
@@ -83,26 +83,7 @@ export default function ChannelDetails() {
         }
         setMembers(membersList);
 
-        const memberConstraints = [
-          where(`members.${context.user.id}`, "==", true),
-        ];
-        membersList.forEach((member) => {
-          memberConstraints.push(
-            where(`members.${member.user.id}`, "==", true)
-          );
-        });
-
-        const q = query(
-          collection(db, "channels"),
-          ...memberConstraints,
-          where("memberCount", "==", Object.keys(state.members).length)
-        );
-
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-          setChannelId(doc.id);
-          console.log(`Found existing channel doc: ${doc.id}`);
-        });
+        setChannelId(await getChannelId(membersList));
       }
     };
 
@@ -331,7 +312,7 @@ export default function ChannelDetails() {
             <FriendCard
               friend={{
                 ...member.user,
-                major: member.role,
+                major: members.length > 1 ? member.role : null,
                 photoUrl: member.user.image,
               }}
               key={member.user.id}

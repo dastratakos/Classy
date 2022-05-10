@@ -4,17 +4,7 @@ import {
   StyleSheet,
   TextInput,
 } from "react-native";
-import { auth, db } from "../firebase";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-  writeBatch,
-} from "firebase/firestore";
+import { auth } from "../firebase";
 import { deleteUser, signOut, updatePassword } from "firebase/auth";
 import { useContext, useState } from "react";
 
@@ -28,6 +18,7 @@ import { Text } from "../components/Themed";
 import { signInWithEmailAndPassword } from "../firebase";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { deleteUserCompletely, updateUser } from "../services/users";
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -46,14 +37,7 @@ export default function Settings() {
       isPrivate: isPrivate,
     });
 
-    setUserDB(context.user.id);
-  };
-
-  const setUserDB = async (id: string) => {
-    const userRef = doc(db, "users", id);
-    await updateDoc(userRef, {
-      isPrivate: context.user.isPrivate,
-    });
+    updateUser(context.user.id, { isPrivate });
   };
 
   const handleSignOut = () => {
@@ -122,46 +106,13 @@ export default function Settings() {
       .then((response) => {
         const user = response.user;
 
-        /* Get all UserCourses and delete. */
-        const batch1 = writeBatch(db);
-        const q1 = query(
-          collection(db, "userCourses"),
-          where("userId", "==", user.uid)
-        );
-        getDocs(q1)
-          .then((querySnapshot1) => {
-            querySnapshot1.forEach((doc) => {
-              batch1.delete(doc.ref);
-            });
-            batch1.commit();
+        deleteUserCompletely(user.uid);
+        deleteUser(user);
 
-            /* Get all Friends (relationships) and delete. */
-            const batch2 = writeBatch(db);
-            const q2 = query(
-              collection(db, "friends"),
-              where(`ids.${user.uid}`, "==", true)
-            );
-            getDocs(q2).then((querySnapshot2) => {
-              querySnapshot2.forEach((doc) => {
-                batch2.delete(doc.ref);
-              });
-              batch2.commit();
-
-              /* Get the user document and delete it. */
-              deleteDoc(doc(db, "users", user.uid));
-
-              /* Delete the user from Firebase auth. */
-              deleteUser(user)
-                .then(() => {
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: "AuthStack" }],
-                  });
-                })
-                .catch((error) => setErrorMessage(error.message));
-            });
-          })
-          .catch((error) => setErrorMessage(error.message));
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
       })
       .catch((error) => setErrorMessage(error.message));
   };

@@ -8,38 +8,30 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import {
-  Timestamp,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-  orderBy,
-} from "firebase/firestore";
 import { User, sendEmailVerification } from "firebase/auth";
-import { auth, db } from "../firebase";
+import { getCurrentTermId, termIdToFullName } from "../utils";
+import { getUser, updateUser } from "../services/users";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Calendar from "../components/Calendar";
-import EnrollmentList from "../components/EnrollmentList";
 import Colors from "../constants/Colors";
 import Constants from "expo-constants";
 import { Enrollment } from "../types";
+import EnrollmentList from "../components/EnrollmentList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
+import TabView from "../components/TabView";
+import { Timestamp } from "firebase/firestore";
+import { auth } from "../firebase";
 import events from "./dummyEvents";
+import { getEnrollmentsForTerm } from "../services/enrollments";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import TabView from "../components/TabView";
-import { getCurrentTermId, termIdToFullName } from "../utils";
 
 export default function Profile() {
   const context = useContext(AppContext);
@@ -54,14 +46,18 @@ export default function Profile() {
   const [inClass, setInClass] = useState(false);
 
   useEffect(() => {
-    // if (!context.user && auth.currentUser) getUser(auth.currentUser.uid);
+    const loadScreen = async () => {
+      // if (!context.user && auth.currentUser) getUser(auth.currentUser.uid);
+      if (auth.currentUser) {
+        const user = await getUser(auth.currentUser.uid);
+        context.setUser({ ...context.user, ...user });
 
-    if (auth.currentUser) {
-      getUser(auth.currentUser.uid);
-      getEnrollmentsForTerm(context.user.id, getCurrentTermId()).then(() =>
-        setInterval(checkInClass, 1000)
-      );
-    }
+        getEnrollmentsForTerm(context.user.id, getCurrentTermId()).then(() =>
+          setInterval(checkInClass, 1000)
+        );
+      }
+    };
+    loadScreen();
 
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) setShowEmailVerification(!user.emailVerified);
@@ -74,40 +70,16 @@ export default function Profile() {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await getUser(context.user.id);
-    await getEnrollmentsForTerm(context.user.id, getCurrentTermId());
+    const user = await getUser(context.user.id);
+    context.setUser({ ...context.user, ...user });
+    setEnrollments(
+      await getEnrollmentsForTerm(context.user.id, getCurrentTermId())
+    );
     if (auth.currentUser)
       setShowEmailVerification(!auth.currentUser.emailVerified);
     console.log("emailVerified:", auth.currentUser?.emailVerified);
     checkInClass();
     setRefreshing(false);
-  };
-
-  const getUser = async (id: string) => {
-    const docRef = doc(db, "users", id);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      context.setUser({ ...context.user, ...docSnap.data() });
-    } else {
-      console.log(`Could not find user: ${id}`);
-    }
-  };
-
-  const getEnrollmentsForTerm = async (id: string, termId: string) => {
-    const q = query(
-      collection(db, "enrollments"),
-      where("userId", "==", id),
-      where("termId", "==", termId),
-      orderBy("code")
-    );
-
-    const results = [];
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      results.push(doc.data());
-    });
-    setEnrollments(results);
   };
 
   const checkInClass = () => {
@@ -175,8 +147,7 @@ export default function Profile() {
     registerForPushNotificationsAsync().then((expoPushToken) => {
       if (expoPushToken) {
         context.setUser({ ...context.user, expoPushToken });
-        const userRef = doc(db, "users", context.user.id);
-        updateDoc(userRef, { expoPushToken });
+        updateUser(context.user.id, { expoPushToken });
       }
     });
   }, []);

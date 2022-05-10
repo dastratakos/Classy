@@ -2,7 +2,6 @@ import * as Haptics from "expo-haptics";
 
 import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 import {
-  addDoc,
   collection,
   getDocs,
   limit,
@@ -23,6 +22,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import Button from "../components/Buttons/Button";
 import Layout from "../constants/Layout";
+import { getChannelId, getNewGroupChatId } from "../services/messages";
 
 export default function NewMessage() {
   const context = useContext(AppContext);
@@ -102,29 +102,7 @@ export default function NewMessage() {
   const createGroupChat = async () => {
     console.log("Creating group chat");
 
-    /**
-     * For a group chat with 3 or more people, we will create a Firestore object
-     * in the "channels" collection to represent it. The channelId will be the
-     * id of the corresponding Firestore doc.
-     */
-    const memberConstraints = [where(`members.${context.user.id}`, "==", true)];
-    Object.keys(members).forEach((id) => {
-      memberConstraints.push(where(`members.${id}`, "==", true));
-    });
-
-    const q = query(
-      collection(db, "channels"),
-      ...memberConstraints,
-      where("memberCount", "==", Object.keys(members).length + 1)
-    );
-
-    let channelId = "";
-
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      channelId = doc.id;
-      console.log(`Found existing channel doc: ${doc.id}`);
-    });
+    let channelId = await getChannelId(members, context.user.id);
 
     if (channelId === "") {
       let membersObj = {};
@@ -132,14 +110,8 @@ export default function NewMessage() {
       Object.keys(members).forEach((id) => {
         membersObj[`${id}`] = true;
       });
-      const data = {
-        members: membersObj,
-        memberCount: Object.keys(membersObj).length,
-      };
-
-      const doc = await addDoc(collection(db, "channels"), data);
-      channelId = doc.id;
-      console.log(`Created new channel doc: ${doc.id}`);
+      
+      channelId = await getNewGroupChatId(membersObj);
     }
 
     const channel = context.streamClient.channel("messaging", channelId, {
