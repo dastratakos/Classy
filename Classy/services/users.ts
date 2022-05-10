@@ -80,14 +80,31 @@ export const deleteUserCompletely = async (userId: string) => {
   });
 };
 
-export const searchUsers = async (userId: string, search: string) => {
-  if (search === "") return [];
+export const searchUsers = async (
+  userId: string,
+  search: string,
+  maxLimit: number = 3
+) => {
+  if (search === "") {
+    const qAll = query(
+      collection(db, "users"),
+      orderBy("name"),
+      limit(maxLimit)
+    );
+
+    const res: User[] = [];
+    const querySnapshot = await getDocs(qAll);
+    querySnapshot.forEach((doc) => {
+      if (doc.id !== userId) res.push(doc.data() as User);
+    });
+    return res;
+  }
 
   const q = query(
     collection(db, "users"),
     where("keywords", "array-contains", search.toLowerCase()),
     orderBy("name"),
-    limit(3)
+    limit(maxLimit)
   );
 
   const res: User[] = [];

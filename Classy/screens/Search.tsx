@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, FlatList } from "react-native";
 import { View } from "../components/Themed";
 
@@ -28,9 +28,16 @@ export default function Search() {
 
   const [refreshing, setRefreshing] = useState(false);
 
+  useEffect(() => {
+    const loadScreen = async () => {
+      handleSearchUsers("");
+    };
+    loadScreen();
+  }, []);
+
   const handleSearchUsers = async (search: string) => {
     if (search === "") {
-      setUserSearchResults([]);
+      setUserSearchResults(await searchUsers(context.user.id, search, 25));
       return;
     }
 
