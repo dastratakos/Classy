@@ -13,22 +13,18 @@ import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { getEnrollmentsForTerm } from "../services/enrollments";
 import EnrollmentList from "../components/EnrollmentList";
-import { getUser } from "../services/users";
 
 export default function Enrollments({ route }: EnrollmentsProps) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
-  const context = useContext(AppContext);
 
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-  const [user, setUser] = useState<User>({} as User);
 
   useEffect(() => {
     const loadScreen = async () => {
       setEnrollments(
         await getEnrollmentsForTerm(route.params.userId, route.params.termId)
       );
-      setUser(await getUser(route.params.userId));
     };
     loadScreen();
   }, []);
