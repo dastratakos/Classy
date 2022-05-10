@@ -1,4 +1,4 @@
-import { Animated, FlatList, StyleSheet } from "react-native";
+import { Animated, FlatList, Image, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 import { doc, updateDoc } from "firebase/firestore";
 import { useContext, useRef, useState } from "react";
@@ -9,14 +9,13 @@ import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Paginator from "../components/Paginator";
-import PlanClasses from "../components/Onboarding/PlanClasses";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SearchForPeerOrClass from "../components/Onboarding/SearchForPeerOrClass";
-import TakeClasses from "../components/Onboarding/TakeClasses";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { db } from "../firebase";
 import { generateSubstrings } from "../utils";
+import OnboardingInfo from "../components/Onboarding/OnboardingInfo";
+import Layout from "../constants/Layout";
 
 export default function Onboarding() {
   const navigation = useNavigation();
@@ -97,15 +96,50 @@ export default function Onboarding() {
     },
     {
       id: 1,
-      component: <PlanClasses />,
+      component: (
+        <OnboardingInfo
+          title="Plan classes"
+          body="Add your classes to Classy and see your day at a glance."
+          image={
+            <Image
+              source={require("../assets/images/onboarding/onboarding1.png")}
+              style={styles.image}
+            />
+          }
+        />
+      ),
     },
     {
       id: 2,
-      component: <TakeClasses />,
+      component: (
+        <OnboardingInfo
+          title="Take classes with friends"
+          body="View your friends' daily schedules and their past, current, and
+          future classes to help you plan your schedule."
+          image={
+            <Image
+              source={require("../assets/images/onboarding/onboarding2.png")}
+              style={styles.image}
+            />
+          }
+        />
+      ),
     },
     {
       id: 3,
-      component: <SearchForPeerOrClass />,
+      component: (
+        <OnboardingInfo
+          title="Search for any peer or class"
+          body="Discover classes that your peers have taken, and meet students
+          with similar classes or interests."
+          image={
+            <Image
+              source={require("../assets/images/onboarding/onboarding3.png")}
+              style={styles.image}
+            />
+          }
+        />
+      ),
     },
   ];
 
@@ -144,4 +178,10 @@ export default function Onboarding() {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  image: {
+    height: Layout.window.width,
+    width: Layout.window.width,
+    resizeMode: "contain",
+  },
+});

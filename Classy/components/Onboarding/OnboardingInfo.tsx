@@ -1,20 +1,24 @@
-import { Image, StyleSheet } from "react-native";
+import { Image, ImageSourcePropType, StyleSheet } from "react-native";
 import { Text, View } from "../Themed";
 import Layout from "../../constants/Layout";
+import { Component, ReactNode } from "react";
 
-export default function SearchForPeerOrClass() {
+export default function OnboardingInfo({
+  title,
+  body,
+  image,
+}: {
+  title: string;
+  body: string;
+  // imageSource: ImageSourcePropType;
+  image: ReactNode;
+}) {
   return (
     <View style={styles.screenContainer}>
-      <Image
-        source={require("../../assets/images/onboarding/onboarding3.png")}
-        style={styles.image}
-      />
+      {image}
       <View style={styles.textContainer}>
-        <Text style={styles.title}>Search for any peer or class</Text>
-        <Text style={styles.body}>
-          Discover classes that your peers have taken, and meet students with
-          similar classes or interests.
-        </Text>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.body}>{body}</Text>
       </View>
     </View>
   );
