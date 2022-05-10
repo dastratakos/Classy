@@ -6,13 +6,14 @@ import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
-import { Enrollment, EnrollmentsProps } from "../types";
+import { Enrollment, EnrollmentsProps, User } from "../types";
 import Layout from "../constants/Layout";
 import { termIdToFullName } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { getEnrollmentsForTerm } from "../services/enrollments";
 import EnrollmentList from "../components/EnrollmentList";
+import { getUser } from "../services/users";
 
 export default function Enrollments({ route }: EnrollmentsProps) {
   const navigation = useNavigation();
@@ -20,12 +21,14 @@ export default function Enrollments({ route }: EnrollmentsProps) {
   const context = useContext(AppContext);
 
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [user, setUser] = useState<User>({} as User);
 
   useEffect(() => {
     const loadScreen = async () => {
       setEnrollments(
         await getEnrollmentsForTerm(route.params.userId, route.params.termId)
       );
+      setUser(await getUser(route.params.userId));
     };
     loadScreen();
   }, []);
@@ -46,7 +49,7 @@ export default function Enrollments({ route }: EnrollmentsProps) {
       <View style={styles.ctaContainer}>
         <Button
           text={"View All Quarters"}
-          onPress={() => navigation.navigate("MyQuarters")}
+          onPress={() => navigation.navigate("Quarters", { user })}
           wide
         />
       </View>

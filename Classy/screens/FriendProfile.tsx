@@ -10,7 +10,11 @@ import {
 } from "react-native";
 import { Enrollment, FriendProfileProps, User } from "../types";
 import { Timestamp } from "firebase/firestore";
-import { getCurrentTermId, sendPushNotification } from "../utils";
+import {
+  getCurrentTermId,
+  sendPushNotification,
+  termIdToFullName,
+} from "../utils";
 import { useContext, useEffect, useRef, useState } from "react";
 
 import ActionSheet from "react-native-actionsheet";
@@ -457,33 +461,44 @@ export default function FriendProfile({ route }: FriendProfileProps) {
           />
         </View>
         {user.isPrivate && !(friendStatus === "friends") ? null : (
-          <Pressable
-            onPress={() =>
-              navigation.navigate("CourseSimilarity", { id: route.params.id })
-            }
-            style={({ pressed }) => [
-              {
-                opacity: pressed ? 0.5 : 1,
-                backgroundColor: Colors[colorScheme].cardBackground,
-              },
-              AppStyles.boxShadow,
-              styles.similarityContainer,
-            ]}
-          >
-            <View
-              style={[
-                StyleSheet.absoluteFill,
-                styles.similarityBar,
+          <>
+            <Pressable
+              onPress={() =>
+                navigation.navigate("CourseSimilarity", { id: route.params.id })
+              }
+              style={({ pressed }) => [
                 {
-                  backgroundColor: Colors[colorScheme].photoBackground,
-                  width: `${57.54}%`,
+                  opacity: pressed ? 0.5 : 1,
+                  backgroundColor: Colors[colorScheme].cardBackground,
                 },
+                AppStyles.boxShadow,
+                styles.similarityContainer,
               ]}
-            />
-            <Text style={styles.similarityText}>
-              {Math.round(57.54)}% course similarity
-            </Text>
-          </Pressable>
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  styles.similarityBar,
+                  {
+                    backgroundColor: Colors[colorScheme].photoBackground,
+                    width: `${57.54}%`,
+                  },
+                ]}
+              />
+              <Text style={styles.similarityText}>
+                {Math.round(57.54)}% course similarity
+              </Text>
+            </Pressable>
+            <View style={[AppStyles.row, { marginTop: Layout.spacing.medium }]}>
+              <Text style={styles.term}>
+                {termIdToFullName(getCurrentTermId())}
+              </Text>
+              <Button
+                text="View All Quarters"
+                onPress={() => navigation.navigate("Quarters", { user })}
+              />
+            </View>
+          </>
         )}
       </View>
       <Separator />
@@ -583,5 +598,9 @@ const styles = StyleSheet.create({
   },
   similarityText: {
     alignSelf: "center",
+  },
+  term: {
+    fontSize: Layout.text.large,
+    fontWeight: "500",
   },
 });

@@ -90,7 +90,7 @@ export type Instructor = {
 export type Tab = {
   label: string;
   component: JSX.Element;
-}
+};
 
 export type RootStackParamList = {
   AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;
@@ -116,11 +116,11 @@ export type RootStackParamList = {
 
   Profile: undefined;
   Favorites: undefined;
-  Enrollments: { userId: string, termId: string };
+  Enrollments: { userId: string; termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
-  MyQuarters: undefined;
+  Quarters: { user: User };
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
   Friends: { id: string };
@@ -149,11 +149,11 @@ export type ProfileStackParamList = {
 
   Profile: undefined;
   Favorites: undefined;
-  Enrollments: { userId: string, termId: string };
+  Enrollments: { userId: string; termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
-  MyQuarters: undefined;
+  Quarters: { user: User };
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
   Friends: { id: string };
@@ -169,11 +169,11 @@ export type SearchStackParamList = {
   Search: undefined;
   Profile: undefined;
   Favorites: undefined;
-  Enrollments: { userId: string, termId: string };
+  Enrollments: { userId: string; termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
-  MyQuarters: undefined;
+  Quarters: { user: User };
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
   Friends: { id: string };
@@ -193,7 +193,7 @@ export type HomeStackParamList = {
   ChannelDetails: undefined;
   NewMessage: undefined;
 
-  Enrollments: { userId: string, termId: string };
+  Enrollments: { userId: string; termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
@@ -261,6 +261,11 @@ export type EnrollmentsProps = NativeStackScreenProps<
 export type SelectQuarterProps = NativeStackScreenProps<
   RootStackParamList,
   "SelectQuarter"
+>;
+
+export type QuartersProps = NativeStackScreenProps<
+  RootStackParamList,
+  "Quarters"
 >;
 
 // Context

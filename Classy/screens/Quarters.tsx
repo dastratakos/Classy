@@ -10,13 +10,16 @@ import AppStyles from "../styles/AppStyles";
 import { useContext, useState } from "react";
 import AppContext from "../context/Context";
 import { termIdToQuarterName } from "../utils";
+import { QuartersProps } from "../types";
 
-export default function MyQuarters() {
+export default function Quarters({ route }: QuartersProps) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
 
   const [editMode, setEditMode] = useState(false);
+
+  if (!route.params.user.terms) return null;
 
   return (
     <>
@@ -25,7 +28,7 @@ export default function MyQuarters() {
         contentContainerStyle={{ alignItems: "center" }}
       >
         <View style={AppStyles.section}>
-          {Object.entries(context.user.terms)
+          {Object.entries(route.params.user.terms)
             .sort()
             .reverse()
             .map(([year, terms]) => (
@@ -47,7 +50,7 @@ export default function MyQuarters() {
                             )} (${numUnits})`}
                             onPress={() =>
                               navigation.navigate("Enrollments", {
-                                userId: context.user.id,
+                                userId: route.params.user.id,
                                 termId,
                               })
                             }
@@ -84,7 +87,7 @@ export default function MyQuarters() {
       </ScrollView>
       {/* TODO: edit quarters */}
       {/* <View style={styles.ctaContainer}>
-        {editMode ? (
+        {route.params.user.id === context.user.id && editMode ? (
           <>
             <Button
               text="Cancel"

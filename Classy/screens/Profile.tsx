@@ -295,7 +295,9 @@ export default function Profile() {
           </Text>
           <Button
             text="View All Quarters"
-            onPress={() => navigation.navigate("MyQuarters")}
+            onPress={() =>
+              navigation.navigate("Quarters", { user: context.user })
+            }
           />
         </View>
       </View>
