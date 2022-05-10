@@ -11,6 +11,7 @@ import { useContext, useState } from "react";
 import AppContext from "../context/Context";
 import { termIdToQuarterName } from "../utils";
 import { QuartersProps } from "../types";
+import QuarterButton from "../components/Buttons/QuarterButton";
 
 export default function Quarters({ route }: QuartersProps) {
   const navigation = useNavigation();
@@ -32,7 +33,7 @@ export default function Quarters({ route }: QuartersProps) {
             .sort()
             .reverse()
             .map(([year, terms]) => (
-              <View style={styles.yearContainer} key={year}>
+              <View style={[styles.yearContainer, {backgroundColor: Colors[colorScheme].secondaryBackground}]} key={year}>
                 <Text style={styles.year}>{year}</Text>
                 <View style={styles.quartersContainer}>
                   {Object.entries(terms)
@@ -44,10 +45,9 @@ export default function Quarters({ route }: QuartersProps) {
 
                       return (
                         <View style={styles.termButton} key={termId}>
-                          <Button
-                            text={`${termIdToQuarterName(
-                              termId
-                            )} (${numUnits})`}
+                          <QuarterButton
+                            text={termIdToQuarterName(termId)}
+                            num={`${numUnits}`}
                             onPress={() =>
                               navigation.navigate("Enrollments", {
                                 userId: route.params.user.id,
@@ -117,7 +117,10 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     marginTop: Layout.spacing.small,
+    paddingTop: Layout.spacing.small,
     marginBottom: Layout.spacing.large,
+    paddingBottom: Layout.spacing.small,
+    borderRadius: Layout.radius.large,
   },
   year: {
     fontSize: Layout.text.large,
@@ -127,12 +130,14 @@ const styles = StyleSheet.create({
   quartersContainer: {
     width: "100%",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     flexWrap: "wrap",
+    backgroundColor: "transparent",
   },
   termButton: {
     width: "30%",
     marginVertical: Layout.spacing.small,
+    backgroundColor: "transparent",
   },
   ctaContainer: {
     ...AppStyles.row,
