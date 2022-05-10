@@ -1,4 +1,5 @@
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, Pressable } from "react-native";
+import { Timestamp } from "firebase/firestore";
 import { Text, View } from "../components/Themed";
 import { useContext, useEffect, useState } from "react";
 
@@ -12,6 +13,8 @@ import { useNavigation } from "@react-navigation/core";
 import { getEnrollmentsForTerm } from "../services/enrollments";
 import { Enrollment } from "../types";
 import homeData from "./homeData";
+import CourseOverview from "../components/CourseOverview";
+import ProfilePhoto from "../components/ProfilePhoto";
 
 export default function Home() {
   const navigation = useNavigation();
@@ -19,6 +22,9 @@ export default function Home() {
   const context = useContext(AppContext);
 
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+
+  const today = Timestamp.now().toDate().getDay() - 1;
+  const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] // is this too hacky? lol
 
   useEffect(() => {
     const loadScreen = async () => {
@@ -34,9 +40,35 @@ export default function Home() {
       style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
     >
-      <Text style={styles.title}>{termIdToFullName(getCurrentTermId())}</Text>
       <View style={AppStyles.section}>
-        <Text>TODO: HomeCards with enrollments data</Text>
+        <View style={AppStyles.row}>
+          <View style={[AppStyles.row, { flex: 1 }]}>
+            <View style={{ flexGrow: 1 }}>
+              <Text>Hi {context.user.name.split(" ")[0]}.</Text>
+              <Text>Your {daysOfWeek[today]}</Text>
+            </View>
+            <Pressable
+                onPress={() => navigation.navigate("ProfileStack", {
+                  screen: "Profile",
+                })}
+              >
+              <ProfilePhoto
+                  url={context.user.photoUrl}
+                  size={Layout.photo.medium}
+                />
+            </Pressable>
+
+          </View>
+        </View>
+        <View>
+          {
+            homeData.map((item)=> <CourseOverview
+              key={item.code}
+              code={item.code}
+              time={item.time}
+              friends={item.friends} />)
+          }
+        </View>
       </View>
     </ScrollView>
   );
