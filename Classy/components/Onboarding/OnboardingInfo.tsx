@@ -1,7 +1,7 @@
-import { Image, ImageSourcePropType, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { Text, View } from "../Themed";
 import Layout from "../../constants/Layout";
-import { Component, ReactNode } from "react";
+import { ReactNode } from "react";
 
 export default function OnboardingInfo({
   title,
@@ -10,7 +10,6 @@ export default function OnboardingInfo({
 }: {
   title: string;
   body: string;
-  // imageSource: ImageSourcePropType;
   image: ReactNode;
 }) {
   return (
@@ -29,11 +28,6 @@ const styles = StyleSheet.create({
     width: Layout.window.width,
     justifyContent: "center",
     alignItems: "center",
-  },
-  image: {
-    height: Layout.window.width,
-    width: Layout.window.width,
-    resizeMode: "contain",
   },
   textContainer: {
     alignItems: "center",
