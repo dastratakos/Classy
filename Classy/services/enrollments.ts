@@ -5,6 +5,7 @@ import {
   doc,
   getDocs,
   increment,
+  orderBy,
   query,
   updateDoc,
   where,
@@ -17,7 +18,8 @@ export const getEnrollmentsForTerm = async (userId: string, termId: string) => {
   const q = query(
     collection(db, "enrollments"),
     where("userId", "==", userId),
-    where("termId", "==", termId)
+    where("termId", "==", termId),
+    orderBy("code")
   );
 
   const res: Enrollment[] = [];

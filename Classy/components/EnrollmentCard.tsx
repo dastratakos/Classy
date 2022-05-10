@@ -29,6 +29,7 @@ export default function EnrollmentCard({
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleDeleteEnrollment = async () => {
+    setModalVisible(false);
     await deleteEnrollment(enrollment.docId);
   };
 
