@@ -3,6 +3,7 @@ import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 
 import {
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -185,121 +186,130 @@ export default function Settings() {
       ]}
       contentContainerStyle={{ alignItems: "center" }}
     >
-      <ProfilePhoto
-        url={photoUrl}
-        size={Layout.photo.xlarge}
-        style={{ marginBottom: Layout.spacing.medium }}
-        loading={uploading}
-      />
-      <Button
-        text="Change profile photo"
-        onPress={() => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          actionSheetRef.current?.show();
-        }}
-      />
-      <Separator />
-      <KeyboardAvoidingView style={styles.inputContainer} behavior="padding">
-        <View style={styles.item}>
-          <View style={styles.field}>
-            <Text>Name</Text>
+      <KeyboardAvoidingView
+        style={styles.keyboardContainer}
+        contentContainerStyle={{ alignItems: "center" }}
+        behavior="position"
+      >
+        <ProfilePhoto
+          url={photoUrl}
+          size={Layout.photo.xlarge}
+          style={{ marginBottom: Layout.spacing.medium }}
+          loading={uploading}
+        />
+        <Button
+          text="Change profile photo"
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            actionSheetRef.current?.show();
+          }}
+        />
+        <Separator />
+        <View style={styles.inputContainer}>
+          <View style={styles.item}>
+            <View style={styles.field}>
+              <Text>Name</Text>
+            </View>
+            <TextInput
+              placeholder="Name"
+              value={name}
+              onChangeText={(text) => {
+                setName(text);
+                setSaveDisabled(false);
+              }}
+              style={[styles.input, { color: Colors[colorScheme].text }]}
+              autoCapitalize="words"
+              textContentType="name"
+            />
           </View>
-          <TextInput
-            placeholder="Name"
-            value={name}
-            onChangeText={(text) => {
-              setName(text);
-              setSaveDisabled(false);
-            }}
-            style={[styles.input, { color: Colors[colorScheme].text }]}
-            autoCapitalize="words"
-            textContentType="name"
-          />
-        </View>
-        <View style={styles.item}>
-          <View style={styles.field}>
-            <Text>Major</Text>
+          <View style={styles.item}>
+            <View style={styles.field}>
+              <Text>Major</Text>
+            </View>
+            <DropDownPicker
+              open={majorOpen}
+              onOpen={onMajorOpen}
+              value={major}
+              items={majorItems}
+              setOpen={setMajorOpen}
+              setValue={(text) => {
+                setMajor(text);
+                setSaveDisabled(false);
+              }}
+              setItems={setMajorItems}
+              // multiple
+              // min={0}
+              // max={2}
+              placeholder="Major"
+              placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
+              searchable
+              searchPlaceholder="Search..."
+              showBadgeDot={false}
+              dropDownDirection="TOP"
+              modalProps={{
+                animationType: "slide",
+              }}
+              theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+              addCustomItem
+              // style={{borderWidth: 0}}
+            />
           </View>
-          <DropDownPicker
-            open={majorOpen}
-            onOpen={onMajorOpen}
-            value={major}
-            items={majorItems}
-            setOpen={setMajorOpen}
-            setValue={(text) => {
-              setMajor(text);
-              setSaveDisabled(false);
-            }}
-            setItems={setMajorItems}
-            // multiple
-            // min={0}
-            // max={2}
-            placeholder="Major"
-            placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
-            searchable
-            searchPlaceholder="Search..."
-            showBadgeDot={false}
-            dropDownDirection="TOP"
-            modalProps={{
-              animationType: "slide",
-            }}
-            theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-            addCustomItem
-            // style={{borderWidth: 0}}
-          />
-        </View>
-        <KeyboardAvoidingView style={styles.item}>
-          <View style={styles.field}>
-            <Text>Graduation Year</Text>
+          <View style={styles.item}>
+            <View style={styles.field}>
+              <Text>Graduation Year</Text>
+            </View>
+            <DropDownPicker
+              open={gradYearOpen}
+              onOpen={onGradYearOpen}
+              value={gradYear}
+              items={gradYearItems}
+              setOpen={setGradYearOpen}
+              setValue={setGradYear}
+              setItems={setGradYearItems}
+              // multiple
+              // min={0}
+              // max={2}
+              placeholder="Graduation Year"
+              placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
+              searchable
+              searchPlaceholder="Search..."
+              showBadgeDot={false}
+              dropDownDirection="TOP"
+              modalProps={{
+                animationType: "slide",
+              }}
+              theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+              // style={{borderWidth: 0}}
+            />
           </View>
-          <DropDownPicker
-            open={gradYearOpen}
-            onOpen={onGradYearOpen}
-            value={gradYear}
-            items={gradYearItems}
-            setOpen={setGradYearOpen}
-            setValue={setGradYear}
-            setItems={setGradYearItems}
-            // multiple
-            // min={0}
-            // max={2}
-            placeholder="Graduation Year"
-            placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
-            searchable
-            searchPlaceholder="Search..."
-            showBadgeDot={false}
-            dropDownDirection="TOP"
-            modalProps={{
-              animationType: "slide",
-            }}
-            theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-            // style={{borderWidth: 0}}
-          />
-        </KeyboardAvoidingView>
-        <View style={styles.item}>
-          <View style={styles.field}>
-            <Text>Clubs & Interests</Text>
+          <View style={styles.item}>
+            <View style={styles.field}>
+              <Text>Clubs & Interests</Text>
+            </View>
+            <TextInput
+              placeholder="Clubs & Interests"
+              value={interests}
+              onChangeText={(text) => {
+                setInterests(text);
+                setSaveDisabled(false);
+              }}
+              style={[styles.input, { color: Colors[colorScheme].text }]}
+              autoCapitalize="sentences"
+            />
           </View>
-          <TextInput
-            placeholder="Clubs & Interests"
-            value={interests}
-            onChangeText={(text) => {
-              setInterests(text);
-              setSaveDisabled(false);
-            }}
-            style={[styles.input, { color: Colors[colorScheme].text }]}
-            autoCapitalize="sentences"
-          />
-        </View>
-        <View style={styles.item}>
-          <View style={styles.field}>
-            <Text>Email</Text>
+          <View style={styles.item}>
+            <View style={styles.field}>
+              <Text>Email</Text>
+            </View>
+            <Text
+              style={[
+                styles.input,
+                { color: Colors[colorScheme].secondaryText },
+              ]}
+            >
+              {auth.currentUser?.email}
+            </Text>
           </View>
-          <Text
-            style={[styles.input, { color: Colors[colorScheme].secondaryText }]}
-          >
-            {auth.currentUser?.email}
-          </Text>
         </View>
       </KeyboardAvoidingView>
       <Separator />
@@ -337,6 +347,9 @@ export default function Settings() {
 const styles = StyleSheet.create({
   container: {
     padding: Layout.spacing.medium,
+  },
+  keyboardContainer: {
+    width: "100%",
   },
   inputContainer: {
     width: "100%",
