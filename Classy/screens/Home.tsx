@@ -11,6 +11,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { getEnrollmentsForTerm } from "../services/enrollments";
 import { Enrollment } from "../types";
+import homeData from "./homeData";
 
 export default function Home() {
   const navigation = useNavigation();
