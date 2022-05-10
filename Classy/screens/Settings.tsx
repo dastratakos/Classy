@@ -23,11 +23,12 @@ import { SaveFormat } from "expo-image-manipulator";
 import Separator from "../components/Separator";
 import { User } from "../types";
 import { auth } from "../firebase";
-import { generateSubstrings } from "../utils";
+import { generateSubstrings, gradYearList, majorList } from "../utils";
 import { updateUser } from "../services/users";
 import { uploadImage } from "../services/storage";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import DropDownPicker from "react-native-dropdown-picker";
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -36,8 +37,16 @@ export default function Settings() {
 
   const [photoUrl, setPhotoUrl] = useState(context.user.photoUrl || "");
   const [name, setName] = useState(context.user.name || "");
-  const [major, setMajor] = useState(context.user.major || "");
+
+  const [major, setMajor] = useState(context.user.major || ""); // TODO: use array for multiple select
+  const [majorPickerOpen, setMajorPickerOpen] = useState(false);
+  const [majorItems, setMajorItems] = useState(majorList);
+  // DropDownPicker.setMode("BADGE"); // TODO: for multiple select
+
   const [gradYear, setGradYear] = useState(context.user.gradYear || "");
+  const [gradYearPickerOpen, setGradYearPickerOpen] = useState(false);
+  const [gradYearItems, setGradYearItems] = useState(gradYearList);
+
   const [interests, setInterests] = useState(context.user.interests || "");
 
   const [saveDisabled, setSaveDisabled] = useState(true);
@@ -170,6 +179,7 @@ export default function Settings() {
       style={[
         styles.container,
         { backgroundColor: Colors[colorScheme].background },
+        // { alignItems: "center" },
       ]}
       contentContainerStyle={{ alignItems: "center" }}
     >
@@ -188,7 +198,7 @@ export default function Settings() {
       />
       <Separator />
       <KeyboardAvoidingView style={styles.inputContainer} behavior="padding">
-        <View style={AppStyles.row}>
+        <View style={styles.item}>
           <View style={styles.field}>
             <Text>Name</Text>
           </View>
@@ -204,37 +214,61 @@ export default function Settings() {
             textContentType="name"
           />
         </View>
-        <View style={AppStyles.row}>
+        <View style={styles.item}>
           <View style={styles.field}>
             <Text>Major</Text>
           </View>
-          <TextInput
-            placeholder="Major"
+          <DropDownPicker
+            open={majorPickerOpen}
             value={major}
-            onChangeText={(text) => {
-              setMajor(text);
-              setSaveDisabled(false);
+            items={majorItems}
+            setOpen={setMajorPickerOpen}
+            setValue={setMajor}
+            setItems={setMajorItems}
+            // multiple
+            // min={0}
+            // max={2}
+            placeholder="Major"
+            placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
+            searchable
+            searchPlaceholder="Search..."
+            showBadgeDot={false}
+            dropDownDirection="TOP"
+            modalProps={{
+              animationType: "slide",
             }}
-            style={[styles.input, { color: Colors[colorScheme].text }]}
-            autoCapitalize="words"
+            theme={colorScheme.toUpperCase()}
+            // style={{borderWidth: 0}}
           />
         </View>
-        <View style={AppStyles.row}>
+        <View style={styles.item}>
           <View style={styles.field}>
             <Text>Graduation Year</Text>
           </View>
-          <TextInput
-            placeholder="Graduation Year"
+          <DropDownPicker
+            open={gradYearPickerOpen}
             value={gradYear}
-            onChangeText={(text) => {
-              setGradYear(text);
-              setSaveDisabled(false);
+            items={gradYearItems}
+            setOpen={setGradYearPickerOpen}
+            setValue={setGradYear}
+            setItems={setGradYearItems}
+            // multiple
+            // min={0}
+            // max={2}
+            placeholder="Graduation Year"
+            placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
+            searchable
+            searchPlaceholder="Search..."
+            showBadgeDot={false}
+            dropDownDirection="TOP"
+            modalProps={{
+              animationType: "slide",
             }}
-            style={[styles.input, { color: Colors[colorScheme].text }]}
-            autoCapitalize="words"
+            theme={colorScheme.toUpperCase()}
+            // style={{borderWidth: 0}}
           />
         </View>
-        <View style={AppStyles.row}>
+        <View style={styles.item}>
           <View style={styles.field}>
             <Text>Clubs & Interests</Text>
           </View>
@@ -249,7 +283,7 @@ export default function Settings() {
             autoCapitalize="sentences"
           />
         </View>
-        <View style={AppStyles.row}>
+        <View style={styles.item}>
           <View style={styles.field}>
             <Text>Email</Text>
           </View>
@@ -267,7 +301,7 @@ export default function Settings() {
         wide
       />
       <Separator />
-      <View style={AppStyles.row}>
+      <View style={[AppStyles.row, { marginBottom: Layout.spacing.xxlarge }]}>
         <View style={{ width: "48%" }}>
           <Button text="Cancel" onPress={() => navigation.goBack()} />
         </View>
@@ -299,9 +333,11 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: "100%",
   },
+  item: {
+    marginVertical: Layout.spacing.small,
+  },
   field: {
-    width: "40%",
-    paddingRight: Layout.spacing.large,
+    marginBottom: Layout.spacing.xsmall,
   },
   input: {
     paddingVertical: Layout.spacing.xsmall,
