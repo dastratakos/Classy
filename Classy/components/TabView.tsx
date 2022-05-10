@@ -1,6 +1,6 @@
 import * as Haptics from "expo-haptics";
 
-import { Animated, FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import { Animated, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, View } from "./Themed";
 
 import AppStyles from "../styles/AppStyles";
@@ -10,12 +10,14 @@ import useColorScheme from "../hooks/useColorScheme";
 import { useState } from "react";
 import { Tab } from "../types";
 
-export default function TabView({ 
+export default function TabView({
   tabs,
-  selectedStyle, 
+  selectedStyle,
+  addTabMargin = false,
 }: {
   tabs: Tab[];
-  selectedStyle?: Object
+  selectedStyle?: Object;
+  addTabMargin?: boolean;
 }) {
   const colorScheme = useColorScheme();
 
@@ -26,16 +28,18 @@ export default function TabView({
   const Indicator = () => {
     return (
       <Animated.View
-        style={[{
-          position: "absolute",
-          // backgroundColor: Colors.red,
-          backgroundColor: Colors[colorScheme].tertiaryBackground,
-          height: Layout.spacing.xxlarge,
-          borderRadius: Layout.spacing.xlarge,
-          width: tabWidth,
+        style={[
+          {
+            position: "absolute",
+            backgroundColor: Colors[colorScheme].tertiaryBackground,
+            height: Layout.spacing.xxlarge,
+            borderRadius: Layout.spacing.xlarge,
+            width: tabWidth,
 
-          transform: [{ translateX: translateValue }],
-        }, selectedStyle]}
+            transform: [{ translateX: translateValue }],
+          },
+          selectedStyle,
+        ]}
       />
     );
   };
@@ -54,10 +58,11 @@ export default function TabView({
     <View style={{ flex: 1 }}>
       <View
         style={[
-          AppStyles.row,
           styles.container,
-          AppStyles.boxShadow,
-          { backgroundColor: Colors[colorScheme].cardBackground },
+          {
+            backgroundColor: Colors[colorScheme].cardBackground,
+            marginHorizontal: addTabMargin ? Layout.spacing.medium : 0,
+          },
         ]}
         onLayout={(event) =>
           setTabWidth(
@@ -84,6 +89,8 @@ export default function TabView({
 
 const styles = StyleSheet.create({
   container: {
+    ...AppStyles.row,
+    ...AppStyles.boxShadow,
     padding: Layout.spacing.xxsmall,
     borderRadius: Layout.spacing.xlarge,
     marginBottom: Layout.spacing.large,

@@ -12,6 +12,7 @@ import { searchCourses, searchMoreCourses } from "../services/courses";
 import { searchMoreUsers, searchUsers } from "../services/users";
 import FriendCard from "../components/FriendCard";
 import CourseCard from "../components/CourseCard";
+import Layout from "../constants/Layout";
 
 export default function Search() {
   const context = useContext(AppContext);
@@ -87,7 +88,10 @@ export default function Search() {
           onEndReached={() => handleSearchUsers(searchPhrase)}
           onEndReachedThreshold={0}
           refreshing={refreshing}
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: Layout.spacing.medium,
+          }}
         />
       ),
     },
@@ -103,7 +107,10 @@ export default function Search() {
           onEndReached={() => handleSearchCourses(searchPhrase)}
           onEndReachedThreshold={0}
           refreshing={refreshing}
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: Layout.spacing.medium,
+          }}
         />
       ),
     },
@@ -126,7 +133,7 @@ export default function Search() {
           setFocused={setFocused}
         />
       </View>
-      <TabView tabs={tabs} />
+      <TabView tabs={tabs} addTabMargin />
     </View>
   );
 }
