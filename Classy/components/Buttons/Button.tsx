@@ -13,6 +13,8 @@ export default function Button({
   loading = false,
   emphasized = false,
   wide = false,
+  containerStyle,
+  textStyle,
 }: {
   text?: string;
   onPress?: () => void;
@@ -20,6 +22,8 @@ export default function Button({
   loading?: boolean;
   emphasized?: boolean;
   wide?: boolean;
+  containerStyle?: Object;
+  textStyle?: Object;
 }) {
   const colorScheme = useColorScheme();
 
@@ -31,9 +35,10 @@ export default function Button({
           styles.containerLoading,
           { backgroundColor: Colors[colorScheme].tertiaryBackground },
           wide ? { width: "100%" } : null,
+          containerStyle
         ]}
       >
-        <Text style={{ color: Colors[colorScheme].secondaryText }}>{text}</Text>
+        <Text style={[{ color: Colors[colorScheme].secondaryText }, textStyle]}>{text}</Text>
       </View>
     );
 
@@ -46,6 +51,7 @@ export default function Button({
             backgroundColor: Colors[colorScheme].secondaryBackground,
             width: wide ? "100%" : Layout.buttonHeight.medium,
           },
+          containerStyle
         ]}
       >
         <ActivityIndicator />
@@ -59,10 +65,11 @@ export default function Button({
           styles.container,
           { backgroundColor: Colors[colorScheme].tint },
           wide ? { width: "100%" } : null,
+          containerStyle
         ]}
       >
         <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
-          <Text style={{ color: Colors[colorScheme].background }}>{text}</Text>
+          <Text style={[{ color: Colors[colorScheme].background }, textStyle]}>{text}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -73,10 +80,11 @@ export default function Button({
         styles.container,
         { backgroundColor: Colors[colorScheme].cardBackground },
         wide ? { width: "100%" } : null,
+        containerStyle,
       ]}
     >
       <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
-        <Text>{text}</Text>
+        <Text style={textStyle}>{text}</Text>
       </TouchableOpacity>
     </View>
   );

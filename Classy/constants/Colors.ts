@@ -2,6 +2,7 @@ const palette = {
   lightRed: "#ff6863",
   red: "#ff3742",
   deepRed: "#cb202d",
+  pink: "#ef476f",
   green: "#20e070",
   lightBlue: "#2f95dc",
   black: "#000000",
@@ -55,4 +56,5 @@ export default {
   lightBlue: palette.lightBlue,
   black: palette.black,
   white: palette.white,
+  pink: palette.pink,
 };
