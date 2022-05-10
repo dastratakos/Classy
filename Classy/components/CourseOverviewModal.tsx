@@ -1,4 +1,5 @@
-import { Modal, Pressable, StyleSheet, FlatList } from "react-native";
+import { Pressable, StyleSheet, FlatList } from "react-native";
+import Modal from "react-native-modal";
 import { Text, View } from "./Themed";
 
 import Colors from "../constants/Colors";
@@ -27,18 +28,9 @@ export default function CourseOverviewModal({
 
   return (
     <Modal
-      animationType="slide"
-      transparent={true}
-      visible={visible}
-      onRequestClose={() => setVisible(!visible)}
+      isVisible={visible}
     >
-      <Pressable
-        style={[
-          styles.container,
-          { backgroundColor: Colors[colorScheme].overlay },
-        ]}
-        onPress={() => setVisible(false)}
-      >
+      <Pressable style={[styles.container]} onPress={() => setVisible(false)}>
         <View
           style={[
             styles.modalView,
