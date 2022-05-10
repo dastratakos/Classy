@@ -14,6 +14,7 @@ import { db } from "../firebase";
 import { termIdToFullName } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { getEnrollmentsForTerm } from "../services/enrollments";
 
 export default function Courses({ route }: CoursesProps) {
   const navigation = useNavigation();
@@ -23,23 +24,13 @@ export default function Courses({ route }: CoursesProps) {
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
-    getEnrollmentsForTerm(context.user.id, route.params.termId);
+    const loadScreen = async () => {
+      setCourses(
+        await getEnrollmentsForTerm(context.user.id, route.params.termId)
+      );
+    };
+    loadScreen();
   }, []);
-
-  const getEnrollmentsForTerm = async (id: string, termId: string) => {
-    const q = query(
-      collection(db, "enrollments"),
-      where("userId", "==", id),
-      where("termId", "==", termId)
-    );
-
-    const results = [];
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      results.push(doc.data());
-    });
-    setCourses(results);
-  };
 
   return (
     <>
