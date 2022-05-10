@@ -117,7 +117,7 @@ export default function Calendar({ events }: { events: [] }) {
             style={[
               { opacity: regularOpacity },
               today === i
-                ? { color: Colors.red }
+                ? { color: Colors.pink }
                 : { color: Colors[colorScheme].text },
             ]}
           >
@@ -177,7 +177,7 @@ export default function Calendar({ events }: { events: [] }) {
             {
               position: "absolute",
               left: indicatorLeft,
-              backgroundColor: Colors.red,
+              backgroundColor: Colors.pink,
               opacity: selectedOpacity,
             },
           ]}
@@ -273,10 +273,10 @@ export default function Calendar({ events }: { events: [] }) {
               },
             ]}
           >
-            <Text style={[styles.gridTimeText, { color: Colors.red }]}>
+            <Text style={[styles.gridTimeText, { color: Colors.pink }]}>
               {getCurrTimeString(currTime)}
             </Text>
-            <View style={[styles.gridLine, { backgroundColor: Colors.red }]} />
+            <View style={[styles.gridLine, { backgroundColor: Colors.pink }]} />
             <View style={styles.currTimeDot} />
           </View>
         )}
@@ -393,6 +393,6 @@ const styles = StyleSheet.create({
     height: Layout.spacing.xsmall,
     width: Layout.spacing.xsmall,
     borderRadius: Layout.spacing.xsmall / 2,
-    backgroundColor: Colors.red,
+    backgroundColor: Colors.pink,
   },
 });
