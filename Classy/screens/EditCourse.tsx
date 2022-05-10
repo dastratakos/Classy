@@ -3,7 +3,7 @@ import * as Haptics from "expo-haptics";
 import { ActivityIndicator, Text, View } from "../components/Themed";
 import { Course, EditCourseProps, Schedule } from "../types";
 import { ScrollView, StyleSheet } from "react-native";
-import { getCurrentTermId, termIdToName } from "../utils";
+import { termIdToName } from "../utils";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -45,8 +45,19 @@ export default function EditCourse({ route }: EditCourseProps) {
       const res = await getCourseTerms(course.courseId);
       setTerms({ ...res });
 
-      context.setSelectedTerm(enrollment.termId)
-      
+      context.setSelectedTerm(enrollment.termId);
+
+      let selectedSectionNumbers = new Set<string>();
+      enrollment.schedules.forEach((schedule: Schedule, i: number) => {
+        selectedSectionNumbers.add(schedule.sectionNumber);
+      });
+
+      let newSet = new Set<number>();
+      res[`${enrollment.termId}`].forEach((schedule: Schedule, i: number) => {
+        if (selectedSectionNumbers.has(schedule.sectionNumber)) newSet.add(i);
+      });
+      setSelectedScheduleIndices(newSet);
+
       setLoading(false);
     };
 
@@ -251,6 +262,6 @@ const styles = StyleSheet.create({
     fontSize: Layout.text.large,
   },
   gradingBasisWrap: {
-    paddingTop: Layout.spacing.large
-  }
+    paddingTop: Layout.spacing.large,
+  },
 });
