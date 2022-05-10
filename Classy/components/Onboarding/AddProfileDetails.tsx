@@ -5,11 +5,12 @@ import * as ImagePicker from "expo-image-picker";
 import {
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   StyleSheet,
   TextInput,
 } from "react-native";
 import { Text, View } from "../Themed";
-import { useContext, useRef, useState } from "react";
+import React, { useCallback, useContext, useRef, useState } from "react";
 
 import ActionSheet from "react-native-actionsheet";
 import AppContext from "../../context/Context";
@@ -21,6 +22,10 @@ import ProfilePhoto from "../ProfilePhoto";
 import { SaveFormat } from "expo-image-manipulator";
 import useColorScheme from "../../hooks/useColorScheme";
 import { uploadImage } from "../../services/storage";
+import Separator from "../Separator";
+import DropDownPicker from "react-native-dropdown-picker";
+import { majorList } from "../../utils/majorList";
+import { yearList } from "../../utils/yearList";
 
 export default function AddProfileDetails({
   photoUrl,
@@ -31,8 +36,8 @@ export default function AddProfileDetails({
   setMajor,
   startYear,
   setStartYear,
-  endYear,
-  setEndYear,
+  gradYear,
+  setGradYear,
   errorMessage,
   setErrorMessage,
 }: {
@@ -42,15 +47,37 @@ export default function AddProfileDetails({
   setName: (arg0: string) => void;
   major: string;
   setMajor: (arg0: string) => void;
-  startYear: number;
-  setStartYear: (arg0: number) => void;
-  endYear: number;
-  setEndYear: (arg0: number) => void;
+  startYear: string;
+  setStartYear: (arg0: string) => void;
+  gradYear: string;
+  setGradYear: (arg0: string) => void;
   errorMessage: string;
   setErrorMessage: (arg0: string) => void;
 }) {
   const context = useContext(AppContext);
   const colorScheme = useColorScheme();
+
+  const [majorOpen, setMajorOpen] = useState(false);
+  const [majorItems, setMajorItems] = useState(majorList);
+  const onMajorOpen = useCallback(() => {
+    setStartYearOpen(false);
+    setGradYearOpen(false);
+  }, []);
+  // DropDownPicker.setMode("BADGE"); // TODO: for multiple select
+
+  const [startYearOpen, setStartYearOpen] = useState(false);
+  const [startYearItems, setStartYearItems] = useState(yearList);
+  const onStartYearOpen = useCallback(() => {
+    setMajorOpen(false);
+    setGradYearOpen(false);
+  }, []);
+
+  const [gradYearOpen, setGradYearOpen] = useState(false);
+  const [gradYearItems, setGradYearItems] = useState(yearList);
+  const onGradYearOpen = useCallback(() => {
+    setMajorOpen(false);
+    setStartYearOpen(false);
+  }, []);
 
   const [uploading, setUploading] = useState(false);
 
@@ -144,130 +171,180 @@ export default function AddProfileDetails({
   };
 
   return (
-    <View style={[AppStyles.section, styles.screenContainer]}>
+    <View style={[styles.container]}>
       <Text style={styles.title}>Add Profile Details</Text>
-      <ProfilePhoto
-        url={photoUrl}
-        size={Layout.photo.xlarge}
-        style={{ marginBottom: Layout.spacing.medium }}
-        loading={uploading}
-      />
-      <Button
-        text="Choose profile photo"
-        onPress={() => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          actionSheetRef.current?.show();
-        }}
-      />
-      <KeyboardAvoidingView style={styles.keyboardContainer} behavior="padding">
-        <Text style={AppStyles.errorText}>{errorMessage}</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Name"
-            value={name}
-            onChangeText={(text) => setName(text)}
-            style={[
-              styles.input,
-              {
-                backgroundColor: Colors[colorScheme].secondaryBackground,
-                color: Colors[colorScheme].text,
-              },
-            ]}
-            autoCapitalize="words"
-            autoCorrect={false}
+      <ScrollView
+        style={styles.screenContainer}
+        contentContainerStyle={{ alignItems: "center" }}
+      >
+        <KeyboardAvoidingView
+          style={styles.keyboardContainer}
+          contentContainerStyle={{ alignItems: "center" }}
+          behavior="position"
+        >
+          <ProfilePhoto
+            url={photoUrl}
+            size={Layout.photo.large}
+            style={{ marginBottom: Layout.spacing.medium }}
+            loading={uploading}
           />
-          <TextInput
-            placeholder="Major"
-            value={major}
-            onChangeText={(text) => {
-              setErrorMessage("");
-              setMajor(text);
+          <Button
+            text="Change profile photo"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              actionSheetRef.current?.show();
             }}
-            style={[
-              styles.input,
-              {
-                backgroundColor: Colors[colorScheme].secondaryBackground,
-                color: Colors[colorScheme].text,
-              },
-            ]}
-            autoCapitalize="words"
-            autoCorrect={false}
-          />
-          <TextInput
-            placeholder="Start Year"
-            value={`${startYear}`}
-            onChangeText={(text) => {
-              setErrorMessage("");
-              setStartYear(parseInt(text));
-            }}
-            style={[
-              styles.input,
-              {
-                backgroundColor: Colors[colorScheme].secondaryBackground,
-                color: Colors[colorScheme].text,
-              },
-            ]}
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="number-pad"
-          />
-          <TextInput
-            placeholder="End Year"
-            value={`${endYear}`}
-            onChangeText={(text) => {
-              setErrorMessage("");
-              setEndYear(parseInt(text));
-            }}
-            style={[
-              styles.input,
-              {
-                backgroundColor: Colors[colorScheme].secondaryBackground,
-                color: Colors[colorScheme].text,
-              },
-            ]}
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="number-pad"
           />
           <View style={{ height: Layout.spacing.large }} />
-        </View>
-      </KeyboardAvoidingView>
+          <Separator />
+          <Text style={AppStyles.errorText}>{errorMessage}</Text>
+          <View style={styles.inputContainer}>
+            <View style={styles.item}>
+              <View style={styles.field}>
+                <Text>Name</Text>
+              </View>
+              <TextInput
+                placeholder="Name"
+                value={name}
+                onChangeText={setName}
+                style={[styles.input, { color: Colors[colorScheme].text }]}
+                autoCapitalize="words"
+                textContentType="name"
+              />
+            </View>
+            <View style={styles.item}>
+              <View style={styles.field}>
+                <Text>Major</Text>
+              </View>
+              <DropDownPicker
+                open={majorOpen}
+                onOpen={onMajorOpen}
+                value={major}
+                items={majorItems}
+                setOpen={setMajorOpen}
+                setValue={setMajor}
+                setItems={setMajorItems}
+                // multiple
+                // min={0}
+                // max={2}
+                placeholder="Major"
+                placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
+                searchable
+                searchPlaceholder="Search..."
+                showBadgeDot={false}
+                dropDownDirection="TOP"
+                modalProps={{
+                  animationType: "slide",
+                }}
+                theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+                addCustomItem
+                // style={{borderWidth: 0}}
+              />
+            </View>
+            <View style={AppStyles.row}>
+              <View style={[styles.item, { width: "48%" }]}>
+                <View style={styles.field}>
+                  <Text>Start Year</Text>
+                </View>
+                <DropDownPicker
+                  open={startYearOpen}
+                  onOpen={onStartYearOpen}
+                  value={startYear}
+                  items={startYearItems}
+                  setOpen={setStartYearOpen}
+                  setValue={setStartYear}
+                  setItems={setStartYearItems}
+                  // multiple
+                  // min={0}
+                  // max={2}
+                  placeholder="Start Year"
+                  placeholderStyle={{
+                    color: Colors[colorScheme].secondaryText,
+                  }}
+                  searchable
+                  searchPlaceholder="Search..."
+                  showBadgeDot={false}
+                  dropDownDirection="TOP"
+                  modalProps={{
+                    animationType: "slide",
+                  }}
+                  theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+                />
+              </View>
+              <View style={[styles.item, { width: "48%" }]}>
+                <View style={styles.field}>
+                  <Text>Graduation Year</Text>
+                </View>
+                <DropDownPicker
+                  open={gradYearOpen}
+                  onOpen={onGradYearOpen}
+                  value={gradYear}
+                  items={gradYearItems}
+                  setOpen={setGradYearOpen}
+                  setValue={setGradYear}
+                  setItems={setGradYearItems}
+                  // multiple
+                  // min={0}
+                  // max={2}
+                  placeholder="Graduation Year"
+                  placeholderStyle={{
+                    color: Colors[colorScheme].secondaryText,
+                  }}
+                  searchable
+                  searchPlaceholder="Search..."
+                  showBadgeDot={false}
+                  dropDownDirection="TOP"
+                  modalProps={{
+                    animationType: "slide",
+                  }}
+                  theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+                />
+              </View>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
 
-      <ActionSheet
-        ref={actionSheetRef}
-        options={actionSheetOptions}
-        cancelButtonIndex={actionSheetOptions.length - 1}
-        destructiveButtonIndex={0}
-        onPress={handleActionSheetOptionPressed}
-      />
+        <ActionSheet
+          ref={actionSheetRef}
+          options={actionSheetOptions}
+          cancelButtonIndex={actionSheetOptions.length - 1}
+          destructiveButtonIndex={0}
+          onPress={handleActionSheetOptionPressed}
+        />
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screenContainer: {
-    width: Layout.window.width,
+  container: {
+    paddingVertical: Layout.spacing.medium,
     alignItems: "center",
+  },
+  screenContainer: {
+    padding: Layout.spacing.medium,
+    width: Layout.window.width,
   },
   title: {
     fontSize: Layout.text.xxlarge,
     fontWeight: "500",
-    marginBottom: Layout.spacing.large,
+    marginBottom: Layout.spacing.medium,
   },
   keyboardContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     width: "100%",
-    marginTop: Layout.spacing.xlarge
   },
   inputContainer: {
     width: "100%",
   },
+  item: {
+    marginVertical: Layout.spacing.small,
+  },
+  field: {
+    marginBottom: Layout.spacing.xsmall,
+  },
   input: {
-    paddingHorizontal: Layout.spacing.medium,
-    paddingVertical: Layout.spacing.small,
-    borderRadius: Layout.spacing.small,
-    marginVertical: Layout.spacing.medium,
+    borderWidth: 1,
+    padding: Layout.spacing.medium,
+    borderRadius: Layout.radius.small,
   },
 });

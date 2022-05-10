@@ -24,15 +24,15 @@ export default function Onboarding() {
   const [photoUrl, setPhotoUrl] = useState(context.user.photoUrl);
   const [name, setName] = useState(context.user.name);
   const [major, setMajor] = useState(context.user.major);
-  const [startYear, setStartYear] = useState(2018); // TODO: compute these values
-  const [endYear, setEndYear] = useState(2022);
+  const [startYear, setStartYear] = useState("2018"); // TODO: compute these values
+  const [gradYear, setGradYear] = useState("2022");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleGetStarted = async () => {
     if (name === "") {
       setErrorMessage("Please enter your name");
       return;
-    } else if (startYear > endYear) {
+    } else if (startYear > gradYear) {
       setErrorMessage("Start year cannot be after the end year");
       return;
     }
@@ -42,7 +42,7 @@ export default function Onboarding() {
       major,
       photoUrl,
       keywords: generateSubstrings(name),
-      gradYear: endYear,
+      gradYear: gradYear,
       onboarded: true,
     };
 
@@ -86,8 +86,8 @@ export default function Onboarding() {
           setMajor={setMajor}
           startYear={startYear}
           setStartYear={setStartYear}
-          endYear={endYear}
-          setEndYear={setEndYear}
+          gradYear={gradYear}
+          setGradYear={setGradYear}
           errorMessage={errorMessage}
           setErrorMessage={setErrorMessage}
         />
@@ -146,7 +146,7 @@ export default function Onboarding() {
     <SafeAreaView
       style={{ flex: 1, backgroundColor: Colors[colorScheme].background }}
     >
-      <View style={{ flex: 3 }}>
+      <View style={{ flex: 4 }}>
         <FlatList
           data={screens}
           renderItem={({ item }) => item.component}

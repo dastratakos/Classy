@@ -3,7 +3,6 @@ import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 
 import {
-  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -11,7 +10,6 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../components/Themed";
-import { generateSubstrings } from "../utils";
 import { useCallback, useContext, useRef, useState } from "react";
 
 import ActionSheet from "react-native-actionsheet";
@@ -26,6 +24,7 @@ import { SaveFormat } from "expo-image-manipulator";
 import Separator from "../components/Separator";
 import { User } from "../types";
 import { auth } from "../firebase";
+import { generateSubstrings } from "../utils";
 import { majorList } from "../utils/majorList";
 import { updateUser } from "../services/users";
 import { uploadImage } from "../services/storage";
