@@ -9,7 +9,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { User, sendEmailVerification } from "firebase/auth";
-import { getCurrentTermId, termIdToFullName } from "../utils";
+import { generateTerms, getCurrentTermId, termIdToFullName } from "../utils";
 import { getUser, updateUser } from "../services/users";
 import { useContext, useEffect, useState } from "react";
 
