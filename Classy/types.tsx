@@ -275,7 +275,7 @@ export type User = {
   email: string;
   name: string;
   major: string;
-  gradYear: number;
+  gradYear: string;
   interests: string;
   isPrivate: boolean;
   photoUrl: string;

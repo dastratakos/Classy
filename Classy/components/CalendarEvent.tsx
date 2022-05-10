@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     paddingVertical: Layout.spacing.xxsmall,
     paddingHorizontal: Layout.spacing.small,
     flex: 1,
-    borderRadius: Layout.radius.small,
+    borderRadius: Layout.radius.xsmall,
     backgroundColor: Colors.lightRed,
     overflow: "hidden",
   },

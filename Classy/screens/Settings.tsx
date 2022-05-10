@@ -10,25 +10,27 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../components/Themed";
-import { useContext, useRef, useState } from "react";
+import { generateSubstrings } from "../utils";
+import { useCallback, useContext, useRef, useState } from "react";
 
 import ActionSheet from "react-native-actionsheet";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
+import DropDownPicker from "react-native-dropdown-picker";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import { SaveFormat } from "expo-image-manipulator";
 import Separator from "../components/Separator";
 import { User } from "../types";
 import { auth } from "../firebase";
-import { generateSubstrings, gradYearList, majorList } from "../utils";
+import { majorList } from "../utils/majorList";
 import { updateUser } from "../services/users";
 import { uploadImage } from "../services/storage";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import DropDownPicker from "react-native-dropdown-picker";
+import { yearList } from "../utils/yearList";
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -39,22 +41,22 @@ export default function Settings() {
   const [name, setName] = useState(context.user.name || "");
 
   const [major, setMajor] = useState(context.user.major || ""); // TODO: use array for multiple select
-  const [majorPickerOpen, setMajorPickerOpen] = useState(false);
+  const [majorOpen, setMajorOpen] = useState(false);
   const [majorItems, setMajorItems] = useState(majorList);
+  const onMajorOpen = useCallback(() => setGradYearOpen(false), []);
   // DropDownPicker.setMode("BADGE"); // TODO: for multiple select
 
   const [gradYear, setGradYear] = useState(context.user.gradYear || "");
-  const [gradYearPickerOpen, setGradYearPickerOpen] = useState(false);
-  const [gradYearItems, setGradYearItems] = useState(gradYearList);
+  const [gradYearOpen, setGradYearOpen] = useState(false);
+  const [gradYearItems, setGradYearItems] = useState(yearList);
+  const onGradYearOpen = useCallback(() => setMajorOpen(false), []);
 
   const [interests, setInterests] = useState(context.user.interests || "");
 
   const [saveDisabled, setSaveDisabled] = useState(true);
-
   const [uploading, setUploading] = useState(false);
 
   const actionSheetRef = useRef();
-
   const actionSheetOptions = [
     "Remove current photo",
     "Choose from library",
@@ -219,11 +221,15 @@ export default function Settings() {
             <Text>Major</Text>
           </View>
           <DropDownPicker
-            open={majorPickerOpen}
+            open={majorOpen}
+            onOpen={onMajorOpen}
             value={major}
             items={majorItems}
-            setOpen={setMajorPickerOpen}
-            setValue={setMajor}
+            setOpen={setMajorOpen}
+            setValue={(text) => {
+              setMajor(text);
+              setSaveDisabled(false);
+            }}
             setItems={setMajorItems}
             // multiple
             // min={0}
@@ -237,19 +243,21 @@ export default function Settings() {
             modalProps={{
               animationType: "slide",
             }}
-            theme={colorScheme.toUpperCase()}
+            theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+            addCustomItem
             // style={{borderWidth: 0}}
           />
         </View>
-        <View style={styles.item}>
+        <KeyboardAvoidingView style={styles.item}>
           <View style={styles.field}>
             <Text>Graduation Year</Text>
           </View>
           <DropDownPicker
-            open={gradYearPickerOpen}
+            open={gradYearOpen}
+            onOpen={onGradYearOpen}
             value={gradYear}
             items={gradYearItems}
-            setOpen={setGradYearPickerOpen}
+            setOpen={setGradYearOpen}
             setValue={setGradYear}
             setItems={setGradYearItems}
             // multiple
@@ -264,10 +272,10 @@ export default function Settings() {
             modalProps={{
               animationType: "slide",
             }}
-            theme={colorScheme.toUpperCase()}
+            theme={colorScheme === "light" ? "LIGHT" : "DARK"}
             // style={{borderWidth: 0}}
           />
-        </View>
+        </KeyboardAvoidingView>
         <View style={styles.item}>
           <View style={styles.field}>
             <Text>Clubs & Interests</Text>
@@ -340,7 +348,8 @@ const styles = StyleSheet.create({
     marginBottom: Layout.spacing.xsmall,
   },
   input: {
-    paddingVertical: Layout.spacing.xsmall,
-    width: "60%",
+    borderWidth: 1,
+    padding: Layout.spacing.medium,
+    borderRadius: Layout.radius.small,
   },
 });

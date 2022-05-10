@@ -10,7 +10,8 @@ export default {
   },
   isSmallDevice: width < 375,
   radius: {
-    small: 5,
+    xsmall: 5,
+    small: 8,
     medium: 15,
     large: 25,
   },

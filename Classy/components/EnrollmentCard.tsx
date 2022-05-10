@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: Layout.photo.small,
     width: Layout.photo.small,
-    borderRadius: Layout.radius.small,
+    borderRadius: Layout.radius.xsmall,
     marginLeft: Layout.spacing.small,
     backgroundColor: "transparent",
   },

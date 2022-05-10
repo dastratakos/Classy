@@ -589,12 +589,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   similarityContainer: {
-    borderRadius: Layout.radius.small,
+    borderRadius: Layout.radius.xsmall,
     paddingVertical: Layout.spacing.small,
     marginTop: Layout.spacing.medium,
   },
   similarityBar: {
-    borderRadius: Layout.radius.small,
+    borderRadius: Layout.radius.xsmall,
   },
   similarityText: {
     alignSelf: "center",
