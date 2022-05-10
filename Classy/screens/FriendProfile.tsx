@@ -80,6 +80,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     const res = await getFriendStatus(context.user.id, route.params.id);
     setFriendStatus(res.friendStatus);
     setFriendDocId(res.friendDocId);
+    setFriendStatusLoading(false);
     getFriendIds(route.params.id).then((res) => {
       setNumFriends(`${res.length}`);
     });

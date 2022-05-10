@@ -259,6 +259,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
+    marginTop: Layout.spacing.xlarge
   },
   inputContainer: {
     width: "100%",

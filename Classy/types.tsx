@@ -265,13 +265,14 @@ export type User = {
   email: string;
   name: string;
   major: string;
-  gradYear: string;
+  gradYear: number;
   interests: string;
   isPrivate: boolean;
   photoUrl: string;
   expoPushToken: string;
   terms: Object;
   keywords: string[];
+  onboarded: boolean;
 };
 
 export type Context = {

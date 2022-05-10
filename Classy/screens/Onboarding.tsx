@@ -21,14 +21,14 @@ export default function Onboarding() {
   const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
-  const [photoUrl, setPhotoUrl] = useState("");
-  const [name, setName] = useState("");
-  const [major, setMajor] = useState("");
+  const [photoUrl, setPhotoUrl] = useState(context.user.photoUrl);
+  const [name, setName] = useState(context.user.name);
+  const [major, setMajor] = useState(context.user.major);
   const [startYear, setStartYear] = useState(2018); // TODO: compute these values
   const [endYear, setEndYear] = useState(2022);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const updateUserDB = async () => {
+  const handleGetStarted = async () => {
     if (name === "") {
       setErrorMessage("Please enter your name");
       return;
@@ -42,11 +42,11 @@ export default function Onboarding() {
       major,
       photoUrl,
       keywords: generateSubstrings(name),
-      // startYear,
-      // endYear,
+      gradYear: endYear,
+      onboarded: true,
     };
 
-    updateUser(context.user.id, data)
+    updateUser(context.user.id, data);
     context.setUser({ ...context.user, ...data });
 
     navigation.reset({
@@ -168,7 +168,9 @@ export default function Onboarding() {
         <Paginator data={screens} scrollX={scrollX} />
         <Button
           text={currentIndex < screens.length - 1 ? "Next" : "Get started"}
-          onPress={currentIndex < screens.length - 1 ? scrollTo : updateUserDB}
+          onPress={
+            currentIndex < screens.length - 1 ? scrollTo : handleGetStarted
+          }
           emphasized
           wide
         />

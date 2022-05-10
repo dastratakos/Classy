@@ -24,7 +24,15 @@ export default function Home() {
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
 
   const today = Timestamp.now().toDate().getDay() - 1;
-  const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] // is this too hacky? lol
+  const daysOfWeek = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ]; // is this too hacky? lol
 
   useEffect(() => {
     const loadScreen = async () => {
@@ -44,30 +52,34 @@ export default function Home() {
         <View style={AppStyles.row}>
           <View style={[AppStyles.row, { flex: 1 }]}>
             <View style={{ flexGrow: 1 }}>
-              <Text>Hi {context.user.name.split(" ")[0]}.</Text>
+              <Text>
+                Hi{context.user.name && `, ${context.user.name.split(" ")[0]}`}
+              </Text>
               <Text>Your {daysOfWeek[today]}</Text>
             </View>
             <Pressable
-                onPress={() => navigation.navigate("ProfileStack", {
+              onPress={() =>
+                navigation.navigate("ProfileStack", {
                   screen: "Profile",
-                })}
-              >
+                })
+              }
+            >
               <ProfilePhoto
-                  url={context.user.photoUrl}
-                  size={Layout.photo.medium}
-                />
+                url={context.user.photoUrl}
+                size={Layout.photo.medium}
+              />
             </Pressable>
-
           </View>
         </View>
         <View>
-          {
-            homeData.map((item)=> <CourseOverview
+          {homeData.map((item) => (
+            <CourseOverview
               key={item.code}
               code={item.code}
               time={item.time}
-              friends={item.friends} />)
-          }
+              friends={item.friends}
+            />
+          ))}
         </View>
       </View>
     </ScrollView>

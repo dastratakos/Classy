@@ -61,14 +61,17 @@ export default function Login({ route }: LoginProps) {
   const setUp = async (id: string) => {
     const user = await getUser(id);
     const newUser = { ...context.user, ...user };
-    context.setUser(newUser)
+    context.setUser(newUser);
 
     context.setFriendIds(await getFriendIds(id));
     connectStreamChatUser(id, newUser.name, newUser.photoUrl);
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "Root" }],
-    });
+
+    if (user.onboarded)
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Root" }],
+      });
+    else navigation.navigate("Onboarding");
   };
 
   const signIn = () => {
