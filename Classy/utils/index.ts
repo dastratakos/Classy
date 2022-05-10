@@ -18,7 +18,7 @@ export const sendPushNotification = async (
   body: string = ""
 ) => {
   if (!expoPushToken) return;
-  
+
   const message = {
     to: expoPushToken,
     sound: "default",
@@ -151,63 +151,162 @@ export const getTimeString = (
 };
 
 export const majorList = [
-  "Aerospace, aeronautical and astronautical/space engineering",
-  "African-american/black studies",
-  "American indian/native american studies",
-  "American/united states studies/civilization",
-  "Anthropology",
-  "Applied mathematics",
-  "Archeology",
-  "Area studies",
-  "Art history, criticism and conservation",
-  "Art/art studies",
-  "Asian-american studies",
-  "Bioengineering and biomedical engineering",
-  "Biology/biological sciences",
-  "Chemical engineering",
-  "Chemistry",
-  "Civil engineering",
-  "Classics and classical languages, literatures, and linguistics",
-  "Cognitive science",
-  "Communication and media studies",
-  "Comparative literature",
-  "Computer science",
-  "Drama and dramatics/theatre arts",
-  "East asian studies",
-  "Econometrics and quantitative economics",
-  "Electrical and electronics engineering",
-  "Engineering",
-  "Engineering/industrial management",
-  "English language and literature",
-  "Environmental/environmental health engineering",
-  "Ethnic, cultural minority, gender, and group studies",
-  "Film/cinema/video studies",
-  "Fine/studio arts",
-  "French language and literature",
-  "Geological and earth sciences/geosciences",
-  "Geology/earth science",
-  "German language and literature",
-  "Hispanic-american, puerto rican, and mexican-american/chicano studies",
-  "History",
-  "Human biology",
-  "International relations and affairs",
-  "Italian language and literature",
-  "Japanese language and literature",
-  "Linguistics",
-  "Materials engineering",
-  "Mathematics",
-  "Mechanical engineering",
-  "Music",
-  "Philosophy and religious studies",
-  "Philosophy",
-  "Physics",
-  "Political science and government",
-  "Public policy analysis",
-  "Religion/religious studies",
-  "Research and experimental psychology",
-  "Russian language and literature",
-  "Science, technology and society",
-  "Sociology",
-  "Spanish language and literature",
-  "Urban studies/affairs",
+  {
+    label: "Aerospace, aeronautical and astronautical/space engineering",
+    value: "Aerospace, aeronautical and astronautical/space engineering",
+  },
+  {
+    label: "African-american/black studies",
+    value: "African-american/black studies",
+  },
+  {
+    label: "American indian/native american studies",
+    value: "American indian/native american studies",
+  },
+  {
+    label: "American/united states studies/civilization",
+    value: "American/united states studies/civilization",
+  },
+  { label: "Anthropology", value: "Anthropology" },
+  { label: "Applied mathematics", value: "Applied mathematics" },
+  { label: "Archeology", value: "Archeology" },
+  { label: "Area studies", value: "Area studies" },
+  {
+    label: "Art history, criticism and conservation",
+    value: "Art history, criticism and conservation",
+  },
+  { label: "Art/art studies", value: "Art/art studies" },
+  { label: "Asian-american studies", value: "Asian-american studies" },
+  {
+    label: "Bioengineering and biomedical engineering",
+    value: "Bioengineering and biomedical engineering",
+  },
+  {
+    label: "Biology/biological sciences",
+    value: "Biology/biological sciences",
+  },
+  { label: "Chemical engineering", value: "Chemical engineering" },
+  { label: "Chemistry", value: "Chemistry" },
+  { label: "Civil engineering", value: "Civil engineering" },
+  {
+    label: "Classics and classical languages, literatures, and linguistics",
+    value: "Classics and classical languages, literatures, and linguistics",
+  },
+  { label: "Cognitive science", value: "Cognitive science" },
+  {
+    label: "Communication and media studies",
+    value: "Communication and media studies",
+  },
+  { label: "Comparative literature", value: "Comparative literature" },
+  { label: "Computer Science", value: "Computer Science" },
+  {
+    label: "Drama and dramatics/theatre arts",
+    value: "Drama and dramatics/theatre arts",
+  },
+  { label: "East asian studies", value: "East asian studies" },
+  {
+    label: "Econometrics and quantitative economics",
+    value: "Econometrics and quantitative economics",
+  },
+  {
+    label: "Electrical and electronics engineering",
+    value: "Electrical and electronics engineering",
+  },
+  { label: "Engineering", value: "Engineering" },
+  {
+    label: "Engineering/industrial management",
+    value: "Engineering/industrial management",
+  },
+  {
+    label: "English language and literature",
+    value: "English language and literature",
+  },
+  {
+    label: "Environmental/environmental health engineering",
+    value: "Environmental/environmental health engineering",
+  },
+  {
+    label: "Ethnic, cultural minority, gender, and group studies",
+    value: "Ethnic, cultural minority, gender, and group studies",
+  },
+  { label: "Film/cinema/video studies", value: "Film/cinema/video studies" },
+  { label: "Fine/studio arts", value: "Fine/studio arts" },
+  {
+    label: "French language and literature",
+    value: "French language and literature",
+  },
+  {
+    label: "Geological and earth sciences/geosciences",
+    value: "Geological and earth sciences/geosciences",
+  },
+  { label: "Geology/earth science", value: "Geology/earth science" },
+  {
+    label: "German language and literature",
+    value: "German language and literature",
+  },
+  {
+    label:
+      "Hispanic-american, puerto rican, and mexican-american/chicano studies",
+    value:
+      "Hispanic-american, puerto rican, and mexican-american/chicano studies",
+  },
+  { label: "History", value: "History" },
+  { label: "Human biology", value: "Human biology" },
+  {
+    label: "International relations and affairs",
+    value: "International relations and affairs",
+  },
+  {
+    label: "Italian language and literature",
+    value: "Italian language and literature",
+  },
+  {
+    label: "Japanese language and literature",
+    value: "Japanese language and literature",
+  },
+  { label: "Linguistics", value: "Linguistics" },
+  { label: "Materials engineering", value: "Materials engineering" },
+  { label: "Mathematics", value: "Mathematics" },
+  { label: "Mechanical engineering", value: "Mechanical engineering" },
+  { label: "Music", value: "Music" },
+  {
+    label: "Philosophy and religious studies",
+    value: "Philosophy and religious studies",
+  },
+  { label: "Philosophy", value: "Philosophy" },
+  { label: "Physics", value: "Physics" },
+  {
+    label: "Political science and government",
+    value: "Political science and government",
+  },
+  { label: "Public policy analysis", value: "Public policy analysis" },
+  { label: "Religion/religious studies", value: "Religion/religious studies" },
+  {
+    label: "Research and experimental psychology",
+    value: "Research and experimental psychology",
+  },
+  {
+    label: "Russian language and literature",
+    value: "Russian language and literature",
+  },
+  {
+    label: "Science, technology and society",
+    value: "Science, technology and society",
+  },
+  { label: "Sociology", value: "Sociology" },
+  {
+    label: "Spanish language and literature",
+    value: "Spanish language and literature",
+  },
+  { label: "Urban studies/affairs", value: "Urban studies/affairs" },
 ];
+
+export const gradYearList = [
+  {label: 2018, value: 2018},
+  {label: 2019, value: 2019},
+  {label: 2020, value: 2020},
+  {label: 2021, value: 2021},
+  {label: 2022, value: 2022},
+  {label: 2023, value: 2023},
+  {label: 2024, value: 2024},
+]
