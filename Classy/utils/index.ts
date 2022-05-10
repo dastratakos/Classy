@@ -142,6 +142,8 @@ export const getTimeString = (
   timestamp: Timestamp,
   timeZone: string = "America/Los_Angeles"
 ) => {
+  if (!timestamp) return "";
+  
   return timestamp.toDate().toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",
@@ -153,15 +155,15 @@ export const getTimeString = (
 export const generateTerms = (startYear: string, endYear: string) => {
   let terms = {};
   for (let year = parseInt(startYear); year < parseInt(endYear); year++) {
-    const yearKey = `${year}-${year % 100 + 1}`;
+    const yearKey = `${year}-${(year % 100) + 1}`;
 
-    const blankTerms = {}
+    const blankTerms = {};
     for (let quarter of [2, 4, 6]) {
       const termId = `${(year + 1 - 1900) * 10 + quarter}`;
       blankTerms[`${termId}`] = 0;
     }
 
-    terms[`${yearKey}`] = blankTerms
+    terms[`${yearKey}`] = blankTerms;
   }
   return terms;
 };
