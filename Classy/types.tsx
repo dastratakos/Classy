@@ -111,7 +111,7 @@ export type RootStackParamList = {
 
   Profile: undefined;
   Favorites: undefined;
-  Courses: { termId: string };
+  Enrollments: { userId: string, termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
@@ -144,7 +144,7 @@ export type ProfileStackParamList = {
 
   Profile: undefined;
   Favorites: undefined;
-  Courses: { termId: string };
+  Enrollments: { userId: string, termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
@@ -164,7 +164,7 @@ export type SearchStackParamList = {
   Search: undefined;
   Profile: undefined;
   Favorites: undefined;
-  Courses: { termId: string };
+  Enrollments: { userId: string, termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
@@ -188,7 +188,7 @@ export type HomeStackParamList = {
   ChannelDetails: undefined;
   NewMessage: undefined;
 
-  Courses: { termId: string };
+  Enrollments: { userId: string, termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
@@ -248,9 +248,9 @@ export type CourseSimilarityProps = NativeStackScreenProps<
   "CourseSimilarity"
 >;
 
-export type CoursesProps = NativeStackScreenProps<
+export type EnrollmentsProps = NativeStackScreenProps<
   RootStackParamList,
-  "Courses"
+  "Enrollments"
 >;
 
 export type SelectQuarterProps = NativeStackScreenProps<

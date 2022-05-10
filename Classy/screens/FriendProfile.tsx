@@ -8,7 +8,7 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { Course, FriendProfileProps, User } from "../types";
+import { Enrollment, FriendProfileProps, User } from "../types";
 import { Timestamp } from "firebase/firestore";
 import { getCurrentTermId, sendPushNotification } from "../utils";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -19,7 +19,6 @@ import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Calendar from "../components/Calendar";
 import Colors from "../constants/Colors";
-import CourseList from "../components/CourseList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import Separator from "../components/Separator";
@@ -39,6 +38,7 @@ import {
 import { getUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import EnrollmentList from "../components/EnrollmentList";
 
 export default function FriendProfile({ route }: FriendProfileProps) {
   const navigation = useNavigation();
@@ -50,7 +50,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const [friendDocId, setFriendDocId] = useState("");
   const [friendStatusLoading, setFriendStatusLoading] = useState(true);
   const [numFriends, setNumFriends] = useState("");
-  const [courses, setCourses] = useState<Course[]>([]);
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [inClass, setInClass] = useState<boolean>(false);
 
   const [refreshing, setRefreshing] = useState(false);
@@ -84,7 +84,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     getFriendIds(route.params.id).then((res) => {
       setNumFriends(`${res.length}`);
     });
-    setCourses(
+    setEnrollments(
       await getEnrollmentsForTerm(route.params.id, getCurrentTermId())
     );
     setInterval(checkInClass, 1000);
@@ -295,7 +295,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     },
     {
       label: "Courses",
-      component: <CourseList courses={courses} />,
+      component: <EnrollmentList enrollments={enrollments} />,
     },
   ];
 

@@ -8,7 +8,7 @@ import ChannelDetails from "../screens/ChannelDetails";
 import ChannelScreen from "../screens/ChannelScreen";
 import Course from "../screens/Course";
 import CourseSimilarity from "../screens/CourseSimilarity";
-import Courses from "../screens/Courses";
+import Enrollments from "../screens/Enrollments";
 import Favorites from "../screens/Favorites";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
@@ -127,8 +127,8 @@ export default function HomeStackNavigator() {
         getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen
-        name="Courses"
-        component={Courses}
+        name="Enrollments"
+        component={Enrollments}
         getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen

@@ -46,7 +46,10 @@ export default function MyQuarters() {
                               termId
                             )} (${numUnits})`}
                             onPress={() =>
-                              navigation.navigate("Courses", { termId })
+                              navigation.navigate("Enrollments", {
+                                userId: context.user.id,
+                                termId,
+                              })
                             }
                           />
                           {editMode && (

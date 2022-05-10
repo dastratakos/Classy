@@ -7,19 +7,23 @@ import { useNavigation } from "@react-navigation/core";
 import useColorScheme from "../hooks/useColorScheme";
 import { Enrollment } from "../types";
 import AppStyles from "../styles/AppStyles";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import EnrollmentModal from "./EnrollmentModal";
 import { deleteEnrollment } from "../services/enrollments";
+import AppContext from "../context/Context";
 
 export default function EnrollmentCard({
   enrollment,
-  numFriends,
-  emphasize,
+  key,
+  numFriends = 0,
+  emphasize = false,
 }: {
   enrollment: Enrollment;
-  numFriends: string;
-  emphasize: boolean;
+  key: string;
+  numFriends?: number;
+  emphasize?: boolean;
 }) {
+  const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -42,12 +46,13 @@ export default function EnrollmentCard({
   };
 
   return (
-    <>
+    <View key={key}>
       <EnrollmentModal
         enrollment={enrollment}
         deleteFunc={deleteEnrollmentAlert}
         visible={modalVisible}
         setVisible={setModalVisible}
+        editable={enrollment.userId === context.user.id}
       />
       <View
         style={[
@@ -72,12 +77,12 @@ export default function EnrollmentCard({
           <View style={styles.numFriendsContainer}>
             <Text style={styles.numberText}>{numFriends}</Text>
             <Text style={styles.friendsText}>
-              {"friend" + (numFriends !== "1" ? "s" : "")}
+              {"friend" + (numFriends !== 1 ? "s" : "")}
             </Text>
           </View>
         </TouchableOpacity>
       </View>
-    </>
+    </View>
   );
 }
 

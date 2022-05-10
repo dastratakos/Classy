@@ -17,13 +17,13 @@ export default function EnrollmentModal({
   deleteFunc,
   visible,
   setVisible,
-  editable = true,
+  editable,
 }: {
   enrollment: Enrollment;
   deleteFunc: () => void;
   visible: boolean;
   setVisible: (arg0: boolean) => void;
-  editable?: boolean;
+  editable: boolean;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();

@@ -12,10 +12,7 @@ export default function EnrollmentList({
       {enrollments.map((enrollment, i) => (
         <EnrollmentCard
           enrollment={enrollment}
-          numFriends={"0"}
-          emphasize={false}
-          // key={i}
-          key={enrollment.courseId}
+          key={`${enrollment.courseId}`}
         />
       ))}
     </>

@@ -3,7 +3,7 @@ import * as React from "react";
 import AddCourse from "../screens/AddCourse";
 import Course from "../screens/Course";
 import CourseSimilarity from "../screens/CourseSimilarity";
-import Courses from "../screens/Courses";
+import Enrollments from "../screens/Enrollments";
 import Favorites from "../screens/Favorites";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
@@ -54,8 +54,8 @@ export default function SearchStackNavigator() {
         getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen
-        name="Courses"
-        component={Courses}
+        name="Enrollments"
+        component={Enrollments}
         getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen
