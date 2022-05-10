@@ -42,6 +42,13 @@ export type Course = {
   unitsMin: number;
 };
 
+export type FavoritedCourse = {
+  code: string[];
+  courseId: number;
+  title: string;
+  userId: string;
+};
+
 export type Enrollment = {
   code: string[];
   courseId: number;

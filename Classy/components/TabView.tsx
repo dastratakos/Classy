@@ -44,7 +44,7 @@ export default function TabView({ tabs }) {
   };
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <View
         style={[
           AppStyles.row,
@@ -70,17 +70,13 @@ export default function TabView({ tabs }) {
           </TouchableOpacity>
         ))}
       </View>
-      {/* {tabs[selectedId].component} */}
-      {tabs.map((tab, i) => (
-        <View key={i}>{selectedId == i && tabs[selectedId].component}</View>
-      ))}
-    </>
+      {tabs[selectedId].component}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: Colors.lightRed,
     padding: Layout.spacing.xxsmall,
     borderRadius: Layout.spacing.xlarge,
     marginBottom: Layout.spacing.large,

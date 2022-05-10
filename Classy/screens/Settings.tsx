@@ -24,7 +24,7 @@ import Separator from "../components/Separator";
 import { User } from "../types";
 import { auth } from "../firebase";
 import { generateSubstrings } from "../utils";
-import { updateUser } from "../services/user";
+import { updateUser } from "../services/users";
 import { uploadImage } from "../services/storage";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";

@@ -1,15 +1,62 @@
+import { Course, Schedule } from "../types";
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDocs,
   increment,
+  limit,
+  orderBy,
   query,
+  startAfter,
   updateDoc,
+  where,
 } from "firebase/firestore";
-import { db } from "../../firebase";
-import { Course, Schedule } from "../../types";
-import { termIdToYear } from "../../utils";
+
+import { FavoritedCourse } from "../types";
+import { db } from "../firebase";
+import { termIdToYear } from "../utils";
+
+export const searchCourses = async (search: string) => {
+  if (search === "") return [];
+
+  const q = query(
+    collection(db, "courses"),
+    where("keywords", "array-contains", search.toLowerCase().trim()),
+    orderBy("code"),
+    limit(3)
+  );
+
+  const res: Course[] = [];
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    res.push(doc.data() as Course);
+  });
+  return res;
+};
+
+export const searchMoreCourses = async (
+  search: string,
+  lastCourse: Course
+) => {
+  if (search === "") return [];
+
+  const q = query(
+    collection(db, "courses"),
+    where("keywords", "array-contains", search.toLowerCase().trim()),
+    orderBy("code"),
+    startAfter(lastCourse),
+    limit(3)
+  );
+
+  const res: Course[] = [];
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    res.push(doc.data() as Course);
+  });
+  return res;
+};
 
 export const getCourseTerms = async (courseId: number) => {
   const q = query(collection(doc(db, "courses", `${courseId}`), "terms"));
@@ -67,4 +114,54 @@ export const addEnrollment = async (
     doc(doc(db, "courses", `${course.courseId}`), "terms", termId),
     courseData
   );
+};
+
+export const getIsFavorited = async (userId: string, courseId: number) => {
+  const q = query(
+    collection(db, "favorites"),
+    where("courseId", "==", courseId),
+    where("userId", "==", userId)
+  );
+
+  let res = false;
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    res = true;
+  });
+  return res;
+};
+
+export const getFavorites = async (userId: string) => {
+  const q = query(collection(db, "favorites"), where("userId", "==", userId));
+
+  const res: FavoritedCourse[] = [];
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    res.push(doc.data() as FavoritedCourse);
+  });
+  return res;
+};
+
+export const addFavorite = async (userId: string, course: Course) => {
+  const data = {
+    code: course.code,
+    courseId: course.courseId,
+    title: course.title,
+    userId,
+  };
+
+  await addDoc(collection(db, "favorites"), data);
+};
+
+export const deleteFavorite = async (userId: string, courseId: number) => {
+  const q = query(
+    collection(db, "favorites"),
+    where("courseId", "==", courseId),
+    where("userId", "==", userId)
+  );
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((res) => {
+    deleteDoc(doc(db, "favorites", res.id));
+  });
 };

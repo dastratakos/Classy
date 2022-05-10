@@ -8,31 +8,24 @@ import {
   StyleSheet,
 } from "react-native";
 import { Icon, Text, View } from "../components/Themed";
-import { useCallback, useContext, useEffect, useState } from "react";
+import {
+  addFavorite,
+  deleteFavorite,
+  getIsFavorited,
+} from "../services/courses";
+import { useContext, useEffect, useState } from "react";
 
+import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import { CourseProps } from "../types";
 import Layout from "../constants/Layout";
-import Separator from "../components/Separator";
-import useColorScheme from "../hooks/useColorScheme";
 import ReadMoreText from "../components/ReadMoreText";
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
-import { db } from "../firebase";
+import Separator from "../components/Separator";
 import friendsData from "./friendsData";
+import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import AppContext from "../context/Context";
-import { G } from "react-native-svg";
 
 const exploreCoursesLink =
   "https://explorecourses.stanford.edu/search?view=catalog&filter-coursestatus-Active=on&page=0&catalog=&academicYear=&q=";
@@ -46,7 +39,7 @@ export default function Course({ route }: CourseProps) {
 
   const [course, setCourse] = useState(route.params.course);
   const [favorited, setFavorited] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // useEffect(() => {
   //   getCourse(route.params.id);
@@ -69,48 +62,24 @@ export default function Course({ route }: CourseProps) {
   // };
 
   useEffect(() => {
-    const getFavorited = async (id: number) => {
-      const q = query(
-        collection(db, "favorites"),
-        where("courseId", "==", id),
-        where("userId", "==", context.user.id)
+    const loadScreen = async () => {
+      setFavorited(
+        await getIsFavorited(context.user.id, route.params.course.courseId)
       );
-
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        setFavorited(true);
-      });
+      setIsLoading(false);
     };
 
-    getFavorited(route.params.course.courseId);
+    loadScreen();
   }, []);
 
   const handleFavoritePressed = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     if (!favorited) {
       setFavorited(true);
-
-      const data = {
-        code: course.code,
-        courseId: course.courseId,
-        title: course.title,
-        userId: context.user.id,
-      };
-
-      await addDoc(collection(db, "favorites"), data);
+      addFavorite(context.user.id, course);
     } else {
       setFavorited(false);
-
-      const q = query(
-        collection(db, "favorites"),
-        where("courseId", "==", course.courseId),
-        where("userId", "==", context.user.id)
-      );
-
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((res) => {
-        deleteDoc(doc(db, "favorites", res.id));
-      });
+      deleteFavorite(context.user.id, course.courseId);
     }
   };
 

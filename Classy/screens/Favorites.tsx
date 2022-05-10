@@ -1,13 +1,13 @@
 import { ScrollView, StyleSheet } from "react-native";
-import { View } from "../components/Themed";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import CourseList from "../components/CourseList";
-import { db } from "../firebase";
+import { FavoritedCourse } from "../types";
+import { View } from "../components/Themed";
+import { getFavorites } from "../services/courses";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
@@ -16,22 +16,14 @@ export default function Favorites() {
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
 
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useState<FavoritedCourse[]>([]);
 
   useEffect(() => {
-    getFavorites(context.user.id);
+    const loadScreen = async () => {
+      setFavorites(await getFavorites(context.user.id));
+    };
+    loadScreen();
   }, []);
-
-  const getFavorites = async (id: string) => {
-    const q = query(collection(db, "favorites"), where("userId", "==", id));
-
-    const results = [];
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      results.push(doc.data());
-    });
-    setFavorites(results);
-  };
 
   return (
     <ScrollView
@@ -45,4 +37,4 @@ export default function Favorites() {
   );
 }
 
-const styles = StyleSheet.create();
+const styles = StyleSheet.create({});
