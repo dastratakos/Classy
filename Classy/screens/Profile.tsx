@@ -32,12 +32,14 @@ import events from "./dummyEvents";
 import { getEnrollmentsForTerm } from "../services/enrollments";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { getFriendIds } from "../services/friends";
 
 export default function Profile() {
   const context = useContext(AppContext);
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
+  const [numFriends, setNumFriends] = useState("");
   const [enrollments, setEnrollments] = useState([] as Enrollment[]);
   const [refreshing, setRefreshing] = useState(true);
   const [showEmailVerification, setShowEmailVerification] = useState(
@@ -51,7 +53,9 @@ export default function Profile() {
       if (auth.currentUser) {
         const user = await getUser(auth.currentUser.uid);
         context.setUser({ ...context.user, ...user });
-
+        getFriendIds(context.user.id).then((res) => {
+          setNumFriends(`${res.length}`);
+        });
         setEnrollments(
           await getEnrollmentsForTerm(context.user.id, getCurrentTermId())
         );
@@ -73,6 +77,9 @@ export default function Profile() {
     setRefreshing(true);
     const user = await getUser(context.user.id);
     context.setUser({ ...context.user, ...user });
+    getFriendIds(context.user.id).then((res) => {
+      setNumFriends(`${res.length}`);
+    });
     setEnrollments(
       await getEnrollmentsForTerm(context.user.id, getCurrentTermId())
     );
@@ -276,8 +283,8 @@ export default function Profile() {
             ) : null}
           </View>
           <SquareButton
-            num={`${context.friendIds.length}`}
-            text={"friend" + (context.friendIds.length === 1 ? "" : "s")}
+            num={`${numFriends}`}
+            text={"friend" + (numFriends === "1" ? "" : "s")}
             size={Layout.buttonHeight.large}
             onPress={() => navigation.navigate("MyFriends")}
           />
