@@ -157,7 +157,7 @@ export const generateTerms = (startYear: string, endYear: string) => {
 
     const blankTerms = {}
     for (let quarter of [2, 4, 6]) {
-      const termId = `${(year - 1900) * 10 + quarter}`;
+      const termId = `${(year + 1 - 1900) * 10 + quarter}`;
       blankTerms[`${termId}`] = 0;
     }
 
