@@ -35,15 +35,15 @@ export default function Search() {
     }
 
     let res;
-    if (!lastUser) {
-      console.log("Searching users:", search);
-      res = await searchUsers(context.user.id, search);
-      setUserSearchResults([...res]);
-    } else {
-      console.log("Searching more users:", search);
-      res = await searchMoreUsers(context.user.id, search, lastUser);
-      setUserSearchResults([...userSearchResults, ...res]);
-    }
+    // if (!lastUser) {
+    console.log("Searching users:", search);
+    res = await searchUsers(context.user.id, search);
+    setUserSearchResults([...res]);
+    // } else {
+    //   console.log("Searching more users:", search);
+    //   res = await searchMoreUsers(context.user.id, search, lastUser);
+    //   setUserSearchResults([...userSearchResults, ...res]);
+    // }
     console.log("user res:", res.length);
     setLastUser(res[res.length - 1]);
     setRefreshing(false);
@@ -55,15 +55,15 @@ export default function Search() {
       return;
     }
     let res;
-    if (!lastCourse) {
-      console.log("Searching courses:", search);
-      res = await searchCourses(search);
-      setCourseSearchResults([...res]);
-    } else {
-      console.log("Searching more courses:", search);
-      res = await searchMoreCourses(search, lastCourse);
-      setCourseSearchResults([...courseSearchResults, ...res]);
-    }
+    // if (!lastCourse) {
+    console.log("Searching courses:", search);
+    res = await searchCourses(search);
+    setCourseSearchResults([...res]);
+    // } else {
+    //   console.log("Searching more courses:", search);
+    //   res = await searchMoreCourses(search, lastCourse);
+    //   setCourseSearchResults([...courseSearchResults, ...res]);
+    // }
     console.log("course res:", res.length);
     setLastCourse(res[res.length - 1]);
     setRefreshing(false);
