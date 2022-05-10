@@ -140,7 +140,7 @@ export default function NewMessage() {
 
     setChatButtonLoading(false);
 
-    navigation.popToTop();
+    navigation.goBack();
     navigation.navigate("ChannelScreen");
   };
 
