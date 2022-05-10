@@ -8,11 +8,13 @@ import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import useColorScheme from "../hooks/useColorScheme";
 import { useState } from "react";
+import { Tab } from "../types";
 
 export default function TabView({ 
   tabs,
   selectedStyle, 
 }: {
+  tabs: Tab[];
   selectedStyle?: Object
 }) {
   const colorScheme = useColorScheme();

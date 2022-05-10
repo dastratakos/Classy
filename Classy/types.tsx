@@ -87,6 +87,11 @@ export type Instructor = {
   sunet: string;
 };
 
+export type Tab = {
+  label: string;
+  component: JSX.Element;
+}
+
 export type RootStackParamList = {
   AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;
   HomeStack: NavigatorScreenParams<HomeStackParamList> | undefined;
