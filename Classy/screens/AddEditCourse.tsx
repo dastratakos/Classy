@@ -128,7 +128,7 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
           <Text style={styles.title}>{course.code.join(", ")}</Text>
           <Text style={styles.title}>{course.title}</Text>
           <View style={styles.row}>
-            <Text>Quarter</Text>
+            <Text style={styles.subheading}>Quarter</Text>
             <Button
               text={
                 context.selectedTerm !== ""
@@ -144,7 +144,7 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
             />
           </View>
           <View style={styles.row}>
-            <Text>Units</Text>
+            <Text style={styles.subheading}>Units</Text>
             <View style={{ flexDirection: "row" }}>
               {Array.from(
                 { length: course.unitsMax - course.unitsMin + 1 },
@@ -168,8 +168,9 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
               ))}
             </View>
           </View>
+          
           <View>
-            <Text>Grading basis</Text>
+            <Text style={styles.subheading}>Grading basis</Text>
             <View
               style={{
                 flexDirection: "row",
@@ -198,7 +199,8 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
             </View>
           </View>
           <View>
-            <Text>Class times</Text>
+            <Text style={styles.subheading}>Class times</Text>
+            <Text style={{color: Colors[colorScheme].secondaryText}}>Select your lecture and section, if applicable</Text>
             <Schedules />
           </View>
         </View>
@@ -234,9 +236,8 @@ export default function AddEditCourse({ route }: AddEditCourseProps) {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: Layout.text.xlarge,
+    fontSize: Layout.text.xxlarge,
     fontWeight: "500",
-    marginBottom: Layout.spacing.small,
   },
   row: {
     ...AppStyles.row,
@@ -249,5 +250,8 @@ const styles = StyleSheet.create({
     left: Layout.spacing.medium,
     right: Layout.spacing.medium,
     backgroundColor: "transparent",
+  },
+  subheading: {
+    fontSize: Layout.text.large,
   },
 });

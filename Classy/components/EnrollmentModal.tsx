@@ -67,17 +67,17 @@ export default function EnrollmentModal({
             { backgroundColor: Colors[colorScheme].cardBackground },
           ]}
         >
-          <Text style={styles.codes}>{enrollment.code[0]}</Text>
+          <Text style={styles.codes}>{enrollment.code.join(", ")}</Text>
           <Text style={[styles.title, {
             color: Colors[colorScheme].secondaryText
           }]}>{enrollment.title}</Text>
           <View style={styles.textwrap}>
-            <Text style={styles.descrip}>Units: </Text>
-            <Text style={[styles.descrip, {fontWeight: "500"}]}>{enrollment.units}</Text>
-          </View>
-          <View style={styles.textwrap}>
             <Text style={styles.descrip}>Quarter: </Text>
             <Text style={[styles.descrip, {fontWeight: "500"}]}>{termIdToFullName(enrollment.termId)}</Text>
+          </View>
+          <View style={styles.textwrap}>
+            <Text style={styles.descrip}>Units: </Text>
+            <Text style={[styles.descrip, {fontWeight: "500"}]}>{enrollment.units}</Text>
           </View>
           <View style={styles.textwrap}>
             <Text style={styles.descrip}>Class Times: </Text>

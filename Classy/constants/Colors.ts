@@ -4,7 +4,7 @@ const palette = {
   deepRed: "#cb202d",
   pink: "#ef476f",
   green: "#20e070",
-  lightBlue: "#2f95dc",
+  lightBlue: "#33c5ff",
   black: "#000000",
   lightBlack: "#111111",
   darkDarkGray: "#1e1e1e",
