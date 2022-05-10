@@ -5,18 +5,15 @@ import {
   deleteDoc,
   doc,
   getDocs,
-  increment,
   limit,
   orderBy,
   query,
   startAfter,
-  updateDoc,
   where,
 } from "firebase/firestore";
 
 import { FavoritedCourse } from "../types";
 import { db } from "../firebase";
-import { termIdToYear } from "../utils";
 
 export const searchCourses = async (search: string) => {
   if (search === "") return [];
@@ -73,47 +70,6 @@ export const getCourseTerms = async (courseId: number) => {
     res[`${doc.id}`] = resSchedules;
   });
   return res;
-};
-
-export const addEnrollment = async (
-  course: Course,
-  grading: string,
-  schedules: Schedule[],
-  termId: string,
-  units: number,
-  userId: string
-) => {
-  /* 1. Create doc in enrollments collection. */
-  const data = {
-    code: course.code,
-    courseId: course.courseId,
-    grading,
-    schedules,
-    termId,
-    title: course.title,
-    units,
-    userId,
-  };
-
-  await addDoc(collection(db, "enrollments"), data);
-
-  /* 2. Update number of units in user doc in users collection. */
-  // TODO: need to check if that field exists in the user terms?
-  const year = termIdToYear(termId);
-  const termKey = `terms.${year}.${termId}`;
-  let userData = {};
-  userData[termKey] = increment(units);
-
-  await updateDoc(doc(db, "users", userId), userData);
-
-  /* 3. Updates students list for that term in courses collection. */
-  const studentsKey = `students.${userId}`;
-  let courseData = {};
-  courseData[studentsKey] = true;
-  await updateDoc(
-    doc(doc(db, "courses", `${course.courseId}`), "terms", termId),
-    courseData
-  );
 };
 
 export const getIsFavorited = async (userId: string, courseId: number) => {

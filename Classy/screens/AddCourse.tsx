@@ -1,7 +1,7 @@
 import * as Haptics from "expo-haptics";
 
 import { ActivityIndicator, Text, View } from "../components/Themed";
-import { AddEditCourseProps, Schedule } from "../types";
+import { AddCourseProps, Schedule } from "../types";
 import { ScrollView, StyleSheet } from "react-native";
 import { getCurrentTermId, termIdToName } from "../utils";
 import { useContext, useEffect, useState } from "react";
@@ -15,9 +15,10 @@ import ScheduleCard from "../components/ScheduleCard";
 import SquareButton from "../components/Buttons/SquareButton";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { addEnrollment, getCourseTerms } from "../services/courses";
+import { getCourseTerms } from "../services/courses";
+import { addEnrollment } from "../services/enrollments";
 
-export default function AddEditCourse({ route }: AddEditCourseProps) {
+export default function AddCourse({ route }: AddCourseProps) {
   const context = useContext(AppContext);
   const navigation = useNavigation();
   const colorScheme = useColorScheme();

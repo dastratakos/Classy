@@ -148,7 +148,7 @@ export default function Course({ route }: CourseProps) {
             text="Add to Courses"
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate("AddEditCourse", { course });
+              navigation.navigate("AddCourse", { course });
             }}
             emphasized
           />

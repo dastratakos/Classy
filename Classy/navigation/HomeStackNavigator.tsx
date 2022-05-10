@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { HomeStackScreenProps, ProfileStackScreenProps } from "../types";
 
-import AddEditCourse from "../screens/AddEditCourse";
+import AddCourse from "../screens/AddCourse";
 import AppContext from "../context/Context";
 import ChannelDetails from "../screens/ChannelDetails";
 import ChannelScreen from "../screens/ChannelScreen";
@@ -136,8 +136,8 @@ export default function HomeStackNavigator() {
         getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen
-        name="AddEditCourse"
-        component={AddEditCourse}
+        name="AddCourse"
+        component={AddCourse}
         options={{ title: "Add or Edit Course" }}
       />
       <Stack.Screen

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import AddEditCourse from "../screens/AddEditCourse";
+import AddCourse from "../screens/AddCourse";
 import Course from "../screens/Course";
 import CourseSimilarity from "../screens/CourseSimilarity";
 import Courses from "../screens/Courses";
@@ -63,8 +63,8 @@ export default function SearchStackNavigator() {
         getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen
-        name="AddEditCourse"
-        component={AddEditCourse}
+        name="AddCourse"
+        component={AddCourse}
         options={{ title: "Add or Edit Course" }}
       />
       <Stack.Screen

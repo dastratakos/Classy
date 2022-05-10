@@ -1,4 +1,4 @@
-import { Modal, Pressable, StyleSheet, TouchableOpacity } from "react-native";
+import { Modal, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "./Themed";
 
 import Colors from "../constants/Colors";
@@ -7,11 +7,8 @@ import { useNavigation } from "@react-navigation/core";
 import useColorScheme from "../hooks/useColorScheme";
 import { Enrollment } from "../types";
 import AppStyles from "../styles/AppStyles";
-import { useState } from "react";
 import Button from "./Buttons/Button";
-import { color } from "react-native-reanimated";
 import { getTimeString, termIdToFullName } from "../utils";
-import ScheduleCard from "./ScheduleCard";
 
 export default function EnrollmentModal({
   enrollment,
@@ -30,23 +27,20 @@ export default function EnrollmentModal({
   const colorScheme = useColorScheme();
 
   const onEdit = () => {
-    console.log("on edit");
-  }
+    console.log("TODO: navigate to EditCourse");
+  };
 
   const onViewMore = () => {
-    console.log("on view more");
-  }
-
-  const onDelete = () => {
-    console.log("on delete");
-  }
+    const course = await getCourse(enrollment.courseId);
+    navigation.navigate("Course", { course });
+  };
 
   const deleteContainerStyle = {
-    backgroundColor: Colors.pink
-  }
+    backgroundColor: Colors.pink,
+  };
   const deleteTextStyle = {
-    color: Colors.white
-  }
+    color: Colors.white,
+  };
   return (
     <Modal
       animationType="slide"
@@ -68,16 +62,27 @@ export default function EnrollmentModal({
           ]}
         >
           <Text style={styles.codes}>{enrollment.code.join(", ")}</Text>
-          <Text style={[styles.title, {
-            color: Colors[colorScheme].secondaryText
-          }]}>{enrollment.title}</Text>
+          <Text
+            style={[
+              styles.title,
+              {
+                color: Colors[colorScheme].secondaryText,
+              },
+            ]}
+          >
+            {enrollment.title}
+          </Text>
           <View style={styles.textwrap}>
             <Text style={styles.descrip}>Quarter: </Text>
-            <Text style={[styles.descrip, {fontWeight: "500"}]}>{termIdToFullName(enrollment.termId)}</Text>
+            <Text style={[styles.descrip, { fontWeight: "500" }]}>
+              {termIdToFullName(enrollment.termId)}
+            </Text>
           </View>
           <View style={styles.textwrap}>
             <Text style={styles.descrip}>Units: </Text>
-            <Text style={[styles.descrip, {fontWeight: "500"}]}>{enrollment.units}</Text>
+            <Text style={[styles.descrip, { fontWeight: "500" }]}>
+              {enrollment.units}
+            </Text>
           </View>
           <View style={styles.textwrap}>
             <Text style={styles.descrip}>Class Times: </Text>
@@ -85,33 +90,40 @@ export default function EnrollmentModal({
           </View>
           <View style={styles.classTimesWrap}>
             {enrollment.schedules.map((schedule, i) => (
-              <Text style={styles.schedText} >
-              {schedule.days.join(", ")}{" "}
-              {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
-              {getTimeString(schedule.endInfo, "Africa/Casablanca")}
-            </Text>
+              <Text style={styles.schedText}>
+                {schedule.days.join(", ")}{" "}
+                {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
+                {getTimeString(schedule.endInfo, "Africa/Casablanca")}
+              </Text>
             ))}
-            
           </View>
-          {editable ? 
+          {editable ? (
             <View style={styles.buttonwrap}>
               <View style={styles.buttonbox}>
-                <Button text="Edit" onPress={onEdit} emphasized/>
+                <Button text="Edit" onPress={onEdit} emphasized />
               </View>
-              <View style={[styles.buttonbox, {paddingHorizontal: Layout.spacing.small}]}>
+              <View
+                style={[
+                  styles.buttonbox,
+                  { paddingHorizontal: Layout.spacing.small },
+                ]}
+              >
                 <Button text="View More" onPress={onViewMore} />
               </View>
               <View style={styles.buttonbox}>
-                <Button text="Delete" onPress={onDelete} containerStyle={deleteContainerStyle} textStyle={deleteTextStyle} />
+                <Button
+                  text="Delete"
+                  onPress={deleteFunc}
+                  containerStyle={deleteContainerStyle}
+                  textStyle={deleteTextStyle}
+                />
               </View>
-            </View>  
-            : 
-            <View style={styles.wideButtonWrap}>
-              <Button wide emphasized text="View More" onPress={onViewMore}/>
             </View>
-            
-          }
-          
+          ) : (
+            <View style={styles.wideButtonWrap}>
+              <Button wide emphasized text="View More" onPress={onViewMore} />
+            </View>
+          )}
         </Pressable>
       </Pressable>
     </Modal>
@@ -162,5 +174,5 @@ const styles = StyleSheet.create({
   wideButtonWrap: {
     paddingTop: Layout.spacing.medium,
     width: "100%",
-  }
+  },
 });

@@ -50,6 +50,7 @@ export type FavoritedCourse = {
 };
 
 export type Enrollment = {
+  docId: string;
   code: string[];
   courseId: number;
   grading: string; // Chosen grading basis
@@ -111,7 +112,7 @@ export type RootStackParamList = {
   Favorites: undefined;
   Courses: { termId: string };
   Course: { course: Course };
-  AddEditCourse: { course: Course };
+  AddCourse: { course: Course };
   MyQuarters: undefined;
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
@@ -143,7 +144,7 @@ export type ProfileStackParamList = {
   Favorites: undefined;
   Courses: { termId: string };
   Course: { course: Course };
-  AddEditCourse: { course: Course };
+  AddCourse: { course: Course };
   MyQuarters: undefined;
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
@@ -162,7 +163,7 @@ export type SearchStackParamList = {
   Favorites: undefined;
   Courses: { termId: string };
   Course: { course: Course };
-  AddEditCourse: { course: Course };
+  AddCourse: { course: Course };
   MyQuarters: undefined;
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
@@ -185,7 +186,7 @@ export type HomeStackParamList = {
 
   Courses: { termId: string };
   Course: { course: Course };
-  AddEditCourse: { course: Course };
+  AddCourse: { course: Course };
   MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -212,9 +213,9 @@ export type RegisterProps = NativeStackScreenProps<
 
 export type CourseProps = NativeStackScreenProps<RootStackParamList, "Course">;
 
-export type AddEditCourseProps = NativeStackScreenProps<
+export type AddCourseProps = NativeStackScreenProps<
   RootStackParamList,
-  "AddEditCourse"
+  "AddCourse"
 >;
 
 export type ThreadScreenProps = NativeStackScreenProps<

@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { Alert, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, View } from "./Themed";
 
 import Colors from "../constants/Colors";
@@ -9,6 +9,7 @@ import { Enrollment } from "../types";
 import AppStyles from "../styles/AppStyles";
 import { useState } from "react";
 import EnrollmentModal from "./EnrollmentModal";
+import { deleteEnrollment } from "../services/enrollments";
 
 export default function EnrollmentCard({
   enrollment,
@@ -19,20 +20,32 @@ export default function EnrollmentCard({
   numFriends: string;
   emphasize: boolean;
 }) {
-  const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const deleteEnrollmentDB = async () => {
-    console.log("TODO: deleteEnrollmentDB");
+  const handleDeleteEnrollment = async () => {
+    await deleteEnrollment(enrollment.docId);
+  };
+
+  const deleteEnrollmentAlert = () => {
+    Alert.alert("Delete course", `Are you sure?`, [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: handleDeleteEnrollment,
+      },
+    ]);
   };
 
   return (
     <>
       <EnrollmentModal
         enrollment={enrollment}
-        deleteFunc={deleteEnrollmentDB}
+        deleteFunc={deleteEnrollmentAlert}
         visible={modalVisible}
         setVisible={setModalVisible}
       />
