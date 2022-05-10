@@ -25,6 +25,7 @@ import Settings from "../screens/Settings";
 import ThreadScreen from "../screens/ThreadScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useContext } from "react";
+import EditCourse from "../screens/EditCourse";
 
 const Stack = createNativeStackNavigator();
 
@@ -138,7 +139,12 @@ export default function HomeStackNavigator() {
       <Stack.Screen
         name="AddCourse"
         component={AddCourse}
-        options={{ title: "Add or Edit Course" }}
+        options={{ title: "Add Course" }}
+      />
+      <Stack.Screen
+        name="EditCourse"
+        component={EditCourse}
+        options={{ title: " Edit Course" }}
       />
       <Stack.Screen
         name="MyFriends"

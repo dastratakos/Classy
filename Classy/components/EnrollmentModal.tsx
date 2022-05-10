@@ -29,20 +29,16 @@ export default function EnrollmentModal({
   const colorScheme = useColorScheme();
 
   const onEdit = () => {
-    console.log("TODO: navigate to EditCourse");
+    setVisible(false);
+    navigation.navigate("EditCourse", { enrollment });
   };
 
   const onViewMore = async () => {
+    setVisible(false);
     const course = await getCourse(enrollment.courseId);
     navigation.navigate("Course", { course });
   };
 
-  const deleteContainerStyle = {
-    backgroundColor: Colors.pink,
-  };
-  const deleteTextStyle = {
-    color: Colors.white,
-  };
   return (
     <Modal isVisible={visible}>
       <Pressable style={[styles.container]} onPress={() => setVisible(false)}>
@@ -104,8 +100,8 @@ export default function EnrollmentModal({
                 <Button
                   text="Delete"
                   onPress={deleteFunc}
-                  containerStyle={deleteContainerStyle}
-                  textStyle={deleteTextStyle}
+                  containerStyle={{ backgroundColor: Colors.pink }}
+                  textStyle={{ color: Colors.white }}
                 />
               </View>
             </View>

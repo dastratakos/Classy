@@ -113,6 +113,7 @@ export type RootStackParamList = {
   Courses: { termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
+  EditCourse: { enrollment: Enrollment };
   MyQuarters: undefined;
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
@@ -145,6 +146,7 @@ export type ProfileStackParamList = {
   Courses: { termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
+  EditCourse: { enrollment: Enrollment };
   MyQuarters: undefined;
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
@@ -164,6 +166,7 @@ export type SearchStackParamList = {
   Courses: { termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
+  EditCourse: { enrollment: Enrollment };
   MyQuarters: undefined;
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
@@ -187,6 +190,7 @@ export type HomeStackParamList = {
   Courses: { termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
+  EditCourse: { enrollment: Enrollment };
   MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
@@ -216,6 +220,11 @@ export type CourseProps = NativeStackScreenProps<RootStackParamList, "Course">;
 export type AddCourseProps = NativeStackScreenProps<
   RootStackParamList,
   "AddCourse"
+>;
+
+export type EditCourseProps = NativeStackScreenProps<
+  RootStackParamList,
+  "EditCourse"
 >;
 
 export type ThreadScreenProps = NativeStackScreenProps<

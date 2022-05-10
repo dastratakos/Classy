@@ -68,6 +68,43 @@ export const addEnrollment = async (
   );
 };
 
+export const updateEnrollment = async (
+  oldEnrollment: Enrollment,
+  grading: string,
+  schedules: Schedule[],
+  termId: string,
+  units: number,
+  userId: string
+) => {
+  /* 1. Update doc in enrollments collection. */
+  const data = {
+    grading,
+    schedules,
+    termId,
+    units,
+    userId,
+  };
+
+  await updateDoc(doc(db, "enrollments", oldEnrollment.docId), data);
+
+  /* 2. Update number of units in user doc in users collection. */
+  // const year = termIdToYear(termId);
+  // const termKey = `terms.${year}.${termId}`;
+  // let userData = {};
+  // userData[termKey] = increment(units);
+
+  // await updateDoc(doc(db, "users", userId), userData);
+
+  /* 3. Updates students list for that term in courses collection. */
+  // const studentsKey = `students.${userId}`;
+  // let courseData = {};
+  // courseData[studentsKey] = true;
+  // await updateDoc(
+  //   doc(doc(db, "courses", `${course.courseId}`), "terms", termId),
+  //   courseData
+  // );
+};
+
 export const deleteEnrollment = async (docId: string) => {
   await deleteDoc(doc(db, "enrollments", docId));
 };
