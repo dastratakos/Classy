@@ -1,4 +1,4 @@
-import { Modal, Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import { Text, View } from "./Themed";
 
 import Colors from "../constants/Colors";
@@ -9,6 +9,8 @@ import { Enrollment } from "../types";
 import AppStyles from "../styles/AppStyles";
 import Button from "./Buttons/Button";
 import { getTimeString, termIdToFullName } from "../utils";
+import { getCourse } from "../services/courses";
+import Modal from "react-native-modal";
 
 export default function EnrollmentModal({
   enrollment,
@@ -30,7 +32,7 @@ export default function EnrollmentModal({
     console.log("TODO: navigate to EditCourse");
   };
 
-  const onViewMore = () => {
+  const onViewMore = async () => {
     const course = await getCourse(enrollment.courseId);
     navigation.navigate("Course", { course });
   };
@@ -42,19 +44,8 @@ export default function EnrollmentModal({
     color: Colors.white,
   };
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={visible}
-      onRequestClose={() => setVisible(!visible)}
-    >
-      <Pressable
-        style={[
-          styles.container,
-          { backgroundColor: Colors[colorScheme].overlay },
-        ]}
-        onPress={() => setVisible(false)}
-      >
+    <Modal isVisible={visible}>
+      <Pressable style={[styles.container]} onPress={() => setVisible(false)}>
         <Pressable
           style={[
             styles.modalView,
@@ -86,7 +77,6 @@ export default function EnrollmentModal({
           </View>
           <View style={styles.textwrap}>
             <Text style={styles.descrip}>Class Times: </Text>
-            {/* <Text style={[styles.descrip, {fontWeight: "500"}]}>{}</Text> */}
           </View>
           <View style={styles.classTimesWrap}>
             {enrollment.schedules.map((schedule, i) => (
@@ -137,7 +127,6 @@ const styles = StyleSheet.create({
   },
   modalView: {
     ...AppStyles.boxShadow,
-    margin: Layout.spacing.large,
     borderRadius: Layout.radius.large,
     padding: Layout.spacing.large,
     alignItems: "flex-start",

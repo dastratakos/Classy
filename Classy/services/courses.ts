@@ -15,6 +15,17 @@ import {
 import { FavoritedCourse } from "../types";
 import { db } from "../firebase";
 
+export const getCourse = async (courseId: number) => {
+  const q = query(collection(db, "courses"), where("courseId", "==", courseId));
+
+  let res = {} as Course;
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    res = doc.data() as Course;
+  });
+  return res;
+};
+
 export const searchCourses = async (search: string) => {
   if (search === "") return [];
 
@@ -33,10 +44,7 @@ export const searchCourses = async (search: string) => {
   return res;
 };
 
-export const searchMoreCourses = async (
-  search: string,
-  lastCourse: Course
-) => {
+export const searchMoreCourses = async (search: string, lastCourse: Course) => {
   if (search === "") return [];
 
   const q = query(
