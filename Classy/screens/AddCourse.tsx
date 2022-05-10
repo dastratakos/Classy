@@ -115,6 +115,7 @@ export default function AddCourse({ route }: AddCourseProps) {
 
     setDoneLoading(false);
     navigation.goBack();
+    navigation.navigate("ProfileStack", { screen: "Profile" });
   };
 
   if (loading) return <ActivityIndicator />;
@@ -169,7 +170,7 @@ export default function AddCourse({ route }: AddCourseProps) {
               ))}
             </View>
           </View>
-          
+
           <View style={styles.gradingBasisWrap}>
             <Text style={styles.subheading}>Grading basis</Text>
             <View
@@ -201,7 +202,9 @@ export default function AddCourse({ route }: AddCourseProps) {
           </View>
           <View>
             <Text style={styles.subheading}>Class times</Text>
-            <Text style={{color: Colors[colorScheme].secondaryText}}>Select your lecture and section, if applicable</Text>
+            <Text style={{ color: Colors[colorScheme].secondaryText }}>
+              Select your lecture and section, if applicable
+            </Text>
             <Schedules />
           </View>
         </View>
@@ -256,6 +259,6 @@ const styles = StyleSheet.create({
     fontSize: Layout.text.large,
   },
   gradingBasisWrap: {
-    paddingTop: Layout.spacing.large
-  }
+    paddingTop: Layout.spacing.large,
+  },
 });

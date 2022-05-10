@@ -52,9 +52,10 @@ export default function Profile() {
         const user = await getUser(auth.currentUser.uid);
         context.setUser({ ...context.user, ...user });
 
-        getEnrollmentsForTerm(context.user.id, getCurrentTermId()).then(() =>
-          setInterval(checkInClass, 1000)
+        setEnrollments(
+          await getEnrollmentsForTerm(context.user.id, getCurrentTermId())
         );
+        setInterval(checkInClass, 1000);
       }
     };
     loadScreen();
@@ -290,13 +291,10 @@ export default function Profile() {
             onPress={() => navigation.navigate("MyQuarters")}
           />
         </View>
-        
-        
-        
       </View>
-      <Separator  />
+      <Separator />
       <View style={AppStyles.section}>
-        <TabView tabs={tabs} selectedStyle={{backgroundColor: Colors.pink}} />
+        <TabView tabs={tabs} selectedStyle={{ backgroundColor: Colors.pink }} />
       </View>
     </ScrollView>
   );
@@ -337,6 +335,6 @@ const styles = StyleSheet.create({
   },
   term: {
     fontSize: Layout.text.large,
-    fontWeight: "500"
+    fontWeight: "500",
   },
 });
