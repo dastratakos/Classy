@@ -67,6 +67,7 @@ export type Term = {
 };
 
 export type Schedule = {
+  // classId: string;
   component: string;
   days: string[];
   endInfo: Timestamp;

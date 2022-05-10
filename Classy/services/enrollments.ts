@@ -88,21 +88,41 @@ export const updateEnrollment = async (
   await updateDoc(doc(db, "enrollments", oldEnrollment.docId), data);
 
   /* 2. Update number of units in user doc in users collection. */
-  // const year = termIdToYear(termId);
-  // const termKey = `terms.${year}.${termId}`;
-  // let userData = {};
-  // userData[termKey] = increment(units);
+  const oldYear = termIdToYear(oldEnrollment.termId);
+  const oldTermKey = `terms.${oldYear}.${oldEnrollment.termId}`;
 
-  // await updateDoc(doc(db, "users", userId), userData);
+  const year = termIdToYear(termId);
+  const termKey = `terms.${year}.${termId}`;
+
+  let userData = {};
+  userData[oldTermKey] = increment(-oldEnrollment.units);
+  userData[termKey] = increment(units);
+
+  await updateDoc(doc(db, "users", userId), userData);
 
   /* 3. Updates students list for that term in courses collection. */
-  // const studentsKey = `students.${userId}`;
-  // let courseData = {};
-  // courseData[studentsKey] = true;
-  // await updateDoc(
-  //   doc(doc(db, "courses", `${course.courseId}`), "terms", termId),
-  //   courseData
-  // );
+  if (oldEnrollment.termId !== termId) {
+    /* Set key to true in new term. */
+    const studentsKey = `students.${userId}`;
+    let courseData = {};
+    courseData[studentsKey] = true;
+    await updateDoc(
+      doc(doc(db, "courses", `${oldEnrollment.courseId}`), "terms", termId),
+      courseData
+    );
+
+    /* Set key to false in old term. */
+    let oldCourseData = {};
+    oldCourseData[studentsKey] = false;
+    await updateDoc(
+      doc(
+        doc(db, "courses", `${oldEnrollment.courseId}`),
+        "terms",
+        oldEnrollment.termId
+      ),
+      oldCourseData
+    );
+  }
 };
 
 export const deleteEnrollment = async (docId: string) => {

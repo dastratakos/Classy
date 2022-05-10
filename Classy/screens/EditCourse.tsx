@@ -16,7 +16,7 @@ import SquareButton from "../components/Buttons/SquareButton";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { getCourse, getCourseTerms } from "../services/courses";
-import { addEnrollment, updateEnrollment } from "../services/enrollments";
+import { updateEnrollment } from "../services/enrollments";
 
 export default function EditCourse({ route }: EditCourseProps) {
   const context = useContext(AppContext);
@@ -45,15 +45,8 @@ export default function EditCourse({ route }: EditCourseProps) {
       const res = await getCourseTerms(course.courseId);
       setTerms({ ...res });
 
-      const currentTermId = getCurrentTermId();
-      if (currentTermId in res) {
-        context.setSelectedTerm(currentTermId);
-        if (res[`${currentTermId}`])
-          setGrading(res[`${currentTermId}`][0].grading[0]);
-      } else {
-        context.setSelectedTerm("");
-      }
-
+      context.setSelectedTerm(enrollment.termId)
+      
       setLoading(false);
     };
 
