@@ -57,8 +57,10 @@ export const getOverlap = async (userId: string, friendId: string) => {
   const overlap = userEnrollments.filter((enrollment) =>
     friendEnrollmentIds.has(enrollment.courseId)
   );
-  
-  const courseSimilarity = 100 * overlap.length / userEnrollments.length;
+
+  let courseSimilarity = 0
+  if (userEnrollments.length)
+    courseSimilarity = (100 * overlap.length) / userEnrollments.length;
 
   return { courseSimilarity, overlap };
 };
@@ -160,6 +162,29 @@ export const updateEnrollment = async (
   }
 };
 
-export const deleteEnrollment = async (docId: string) => {
-  await deleteDoc(doc(db, "enrollments", docId));
+export const deleteEnrollment = async (enrollment: Enrollment) => {
+  /* 1. Delete enrollment doc. */
+  await deleteDoc(doc(db, "enrollments", enrollment.docId));
+
+  /* 2. Update number of units in user doc in users collection. */
+  const year = termIdToYear(enrollment.termId);
+  const termKey = `terms.${year}.${enrollment.termId}`;
+
+  let userData = {};
+  userData[termKey] = increment(-enrollment.units);
+
+  await updateDoc(doc(db, "users", enrollment.userId), userData);
+
+  /* Set key to false in term. */
+  const studentsKey = `students.${enrollment.userId}`;
+  let courseData = {};
+  courseData[studentsKey] = false;
+  await updateDoc(
+    doc(
+      doc(db, "courses", `${enrollment.courseId}`),
+      "terms",
+      enrollment.termId
+    ),
+    courseData
+  );
 };
