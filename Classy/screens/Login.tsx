@@ -1,10 +1,11 @@
+import * as Haptics from "expo-haptics";
+
 import {
   KeyboardAvoidingView,
   Pressable,
   StyleSheet,
   TextInput,
 } from "react-native";
-import { LoginProps } from "../types";
 import { Text, View } from "../components/Themed";
 import { auth, signInWithEmailAndPassword } from "../firebase";
 import { useContext, useEffect, useState } from "react";
@@ -14,10 +15,11 @@ import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
+import { LoginProps } from "../types";
+import { getFriendIds } from "../services/friends";
+import { getUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { getUser } from "../services/users";
-import { getFriendIds } from "../services/friends";
 
 export default function Login({ route }: LoginProps) {
   const [email, setEmail] = useState(route.params?.email || "");
@@ -79,6 +81,8 @@ export default function Login({ route }: LoginProps) {
       setErrorMessage("Please enter an email and a password.");
       return;
     }
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     signInWithEmailAndPassword(auth, email, password)
       .then((response) => {

@@ -46,12 +46,13 @@ export const setUser = async (id: string, email: string) => {
 
 export const updateUser = async (userId: string, data: Partial<User>) => {
   const userRef = doc(db, "users", userId);
+  console.log("updating user with data:", data);
   await updateDoc(userRef, data);
 };
 
 export const deleteUserCompletely = async (userId: string) => {
   /* TODO: Set all enrolled statuses to false in courses backend. */
-  
+
   /* Get all Enrollments and delete. */
   const batch1 = writeBatch(db);
   const q1 = query(
@@ -140,18 +141,19 @@ export const searchMoreUsers = async (
   return res;
 };
 
-export const generateTerms = (startYear: string, endYear: string) => {
-  let terms = {};
+export const generateTerms = (terms: Object, startYear: string, endYear: string) => {
+  let res = terms;
   for (let year = parseInt(startYear); year < parseInt(endYear); year++) {
     const yearKey = `${year}-${(year % 100) + 1}`;
 
-    const blankTerms = {};
+    if (!res[yearKey])
+      res[yearKey] = {};
+
     for (let quarter of [2, 4, 6]) {
       const termId = `${(year + 1 - 1900) * 10 + quarter}`;
-      blankTerms[`${termId}`] = increment(0);
+      if (!terms[yearKey][termId])
+        res[yearKey][termId] = 0
     }
-
-    terms[`${yearKey}`] = blankTerms;
   }
-  return terms;
+  return res;
 };

@@ -1,3 +1,5 @@
+import * as Haptics from "expo-haptics";
+
 import {
   KeyboardAvoidingView,
   Pressable,
@@ -7,6 +9,7 @@ import {
 import { Text, View } from "../components/Themed";
 
 import AppStyles from "../styles/AppStyles";
+import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import { auth } from "../firebase";
@@ -23,9 +26,11 @@ export default function ResetPassword() {
   const colorScheme = useColorScheme();
 
   const resetPassword = () => {
-    sendPasswordResetEmail(auth, email).then(() =>
-      navigation.navigate("Login")
-    ).catch((error) => setErrorMessage(error.message));
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    sendPasswordResetEmail(auth, email)
+      .then(() => navigation.navigate("Login"))
+      .catch((error) => setErrorMessage(error.message));
   };
 
   return (
@@ -60,7 +65,13 @@ export default function ResetPassword() {
         </View>
         <View style={{ height: Layout.spacing.large }} />
 
-        <Button text="Reset Password" onPress={resetPassword} wide />
+        <Button
+          text="Reset Password"
+          onPress={resetPassword}
+          wide
+          disabled={email === ""}
+          emphasized={email !== ""}
+        />
       </KeyboardAvoidingView>
       <View
         style={[
@@ -76,9 +87,7 @@ export default function ResetPassword() {
         >
           Don't have an account?
         </Text>
-        <Pressable
-          onPress={() => navigation.navigate("Register", { email })}
-        >
+        <Pressable onPress={() => navigation.navigate("Register", { email })}>
           <Text style={styles.textButton}>Register.</Text>
         </Pressable>
       </View>

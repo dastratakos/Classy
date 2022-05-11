@@ -1,3 +1,5 @@
+import * as Haptics from "expo-haptics";
+
 import {
   KeyboardAvoidingView,
   ScrollView,
@@ -32,6 +34,8 @@ export default function Settings() {
   const colorScheme = useColorScheme();
 
   const handleChangeIsPrivate = (isPrivate: boolean) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     context.setUser({
       ...context.user,
       isPrivate: isPrivate,
@@ -41,6 +45,8 @@ export default function Settings() {
   };
 
   const handleSignOut = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     signOut(auth)
       .then(() => {
         context.setUser({
@@ -71,6 +77,8 @@ export default function Settings() {
       return;
     }
 
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     signInWithEmailAndPassword(
       auth,
       auth.currentUser?.email || "",
@@ -95,6 +103,8 @@ export default function Settings() {
       setErrorMessage("Please enter current password to delete your account.");
       return;
     }
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     // TODO: need to figure out how to handle messages
 
@@ -131,12 +141,14 @@ export default function Settings() {
         <Button
           text="Switch to Public Account"
           onPress={() => handleChangeIsPrivate(false)}
+          emphasized
           wide
         />
       ) : (
         <Button
           text="Switch to Private Account"
           onPress={() => handleChangeIsPrivate(true)}
+          emphasized
           wide
         />
       )}
@@ -207,7 +219,12 @@ export default function Settings() {
       <Separator />
       <Button text="Delete Account" onPress={handleDeleteUserAndData} wide />
       <Separator />
-      <Button text="Log Out" onPress={handleSignOut} wide />
+      <Button
+        text="Log Out"
+        onPress={handleSignOut}
+        wide
+        textStyle={{ color: Colors.pink }}
+      />
     </ScrollView>
   );
 }

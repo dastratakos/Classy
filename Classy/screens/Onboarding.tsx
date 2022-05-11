@@ -1,3 +1,5 @@
+import * as Haptics from "expo-haptics";
+
 import { Animated, FlatList, Image, StyleSheet } from "react-native";
 import { generateTerms, updateUser } from "../services/users";
 import { useContext, useRef, useState } from "react";
@@ -37,6 +39,8 @@ export default function Onboarding() {
       return;
     }
 
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     const data = {
       name,
       major,
@@ -45,7 +49,7 @@ export default function Onboarding() {
       startYear,
       gradYear,
       onboarded: true,
-      terms: generateTerms(startYear, gradYear),
+      terms: generateTerms(context.user.terms, startYear, gradYear),
     };
 
     updateUser(context.user.id, data);
@@ -68,11 +72,10 @@ export default function Onboarding() {
   const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
 
   const scrollTo = () => {
-    if (currentIndex < screens.length - 1) {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    if (currentIndex < screens.length - 1)
       slidesRef.current?.scrollToIndex({ index: currentIndex + 1 });
-    } else {
-      console.log("Last item");
-    }
   };
 
   const screens = [

@@ -1,3 +1,5 @@
+import * as Haptics from "expo-haptics";
+
 import {
   KeyboardAvoidingView,
   Pressable,
@@ -34,6 +36,8 @@ export default function Register({ route }: RegisterProps) {
       setErrorMessage("Passwords do not match.");
       return;
     }
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((response) => {
