@@ -1,16 +1,16 @@
-import { Pressable, StyleSheet, FlatList } from "react-native";
-import Modal from "react-native-modal";
+import { Enrollment, User } from "../types";
+import { FlatList, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "./Themed";
-import { Timestamp } from "firebase/firestore";
+import { componentToName, getTimeString } from "../utils";
 
+import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
-import { useNavigation } from "@react-navigation/core";
-import useColorScheme from "../hooks/useColorScheme";
-import { Enrollment, User } from "../types";
-import AppStyles from "../styles/AppStyles";
+import Modal from "react-native-modal";
 import ProfilePhoto from "../components/ProfilePhoto";
-import { componentToName, getTimeString } from "../utils";
+import { Timestamp } from "firebase/firestore";
+import useColorScheme from "../hooks/useColorScheme";
+import { useNavigation } from "@react-navigation/core";
 
 export default function CourseOverviewModal({
   enrollment,
@@ -42,27 +42,44 @@ export default function CourseOverviewModal({
             { maxHeight: "50%" },
           ]}
         >
-          <Text style={styles.code}>{enrollment.code.join(", ")} {component && componentToName(component)}</Text>
+          <Text style={styles.code}>
+            {enrollment.code.join(", ")}{" "}
+            {component && componentToName(component)}
+          </Text>
           <Text style={{ marginTop: Layout.spacing.xxsmall }}>
             {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
             {getTimeString(startInfo, "Africa/Casablanca")} -{" "}
             {getTimeString(endInfo, "Africa/Casablanca")}
           </Text>
-          <Text style={{ fontWeight: "bold", marginTop: Layout.spacing.small, alignSelf: "center" }}>Class Friends ({friends.length})</Text>
+          <Text
+            style={{
+              fontWeight: "bold",
+              marginTop: Layout.spacing.small,
+              alignSelf: "center",
+            }}
+          >
+            Class Friends ({friends.length})
+          </Text>
 
-          <View style={{ maxHeight: "80%", width: "100%", backgroundColor: Colors[colorScheme].secondaryBackground }}>
+          <View
+            style={{
+              maxHeight: "80%",
+              width: "100%",
+              backgroundColor: Colors[colorScheme].secondaryBackground,
+            }}
+          >
             <FlatList
               data={friends}
               renderItem={({ item }) => (
-                <View style={[
-                  styles.friendContainer,
-                  AppStyles.boxShadow,
-                  { backgroundColor: Colors[colorScheme].cardBackground }]}>
+                <View
+                  style={[
+                    styles.friendContainer,
+                    AppStyles.boxShadow,
+                    { backgroundColor: Colors[colorScheme].background },
+                  ]}
+                >
                   <Pressable
-                    style={[
-                      AppStyles.row,
-                      { backgroundColor: Colors[colorScheme].cardBackground },
-                    ]}
+                    style={[AppStyles.row, { backgroundColor: "transparent" }]}
                     onPress={() => {
                       navigation.navigate("FriendProfile", { id: item.id });
                       setVisible(false);
@@ -74,15 +91,17 @@ export default function CourseOverviewModal({
                     />
                     <View
                       style={{
-                        backgroundColor: Colors[colorScheme].cardBackground,
+                        backgroundColor: "transparent",
                         flexGrow: 1,
                       }}
                     >
-                      <Text style={{ fontSize: Layout.text.large }}>  {item.name}</Text>
+                      <Text style={{ fontSize: Layout.text.large }}>
+                        {" "}
+                        {item.name}
+                      </Text>
                     </View>
                   </Pressable>
                 </View>
-
               )}
               keyExtractor={(item) => `${item.id}`}
               style={{ flexGrow: 0 }}
