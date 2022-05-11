@@ -96,6 +96,8 @@ export default function Profile() {
       setNumFriends(`${res.length}`);
     });
 
+    getRequestIds(context.user.id).then((res) => setNumRequests(res.length));
+
     const res = await getEnrollmentsForTerm(
       context.user.id,
       getCurrentTermId()
