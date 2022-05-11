@@ -10,7 +10,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import { Enrollment, User } from "../types";
 import AppStyles from "../styles/AppStyles";
 import ProfilePhoto from "../components/ProfilePhoto";
-import { getTimeString } from "../utils";
+import { componentToName, getTimeString } from "../utils";
 
 export default function CourseOverviewModal({
   enrollment,
@@ -42,7 +42,7 @@ export default function CourseOverviewModal({
             { maxHeight: "50%" },
           ]}
         >
-          <Text style={styles.code}>{enrollment.code.join(", ")} {component === "DIS" && "Section"}{component === "LEC" && "Lecture"}</Text>
+          <Text style={styles.code}>{enrollment.code.join(", ")} {component && componentToName(component)}</Text>
           <Text style={{ marginTop: Layout.spacing.xxsmall }}>
             {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
             {getTimeString(startInfo, "Africa/Casablanca")} -{" "}

@@ -12,7 +12,7 @@ import { useState } from "react";
 import CourseOverviewModal from "../CourseOverviewModal";
 import ProfilePhoto from "../ProfilePhoto";
 import Colors from "../../constants/Colors";
-import { getTimeString } from "../../utils";
+import { componentToName, getTimeString } from "../../utils";
 
 export default function CourseOverview({
   key,
@@ -51,7 +51,7 @@ export default function CourseOverview({
           { backgroundColor: Colors[colorScheme].secondaryBackground },
         ]}
       >
-        <Text style={styles.code}>{enrollment.code.join(", ")} {component === "DIS" && "Section"}{component === "LEC" && "Lecture"}</Text>
+        <Text style={styles.code}>{enrollment.code.join(", ")} {component && componentToName(component)}</Text>
         <Text style={{ marginTop: Layout.spacing.xxsmall }}>
           {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
           {getTimeString(startInfo, "Africa/Casablanca")} -{" "}
