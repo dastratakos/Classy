@@ -26,6 +26,8 @@ import { DaySchedule, Event, WeekSchedule } from "../types";
 export default function Calendar({ week }: { week: WeekSchedule }) {
   const colorScheme = useColorScheme();
 
+  const ref = useRef();
+
   /* Create new data structure with ref property. */
   const newEvents = week.map((item) => ({ ...item, ref: createRef() }));
 
@@ -43,6 +45,14 @@ export default function Calendar({ week }: { week: WeekSchedule }) {
 
   useEffect(() => {
     setInterval(() => setCurrTime(Timestamp.now()), 1000);
+
+    /* Default to Monday if it's a weekend. */
+    const initialSelected = today >= 0 && today <= 4 ? today : 0;
+    console.log("initialSelected:", initialSelected);
+    ref?.current?.scrollToOffset({
+      offset: initialSelected * dayWidth,
+      animated: false,
+    });
   }, []);
 
   const getCurrTimeString = (currTime: Timestamp) => {
@@ -324,17 +334,6 @@ export default function Calendar({ week }: { week: WeekSchedule }) {
       </View>
     );
   };
-
-  const ref = useRef();
-
-  useEffect(() => {
-    /* Default to Monday if it's a weekend. */
-    const initialSelected = today >= 0 && today <= 4 ? today : 0;
-    ref?.current?.scrollToOffset({
-      offset: initialSelected * dayWidth,
-      animated: false,
-    });
-  }, []);
 
   const onItemPress = useCallback((itemIndex) => {
     ref?.current?.scrollToOffset({
