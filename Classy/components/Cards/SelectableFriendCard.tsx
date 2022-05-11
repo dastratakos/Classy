@@ -1,12 +1,12 @@
-import { Icon, Text, View } from "./Themed";
+import { Icon, Text, View } from "../Themed";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
-import AppContext from "../context/Context";
-import AppStyles from "../styles/AppStyles";
-import Colors from "../constants/Colors";
-import Layout from "../constants/Layout";
-import ProfilePhoto from "./ProfilePhoto";
-import useColorScheme from "../hooks/useColorScheme";
+import AppContext from "../../context/Context";
+import AppStyles from "../../styles/AppStyles";
+import Colors from "../../constants/Colors";
+import Layout from "../../constants/Layout";
+import ProfilePhoto from "../ProfilePhoto";
+import useColorScheme from "../../hooks/useColorScheme";
 import { useContext } from "react";
 import { useNavigation } from "@react-navigation/core";
 

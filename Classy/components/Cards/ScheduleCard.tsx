@@ -1,12 +1,12 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { Icon, Text, View } from "./Themed";
-import { componentToName, getTimeString } from "../utils";
+import { Icon, Text, View } from "../Themed";
+import { componentToName, getTimeString } from "../../utils";
 
-import AppStyles from "../styles/AppStyles";
-import Colors from "../constants/Colors";
-import Layout from "../constants/Layout";
-import { Schedule } from "../types";
-import useColorScheme from "../hooks/useColorScheme";
+import AppStyles from "../../styles/AppStyles";
+import Colors from "../../constants/Colors";
+import Layout from "../../constants/Layout";
+import { Schedule } from "../../types";
+import useColorScheme from "../../hooks/useColorScheme";
 
 export default function ScheduleCard({
   schedule,

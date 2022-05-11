@@ -10,7 +10,7 @@ import TabView from "../components/TabView";
 import { Course, User } from "../types";
 import { searchCourses, searchMoreCourses } from "../services/courses";
 import { searchMoreUsers, searchUsers } from "../services/users";
-import FriendCard from "../components/FriendCard";
+import FriendCard from "../components/Cards/FriendCard";
 import CourseCard from "../components/Cards/CourseCard";
 import Layout from "../constants/Layout";
 

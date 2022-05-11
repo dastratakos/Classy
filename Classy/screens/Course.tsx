@@ -19,13 +19,17 @@ import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
-import { CourseProps } from "../types";
+import { Course as CourseType, CourseProps, User } from "../types";
 import Layout from "../constants/Layout";
 import ReadMoreText from "../components/ReadMoreText";
 import Separator from "../components/Separator";
-import friendsData from "./friendsData";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { getFriendsInCourse } from "../services/friends";
+import { getUser } from "../services/users";
+import { termIdToFullName } from "../utils";
+import FriendCard from "../components/Cards/FriendCard";
+import FriendList from "../components/Lists/FriendList";
 
 const exploreCoursesLink =
   "https://explorecourses.stanford.edu/search?view=catalog&filter-coursestatus-Active=on&page=0&catalog=&academicYear=&q=";
@@ -37,35 +41,34 @@ export default function Course({ route }: CourseProps) {
   const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
-  const [course, setCourse] = useState(route.params.course);
-  const [favorited, setFavorited] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // useEffect(() => {
-  //   getCourse(route.params.id);
-  // }, []);
-
-  // const getCourse = async (id: number) => {
-  //   console.log("getting course:", id);
-
-  //   const docRef = doc(db, "courses", `${id}`);
-  //   const docSnap = await getDoc(docRef);
-
-  //   if (docSnap.exists()) {
-  //     console.log("data:", docSnap.data());
-  //     setCourse(docSnap.data() as CourseType);
-  //     setIsLoading(false);
-  //   } else {
-  //     console.log(`Could not find course: ${id}.`);
-  //     alert(`Could not find course: ${id}.`);
-  //   }
-  // };
+  const course: CourseType = route.params.course;
+  const [friendsData, setFriendsData] = useState<Object>({});
+  const [favorited, setFavorited] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const loadScreen = async () => {
       setFavorited(
         await getIsFavorited(context.user.id, route.params.course.courseId)
       );
+      const friendIds = await getFriendsInCourse(
+        context.user.id,
+        route.params.course.courseId
+      );
+
+      let friendsDataObj = {};
+      for (let term of Object.keys(friendIds)) {
+        if (!friendIds[`${term}`].length) continue;
+
+        let friends: User[] = [];
+        for (let id of friendIds[`${term}`]) {
+          friends.push(await getUser(id));
+        }
+        friendsDataObj[`${term}`] = friends;
+      }
+      console.log("friendsDataObj:", friendsDataObj);
+      setFriendsData(friendsDataObj);
+
       setIsLoading(false);
     };
 
@@ -124,23 +127,20 @@ export default function Course({ route }: CourseProps) {
           </View>
         </View>
         <Separator />
-        {/* <View style={styles.friendsSection}>
-        <Text style={styles.friendsHeader}>Friends</Text>
-        <View style={AppStyles.section}>
-          // TODO: use SectionList?
-          {Object.keys(friendsData).map((termId) => (
-            <View key={termId}>
-              <Text style={styles.term}>
-                getTermString({termId}) ({friendsData[termId].length})
-              </Text>
-              // TODO: use FriendList
-              {friendsData[termId].map((friend) => (
-                <FriendCard friend={friend} key={friend.id} />
-              ))}
-            </View>
-          ))}
+        <View style={styles.friendsSection}>
+          <Text style={styles.friendsHeader}>Friends</Text>
+          <View style={AppStyles.section}>
+            {/* TODO: use SectionList? */}
+            {Object.keys(friendsData).map((termId) => (
+              <View key={termId}>
+                <Text style={styles.term}>
+                  {termIdToFullName(termId)} ({friendsData[termId].length})
+                </Text>
+                <FriendList friends={friendsData[termId]} />
+              </View>
+            ))}
+          </View>
         </View>
-      </View> */}
       </ScrollView>
       <View style={styles.ctaContainer}>
         <View style={{ flexGrow: 1 }}>

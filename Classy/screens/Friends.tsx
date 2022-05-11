@@ -20,7 +20,9 @@ export default function Friends({ route }: FriendsProps) {
     const loadScreen = async () => {
       const friendIds = await getFriendIds(route.params.id);
       setFriends(await getFriendsFromIds(friendIds));
-    }
+
+      setIsLoading(false);
+    };
     loadScreen();
   }, []);
 

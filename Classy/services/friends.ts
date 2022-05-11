@@ -3,6 +3,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   query,
   updateDoc,
@@ -10,6 +11,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { User } from "../types";
+import { getCurrentTermId } from "../utils";
 import { getCourseStudents } from "./courses";
 import { getUser } from "./users";
 
@@ -174,13 +176,42 @@ export const blockUserWithDoc = async (
 };
 
 export const getFriendsInCourse = async (userId: string, courseId: number) => {
-  const friends = [];
-
   const allStudents = await getCourseStudents(courseId);
   const friendIds = await getFriendIds(userId);
 
-  console.log("allStudents:", allStudents);
-  console.log("friendIds:", friendIds);
+  const res = {};
+  Object.keys(allStudents).forEach((term) => {
+    if (!allStudents[`${term}`]) return;
 
-  return [];
+    let friends: string[] = [];
+    Object.entries(allStudents[`${term}`]).filter(([studentId, enrolled]) => {
+      if (enrolled && friendIds.includes(studentId)) friends.push(studentId);
+    });
+    res[`${term}`] = friends;
+  });
+
+  console.log("filtered:", res);
+
+  return res;
+};
+
+export const getNumFriendInCourse = async (
+  courseId: number,
+  friendIds: string[]
+) => {
+  const currentTermId = getCurrentTermId();
+
+  const docRef = doc(doc(db, "courses", `${courseId}`), "terms", currentTermId);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const students = docSnap.data().students;
+    const filtered = Object.entries(students).filter(
+      ([studentId, enrolled]) => enrolled && friendIds.includes(studentId)
+    );
+    return filtered.length;
+  } else {
+    console.log(`No termId ${currentTermId} for course ${courseId}`);
+    return 0;
+  }
 };

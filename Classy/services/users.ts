@@ -26,7 +26,6 @@ export const getUser = async (id: string) => {
     return docSnap.data() as User;
   } else {
     console.log(`Could not find user: ${id}`);
-    alert("This user does not exist.");
     return {} as User;
   }
 };

@@ -14,7 +14,7 @@ import { useContext, useState } from "react";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
-import SelectableFriendCard from "../components/SelectableFriendCard";
+import SelectableFriendCard from "../components/Cards/SelectableFriendCard";
 import SimpleSearchBar from "../components/SimpleSearchBar";
 import { View } from "../components/Themed";
 import { db } from "../firebase";
