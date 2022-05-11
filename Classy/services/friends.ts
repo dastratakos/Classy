@@ -55,6 +55,8 @@ export const getRequestIds = async (userId: string) => {
 };
 
 export const getFriendsFromIds = async (friendIds: string[]) => {
+  if (friendIds.length === 0) return [];
+
   let friendsList = [] as User[];
   let count = 0;
 
