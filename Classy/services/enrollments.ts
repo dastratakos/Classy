@@ -30,6 +30,39 @@ export const getEnrollmentsForTerm = async (userId: string, termId: string) => {
   return res;
 };
 
+export const getEnrollments = async (userId: string) => {
+  const q = query(
+    collection(db, "enrollments"),
+    where("userId", "==", userId),
+    orderBy("code")
+  );
+
+  const res: Enrollment[] = [];
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    res.push({ ...doc.data(), docId: doc.id } as Enrollment);
+  });
+  return res;
+};
+
+export const getOverlap = async (userId: string, friendId: string) => {
+  const userEnrollments = await getEnrollments(userId);
+  const friendEnrollments = await getEnrollments(friendId);
+
+  const friendEnrollmentIds = new Set<number>();
+  friendEnrollments.forEach((enrollment) =>
+    friendEnrollmentIds.add(enrollment.courseId)
+  );
+
+  const overlap = userEnrollments.filter((enrollment) =>
+    friendEnrollmentIds.has(enrollment.courseId)
+  );
+  
+  const courseSimilarity = 100 * overlap.length / userEnrollments.length;
+
+  return { courseSimilarity, overlap };
+};
+
 export const addEnrollment = async (
   course: Course,
   grading: string,

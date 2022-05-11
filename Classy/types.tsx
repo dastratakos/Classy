@@ -101,7 +101,7 @@ export type Event = {
   enrollment: Enrollment;
 };
 
-export type Day = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday"
+export type Day = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday";
 
 export type DaySchedule = { day: Day; events: Event[] };
 
@@ -140,7 +140,7 @@ export type RootStackParamList = {
   MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
-  CourseSimilarity: { id: string };
+  CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
@@ -173,7 +173,7 @@ export type ProfileStackParamList = {
   MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
-  CourseSimilarity: { id: string };
+  CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
 
 export type ProfileStackScreenProps<
@@ -193,7 +193,7 @@ export type SearchStackParamList = {
   MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
-  CourseSimilarity: { id: string };
+  CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
 
 export type SearchStackScreenProps<Screen extends keyof SearchStackParamList> =
@@ -215,7 +215,7 @@ export type HomeStackParamList = {
   MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
-  CourseSimilarity: { id: string };
+  CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
 
 export type HomeStackScreenProps<Screen extends keyof HomeStackParamList> =

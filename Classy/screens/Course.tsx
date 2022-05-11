@@ -1,13 +1,8 @@
 import * as Haptics from "expo-haptics";
 import * as WebBrowser from "expo-web-browser";
 
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
-import { Icon, Text, View } from "../components/Themed";
+import { Pressable, ScrollView, StyleSheet } from "react-native";
+import { ActivityIndicator, Icon, Text, View } from "../components/Themed";
 import {
   addFavorite,
   deleteFavorite,
@@ -25,10 +20,9 @@ import ReadMoreText from "../components/ReadMoreText";
 import Separator from "../components/Separator";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { getFriendsInCourse } from "../services/friends";
+import { getAllFriendsInCourse } from "../services/friends";
 import { getUser } from "../services/users";
 import { termIdToFullName } from "../utils";
-import FriendCard from "../components/Cards/FriendCard";
 import FriendList from "../components/Lists/FriendList";
 
 const exploreCoursesLink =
@@ -51,7 +45,7 @@ export default function Course({ route }: CourseProps) {
       setFavorited(
         await getIsFavorited(context.user.id, route.params.course.courseId)
       );
-      const friendIds = await getFriendsInCourse(
+      const friendIds = await getAllFriendsInCourse(
         context.user.id,
         route.params.course.courseId
       );
@@ -66,7 +60,6 @@ export default function Course({ route }: CourseProps) {
         }
         friendsDataObj[`${term}`] = friends;
       }
-      console.log("friendsDataObj:", friendsDataObj);
       setFriendsData(friendsDataObj);
 
       setIsLoading(false);

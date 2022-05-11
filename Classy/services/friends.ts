@@ -175,7 +175,7 @@ export const blockUserWithDoc = async (
   });
 };
 
-export const getFriendsInCourse = async (userId: string, courseId: number) => {
+export const getAllFriendsInCourse = async (userId: string, courseId: number) => {
   const allStudents = await getCourseStudents(courseId);
   const friendIds = await getFriendIds(userId);
 
@@ -189,8 +189,6 @@ export const getFriendsInCourse = async (userId: string, courseId: number) => {
     });
     res[`${term}`] = friends;
   });
-
-  console.log("filtered:", res);
 
   return res;
 };

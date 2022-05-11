@@ -1,16 +1,14 @@
 import { Text, View } from "../components/Themed";
 
-import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import { ScrollView, StyleSheet } from "react-native";
-import { useContext, useEffect, useState } from "react";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 import Layout from "../constants/Layout";
 import { CourseSimilarityProps } from "../types";
+import EnrollmentList from "../components/Lists/EnrollmentList";
 
 export default function CourseSimilarity({ route }: CourseSimilarityProps) {
-  const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
   return (
@@ -19,11 +17,22 @@ export default function CourseSimilarity({ route }: CourseSimilarityProps) {
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={AppStyles.section}>
-        <Text>Friend id: {route.params.id}</Text>
-        <Text>TODO: Course Similarity screen</Text>
+        <Text style={styles.similarity}>
+          Course similarity: {Math.round(route.params.courseSimilarity)}%
+        </Text>
+        <Text style={styles.title}>Overlapping courses</Text>
+        <EnrollmentList enrollments={route.params.overlap} />
       </View>
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  similarity: {
+    marginBottom: Layout.spacing.large,
+  },
+  title: {
+    fontSize: Layout.text.xxlarge,
+    fontWeight: "500",
+  },
+});

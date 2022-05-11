@@ -29,7 +29,7 @@ import ProfilePhoto from "../components/ProfilePhoto";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
 import TabView from "../components/TabView";
-import { getEnrollmentsForTerm } from "../services/enrollments";
+import { getEnrollmentsForTerm, getOverlap } from "../services/enrollments";
 import {
   acceptRequest,
   addFriend,
@@ -53,6 +53,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const [friendStatus, setFriendStatus] = useState<string>("");
   const [friendDocId, setFriendDocId] = useState<string>("");
   const [friendStatusLoading, setFriendStatusLoading] = useState<boolean>(true);
+  const [courseSimilarity, setCourseSimilarity] = useState<number>(0);
+  const [overlap, setOverlap] = useState<Enrollment[]>([]);
   const [numFriends, setNumFriends] = useState<string>("");
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [week, setWeek] = useState<WeekSchedule>([]);
@@ -97,6 +99,10 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     );
     setEnrollments(res2);
     setWeek(getWeekFromEnrollments(res2));
+
+    const res3 = await getOverlap(context.user.id, route.params.id);
+    setCourseSimilarity(res3.courseSimilarity);
+    setOverlap(res3.overlap);
 
     setInterval(checkInClass, 1000);
     setRefreshing(false);
@@ -471,7 +477,10 @@ export default function FriendProfile({ route }: FriendProfileProps) {
           <>
             <Pressable
               onPress={() =>
-                navigation.navigate("CourseSimilarity", { id: route.params.id })
+                navigation.navigate("CourseSimilarity", {
+                  courseSimilarity,
+                  overlap,
+                })
               }
               style={({ pressed }) => [
                 {
@@ -488,12 +497,12 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                   styles.similarityBar,
                   {
                     backgroundColor: Colors[colorScheme].photoBackground,
-                    width: `${57.54}%`,
+                    width: `${courseSimilarity}%`,
                   },
                 ]}
               />
               <Text style={styles.similarityText}>
-                {Math.round(57.54)}% course similarity
+                {Math.round(courseSimilarity)}% course similarity
               </Text>
             </Pressable>
             <View style={[AppStyles.row, { marginTop: Layout.spacing.medium }]}>

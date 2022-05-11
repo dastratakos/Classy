@@ -13,24 +13,25 @@ import { searchMoreUsers, searchUsers } from "../services/users";
 import FriendCard from "../components/Cards/FriendCard";
 import CourseCard from "../components/Cards/CourseCard";
 import Layout from "../constants/Layout";
+import { getFriendIds, getNumFriendInCourse } from "../services/friends";
 
 export default function Search() {
   const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
-  const [searchPhrase, setSearchPhrase] = useState("");
-  const [focused, setFocused] = useState(false);
-  const [userSearchResults, setUserSearchResults] = useState([] as User[]);
-  const [courseSearchResults, setCourseSearchResults] = useState(
-    [] as Course[]
-  );
-  const [lastUser, setLastUser] = useState({} as User);
-  const [lastCourse, setLastCourse] = useState({} as Course);
+  const [searchPhrase, setSearchPhrase] = useState<string>("");
+  const [friendIds, setFriendIds] = useState<string[]>([]);
+  const [focused, setFocused] = useState<boolean>(false);
+  const [userSearchResults, setUserSearchResults] = useState<User[]>([]);
+  const [courseSearchResults, setCourseSearchResults] = useState<Course[]>([]);
+  const [lastUser, setLastUser] = useState<User>({} as User);
+  const [lastCourse, setLastCourse] = useState<Course>({} as Course);
 
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const loadScreen = async () => {
+      setFriendIds(await getFriendIds(context.user.id));
       handleSearchUsers("");
     };
     loadScreen();
