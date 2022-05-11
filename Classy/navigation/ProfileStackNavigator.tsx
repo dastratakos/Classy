@@ -58,7 +58,7 @@ export default function ProfileStackNavigator() {
       <Stack.Screen
         name="AddCourse"
         component={AddCourse}
-        options={{ title: "Add or Edit Course" }}
+        options={{ title: "Add Course" }}
       />
       <Stack.Screen
         name="EditCourse"

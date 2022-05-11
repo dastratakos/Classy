@@ -147,13 +147,23 @@ export default function AddCourse({ route }: AddCourseProps) {
           </View>
           <View style={styles.row}>
             <Text style={styles.subheading}>Units</Text>
-            <View style={{ flexDirection: "row" }}>
+            <View
+              style={{
+                flexDirection: "row",
+                flexWrap: "wrap",
+                justifyContent: "flex-end",
+                width: "75%",
+              }}
+            >
               {Array.from(
                 { length: course.unitsMax - course.unitsMin + 1 },
                 (_, i) => i + course.unitsMin
               ).map((numUnits) => (
                 <View
-                  style={{ marginLeft: Layout.spacing.small }}
+                  style={{
+                    marginLeft: Layout.spacing.small,
+                    marginVertical: Layout.spacing.xsmall,
+                  }}
                   key={numUnits}
                 >
                   <SquareButton
@@ -210,7 +220,7 @@ export default function AddCourse({ route }: AddCourseProps) {
         </View>
       </ScrollView>
       <View style={styles.ctaContainer}>
-        <View style={{ width: "48%" }}>
+        <View style={{ width: "48%", backgroundColor: "transparent" }}>
           <Button
             text="Cancel"
             onPress={() => {
@@ -219,7 +229,7 @@ export default function AddCourse({ route }: AddCourseProps) {
             }}
           />
         </View>
-        <View style={{ width: "48%" }}>
+        <View style={{ width: "48%", backgroundColor: "transparent" }}>
           <Button
             text="Done"
             onPress={handleDonePressed}
@@ -259,6 +269,6 @@ const styles = StyleSheet.create({
     fontSize: Layout.text.large,
   },
   gradingBasisWrap: {
-    paddingTop: Layout.spacing.large,
+    marginVertical: Layout.spacing.medium,
   },
 });

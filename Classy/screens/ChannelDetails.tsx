@@ -288,10 +288,10 @@ export default function ChannelDetails() {
                 />
               </View>
               <View style={AppStyles.row}>
-                <View style={{ width: "48%" }}>
+                <View style={{ width: "48%", backgroundColor: "transparent" }}>
                   <Button text="Cancel" onPress={() => navigation.goBack()} />
                 </View>
-                <View style={{ width: "48%" }}>
+                <View style={{ width: "48%", backgroundColor: "transparent" }}>
                   <Button
                     text="Save Name"
                     onPress={handleSavePress}

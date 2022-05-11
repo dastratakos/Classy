@@ -82,12 +82,7 @@ export default function QuarterButton({
     );
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: Colors[colorScheme].cardBackground },
-      ]}
-    >
+    <View style={styles.container}>
       <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
         <Text style={styles.text}>{text}</Text>
         <View

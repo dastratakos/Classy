@@ -30,7 +30,7 @@ export default function ScheduleCard({
           { backgroundColor: Colors[colorScheme].cardBackground },
         ]}
       >
-        <View style={AppStyles.row}>
+        <View style={[AppStyles.row, { backgroundColor: "transparent" }]}>
           <View style={styles.textContainer}>
             <Text style={styles.cardTitle} numberOfLines={1}>
               {schedule.sectionNumber} {componentToName(schedule.component)}
@@ -83,5 +83,6 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
     marginRight: Layout.spacing.small,
+    backgroundColor: "transparent",
   },
 });

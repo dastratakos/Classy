@@ -4,6 +4,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  increment,
   limit,
   orderBy,
   query,
@@ -137,4 +138,20 @@ export const searchMoreUsers = async (
     if (doc.id !== userId) res.push(doc.data() as User);
   });
   return res;
+};
+
+export const generateTerms = (startYear: string, endYear: string) => {
+  let terms = {};
+  for (let year = parseInt(startYear); year < parseInt(endYear); year++) {
+    const yearKey = `${year}-${(year % 100) + 1}`;
+
+    const blankTerms = {};
+    for (let quarter of [2, 4, 6]) {
+      const termId = `${(year + 1 - 1900) * 10 + quarter}`;
+      blankTerms[`${termId}`] = increment(0);
+    }
+
+    terms[`${yearKey}`] = blankTerms;
+  }
+  return terms;
 };

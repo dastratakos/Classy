@@ -55,14 +55,20 @@ export default function SelectQuarter({ route }: SelectQuarterProps) {
           .sort()
           .reverse()
           .map(([year, terms]) => (
-            <View style={[styles.yearContainer, {backgroundColor: Colors[colorScheme].secondaryBackground}]} key={year}>
+            <View
+              style={[
+                styles.yearContainer,
+                { backgroundColor: Colors[colorScheme].secondaryBackground },
+              ]}
+              key={year}
+            >
               <Text style={styles.year}>{year}</Text>
               <View style={[styles.quartersContainer]}>
                 {Object.entries(terms)
                   .sort()
                   .map(([termId, available]) => {
                     return (
-                      <View style={[styles.termButton]} key={termId}>
+                      <View style={styles.termButton} key={termId}>
                         <Button
                           text={`${termIdToQuarterName(termId)}`}
                           onPress={() => {
@@ -74,6 +80,14 @@ export default function SelectQuarter({ route }: SelectQuarterProps) {
                           }}
                           disabled={!available}
                           emphasized={termId === context.selectedTerm}
+                          containerStyle={
+                            available && termId !== context.selectedTerm
+                              ? {
+                                  backgroundColor:
+                                    Colors[colorScheme].background,
+                                }
+                              : {}
+                          }
                         />
                       </View>
                     );

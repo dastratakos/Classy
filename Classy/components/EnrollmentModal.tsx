@@ -103,7 +103,13 @@ export default function EnrollmentModal({
                   { paddingHorizontal: Layout.spacing.small },
                 ]}
               >
-                <Button text="View More" onPress={onViewMore} />
+                <Button
+                  text="View More"
+                  onPress={onViewMore}
+                  containerStyle={{
+                    backgroundColor: Colors[colorScheme].background,
+                  }}
+                />
               </View>
               <View style={styles.buttonbox}>
                 <Button
@@ -146,12 +152,14 @@ const styles = StyleSheet.create({
   },
   textwrap: {
     flexDirection: "row",
+    backgroundColor: "transparent",
   },
   descrip: {
     fontSize: Layout.text.large,
   },
   classTimesWrap: {
     width: "100%",
+    backgroundColor: "transparent",
   },
   schedText: {
     fontSize: Layout.text.large,
@@ -161,9 +169,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: Layout.spacing.medium,
     width: "100%",
+    backgroundColor: "transparent",
   },
   buttonbox: {
     flex: 1,
+    backgroundColor: "transparent",
   },
   wideButtonWrap: {
     paddingTop: Layout.spacing.medium,

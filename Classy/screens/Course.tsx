@@ -85,7 +85,10 @@ export default function Course({ route }: CourseProps) {
     <>
       <ScrollView
         style={{ backgroundColor: Colors[colorScheme].background }}
-        contentContainerStyle={{ alignItems: "center" }}
+        contentContainerStyle={{
+          alignItems: "center",
+          paddingBottom: Layout.buttonHeight.medium + Layout.spacing.medium,
+        }}
       >
         <View style={AppStyles.section}>
           <Text style={styles.title}>{course.code.join(", ")}</Text>
@@ -105,13 +108,13 @@ export default function Course({ route }: CourseProps) {
               },
             ]}
           >
-            <View style={{ width: "48%" }}>
+            <View style={{ width: "48%", backgroundColor: "transparent" }}>
               <Button
                 text="Explore Courses"
                 onPress={() => handleExplorePress(course.courseId)}
               />
             </View>
-            <View style={{ width: "48%" }}>
+            <View style={{ width: "48%", backgroundColor: "transparent" }}>
               <Button
                 text="Carta"
                 onPress={() => handleCartaPress(course.code[0])}
@@ -146,7 +149,12 @@ export default function Course({ route }: CourseProps) {
             emphasized
           />
         </View>
-        <View style={styles.favoriteButtonContainer}>
+        <View
+          style={[
+            styles.favoriteButtonContainer,
+            { backgroundColor: Colors[colorScheme].cardBackground },
+          ]}
+        >
           <Pressable
             onPress={handleFavoritePressed}
             style={({ pressed }) => [

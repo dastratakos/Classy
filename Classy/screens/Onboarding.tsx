@@ -1,5 +1,5 @@
 import { Animated, FlatList, Image, StyleSheet } from "react-native";
-import { View } from "../components/Themed";
+import { generateTerms, updateUser } from "../services/users";
 import { useContext, useRef, useState } from "react";
 
 import AddProfileDetails from "../components/Onboarding/AddProfileDetails";
@@ -7,14 +7,14 @@ import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
+import Layout from "../constants/Layout";
+import OnboardingInfo from "../components/Onboarding/OnboardingInfo";
 import Paginator from "../components/Paginator";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { View } from "../components/Themed";
+import { generateSubstrings } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { generateSubstrings, generateTerms } from "../utils";
-import OnboardingInfo from "../components/Onboarding/OnboardingInfo";
-import Layout from "../constants/Layout";
-import { updateUser } from "../services/users";
 
 export default function Onboarding() {
   const navigation = useNavigation();

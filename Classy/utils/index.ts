@@ -153,22 +153,6 @@ export const getTimeString = (
   });
 };
 
-export const generateTerms = (startYear: string, endYear: string) => {
-  let terms = {};
-  for (let year = parseInt(startYear); year < parseInt(endYear); year++) {
-    const yearKey = `${year}-${(year % 100) + 1}`;
-
-    const blankTerms = {};
-    for (let quarter of [2, 4, 6]) {
-      const termId = `${(year + 1 - 1900) * 10 + quarter}`;
-      blankTerms[`${termId}`] = 0;
-    }
-
-    terms[`${yearKey}`] = blankTerms;
-  }
-  return terms;
-};
-
 export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
   let week: WeekSchedule = [
     {
