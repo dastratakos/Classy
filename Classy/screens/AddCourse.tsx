@@ -27,7 +27,7 @@ export default function AddCourse({ route }: AddCourseProps) {
 
   const [terms, setTerms] = useState({});
   const [loading, setLoading] = useState(true);
-  const [selectedUnits, setSelectedUnits] = useState(course.unitsMin);
+  const [selectedUnits, setSelectedUnits] = useState(course.unitsMax);
   const [grading, setGrading] = useState(
     context.selectedTerm && terms[`${context.selectedTerm}`]
       ? terms[`${context.selectedTerm}`][0].grading[0]
