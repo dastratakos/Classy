@@ -12,10 +12,12 @@ import CourseOverviewModal from "./CourseOverviewModal";
 import ProfilePhoto from "../components/ProfilePhoto";
 
 export default function CourseOverview({
+  key,
   code,
   time,
   friends,
 }: {
+  key: string;
   code: string;
   time: string;
   friends: User[];
@@ -26,7 +28,7 @@ export default function CourseOverview({
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
-    <>
+    <View key={key}>
       <CourseOverviewModal
         code={code}
         time={time}
@@ -72,7 +74,7 @@ export default function CourseOverview({
           </Pressable>
         }
       </View>
-    </>
+    </View>
   );
 }
 

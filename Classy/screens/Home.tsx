@@ -1,4 +1,9 @@
-import { ScrollView, StyleSheet, Pressable } from "react-native";
+import {
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+} from "react-native";
 import { Timestamp } from "firebase/firestore";
 import { Text, View } from "../components/Themed";
 import { useContext, useEffect, useState } from "react";
@@ -7,21 +12,23 @@ import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
-import { getCurrentTermId, termIdToFullName } from "../utils";
+import { getCurrentTermId } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { getEnrollmentsForTerm } from "../services/enrollments";
-import { Enrollment } from "../types";
-import homeData from "./homeData";
+import { HomeData } from "../types";
 import CourseOverview from "../components/CourseOverview";
 import ProfilePhoto from "../components/ProfilePhoto";
+import { getFriendsInCourse } from "../services/friends";
 
 export default function Home() {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
 
-  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [homeData, setHomeData] = useState<HomeData>([]);
+
+  const [refreshing, setRefreshing] = useState<boolean>(true);
 
   const today = Timestamp.now().toDate().getDay() - 1;
   const daysOfWeek = [
@@ -32,21 +39,41 @@ export default function Home() {
     "Friday",
     "Saturday",
     "Sunday",
-  ]; // is this too hacky? lol
+  ];
 
   useEffect(() => {
-    const loadScreen = async () => {
-      setEnrollments(
-        await getEnrollmentsForTerm(context.user.id, getCurrentTermId())
-      );
-    };
-    loadScreen();
+    onRefresh();
   }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+
+    const res = await getEnrollmentsForTerm(
+      context.user.id,
+      getCurrentTermId()
+    );
+
+    let homeDataArr = [];
+    for (let enrollment of res) {
+      const friends = await getFriendsInCourse(
+        context.user.id,
+        enrollment.courseId,
+        getCurrentTermId()
+      );
+      homeDataArr.push({ enrollment, friends });
+    }
+    setHomeData(homeDataArr);
+
+    setRefreshing(false);
+  };
 
   return (
     <ScrollView
       style={{ backgroundColor: Colors[colorScheme].background }}
       contentContainerStyle={{ alignItems: "center" }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
     >
       <View style={AppStyles.section}>
         <View style={AppStyles.row}>
@@ -74,9 +101,9 @@ export default function Home() {
         <View>
           {homeData.map((item) => (
             <CourseOverview
-              key={item.code}
-              code={item.code}
-              time={item.time}
+              key={`${item.enrollment.courseId}`}
+              code={item.enrollment.code.join(", ")}
+              time={"TODO"}
               friends={item.friends}
             />
           ))}

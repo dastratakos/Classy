@@ -107,6 +107,8 @@ export type DaySchedule = { day: Day; events: Event[] };
 
 export type WeekSchedule = DaySchedule[];
 
+export type HomeData = {enrollment: Enrollment, friends: User[]}[]
+
 export type RootStackParamList = {
   AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;
   HomeStack: NavigatorScreenParams<HomeStackParamList> | undefined;

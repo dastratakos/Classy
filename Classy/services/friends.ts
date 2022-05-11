@@ -175,7 +175,10 @@ export const blockUserWithDoc = async (
   });
 };
 
-export const getAllFriendsInCourse = async (userId: string, courseId: number) => {
+export const getAllFriendsInCourse = async (
+  userId: string,
+  courseId: number
+) => {
   const allStudents = await getCourseStudents(courseId);
   const friendIds = await getFriendIds(userId);
 
@@ -191,6 +194,38 @@ export const getAllFriendsInCourse = async (userId: string, courseId: number) =>
   });
 
   return res;
+};
+
+export const getFriendsInCourse = async (
+  userId: string,
+  courseId: number,
+  termId: string
+) => {
+  const friendIds = await getFriendIds(userId);
+
+  const docRef = doc(doc(db, "courses", `${courseId}`), "terms", termId);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const students = docSnap.data().students;
+
+    if (!students) return [];
+
+    const filtered = Object.fromEntries(
+      Object.entries(students).filter(
+        ([studentId, enrolled]) => enrolled && friendIds.includes(studentId)
+      )
+    );
+
+    let friends: User[] = [];
+    for (let friendId of Object.keys(filtered)) {
+      friends.push(await getUser(friendId));
+    }
+    return friends;
+  } else {
+    console.log(`No termId ${currentTermId} for course ${courseId}`);
+    return [] as User[];
+  }
 };
 
 export const getNumFriendInCourse = async (
