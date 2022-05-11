@@ -93,6 +93,20 @@ export type Tab = {
   component: JSX.Element;
 };
 
+export type Event = {
+  title: string;
+  startInfo: Timestamp;
+  endInfo: Timestamp;
+  location: string;
+  enrollment: Enrollment;
+};
+
+export type Day = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday"
+
+export type DaySchedule = { day: Day; events: Event[] };
+
+export type WeekSchedule = DaySchedule[];
+
 export type RootStackParamList = {
   AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;
   HomeStack: NavigatorScreenParams<HomeStackParamList> | undefined;

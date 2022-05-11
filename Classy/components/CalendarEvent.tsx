@@ -1,41 +1,77 @@
-import { Pressable, StyleSheet } from "react-native";
+import { Alert, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, View } from "./Themed";
 
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
+import { Event } from "../types";
+import { getTimeString } from "../utils";
+import React, { useContext, useState } from "react";
+import EnrollmentModal from "./EnrollmentModal";
+import { deleteEnrollment } from "../services/enrollments";
+import AppContext from "../context/Context";
 
 export default function CalendarEvent({
-  title,
-  time,
-  location,
+  event,
   marginTop,
   height,
   leftIndent = 0,
-  onPress,
 }: {
-  title: string;
-  time: string;
-  location: string;
+  event: Event;
   marginTop: number;
   height: number;
   leftIndent: number;
-  onPress: () => void;
 }) {
+  const context = useContext(AppContext);
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleDeleteEnrollment = async () => {
+    setModalVisible(false);
+    console.log("handleDeleteEnrollment");
+    await deleteEnrollment(event.enrollment.docId);
+  };
+
+  const deleteEnrollmentAlert = () => {
+    Alert.alert("Delete course", `Are you sure?`, [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: handleDeleteEnrollment,
+      },
+    ]);
+  };
+
   return (
     <View style={[styles.container, { marginTop: marginTop }]}>
+      <EnrollmentModal
+        enrollment={event.enrollment}
+        deleteFunc={deleteEnrollmentAlert}
+        visible={modalVisible}
+        setVisible={setModalVisible}
+        editable={event.enrollment.userId === context.user.id}
+      />
       <View style={[styles.leftPadding, { width: 45 + leftIndent }]} />
-      <Pressable
-        style={({ pressed }) => [
-          styles.event,
-          { opacity: pressed ? 0.5 : 0.75, height: height },
-        ]}
-        onPress={onPress}
-      >
-        <Text style={styles.titleText}>{title}</Text>
-        <Text style={styles.timeText}>{time}</Text>
-        <Text style={styles.locationText}>{location}</Text>
-      </Pressable>
+      <View style={[styles.event, { height }]}>
+        <TouchableOpacity
+          onPress={() => {
+            console.log("opening");
+            setModalVisible(true);
+          }}
+        >
+          <Text style={styles.titleText}>{event.title}</Text>
+          {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
+          <Text style={styles.timeText}>
+            {getTimeString(event.startInfo, "Africa/Casablanca") +
+              " - " +
+              getTimeString(event.endInfo, "Africa/Casablanca")}
+          </Text>
+          <Text style={styles.locationText}>{event.location}</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -56,6 +92,7 @@ const styles = StyleSheet.create({
     borderRadius: Layout.radius.xsmall,
     backgroundColor: Colors.lightRed,
     overflow: "hidden",
+    opacity: 0.9,
   },
   titleText: {
     fontWeight: "500",

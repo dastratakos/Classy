@@ -8,10 +8,11 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { Enrollment, FriendProfileProps, User } from "../types";
+import { Enrollment, FriendProfileProps, User, WeekSchedule } from "../types";
 import { Timestamp } from "firebase/firestore";
 import {
   getCurrentTermId,
+  getWeekFromEnrollments,
   sendPushNotification,
   termIdToFullName,
 } from "../utils";
@@ -28,7 +29,6 @@ import ProfilePhoto from "../components/ProfilePhoto";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
 import TabView from "../components/TabView";
-import events from "./dummyEvents";
 import { getEnrollmentsForTerm } from "../services/enrollments";
 import {
   acceptRequest,
@@ -49,12 +49,13 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
 
-  const [user, setUser] = useState({} as User);
-  const [friendStatus, setFriendStatus] = useState("");
-  const [friendDocId, setFriendDocId] = useState("");
-  const [friendStatusLoading, setFriendStatusLoading] = useState(true);
-  const [numFriends, setNumFriends] = useState("");
+  const [user, setUser] = useState<User>({} as User);
+  const [friendStatus, setFriendStatus] = useState<string>("");
+  const [friendDocId, setFriendDocId] = useState<string>("");
+  const [friendStatusLoading, setFriendStatusLoading] = useState<boolean>(true);
+  const [numFriends, setNumFriends] = useState<string>("");
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [week, setWeek] = useState<WeekSchedule>([]);
   const [inClass, setInClass] = useState<boolean>(false);
 
   const [refreshing, setRefreshing] = useState(false);
@@ -81,6 +82,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const onRefresh = async () => {
     setRefreshing(true);
     setUser(await getUser(route.params.id));
+
     const res = await getFriendStatus(context.user.id, route.params.id);
     setFriendStatus(res.friendStatus);
     setFriendDocId(res.friendDocId);
@@ -88,9 +90,14 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     getFriendIds(route.params.id).then((res) => {
       setNumFriends(`${res.length}`);
     });
-    setEnrollments(
-      await getEnrollmentsForTerm(route.params.id, getCurrentTermId())
+
+    const res2 = await getEnrollmentsForTerm(
+      route.params.id,
+      getCurrentTermId()
     );
+    setEnrollments(res2);
+    setWeek(getWeekFromEnrollments(res2));
+
     setInterval(checkInClass, 1000);
     setRefreshing(false);
   };
@@ -99,12 +106,12 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     const now = Timestamp.now().toDate();
     const today = now.getDay() - 1;
 
-    if (!events[today]) {
+    if (!week[today]) {
       setInClass(false);
       return;
     }
 
-    for (let event of events[today].events) {
+    for (let event of week[today].events) {
       const startInfo = event.startInfo.toDate();
       var startTime = new Date();
       startTime.setHours(startInfo.getHours());
@@ -295,7 +302,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const tabs = [
     {
       label: "Calendar",
-      component: <Calendar events={events} />,
+      component: <Calendar week={week} />,
     },
     {
       label: "Courses",

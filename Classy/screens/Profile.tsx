@@ -9,7 +9,11 @@ import {
   StyleSheet,
 } from "react-native";
 import { User, sendEmailVerification } from "firebase/auth";
-import { generateTerms, getCurrentTermId, termIdToFullName } from "../utils";
+import {
+  getCurrentTermId,
+  getWeekFromEnrollments,
+  termIdToFullName,
+} from "../utils";
 import { getUser, updateUser } from "../services/users";
 import { useContext, useEffect, useState } from "react";
 
@@ -19,7 +23,7 @@ import Button from "../components/Buttons/Button";
 import Calendar from "../components/Calendar";
 import Colors from "../constants/Colors";
 import Constants from "expo-constants";
-import { Enrollment } from "../types";
+import { Enrollment, WeekSchedule } from "../types";
 import EnrollmentList from "../components/EnrollmentList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
@@ -28,7 +32,6 @@ import SquareButton from "../components/Buttons/SquareButton";
 import TabView from "../components/TabView";
 import { Timestamp } from "firebase/firestore";
 import { auth } from "../firebase";
-import events from "./dummyEvents";
 import { getEnrollmentsForTerm } from "../services/enrollments";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
@@ -39,10 +42,11 @@ export default function Profile() {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
-  const [numFriends, setNumFriends] = useState("");
-  const [enrollments, setEnrollments] = useState([] as Enrollment[]);
-  const [refreshing, setRefreshing] = useState(true);
-  const [showEmailVerification, setShowEmailVerification] = useState(
+  const [numFriends, setNumFriends] = useState<string>("");
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [week, setWeek] = useState<WeekSchedule>([]);
+  const [refreshing, setRefreshing] = useState<boolean>(true);
+  const [showEmailVerification, setShowEmailVerification] = useState<boolean>(
     !auth.currentUser?.emailVerified
   );
   const [inClass, setInClass] = useState(false);
@@ -56,9 +60,14 @@ export default function Profile() {
         getFriendIds(context.user.id).then((res) => {
           setNumFriends(`${res.length}`);
         });
-        setEnrollments(
-          await getEnrollmentsForTerm(context.user.id, getCurrentTermId())
+        
+        const res = await getEnrollmentsForTerm(
+          context.user.id,
+          getCurrentTermId()
         );
+        setEnrollments(res);
+        setWeek(getWeekFromEnrollments(res));
+        
         setInterval(checkInClass, 1000);
       }
     };
@@ -75,18 +84,26 @@ export default function Profile() {
 
   const onRefresh = async () => {
     setRefreshing(true);
+    
     const user = await getUser(context.user.id);
     context.setUser({ ...context.user, ...user });
     getFriendIds(context.user.id).then((res) => {
       setNumFriends(`${res.length}`);
     });
-    setEnrollments(
-      await getEnrollmentsForTerm(context.user.id, getCurrentTermId())
+    
+    const res = await getEnrollmentsForTerm(
+      context.user.id,
+      getCurrentTermId()
     );
+    setEnrollments(res);
+    setWeek(getWeekFromEnrollments(res));
+    
     if (auth.currentUser)
       setShowEmailVerification(!auth.currentUser.emailVerified);
     console.log("emailVerified:", auth.currentUser?.emailVerified);
+    
     checkInClass();
+    
     setRefreshing(false);
   };
 
@@ -94,12 +111,12 @@ export default function Profile() {
     const now = Timestamp.now().toDate();
     const today = now.getDay() - 1;
 
-    if (!events[today]) {
+    if (!week[today]) {
       setInClass(false);
       return;
     }
 
-    for (let event of events[today].events) {
+    for (let event of week[today].events) {
       const startInfo = event.startInfo.toDate();
       var startTime = new Date();
       startTime.setHours(startInfo.getHours());
@@ -195,7 +212,7 @@ export default function Profile() {
   const tabs = [
     {
       label: "Calendar",
-      component: <Calendar events={events} />,
+      component: <Calendar week={week} />,
     },
     {
       label: "Courses",

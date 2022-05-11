@@ -1,4 +1,5 @@
 import { Timestamp } from "firebase/firestore";
+import { Day, Enrollment, Event, WeekSchedule } from "../types";
 
 export const generateSubstrings = (text: string) => {
   let substrings: string[] = [];
@@ -143,7 +144,7 @@ export const getTimeString = (
   timeZone: string = "America/Los_Angeles"
 ) => {
   if (!timestamp) return "";
-  
+
   return timestamp.toDate().toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",
@@ -166,4 +167,64 @@ export const generateTerms = (startYear: string, endYear: string) => {
     terms[`${yearKey}`] = blankTerms;
   }
   return terms;
+};
+
+export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
+  let week: WeekSchedule = [
+    {
+      day: "Monday",
+      events: [],
+    },
+    {
+      day: "Tuesday",
+      events: [],
+    },
+    {
+      day: "Wednesday",
+      events: [],
+    },
+    {
+      day: "Thursday",
+      events: [],
+    },
+    {
+      day: "Friday",
+      events: [],
+    },
+  ];
+
+  const dayIndices = {
+    Monday: 0,
+    Tuesday: 1,
+    Wednesday: 2,
+    Thursday: 3,
+    Friday: 4,
+  };
+
+  for (let enrollment of enrollments) {
+    for (let schedule of enrollment.schedules) {
+      const title =
+        enrollment.code.join(", ") + " " + componentToName(schedule.component);
+      const event: Event = {
+        title,
+        startInfo: schedule.startInfo,
+        endInfo: schedule.endInfo,
+        location: schedule.location,
+        enrollment: enrollment,
+      };
+      for (let day of schedule.days) {
+        console.log(`${day}: ${title}`);
+        const index = dayIndices[`${day}`];
+        week[index].events.push(event);
+      }
+    }
+  }
+
+  for (let i = 0; i < week.length; i++) {
+    week[i].events.sort((a: Event, b: Event) => a.startInfo > b.startInfo);
+  }
+
+  // TODO: sort events by startInfo
+
+  return week;
 };

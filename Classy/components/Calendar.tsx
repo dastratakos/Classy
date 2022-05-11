@@ -21,15 +21,13 @@ import Layout from "../constants/Layout";
 import { Text } from "./Themed";
 import { Timestamp } from "firebase/firestore";
 import useColorScheme from "../hooks/useColorScheme";
-import { useNavigation } from "@react-navigation/core";
-import { getTimeString } from "../utils";
+import { DaySchedule, Event, WeekSchedule } from "../types";
 
-export default function Calendar({ events }: { events: [] }) {
-  const navigation = useNavigation();
+export default function Calendar({ week }: { week: WeekSchedule }) {
   const colorScheme = useColorScheme();
 
   /* Create new data structure with ref property. */
-  const newEvents = events.map((item) => ({ ...item, ref: createRef() }));
+  const newEvents = week.map((item) => ({ ...item, ref: createRef() }));
 
   const { width } = Dimensions.get("screen");
   const dayWidth = width - 2 * Layout.spacing.medium;
@@ -41,7 +39,7 @@ export default function Calendar({ events }: { events: [] }) {
   // TODO: compute earliest and latest events for all days ahead of time
   // earliest Stanford course is 6:00 AM and latest is 9:30 PM
   const times = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
-  const [currTime, setCurrTime] = useState(Timestamp.now());
+  const [currTime, setCurrTime] = useState<Timestamp>(Timestamp.now());
 
   useEffect(() => {
     setInterval(() => setCurrTime(Timestamp.now()), 1000);
@@ -53,10 +51,10 @@ export default function Calendar({ events }: { events: [] }) {
     return `${((now.getHours() - 1) % 12) + 1}:${minutes}`;
   };
 
-  const getMarginTop = (time: Timestamp) => {
+  const getMarginTop = (time: Timestamp, timeAdjustment: number = 0) => {
     const offset = Layout.spacing.medium + Layout.spacing.xxxlarge / 2;
     const t = time.toDate();
-    const hourDiff = t.getHours() - times[0];
+    const hourDiff = t.getHours() - times[0] + timeAdjustment;
 
     return (
       offset +
@@ -95,54 +93,63 @@ export default function Calendar({ events }: { events: [] }) {
     return false;
   };
 
-  const DayTab = forwardRef(({ day, i, onItemPress }, ref) => {
-    const inputRange = [0, 1, 2, 3, 4].map((num) => num * dayWidth);
-    const regularOpacity = scrollX.interpolate({
-      inputRange,
-      outputRange: [0, 1, 2, 3, 4].map((num) => (num === i ? 0 : 1)),
-    });
-    const selectedOpacity = scrollX.interpolate({
-      inputRange,
-      outputRange: [0, 1, 2, 3, 4].map((num) => (num === i ? 1 : 0)),
-    });
+  const DayTab = forwardRef(
+    (
+      {
+        day,
+        i,
+        onItemPress,
+      }: { day: string; i: number; onItemPress: () => void },
+      ref
+    ) => {
+      const inputRange = [0, 1, 2, 3, 4].map((num) => num * dayWidth);
+      const regularOpacity = scrollX.interpolate({
+        inputRange,
+        outputRange: [0, 1, 2, 3, 4].map((num) => (num === i ? 0 : 1)),
+      });
+      const selectedOpacity = scrollX.interpolate({
+        inputRange,
+        outputRange: [0, 1, 2, 3, 4].map((num) => (num === i ? 1 : 0)),
+      });
 
-    return (
-      <Pressable
-        style={{ flex: 1, alignItems: "center" }}
-        onPress={onItemPress}
-        ref={ref}
-      >
-        <View style={styles.day}>
-          <Animated.Text
-            style={[
-              { opacity: regularOpacity },
-              today === i
-                ? { color: Colors.pink }
-                : { color: Colors[colorScheme].text },
-            ]}
-          >
-            {day}
-          </Animated.Text>
-          <Animated.Text
-            style={[
-              {
-                opacity: selectedOpacity,
-                fontWeight: "700",
-                position: "absolute",
-              },
-              today === i
-                ? { color: Colors.white }
-                : { color: Colors[colorScheme].background },
-            ]}
-          >
-            {day}
-          </Animated.Text>
-        </View>
-      </Pressable>
-    );
-  });
+      return (
+        <Pressable
+          style={{ flex: 1, alignItems: "center" }}
+          onPress={onItemPress}
+          ref={ref}
+        >
+          <View style={styles.day}>
+            <Animated.Text
+              style={[
+                { opacity: regularOpacity },
+                today === i
+                  ? { color: Colors.pink }
+                  : { color: Colors[colorScheme].text },
+              ]}
+            >
+              {day}
+            </Animated.Text>
+            <Animated.Text
+              style={[
+                {
+                  opacity: selectedOpacity,
+                  fontWeight: "700",
+                  position: "absolute",
+                },
+                today === i
+                  ? { color: Colors.white }
+                  : { color: Colors[colorScheme].background },
+              ]}
+            >
+              {day}
+            </Animated.Text>
+          </View>
+        </Pressable>
+      );
+    }
+  );
 
-  const Indicator = ({ scrollX }) => {
+  const Indicator = ({ scrollX }: { scrollX: Animated.Value }) => {
     const inputRange = [0, 1, 2, 3, 4].map((i) => i * dayWidth);
     const indicatorLeft = scrollX.interpolate({
       inputRange,
@@ -186,7 +193,15 @@ export default function Calendar({ events }: { events: [] }) {
     );
   };
 
-  const Header = ({ data, scrollX, onItemPress }) => {
+  const Header = ({
+    data,
+    scrollX,
+    onItemPress,
+  }: {
+    data: WeekSchedule;
+    scrollX: Animated.Value;
+    onItemPress: (arg0: number) => {};
+  }) => {
     return (
       <View>
         <Indicator scrollX={scrollX} />
@@ -199,7 +214,7 @@ export default function Calendar({ events }: { events: [] }) {
             },
           ]}
         >
-          {data.map((item, i) => (
+          {data.map((item: DaySchedule, i) => (
             <DayTab
               key={i}
               day={item.day[0]}
@@ -258,7 +273,7 @@ export default function Calendar({ events }: { events: [] }) {
     );
   };
 
-  const Day = ({ events, index }) => {
+  const Day = ({ events, index }: { events: Event[]; index: number }) => {
     return (
       <View style={{ width: dayWidth }}>
         <Grid />
@@ -280,7 +295,7 @@ export default function Calendar({ events }: { events: [] }) {
             <View style={styles.currTimeDot} />
           </View>
         )}
-        {events.map((event, i) => {
+        {events.map((event: Event, i: number) => {
           /* Handle overlapping events by indenting. */
           let leftIndent = 0;
           let prevIndex = i - 1;
@@ -297,20 +312,11 @@ export default function Calendar({ events }: { events: [] }) {
 
           return (
             <CalendarEvent
-              title={event.title}
-              time={
-                getTimeString(event.startInfo) +
-                " " +
-                getTimeString(event.endInfo)
-              }
-              location={event.location}
-              marginTop={getMarginTop(event.startInfo)}
+              event={event}
+              // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
+              marginTop={getMarginTop(event.startInfo, 7)}
               height={getHeight(event.startInfo, event.endInfo)}
               leftIndent={leftIndent}
-              onPress={
-                () => console.log("need to pass in full course here")
-                // navigation.navigate("Course", { id: event.courseId })
-              }
               key={i}
             />
           );
@@ -342,7 +348,7 @@ export default function Calendar({ events }: { events: [] }) {
       <Animated.FlatList
         ref={ref}
         data={newEvents}
-        keyExtractor={(item: Object) => item.day}
+        keyExtractor={(item: DaySchedule) => item.day}
         horizontal
         showsHorizontalScrollIndicator={false}
         pagingEnabled
@@ -372,7 +378,6 @@ const styles = StyleSheet.create({
     height: 30,
     width: 30,
     borderRadius: 30 / 2,
-    backgroundColor: "blue",
   },
   gridTimeText: {
     fontWeight: "600",

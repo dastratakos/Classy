@@ -37,6 +37,7 @@ export default function ScheduleCard({
             </Text>
             <Text style={styles.cardSubtitle} numberOfLines={1}>
               {schedule.days.join(", ")}{" "}
+              {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
               {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
               {getTimeString(schedule.endInfo, "Africa/Casablanca")}
             </Text>

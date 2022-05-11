@@ -30,18 +30,26 @@ export default function EnrollmentModal({
 
   const onEdit = () => {
     setVisible(false);
+    console.log("onEdit");
     navigation.navigate("EditCourse", { enrollment });
   };
 
   const onViewMore = async () => {
     setVisible(false);
+    console.log("onViewMore");
     const course = await getCourse(enrollment.courseId);
     navigation.navigate("Course", { course });
   };
 
   return (
     <Modal isVisible={visible}>
-      <Pressable style={[styles.container]} onPress={() => setVisible(false)}>
+      <Pressable
+        style={styles.container}
+        onPress={() => {
+          console.log("closing");
+          setVisible(false);
+        }}
+      >
         <Pressable
           style={[
             styles.modalView,
@@ -78,6 +86,7 @@ export default function EnrollmentModal({
             {enrollment.schedules.map((schedule, i) => (
               <Text style={styles.schedText}>
                 {schedule.days.join(", ")}{" "}
+                {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
                 {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
                 {getTimeString(schedule.endInfo, "Africa/Casablanca")}
               </Text>
