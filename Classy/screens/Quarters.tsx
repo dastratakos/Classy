@@ -33,7 +33,13 @@ export default function Quarters({ route }: QuartersProps) {
             .sort()
             .reverse()
             .map(([year, terms]) => (
-              <View style={[styles.yearContainer, {backgroundColor: Colors[colorScheme].secondaryBackground}]} key={year}>
+              <View
+                style={[
+                  styles.yearContainer,
+                  { backgroundColor: Colors[colorScheme].secondaryBackground },
+                ]}
+                key={year}
+              >
                 <Text style={styles.year}>{year}</Text>
                 <View style={styles.quartersContainer}>
                   {Object.entries(terms)

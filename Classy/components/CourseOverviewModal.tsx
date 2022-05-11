@@ -6,19 +6,18 @@ import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import { useNavigation } from "@react-navigation/core";
 import useColorScheme from "../hooks/useColorScheme";
-import { User } from "../types";
+import { Enrollment, User } from "../types";
 import AppStyles from "../styles/AppStyles";
 import ProfilePhoto from "../components/ProfilePhoto";
+import { getTimeString } from "../utils";
 
 export default function CourseOverviewModal({
-  code,
-  time,
+  enrollment,
   friends,
   visible,
   setVisible,
 }: {
-  code: string;
-  time: string;
+  enrollment: Enrollment;
   friends: User[];
   visible: boolean;
   setVisible: (arg0: boolean) => void;
@@ -27,32 +26,40 @@ export default function CourseOverviewModal({
   const colorScheme = useColorScheme();
 
   return (
-    <Modal
-      isVisible={visible}
-    >
+    <Modal isVisible={visible}>
       <Pressable style={[styles.container]} onPress={() => setVisible(false)}>
         <View
           style={[
             styles.modalView,
             { backgroundColor: Colors[colorScheme].cardBackground },
-            { maxHeight:"50%" }
+            { maxHeight: "50%" },
           ]}
         >
-          <Text>{code}</Text>
-          <Text>{time}</Text>
+          <Text style={styles.title}>{enrollment.code.join(", ")}</Text>
+          {enrollment.schedules.map((schedule, i) => (
+            <Text style={styles.schedText}>
+              {schedule.days.join(", ")}{" "}
+              {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
+              {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
+              {getTimeString(schedule.endInfo, "Africa/Casablanca")}
+            </Text>
+          ))}
           <Text>Class Friends</Text>
-          <View style={{ maxHeight:"85%", width:"100%" }}>
+          <View style={{ maxHeight: "85%", width: "100%" }}>
             <FlatList
               data={friends}
               renderItem={({ item }) => (
                 <Pressable
-                  onPress={() => { navigation.navigate("FriendProfile", { id: item.id }); setVisible(false); }}
+                  onPress={() => {
+                    navigation.navigate("FriendProfile", { id: item.id });
+                    setVisible(false);
+                  }}
                 >
                   <View style={[AppStyles.row, { flex: 1 }]}>
                     <ProfilePhoto
-                          url={item.photoUrl}
-                          size={Layout.photo.small}
-                        />
+                      url={item.photoUrl}
+                      size={Layout.photo.small}
+                    />
                     <View style={{ flexGrow: 1 }}>
                       <Text> {item.name}</Text>
                     </View>
@@ -80,5 +87,13 @@ const styles = StyleSheet.create({
     borderRadius: Layout.radius.large,
     padding: Layout.spacing.large,
     alignItems: "center",
+  },
+  title: {
+    fontSize: Layout.text.xlarge,
+    marginBottom: Layout.spacing.medium,
+  },
+  schedText: {
+    fontSize: Layout.text.large,
+    fontWeight: "500",
   },
 });

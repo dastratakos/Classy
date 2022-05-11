@@ -17,7 +17,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { getEnrollmentsForTerm } from "../services/enrollments";
 import { HomeData } from "../types";
-import CourseOverview from "../components/CourseOverview";
+import CourseOverview from "../components/Cards/CourseOverview";
 import ProfilePhoto from "../components/ProfilePhoto";
 import { getFriendsInCourse } from "../services/friends";
 
@@ -102,8 +102,7 @@ export default function Home() {
           {homeData.map((item) => (
             <CourseOverview
               key={`${item.enrollment.courseId}`}
-              code={item.enrollment.code.join(", ")}
-              time={"TODO"}
+              enrollment={item.enrollment}
               friends={item.friends}
             />
           ))}

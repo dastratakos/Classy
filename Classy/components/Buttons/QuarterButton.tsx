@@ -28,20 +28,27 @@ export default function QuarterButton({
       <View
         style={[
           styles.container,
-          {backgroundColor: Colors[colorScheme].tertiaryBackground},
+          { backgroundColor: Colors[colorScheme].tertiaryBackground },
         ]}
       >
         <Text style={styles.text}>{text}</Text>
-        <View style={[styles.unitContainer, {backgroundColor: "transparent"}]}>
-            <Text style={styles.number}>{num}</Text>
-            <Text style={styles.unitsText}>Units</Text>
+        <View
+          style={[styles.unitContainer, { backgroundColor: "transparent" }]}
+        >
+          <Text style={styles.number}>{num}</Text>
+          <Text style={styles.unitsText}>Units</Text>
         </View>
       </View>
     );
 
   if (loading)
     return (
-      <View style={[styles.container, {backgroundColor: Colors[colorScheme].secondaryBackground}]}>
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: Colors[colorScheme].secondaryBackground },
+        ]}
+      >
         <ActivityIndicator />
       </View>
     );
@@ -51,15 +58,25 @@ export default function QuarterButton({
       <View
         style={[
           styles.container,
-          {backgroundColor: Colors[colorScheme].tint,},
+          { backgroundColor: Colors[colorScheme].tint },
         ]}
       >
         <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
-            <Text style={[styles.text, { color: Colors[colorScheme].background }]}>{text}</Text>
-            <View style={[styles.unitContainer, {backgroundColor: "transparent"}]}>
-                <Text style={[styles.number, { color: Colors[colorScheme].background }]}>{num}</Text>
-                <Text style={styles.unitsText}>Units</Text>
-            </View>
+          <Text
+            style={[styles.text, { color: Colors[colorScheme].background }]}
+          >
+            {text}
+          </Text>
+          <View
+            style={[styles.unitContainer, { backgroundColor: "transparent" }]}
+          >
+            <Text
+              style={[styles.number, { color: Colors[colorScheme].background }]}
+            >
+              {num}
+            </Text>
+            <Text style={styles.unitsText}>Units</Text>
+          </View>
         </TouchableOpacity>
       </View>
     );
@@ -68,14 +85,16 @@ export default function QuarterButton({
     <View
       style={[
         styles.container,
-        {backgroundColor: Colors[colorScheme].cardBackground,},
+        { backgroundColor: Colors[colorScheme].cardBackground },
       ]}
     >
       <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
         <Text style={styles.text}>{text}</Text>
-        <View style={styles.unitContainer}>
-            <Text style={styles.number}>{num}</Text>
-            <Text style={styles.unitsText}>Units</Text>
+        <View
+          style={[styles.unitContainer, { backgroundColor: "transparent" }]}
+        >
+          <Text style={styles.number}>{num}</Text>
+          <Text style={styles.unitsText}>Units</Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -100,13 +119,13 @@ const styles = StyleSheet.create({
   unitContainer: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
   },
   number: {
     fontSize: Layout.text.xlarge,
   },
   unitsText: {
-      fontSize: Layout.text.small,
+    fontSize: Layout.text.small,
   },
   text: {
     fontSize: Layout.text.large,
