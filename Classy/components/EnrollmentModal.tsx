@@ -1,16 +1,16 @@
 import { Pressable, StyleSheet } from "react-native";
 import { Text, View } from "./Themed";
+import { getTimeString, termIdToFullName } from "../utils";
 
-import Colors from "../constants/Colors";
-import Layout from "../constants/Layout";
-import { useNavigation } from "@react-navigation/core";
-import useColorScheme from "../hooks/useColorScheme";
-import { Enrollment } from "../types";
 import AppStyles from "../styles/AppStyles";
 import Button from "./Buttons/Button";
-import { getTimeString, termIdToFullName } from "../utils";
-import { getCourse } from "../services/courses";
+import Colors from "../constants/Colors";
+import { Enrollment } from "../types";
+import Layout from "../constants/Layout";
 import Modal from "react-native-modal";
+import { getCourse } from "../services/courses";
+import useColorScheme from "../hooks/useColorScheme";
+import { useNavigation } from "@react-navigation/core";
 
 export default function EnrollmentModal({
   enrollment,
