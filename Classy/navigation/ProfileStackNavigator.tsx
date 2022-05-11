@@ -91,6 +91,7 @@ export default function ProfileStackNavigator() {
       <Stack.Screen
         name="Quarters"
         component={Quarters}
+        getId={() => new Date().getTime().toString()}
         options={{ title: "Quarters" }}
       />
     </Stack.Navigator>

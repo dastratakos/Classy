@@ -99,6 +99,7 @@ export default function SearchStackNavigator() {
       <Stack.Screen
         name="Quarters"
         component={Quarters}
+        getId={() => new Date().getTime().toString()}
         options={{ title: "Quarters" }}
       />
     </Stack.Navigator>

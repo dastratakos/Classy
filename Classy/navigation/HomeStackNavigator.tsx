@@ -69,6 +69,7 @@ export default function HomeStackNavigator() {
       <Stack.Screen
         name="ChannelScreen"
         component={ChannelScreen}
+        getId={() => new Date().getTime().toString()}
         options={({ navigation }: HomeStackScreenProps<"Messages">) => ({
           title: context.channelName,
           headerRight: () => (
@@ -86,11 +87,13 @@ export default function HomeStackNavigator() {
       <Stack.Screen
         name="Thread"
         component={ThreadScreen}
+        getId={() => new Date().getTime().toString()}
         options={{ title: "Thread" }}
       />
       <Stack.Screen
         name="ChannelDetails"
         component={ChannelDetails}
+        getId={() => new Date().getTime().toString()}
         options={{ title: "Details" }}
       />
       <Stack.Screen
@@ -172,6 +175,7 @@ export default function HomeStackNavigator() {
       <Stack.Screen
         name="Quarters"
         component={Quarters}
+        getId={() => new Date().getTime().toString()}
         options={{ title: "Quarters" }}
       />
     </Stack.Navigator>
