@@ -31,15 +31,16 @@ export const getUser = async (id: string) => {
   }
 };
 
-export const setUser = async (id: string, email: string) => {
-  const data = {
-    id,
-    email,
-    createdAt: Timestamp.now(),
-    isPrivate: false,
-  };
+export type NewUser = {
+  id: string;
+  email: string;
+  interests: string;
+  createdAt: Timestamp;
+  isPrivate: boolean;
+};
 
-  await setDoc(doc(db, "users", id), data);
+export const setUser = async (data: NewUser) => {
+  await setDoc(doc(db, "users", data.id), data);
 
   return data;
 };
@@ -155,8 +156,10 @@ export const generateTerms = (
 
     for (let quarter of [2, 4, 6]) {
       const termId = `${(year + 1 - 1900) * 10 + quarter}`;
-      if (!terms[yearKey][termId]) res[yearKey][termId] = 0;
+      if (res[yearKey][termId]) continue;
+      res[yearKey][termId] = 0;
     }
   }
+  console.log("terms =", res);
   return res;
 };

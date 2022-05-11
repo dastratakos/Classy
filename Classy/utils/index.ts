@@ -3,6 +3,9 @@ import { Day, Enrollment, Event, WeekSchedule } from "../types";
 
 export const generateSubstrings = (text: string) => {
   let substrings: string[] = [];
+
+  if (!text) return substrings;
+
   const pieces = text.toLowerCase().split(" ");
   for (let i = 0; i < pieces.length; i++) {
     let substr = "";
@@ -145,7 +148,7 @@ export const getTimeString = (
 ) => {
   if (!timestamp) return "";
 
-  const date = new Date(timestamp.seconds * 1000)
+  const date = new Date(timestamp.seconds * 1000);
   return date.toLocaleString("en-US", {
     // return timestamp.toDate().toLocaleString("en-US", {
     hour: "numeric",

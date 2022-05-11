@@ -65,6 +65,8 @@ export default function Settings() {
   ];
 
   const handleSavePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     const newUser: User = {
       ...context.user,
       name,
@@ -111,7 +113,7 @@ export default function Settings() {
 
         const newUser = {
           ...context.user,
-          photoUrl,
+          photoUrl: uploadUrl,
         };
         context.setUser(newUser);
 

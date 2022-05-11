@@ -20,6 +20,7 @@ import { sendEmailVerification } from "firebase/auth";
 import { setUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { Timestamp } from "firebase/firestore";
 
 export default function Register({ route }: RegisterProps) {
   const [email, setEmail] = useState(route.params?.email || "");
@@ -46,11 +47,18 @@ export default function Register({ route }: RegisterProps) {
         const uid = response.user.uid;
 
         connectStreamChatUser(uid);
-        setUser(uid, email);
+        const data = {
+          id: uid,
+          email,
+          interests: "",
+          createdAt: Timestamp.now(),
+          isPrivate: false,
+        }
+        setUser(data);
 
         context.setUser({
           ...context.user,
-          ...{ id: uid, email, isPrivate: false },
+          ...data,
         });
         navigation.navigate("Onboarding");
       })

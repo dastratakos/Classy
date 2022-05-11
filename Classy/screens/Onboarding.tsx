@@ -31,20 +31,20 @@ export default function Onboarding() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleGetStarted = async () => {
-    if (name === "") {
-      setErrorMessage("Please enter your name");
-      return;
-    } else if (startYear > gradYear) {
-      setErrorMessage("Start year cannot be after the end year");
-      return;
-    }
+    // if (name === "") {
+    //   setErrorMessage("Please enter your name");
+    //   return;
+    // } else if (startYear > gradYear) {
+    //   setErrorMessage("Start year cannot be after the end year");
+    //   return;
+    // }
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     const data = {
-      name,
-      major,
-      photoUrl,
+      name: name ? name : "",
+      major: major ? major : "",
+      photoUrl: photoUrl ? photoUrl : "",
       keywords: generateSubstrings(name),
       startYear,
       gradYear,
