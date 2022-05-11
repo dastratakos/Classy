@@ -141,18 +141,21 @@ export const searchMoreUsers = async (
   return res;
 };
 
-export const generateTerms = (terms: Object, startYear: string, endYear: string) => {
+export const generateTerms = (
+  terms: Object,
+  startYear: string,
+  endYear: string
+) => {
   let res = terms;
+  if (!res) res = {};
   for (let year = parseInt(startYear); year < parseInt(endYear); year++) {
     const yearKey = `${year}-${(year % 100) + 1}`;
 
-    if (!res[yearKey])
-      res[yearKey] = {};
+    if (!res[yearKey]) res[yearKey] = {};
 
     for (let quarter of [2, 4, 6]) {
       const termId = `${(year + 1 - 1900) * 10 + quarter}`;
-      if (!terms[yearKey][termId])
-        res[yearKey][termId] = 0
+      if (!terms[yearKey][termId]) res[yearKey][termId] = 0;
     }
   }
   return res;
