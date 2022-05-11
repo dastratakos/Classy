@@ -77,6 +77,7 @@ export default function Home() {
         }
       }
     }
+    homeDataArr.sort((a, b) => a.startInfo > b.startInfo);
     setHomeData(homeDataArr);
 
     // let dummyDataArr = [];
