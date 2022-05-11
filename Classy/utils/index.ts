@@ -213,7 +213,6 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
         enrollment: enrollment,
       };
       for (let day of schedule.days) {
-        console.log(`${day}: ${title}`);
         const index = dayIndices[`${day}`];
         week[index].events.push(event);
       }
@@ -223,8 +222,6 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
   for (let i = 0; i < week.length; i++) {
     week[i].events.sort((a: Event, b: Event) => a.startInfo > b.startInfo);
   }
-
-  // TODO: sort events by startInfo
 
   return week;
 };

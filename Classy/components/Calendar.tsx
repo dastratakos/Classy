@@ -298,17 +298,17 @@ export default function Calendar({ week }: { week: WeekSchedule }) {
         {events.map((event: Event, i: number) => {
           /* Handle overlapping events by indenting. */
           let leftIndent = 0;
-          let prevIndex = i - 1;
-          let currIndex = i;
-          while (prevIndex >= 0) {
-            const prevEndTime = events[prevIndex].endInfo;
-            const currStartTime = events[currIndex].startInfo;
-            if (prevEndTime > currStartTime) {
-              leftIndent += Layout.spacing.xsmall;
-              currIndex = prevIndex;
-            }
-            prevIndex--;
-          }
+          // let prevIndex = i - 1;
+          // let currIndex = i;
+          // while (prevIndex >= 0) {
+          //   const prevEndTime = events[prevIndex].endInfo;
+          //   const currStartTime = events[currIndex].startInfo;
+          //   if (prevEndTime > currStartTime) {
+          //     leftIndent += Layout.spacing.xsmall;
+          //     currIndex = prevIndex;
+          //   }
+          //   prevIndex--;
+          // }
 
           return (
             <CalendarEvent

@@ -67,7 +67,7 @@ export default function CalendarEvent({
           <Text style={styles.timeText}>
             {getTimeString(event.startInfo, "Africa/Casablanca") +
               " - " +
-              getTimeString(event.endInfo, "Africa/Casablanca")}
+              getTimeString(event.endInfo, "America/Danmarkshavn")}
           </Text>
           <Text style={styles.locationText}>{event.location}</Text>
         </TouchableOpacity>
