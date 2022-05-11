@@ -1,6 +1,6 @@
 import * as Haptics from "expo-haptics";
 
-import { Icon, Text, View } from "../components/Themed";
+import { Icon, Icon2, Text, View } from "../components/Themed";
 import {
   Alert,
   Pressable,
@@ -346,7 +346,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
           <View style={[AppStyles.row, { flex: 1 }]}>
             <ProfilePhoto
               url={user.photoUrl}
-              size={Layout.photo.medium}
+              size={Layout.photo.large}
               style={{ marginRight: Layout.spacing.large }}
             />
             <View style={{ flexGrow: 1 }}>
@@ -439,7 +439,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             {user.major ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon name="pencil" size={Layout.icon.medium} />
+                  <Icon2 name="pencil" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{user.major}</Text>
               </View>
@@ -448,7 +448,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             {user.gradYear ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon name="graduation-cap" size={Layout.icon.medium} />
+                  <Icon2 name="graduation" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{user.gradYear}</Text>
               </View>
@@ -457,7 +457,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             {user.interests ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon name="puzzle-piece" size={Layout.icon.medium} />
+                  <Icon2 name="puzzle" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{user.interests}</Text>
               </View>
@@ -496,7 +496,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                   StyleSheet.absoluteFill,
                   styles.similarityBar,
                   {
-                    backgroundColor: Colors[colorScheme].photoBackground,
+                    backgroundColor: Colors.yellow,
                     width: `${courseSimilarity}%`,
                   },
                 ]}
@@ -527,7 +527,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         </View>
       ) : (
         <View style={AppStyles.section}>
-          <TabView tabs={tabs} />
+          <TabView tabs={tabs} selectedStyle={{ backgroundColor: Colors.pink }}/>
         </View>
       )}
       <ActionSheet
@@ -603,6 +603,7 @@ const styles = StyleSheet.create({
     width: 30,
     marginRight: 15,
     alignItems: "center",
+    marginBottom: Layout.spacing.xsmall,
   },
   similarityContainer: {
     borderRadius: Layout.radius.xsmall,

@@ -14,6 +14,7 @@ import FriendCard from "../components/Cards/FriendCard";
 import CourseCard from "../components/Cards/CourseCard";
 import Layout from "../constants/Layout";
 import { getFriendIds, getNumFriendInCourse } from "../services/friends";
+import Colors from "../constants/Colors";
 
 export default function Search() {
   const context = useContext(AppContext);
@@ -139,7 +140,7 @@ export default function Search() {
           setFocused={setFocused}
         />
       </View>
-      <TabView tabs={tabs} addTabMargin />
+      <TabView tabs={tabs} addTabMargin selectedStyle={{ backgroundColor: Colors.pink }} />
     </View>
   );
 }

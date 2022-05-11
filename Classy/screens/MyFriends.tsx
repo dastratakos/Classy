@@ -56,7 +56,7 @@ export default function MyFriends() {
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={AppStyles.section}>
-        <TabView tabs={tabs} />
+        <TabView tabs={tabs} selectedStyle={{ backgroundColor: Colors.pink }} />
       </View>
     </ScrollView>
   );

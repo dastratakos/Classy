@@ -135,7 +135,7 @@ export default function AddCourse({ route }: AddCourseProps) {
               text={
                 context.selectedTerm !== ""
                   ? termIdToName(context.selectedTerm)
-                  : "Select"
+                  : "Select a Quarter"
               }
               onPress={() =>
                 navigation.navigate("SelectQuarter", {

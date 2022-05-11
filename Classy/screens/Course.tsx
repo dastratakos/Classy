@@ -104,7 +104,7 @@ export default function Course({ route }: CourseProps) {
               AppStyles.row,
               {
                 justifyContent: "space-between",
-                marginVertical: Layout.spacing.medium,
+                marginTop: Layout.spacing.small,
               },
             ]}
           >

@@ -178,5 +178,6 @@ const styles = StyleSheet.create({
   wideButtonWrap: {
     paddingTop: Layout.spacing.medium,
     width: "100%",
+    backgroundColor: "transparent",
   },
 });
