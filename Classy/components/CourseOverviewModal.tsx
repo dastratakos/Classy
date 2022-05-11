@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, FlatList } from "react-native";
 import Modal from "react-native-modal";
 import { Text, View } from "./Themed";
+import { Timestamp } from "firebase/firestore";
 
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
@@ -14,11 +15,17 @@ import { getTimeString } from "../utils";
 export default function CourseOverviewModal({
   enrollment,
   friends,
+  startInfo,
+  endInfo,
+  component,
   visible,
   setVisible,
 }: {
   enrollment: Enrollment;
   friends: User[];
+  startInfo: Timestamp;
+  endInfo: Timestamp;
+  component: string;
   visible: boolean;
   setVisible: (arg0: boolean) => void;
 }) {
@@ -28,49 +35,60 @@ export default function CourseOverviewModal({
   return (
     <Modal isVisible={visible}>
       <Pressable style={[styles.container]} onPress={() => setVisible(false)}>
-        <View
+        <Pressable
           style={[
             styles.modalView,
-            { backgroundColor: Colors[colorScheme].cardBackground },
+            { backgroundColor: Colors[colorScheme].secondaryBackground },
             { maxHeight: "50%" },
           ]}
         >
-          <Text style={styles.title}>{enrollment.code.join(", ")}</Text>
-          {enrollment.schedules.map((schedule, i) => (
-            <Text style={styles.schedText}>
-              {schedule.days.join(", ")}{" "}
-              {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
-              {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
-              {getTimeString(schedule.endInfo, "Africa/Casablanca")}
-            </Text>
-          ))}
-          <Text>Class Friends</Text>
-          <View style={{ maxHeight: "85%", width: "100%" }}>
+          <Text style={styles.code}>{enrollment.code.join(", ")} {component === "DIS" && "Section"}{component === "LEC" && "Lecture"}</Text>
+          <Text style={{ marginTop: Layout.spacing.xxsmall }}>
+            {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
+            {getTimeString(startInfo, "Africa/Casablanca")} -{" "}
+            {getTimeString(endInfo, "Africa/Casablanca")}
+          </Text>
+          <Text style={{ fontWeight: "bold", marginTop: Layout.spacing.small, alignSelf: "center" }}>Class Friends ({friends.length})</Text>
+
+          <View style={{ maxHeight: "80%", width: "100%", backgroundColor: Colors[colorScheme].secondaryBackground }}>
             <FlatList
               data={friends}
               renderItem={({ item }) => (
-                <Pressable
-                  onPress={() => {
-                    navigation.navigate("FriendProfile", { id: item.id });
-                    setVisible(false);
-                  }}
-                >
-                  <View style={[AppStyles.row, { flex: 1 }]}>
+                <View style={[
+                  styles.friendContainer,
+                  AppStyles.boxShadow,
+                  { backgroundColor: Colors[colorScheme].cardBackground }]}>
+                  <Pressable
+                    style={[
+                      AppStyles.row,
+                      { backgroundColor: Colors[colorScheme].cardBackground },
+                    ]}
+                    onPress={() => {
+                      navigation.navigate("FriendProfile", { id: item.id });
+                      setVisible(false);
+                    }}
+                  >
                     <ProfilePhoto
                       url={item.photoUrl}
-                      size={Layout.photo.small}
+                      size={Layout.photo.xsmall}
                     />
-                    <View style={{ flexGrow: 1 }}>
-                      <Text> {item.name}</Text>
+                    <View
+                      style={{
+                        backgroundColor: Colors[colorScheme].cardBackground,
+                        flexGrow: 1,
+                      }}
+                    >
+                      <Text style={{ fontSize: Layout.text.large }}>  {item.name}</Text>
                     </View>
-                  </View>
-                </Pressable>
+                  </Pressable>
+                </View>
+
               )}
               keyExtractor={(item) => `${item.id}`}
               style={{ flexGrow: 0 }}
             />
           </View>
-        </View>
+        </Pressable>
       </Pressable>
     </Modal>
   );
@@ -81,16 +99,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
+  friendContainer: {
+    paddingHorizontal: Layout.spacing.xsmall,
+    paddingVertical: Layout.spacing.xsmall,
+    borderRadius: Layout.radius.medium,
+    marginVertical: Layout.spacing.small,
+    alignSelf: "center",
+    width: "97%",
+  },
   modalView: {
     ...AppStyles.boxShadow,
-    margin: Layout.spacing.large,
+    margin: Layout.spacing.xxsmall,
     borderRadius: Layout.radius.large,
     padding: Layout.spacing.large,
-    alignItems: "center",
   },
-  title: {
+  code: {
     fontSize: Layout.text.xlarge,
-    marginBottom: Layout.spacing.medium,
   },
   schedText: {
     fontSize: Layout.text.large,
