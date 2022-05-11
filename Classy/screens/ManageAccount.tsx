@@ -119,6 +119,18 @@ export default function Settings() {
         deleteUserCompletely(user.uid);
         deleteUser(user);
 
+        context.setUser({
+          ...context.user,
+          id: "",
+          email: "",
+          name: "",
+          major: "",
+          gradYear: "",
+          interests: "",
+          isPrivate: false,
+          photoUrl: "",
+        });
+
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
