@@ -112,7 +112,7 @@ export default function Home() {
           <View style={[AppStyles.row, { flex: 1 }]}>
             <View style={{ flexGrow: 1 }}>
               <Text style={styles.title}>
-                Hi{context.user.name && `, ${context.user.name.split(" ")[0]}`}.
+                Hi{context.user.name && `, ${context.user.name.split(" ")[0]}!`}
               </Text>
               <Text style={styles.subtitle}>
                 <Text>Your </Text>

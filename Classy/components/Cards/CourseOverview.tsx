@@ -47,7 +47,7 @@ export default function CourseOverview({
       <View
         style={[
           styles.container,
-          { backgroundColor: Colors[colorScheme].secondaryBackground },
+          { backgroundColor: Colors.pink },
         ]}
       >
         <Text style={styles.code}>
@@ -68,7 +68,7 @@ export default function CourseOverview({
           Class Friends ({friends.length})
         </Text>
         <View
-          style={{ backgroundColor: Colors[colorScheme].secondaryBackground }}
+          style={{ backgroundColor: "transparent"}}
         >
           {friends.length > 0 &&
             friends.slice(0, 3).map((item) => (
@@ -77,7 +77,7 @@ export default function CourseOverview({
                 style={[
                   styles.friendContainer,
                   AppStyles.boxShadow,
-                  { backgroundColor: Colors[colorScheme].background },
+                  { backgroundColor: Colors[colorScheme].secondaryBackground },
                 ]}
               >
                 <Pressable
@@ -143,11 +143,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Layout.spacing.xsmall,
     paddingVertical: Layout.spacing.xsmall,
     borderRadius: Layout.radius.medium,
-    marginVertical: Layout.spacing.small,
+    marginVertical: Layout.spacing.xxsmall,
     width: "100%",
   },
   code: {
     fontSize: Layout.text.xlarge,
+    fontWeight: "500",
   },
   schedText: {
     fontSize: Layout.text.medium,

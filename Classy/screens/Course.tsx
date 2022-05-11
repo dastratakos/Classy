@@ -124,7 +124,7 @@ export default function Course({ route }: CourseProps) {
         </View>
         <Separator />
         <View style={styles.friendsSection}>
-          <Text style={styles.friendsHeader}>Friends</Text>
+          <Text style={styles.friendsHeader}>{"Friends in " + course.code.join(", ")}</Text>
           <View style={AppStyles.section}>
             {/* TODO: use SectionList? */}
             {Object.keys(friendsData).map((termId) => (
@@ -202,12 +202,10 @@ const styles = StyleSheet.create({
   friendsHeader: {
     fontSize: Layout.text.large,
     fontWeight: "500",
-    marginTop: Layout.spacing.small,
-    marginBottom: Layout.spacing.medium,
+    marginVertical: Layout.spacing.xxsmall,
   },
   term: {
     fontSize: Layout.text.medium,
-    fontWeight: "500",
   },
   ctaContainer: {
     ...AppStyles.row,

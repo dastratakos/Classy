@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Layout.spacing.small,
     flex: 1,
     borderRadius: Layout.radius.xsmall,
-    backgroundColor: Colors.lightRed,
+    backgroundColor: Colors.pink,
     overflow: "hidden",
     opacity: 0.9,
   },
