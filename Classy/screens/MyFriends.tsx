@@ -10,7 +10,7 @@ import { useContext, useEffect, useState } from "react";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
-import FriendList from "../components/FriendList";
+import FriendList from "../components/Lists/FriendList";
 import TabView from "../components/TabView";
 import { User } from "../types";
 import useColorScheme from "../hooks/useColorScheme";

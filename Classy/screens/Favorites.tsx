@@ -4,15 +4,13 @@ import { useContext, useEffect, useState } from "react";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
-import CourseList from "../components/CourseList";
 import { FavoritedCourse } from "../types";
 import { View } from "../components/Themed";
 import { getFavorites } from "../services/courses";
 import useColorScheme from "../hooks/useColorScheme";
-import { useNavigation } from "@react-navigation/core";
+import FavoriteCard from "../components/Cards/FavoriteCard";
 
 export default function Favorites() {
-  const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
 
@@ -31,7 +29,9 @@ export default function Favorites() {
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={AppStyles.section}>
-        <CourseList courses={favorites} />
+        {favorites.map((favorite: FavoritedCourse, i: number) => (
+          <FavoriteCard favorite={favorite} key={i.toString()} />
+        ))}
       </View>
     </ScrollView>
   );

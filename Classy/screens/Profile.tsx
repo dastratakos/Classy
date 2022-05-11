@@ -24,7 +24,7 @@ import Calendar from "../components/Calendar";
 import Colors from "../constants/Colors";
 import Constants from "expo-constants";
 import { Enrollment, WeekSchedule } from "../types";
-import EnrollmentList from "../components/EnrollmentList";
+import EnrollmentList from "../components/Lists/EnrollmentList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import Separator from "../components/Separator";
@@ -35,7 +35,7 @@ import { auth } from "../firebase";
 import { getEnrollmentsForTerm } from "../services/enrollments";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { getFriendIds } from "../services/friends";
+import { getFriendIds, getRequestIds } from "../services/friends";
 
 export default function Profile() {
   const context = useContext(AppContext);
@@ -43,6 +43,7 @@ export default function Profile() {
   const colorScheme = useColorScheme();
 
   const [numFriends, setNumFriends] = useState<string>("");
+  const [numRequests, setNumRequests] = useState<number>(0);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [week, setWeek] = useState<WeekSchedule>([]);
   const [refreshing, setRefreshing] = useState<boolean>(true);
@@ -57,17 +58,21 @@ export default function Profile() {
       if (auth.currentUser) {
         const user = await getUser(auth.currentUser.uid);
         context.setUser({ ...context.user, ...user });
-        getFriendIds(context.user.id).then((res) => {
-          setNumFriends(`${res.length}`);
-        });
-        
+        getFriendIds(context.user.id).then((res) =>
+          setNumFriends(`${res.length}`)
+        );
+
+        getRequestIds(context.user.id).then((res) =>
+          setNumRequests(res.length)
+        );
+
         const res = await getEnrollmentsForTerm(
           context.user.id,
           getCurrentTermId()
         );
         setEnrollments(res);
         setWeek(getWeekFromEnrollments(res));
-        
+
         setInterval(checkInClass, 1000);
       }
     };
@@ -84,26 +89,26 @@ export default function Profile() {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    
+
     const user = await getUser(context.user.id);
     context.setUser({ ...context.user, ...user });
     getFriendIds(context.user.id).then((res) => {
       setNumFriends(`${res.length}`);
     });
-    
+
     const res = await getEnrollmentsForTerm(
       context.user.id,
       getCurrentTermId()
     );
     setEnrollments(res);
     setWeek(getWeekFromEnrollments(res));
-    
+
     if (auth.currentUser)
       setShowEmailVerification(!auth.currentUser.emailVerified);
     console.log("emailVerified:", auth.currentUser?.emailVerified);
-    
+
     checkInClass();
-    
+
     setRefreshing(false);
   };
 
@@ -304,6 +309,7 @@ export default function Profile() {
             text={"friend" + (numFriends === "1" ? "" : "s")}
             size={Layout.buttonHeight.large}
             onPress={() => navigation.navigate("MyFriends")}
+            indicator={numRequests > 0}
           />
         </View>
         <View style={[AppStyles.row]}>

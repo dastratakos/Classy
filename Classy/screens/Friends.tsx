@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
-import FriendList from "../components/FriendList";
+import FriendList from "../components/Lists/FriendList";
 import { getFriendIds, getFriendsFromIds } from "../services/friends";
 
 export default function Friends({ route }: FriendsProps) {

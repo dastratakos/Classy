@@ -80,6 +80,19 @@ export const getCourseTerms = async (courseId: number) => {
   return res;
 };
 
+export const getCourseStudents = async (courseId: number) => {
+  const q = query(collection(doc(db, "courses", `${courseId}`), "terms"));
+
+  const res = {};
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    let resStudents = doc.data().students;
+
+    res[`${doc.id}`] = resStudents;
+  });
+  return res;
+};
+
 export const getIsFavorited = async (userId: string, courseId: number) => {
   const q = query(
     collection(db, "favorites"),
@@ -96,7 +109,11 @@ export const getIsFavorited = async (userId: string, courseId: number) => {
 };
 
 export const getFavorites = async (userId: string) => {
-  const q = query(collection(db, "favorites"), where("userId", "==", userId));
+  const q = query(
+    collection(db, "favorites"),
+    where("userId", "==", userId),
+    orderBy("code")
+  );
 
   const res: FavoritedCourse[] = [];
   const querySnapshot = await getDocs(q);

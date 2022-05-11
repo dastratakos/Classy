@@ -1,5 +1,5 @@
-import { Course } from "../types";
-import CourseCard from "./CourseCard";
+import { Course } from "../../types";
+import CourseCard from "../Cards/CourseCard";
 
 export default function CourseList({ courses }: { courses: Course[] }) {
   // TODO: use FlatList
@@ -8,10 +8,9 @@ export default function CourseList({ courses }: { courses: Course[] }) {
       {courses.map((course, i) => (
         <CourseCard
           course={course}
-          numFriends={"0"}
+          key={`${course.courseId}`}
+          numFriends={0}
           emphasize={false}
-          // key={i}
-          key={course.courseId}
         />
       ))}
     </>

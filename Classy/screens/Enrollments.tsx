@@ -12,7 +12,7 @@ import { termIdToFullName } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { getEnrollmentsForTerm } from "../services/enrollments";
-import EnrollmentList from "../components/EnrollmentList";
+import EnrollmentList from "../components/Lists/EnrollmentList";
 
 export default function Enrollments({ route }: EnrollmentsProps) {
   const navigation = useNavigation();

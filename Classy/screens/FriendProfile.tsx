@@ -42,7 +42,7 @@ import {
 import { getUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import EnrollmentList from "../components/EnrollmentList";
+import EnrollmentList from "../components/Lists/EnrollmentList";
 
 export default function FriendProfile({ route }: FriendProfileProps) {
   const navigation = useNavigation();

@@ -11,7 +11,7 @@ import { Course, User } from "../types";
 import { searchCourses, searchMoreCourses } from "../services/courses";
 import { searchMoreUsers, searchUsers } from "../services/users";
 import FriendCard from "../components/FriendCard";
-import CourseCard from "../components/CourseCard";
+import CourseCard from "../components/Cards/CourseCard";
 import Layout from "../constants/Layout";
 
 export default function Search() {
@@ -100,8 +100,13 @@ export default function Search() {
       component: (
         <FlatList
           data={courseSearchResults}
-          renderItem={({ item }) => (
-            <CourseCard course={item} numFriends={"0"} emphasize={false} />
+          renderItem={({ item, index }) => (
+            <CourseCard
+              course={item}
+              key={index.toString()}
+              numFriends={0}
+              emphasize={false}
+            />
           )}
           keyExtractor={(item) => `${item.courseId}`}
           onEndReached={() => handleSearchCourses(searchPhrase)}

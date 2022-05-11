@@ -1,16 +1,15 @@
 import { Alert, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, View } from "./Themed";
+import { Text, View } from "../Themed";
 
-import Colors from "../constants/Colors";
-import Layout from "../constants/Layout";
-import { useNavigation } from "@react-navigation/core";
-import useColorScheme from "../hooks/useColorScheme";
-import { Enrollment } from "../types";
-import AppStyles from "../styles/AppStyles";
+import Colors from "../../constants/Colors";
+import Layout from "../../constants/Layout";
+import useColorScheme from "../../hooks/useColorScheme";
+import { Enrollment } from "../../types";
+import AppStyles from "../../styles/AppStyles";
 import { useContext, useState } from "react";
-import EnrollmentModal from "./EnrollmentModal";
-import { deleteEnrollment } from "../services/enrollments";
-import AppContext from "../context/Context";
+import EnrollmentModal from "../EnrollmentModal";
+import { deleteEnrollment } from "../../services/enrollments";
+import AppContext from "../../context/Context";
 
 export default function EnrollmentCard({
   enrollment,

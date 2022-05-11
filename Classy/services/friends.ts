@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { User } from "../types";
+import { getCourseStudents } from "./courses";
 import { getUser } from "./users";
 
 export const getFriendIds = async (userId: string) => {
@@ -170,4 +171,16 @@ export const blockUserWithDoc = async (
     },
     status: "blocked",
   });
+};
+
+export const getFriendsInCourse = async (userId: string, courseId: number) => {
+  const friends = [];
+
+  const allStudents = await getCourseStudents(courseId);
+  const friendIds = await getFriendIds(userId);
+
+  console.log("allStudents:", allStudents);
+  console.log("friendIds:", friendIds);
+
+  return [];
 };

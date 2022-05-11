@@ -1,21 +1,23 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { Text, View } from "./Themed";
+import { Text, View } from "../Themed";
 
-import Colors from "../constants/Colors";
-import Layout from "../constants/Layout";
+import Colors from "../../constants/Colors";
+import Layout from "../../constants/Layout";
 import { useNavigation } from "@react-navigation/core";
-import useColorScheme from "../hooks/useColorScheme";
-import { Course } from "../types";
-import AppStyles from "../styles/AppStyles";
+import useColorScheme from "../../hooks/useColorScheme";
+import { Course } from "../../types";
+import AppStyles from "../../styles/AppStyles";
 
 export default function CourseCard({
   course,
-  numFriends,
-  emphasize,
+  key,
+  numFriends = 0,
+  emphasize = false,
 }: {
   course: Course;
-  numFriends: string;
-  emphasize: boolean;
+  key: string
+  numFriends?: number;
+  emphasize?: boolean;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -44,7 +46,7 @@ export default function CourseCard({
         <View style={styles.numFriendsContainer}>
           <Text style={styles.numberText}>{numFriends}</Text>
           <Text style={styles.friendsText}>
-            {"friend" + (numFriends !== "1" ? "s" : "")}
+            {"friend" + (numFriends !== 0 ? "s" : "")}
           </Text>
         </View>
       </TouchableOpacity>

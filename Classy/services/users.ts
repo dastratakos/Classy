@@ -50,6 +50,8 @@ export const updateUser = async (userId: string, data: Partial<User>) => {
 };
 
 export const deleteUserCompletely = async (userId: string) => {
+  /* TODO: Set all enrolled statuses to false in courses backend. */
+  
   /* Get all Enrollments and delete. */
   const batch1 = writeBatch(db);
   const q1 = query(

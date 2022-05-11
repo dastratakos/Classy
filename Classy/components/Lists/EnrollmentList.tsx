@@ -1,5 +1,5 @@
-import { Enrollment } from "../types";
-import EnrollmentCard from "./EnrollmentCard";
+import { Enrollment } from "../../types";
+import EnrollmentCard from "../Cards/EnrollmentCard";
 
 export default function EnrollmentList({
   enrollments,
