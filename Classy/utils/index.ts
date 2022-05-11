@@ -145,7 +145,9 @@ export const getTimeString = (
 ) => {
   if (!timestamp) return "";
 
-  return timestamp.toDate().toLocaleString("en-US", {
+  const date = new Date(timestamp.seconds * 1000)
+  return date.toLocaleString("en-US", {
+    // return timestamp.toDate().toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",
     hour12: true,

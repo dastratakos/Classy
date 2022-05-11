@@ -18,8 +18,10 @@ import { useNavigation } from "@react-navigation/core";
 import { getEnrollmentsForTerm } from "../services/enrollments";
 import { HomeData } from "../types";
 import CourseOverview from "../components/Cards/CourseOverview";
+// import CourseOverview from "../components/CourseOverview";
 import ProfilePhoto from "../components/ProfilePhoto";
 import { getFriendsInCourse } from "../services/friends";
+import dummyData from "./homeData";
 
 export default function Home() {
   const navigation = useNavigation();
@@ -60,9 +62,33 @@ export default function Home() {
         enrollment.courseId,
         getCurrentTermId()
       );
-      homeDataArr.push({ enrollment, friends });
+
+      for (let schedule of enrollment.schedules) {
+        if (schedule.days.includes(daysOfWeek[today])) {
+          const component = schedule.component;
+          const startInfo = schedule.startInfo;
+          const endInfo = schedule.endInfo;
+          homeDataArr.push({ enrollment, friends, startInfo, endInfo, component });
+        };
+      };
     }
     setHomeData(homeDataArr);
+
+    // let dummyDataArr = [];
+    // for (let object of dummyData) {
+    //   const enrollment = object.enrollment;
+    //   const friends = object.friends;
+    //   for (let schedule of enrollment.schedules) {
+    //     if (schedule.days.includes(daysOfWeek[today])) {
+    //       const component = schedule.component;
+    //       const startInfo = schedule.startInfo;
+    //       const endInfo = schedule.endInfo;
+    //       dummyDataArr.push({ enrollment, friends, startInfo, endInfo, component });
+    //     };
+    //   };
+    // };
+
+    // setHomeData(dummyDataArr);
 
     setRefreshing(false);
   };
@@ -79,10 +105,13 @@ export default function Home() {
         <View style={AppStyles.row}>
           <View style={[AppStyles.row, { flex: 1 }]}>
             <View style={{ flexGrow: 1 }}>
-              <Text>
-                Hi{context.user.name && `, ${context.user.name.split(" ")[0]}`}
+              <Text style={styles.title}>
+                Hi{context.user.name && `, ${context.user.name.split(" ")[0]}`}.
               </Text>
-              <Text>Your {daysOfWeek[today]}</Text>
+              <Text style={styles.subtitle}>
+                <Text>Your </Text>
+                <Text style={{ fontWeight: "bold" }}>{daysOfWeek[today]}</Text>
+              </Text>
             </View>
             <Pressable
               onPress={() =>
@@ -104,6 +133,9 @@ export default function Home() {
               key={`${item.enrollment.courseId}`}
               enrollment={item.enrollment}
               friends={item.friends}
+              startInfo={item.startInfo}
+              endInfo={item.endInfo}
+              component={item.component}
             />
           ))}
         </View>
@@ -113,8 +145,11 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
+  subtitle: {
+    marginTop: Layout.spacing.small,
+    fontSize: Layout.text.xxlarge,
+  },
   title: {
-    marginTop: Layout.spacing.xlarge,
-    fontSize: Layout.text.xlarge,
+    fontSize: Layout.text.large,
   },
 });
