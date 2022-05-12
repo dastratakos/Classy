@@ -72,8 +72,6 @@ export default function Profile() {
         );
         setEnrollments(res);
         setWeek(getWeekFromEnrollments(res));
-
-        setInterval(checkInClass, 1000);
       }
     };
     loadScreen();
@@ -86,6 +84,11 @@ export default function Profile() {
 
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(checkInClass, 1000);
+    return () => clearInterval(interval);
+  }, [week]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -126,12 +129,14 @@ export default function Profile() {
     for (let event of week[today].events) {
       const startInfo = event.startInfo.toDate();
       var startTime = new Date();
-      startTime.setHours(startInfo.getHours());
+      // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
+      startTime.setHours(startInfo.getHours() + 7);
       startTime.setMinutes(startInfo.getMinutes());
 
       const endInfo = event.endInfo.toDate();
       var endTime = new Date();
-      endTime.setHours(endInfo.getHours());
+      // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
+      endTime.setHours(endInfo.getHours() + 7);
       endTime.setMinutes(endInfo.getMinutes());
 
       if (startTime <= now && endTime >= now) {

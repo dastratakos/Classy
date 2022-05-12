@@ -44,15 +44,8 @@ export default function Calendar({ week }: { week: WeekSchedule }) {
   const [currTime, setCurrTime] = useState<Timestamp>(Timestamp.now());
 
   useEffect(() => {
-    setInterval(() => setCurrTime(Timestamp.now()), 1000);
-
-    /* Default to Monday if it's a weekend. */
-    const initialSelected = today >= 0 && today <= 4 ? today : 0;
-    console.log("initialSelected:", initialSelected);
-    ref?.current?.scrollToOffset({
-      offset: initialSelected * dayWidth,
-      animated: false,
-    });
+    const interval = setInterval(() => setCurrTime(Timestamp.now()), 1000);
+    return () => clearInterval(interval);
   }, []);
 
   const getCurrTimeString = (currTime: Timestamp) => {
@@ -359,6 +352,15 @@ export default function Calendar({ week }: { week: WeekSchedule }) {
         renderItem={({ item, index }) => (
           <Day events={item.events} index={index} />
         )}
+        onLayout={() => {
+          /* Default to Monday if it's a weekend. */
+          const initialSelected = today >= 0 && today <= 4 ? today : 0;
+          console.log("initialSelected:", initialSelected);
+          ref?.current?.scrollToOffset({
+            offset: initialSelected * dayWidth,
+            animated: false,
+          });
+        }}
       />
     </>
   );

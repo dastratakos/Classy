@@ -82,6 +82,11 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     onRefresh();
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(checkInClass, 1000);
+    return () => clearInterval(interval);
+  }, [week]);
+
   const onRefresh = async () => {
     setRefreshing(true);
     setUser(await getUser(route.params.id));
@@ -99,13 +104,13 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       getCurrentTermId()
     );
     setEnrollments(res2);
-    setWeek(getWeekFromEnrollments(res2));
+    const weekRes = getWeekFromEnrollments(res2);
+    setWeek(weekRes);
 
     const res3 = await getOverlap(context.user.id, route.params.id);
     setCourseSimilarity(res3.courseSimilarity);
     setOverlap(res3.overlap);
 
-    setInterval(checkInClass, 1000);
     setRefreshing(false);
   };
 
@@ -121,12 +126,14 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     for (let event of week[today].events) {
       const startInfo = event.startInfo.toDate();
       var startTime = new Date();
-      startTime.setHours(startInfo.getHours());
+      // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
+      startTime.setHours(startInfo.getHours() + 7);
       startTime.setMinutes(startInfo.getMinutes());
 
       const endInfo = event.endInfo.toDate();
       var endTime = new Date();
-      endTime.setHours(endInfo.getHours());
+      // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
+      endTime.setHours(endInfo.getHours() + 7);
       endTime.setMinutes(endInfo.getMinutes());
 
       if (startTime <= now && endTime >= now) {
@@ -509,7 +516,10 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         </View>
       ) : (
         <View style={AppStyles.section}>
-          <TabView tabs={tabs} selectedStyle={{ backgroundColor: Colors.pink }}/>
+          <TabView
+            tabs={tabs}
+            selectedStyle={{ backgroundColor: Colors.pink }}
+          />
         </View>
       )}
       <ActionSheet
