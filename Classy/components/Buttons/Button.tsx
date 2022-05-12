@@ -35,10 +35,12 @@ export default function Button({
           styles.containerLoading,
           { backgroundColor: Colors[colorScheme].tertiaryBackground },
           wide ? { width: "100%" } : null,
-          containerStyle
+          containerStyle,
         ]}
       >
-        <Text style={[{ color: Colors[colorScheme].secondaryText }, textStyle]}>{text}</Text>
+        <Text style={[{ color: Colors[colorScheme].secondaryText }, textStyle]}>
+          {text}
+        </Text>
       </View>
     );
 
@@ -47,11 +49,9 @@ export default function Button({
       <View
         style={[
           styles.container,
-          {
-            backgroundColor: Colors[colorScheme].secondaryBackground,
-            width: wide ? "100%" : Layout.buttonHeight.medium,
-          },
-          containerStyle
+          { backgroundColor: Colors[colorScheme].secondaryBackground },
+          wide ? { width: "100%" } : null,
+          containerStyle,
         ]}
       >
         <ActivityIndicator />
@@ -65,11 +65,13 @@ export default function Button({
           styles.container,
           { backgroundColor: Colors[colorScheme].tint },
           wide ? { width: "100%" } : null,
-          containerStyle
+          containerStyle,
         ]}
       >
         <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
-          <Text style={[{ color: Colors[colorScheme].background }, textStyle]}>{text}</Text>
+          <Text style={[{ color: Colors[colorScheme].background }, textStyle]}>
+            {text}
+          </Text>
         </TouchableOpacity>
       </View>
     );

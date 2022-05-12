@@ -1,5 +1,6 @@
 import { Enrollment } from "../../types";
 import EnrollmentCard from "../Cards/EnrollmentCard";
+import { View, Text } from "../../components/Themed";
 
 export default function EnrollmentList({
   enrollments,
@@ -9,12 +10,16 @@ export default function EnrollmentList({
   // TODO: use FlatList
   return (
     <>
-      {enrollments.map((enrollment, i) => (
+      {enrollments.length > 0 ? enrollments.map((enrollment, i) => (
         <EnrollmentCard
           enrollment={enrollment}
           key={`${enrollment.courseId}`}
         />
-      ))}
+      )) : 
+        <View>
+          <Text>no courses</Text>
+        </View>
+      }
     </>
   );
 }
