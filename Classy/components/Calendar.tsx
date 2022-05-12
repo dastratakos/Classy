@@ -238,7 +238,7 @@ export default function Calendar({ week }: { week: WeekSchedule }) {
     );
   };
 
-  const Grid = () => {
+  const Grid = ({ index }: { index: number }) => {
     return (
       <View
         style={[
@@ -262,7 +262,7 @@ export default function Calendar({ week }: { week: WeekSchedule }) {
             <Text
               style={[
                 styles.gridTimeText,
-                currentTimeClose(currTime, time)
+                today === index && currentTimeClose(currTime, time)
                   ? { color: "transparent" }
                   : { color: Colors[colorScheme].secondaryText },
               ]}
@@ -286,7 +286,7 @@ export default function Calendar({ week }: { week: WeekSchedule }) {
   const Day = ({ events, index }: { events: Event[]; index: number }) => {
     return (
       <View style={{ width: dayWidth }}>
-        <Grid />
+        <Grid index={index} />
         {today === index && (
           <View
             style={[
