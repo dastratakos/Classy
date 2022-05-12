@@ -22,7 +22,13 @@ export default function ProgressBar({
 
   if (!onPress)
     return (
-      <View style={[styles.container, containerStyle]}>
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: Colors[colorScheme].cardBackground },
+          containerStyle,
+        ]}
+      >
         <MaskedView
           style={styles.maskedView}
           maskElement={<View style={styles.maskElement} />}
@@ -31,7 +37,7 @@ export default function ProgressBar({
             style={[
               StyleSheet.absoluteFill,
               {
-                backgroundColor: Colors[colorScheme].photoBackground,
+                backgroundColor: Colors.yellow,
                 width: `${progress}%`,
               },
             ]}
@@ -42,7 +48,13 @@ export default function ProgressBar({
     );
 
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme].cardBackground },
+        containerStyle,
+      ]}
+    >
       <MaskedView
         style={styles.maskedView}
         maskElement={<View style={styles.maskElement} />}
@@ -58,7 +70,7 @@ export default function ProgressBar({
             style={[
               StyleSheet.absoluteFill,
               {
-                backgroundColor: Colors[colorScheme].photoBackground,
+                backgroundColor: Colors.yellow,
                 width: `${progress}%`,
               },
             ]}
