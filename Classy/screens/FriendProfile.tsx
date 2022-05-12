@@ -1,6 +1,5 @@
 import * as Haptics from "expo-haptics";
 
-import { Icon, Icon2, Text, View } from "../components/Themed";
 import {
   Alert,
   Pressable,
@@ -9,27 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Enrollment, FriendProfileProps, User, WeekSchedule } from "../types";
-import { Timestamp } from "firebase/firestore";
-import {
-  getCurrentTermId,
-  getWeekFromEnrollments,
-  sendPushNotification,
-  termIdToFullName,
-} from "../utils";
-import { useContext, useEffect, useRef, useState } from "react";
-
-import ActionSheet from "react-native-actionsheet";
-import AppContext from "../context/Context";
-import AppStyles from "../styles/AppStyles";
-import Button from "../components/Buttons/Button";
-import Calendar from "../components/Calendar";
-import Colors from "../constants/Colors";
-import Layout from "../constants/Layout";
-import ProfilePhoto from "../components/ProfilePhoto";
-import Separator from "../components/Separator";
-import SquareButton from "../components/Buttons/SquareButton";
-import TabView from "../components/TabView";
-import { getEnrollmentsForTerm, getOverlap } from "../services/enrollments";
+import { Icon, Icon2, Text, View } from "../components/Themed";
 import {
   acceptRequest,
   addFriend,
@@ -39,10 +18,32 @@ import {
   getFriendIds,
   getFriendStatus,
 } from "../services/friends";
+import {
+  getCurrentTermId,
+  getWeekFromEnrollments,
+  sendPushNotification,
+  termIdToFullName,
+} from "../utils";
+import { getEnrollmentsForTerm, getOverlap } from "../services/enrollments";
+import { useContext, useEffect, useRef, useState } from "react";
+
+import ActionSheet from "react-native-actionsheet";
+import AppContext from "../context/Context";
+import AppStyles from "../styles/AppStyles";
+import Button from "../components/Buttons/Button";
+import Calendar from "../components/Calendar";
+import Colors from "../constants/Colors";
+import EnrollmentList from "../components/Lists/EnrollmentList";
+import Layout from "../constants/Layout";
+import ProfilePhoto from "../components/ProfilePhoto";
+import ProgressBar from "../components/ProgressBar";
+import Separator from "../components/Separator";
+import SquareButton from "../components/Buttons/SquareButton";
+import TabView from "../components/TabView";
+import { Timestamp } from "firebase/firestore";
 import { getUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import EnrollmentList from "../components/Lists/EnrollmentList";
 
 export default function FriendProfile({ route }: FriendProfileProps) {
   const navigation = useNavigation();
@@ -473,38 +474,19 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             }}
           />
         </View>
-        {user.isPrivate && !(friendStatus === "friends") ? null : (
+        {!user.isPrivate || friendStatus === "friends" ? (
           <>
-            <Pressable
+            <ProgressBar
+              progress={courseSimilarity}
+              text={`${Math.round(courseSimilarity)}% course similarity`}
               onPress={() =>
                 navigation.navigate("CourseSimilarity", {
                   courseSimilarity,
                   overlap,
                 })
               }
-              style={({ pressed }) => [
-                {
-                  opacity: pressed ? 0.5 : 1,
-                  backgroundColor: Colors[colorScheme].cardBackground,
-                },
-                AppStyles.boxShadow,
-                styles.similarityContainer,
-              ]}
-            >
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  styles.similarityBar,
-                  {
-                    backgroundColor: Colors.yellow,
-                    width: `${courseSimilarity}%`,
-                  },
-                ]}
-              />
-              <Text style={styles.similarityText}>
-                {Math.round(courseSimilarity)}% course similarity
-              </Text>
-            </Pressable>
+              containerStyle={{ marginTop: Layout.spacing.medium }}
+            />
             <View style={[AppStyles.row, { marginTop: Layout.spacing.medium }]}>
               <Text style={styles.term}>
                 {termIdToFullName(getCurrentTermId())}
@@ -515,7 +497,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
               />
             </View>
           </>
-        )}
+        ) : null}
       </View>
       <Separator />
       {user.isPrivate && !(friendStatus === "friends") ? (
@@ -604,17 +586,6 @@ const styles = StyleSheet.create({
     marginRight: 15,
     alignItems: "center",
     marginBottom: Layout.spacing.xsmall,
-  },
-  similarityContainer: {
-    borderRadius: Layout.radius.xsmall,
-    paddingVertical: Layout.spacing.small,
-    marginTop: Layout.spacing.medium,
-  },
-  similarityBar: {
-    borderRadius: Layout.radius.xsmall,
-  },
-  similarityText: {
-    alignSelf: "center",
   },
   term: {
     fontSize: Layout.text.large,

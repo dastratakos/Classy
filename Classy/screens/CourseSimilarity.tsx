@@ -7,6 +7,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import Layout from "../constants/Layout";
 import { CourseSimilarityProps } from "../types";
 import EnrollmentList from "../components/Lists/EnrollmentList";
+import ProgressBar from "../components/ProgressBar";
 
 export default function CourseSimilarity({ route }: CourseSimilarityProps) {
   const colorScheme = useColorScheme();
@@ -17,9 +18,13 @@ export default function CourseSimilarity({ route }: CourseSimilarityProps) {
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={AppStyles.section}>
-        <Text style={styles.similarity}>
-          Course similarity: {Math.round(route.params.courseSimilarity)}%
-        </Text>
+        <ProgressBar
+          progress={route.params.courseSimilarity}
+          text={`${Math.round(
+            route.params.courseSimilarity
+          )}% course similarity`}
+          containerStyle={{ marginVertical: Layout.spacing.medium }}
+        />
         <Text style={styles.title}>Overlapping courses</Text>
         <EnrollmentList enrollments={route.params.overlap} />
       </View>
@@ -28,9 +33,6 @@ export default function CourseSimilarity({ route }: CourseSimilarityProps) {
 }
 
 const styles = StyleSheet.create({
-  similarity: {
-    marginBottom: Layout.spacing.large,
-  },
   title: {
     fontSize: Layout.text.xxlarge,
     fontWeight: "500",
