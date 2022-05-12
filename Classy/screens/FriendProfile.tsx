@@ -43,6 +43,7 @@ import { getUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import EnrollmentList from "../components/Lists/EnrollmentList";
+import MaskedView from "@react-native-masked-view/masked-view";
 
 export default function FriendProfile({ route }: FriendProfileProps) {
   const navigation = useNavigation();
@@ -475,36 +476,40 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         </View>
         {user.isPrivate && !(friendStatus === "friends") ? null : (
           <>
-            <Pressable
-              onPress={() =>
-                navigation.navigate("CourseSimilarity", {
-                  courseSimilarity,
-                  overlap,
-                })
-              }
-              style={({ pressed }) => [
-                {
-                  opacity: pressed ? 0.5 : 1,
-                  backgroundColor: Colors[colorScheme].cardBackground,
-                },
-                AppStyles.boxShadow,
-                styles.similarityContainer,
-              ]}
-            >
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  styles.similarityBar,
-                  {
-                    backgroundColor: Colors.yellow,
-                    width: `${courseSimilarity}%`,
-                  },
-                ]}
-              />
-              <Text style={styles.similarityText}>
-                {Math.round(courseSimilarity)}% course similarity
-              </Text>
-            </Pressable>
+            <View style={styles.similarityContainer}>
+              <MaskedView
+                style={{
+                  flex: 1,
+                }}
+                maskElement={<View style={styles.maskElement} />}
+              >
+                <Pressable
+                  style={({ pressed }) => [
+                    { opacity: pressed ? 0.5 : 1 },
+                    styles.similarityBar,
+                  ]}
+                  onPress={() =>
+                    navigation.navigate("CourseSimilarity", {
+                      courseSimilarity,
+                      overlap,
+                    })
+                  }
+                >
+                  <View
+                    style={[
+                      StyleSheet.absoluteFill,
+                      {
+                        backgroundColor: Colors[colorScheme].photoBackground,
+                        width: `${courseSimilarity}%`,
+                      },
+                    ]}
+                  />
+                  <Text style={styles.similarityText}>
+                    {Math.round(courseSimilarity)}% course similarity
+                  </Text>
+                </Pressable>
+              </MaskedView>
+            </View>
             <View style={[AppStyles.row, { marginTop: Layout.spacing.medium }]}>
               <Text style={styles.term}>
                 {termIdToFullName(getCurrentTermId())}
@@ -606,13 +611,20 @@ const styles = StyleSheet.create({
     marginBottom: Layout.spacing.xsmall,
   },
   similarityContainer: {
-    borderRadius: Layout.radius.xsmall,
-    paddingVertical: Layout.spacing.small,
+    ...AppStyles.boxShadow,
+    borderRadius: Layout.radius.medium,
+    height: Layout.buttonHeight.medium,
     marginTop: Layout.spacing.medium,
   },
-  similarityBar: {
-    borderRadius: Layout.radius.xsmall,
+  maskElement: {
+    flex: 1,
+    borderRadius: Layout.radius.medium,
   },
+  similarityBar: {
+    flex: 1,
+    justifyContent: "center",
+  },
+
   similarityText: {
     alignSelf: "center",
   },
