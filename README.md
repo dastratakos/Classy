@@ -9,12 +9,12 @@ to be the social middle ground between
 [Carta](https://carta-beta.stanford.edu), allowing users to clearly visualize
 what their and their peers' schedules will look like. 
 
-In our mobile, users are able to input their four-year plan, view their progress
-on requirements such as units and [Ways](https://ways.stanford.edu), and check
-out what their peers are taking. Users' profiles will consist of their academic
-year, major, sport (if applicable), hobbies, clubs and more! Based on one’s
-courses, interests, and friends, we will offer them recommendations for courses
-to take in the future.
+In our mobile app, users are able to input their four-year plan, view their
+progress on requirements such as units and [Ways](https://ways.stanford.edu),
+and check out what their peers are taking. Users' profiles will consist of their
+academic year, major, clubs and interests and more! Based on one’s courses,
+interests, and friends, we will offer them recommendations for courses to take
+in the future.
 
 ### Technologies
 Frontend - Expo App (TypeScript)
