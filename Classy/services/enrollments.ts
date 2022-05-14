@@ -1,3 +1,4 @@
+import { Course, Enrollment, Schedule } from "../types";
 import {
   addDoc,
   collection,
@@ -10,8 +11,8 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+
 import { db } from "../firebase";
-import { Course, Enrollment, Schedule } from "../types";
 import { termIdToYear } from "../utils";
 
 export const getEnrollmentsForTerm = async (userId: string, termId: string) => {
@@ -58,7 +59,7 @@ export const getOverlap = async (userId: string, friendId: string) => {
     friendEnrollmentIds.has(enrollment.courseId)
   );
 
-  let courseSimilarity = 0
+  let courseSimilarity = 0;
   if (userEnrollments.length)
     courseSimilarity = (100 * overlap.length) / userEnrollments.length;
 
@@ -175,7 +176,7 @@ export const deleteEnrollment = async (enrollment: Enrollment) => {
 
   await updateDoc(doc(db, "users", enrollment.userId), userData);
 
-  /* Set key to false in term. */
+  /* 3. Set key to false in term. */
   const studentsKey = `students.${enrollment.userId}`;
   let courseData = {};
   courseData[studentsKey] = false;

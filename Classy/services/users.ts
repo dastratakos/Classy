@@ -1,16 +1,15 @@
 import {
+  Timestamp,
   collection,
   deleteDoc,
   doc,
   getDoc,
   getDocs,
-  increment,
   limit,
   orderBy,
   query,
   setDoc,
   startAfter,
-  Timestamp,
   updateDoc,
   where,
   writeBatch,
@@ -18,6 +17,7 @@ import {
 
 import { User } from "../types";
 import { db } from "../firebase";
+import { getEnrollments } from "./enrollments";
 
 export const getUser = async (id: string) => {
   const docRef = doc(db, "users", id);
@@ -52,36 +52,41 @@ export const updateUser = async (userId: string, data: Partial<User>) => {
 };
 
 export const deleteUserCompletely = async (userId: string) => {
-  /* TODO: Set all enrolled statuses to false in courses backend. */
+  /* 1. Get all Enrollments and delete. */
+  const enrollments = await getEnrollments(userId);
+  for (let enrollment of enrollments) {
+    /* 1a. Delete enrollment doc. */
+    await deleteDoc(doc(db, "enrollments", enrollment.docId));
 
-  /* Get all Enrollments and delete. */
-  const batch1 = writeBatch(db);
-  const q1 = query(
-    collection(db, "enrollments"),
-    where("userId", "==", userId)
-  );
-  getDocs(q1).then((querySnapshot1) => {
-    querySnapshot1.forEach((doc) => {
-      batch1.delete(doc.ref);
-    });
-    batch1.commit();
-
-    /* Get all Friends (relationships) and delete. */
-    const batch2 = writeBatch(db);
-    const q2 = query(
-      collection(db, "friends"),
-      where(`ids.${userId}`, "==", true)
+    /* 1b. Set key to false in term. */
+    const studentsKey = `students.${enrollment.userId}`;
+    let courseData = {};
+    courseData[studentsKey] = false;
+    await updateDoc(
+      doc(
+        doc(db, "courses", `${enrollment.courseId}`),
+        "terms",
+        enrollment.termId
+      ),
+      courseData
     );
-    getDocs(q2).then((querySnapshot2) => {
-      querySnapshot2.forEach((doc) => {
-        batch2.delete(doc.ref);
-      });
-      batch2.commit();
+  }
 
-      /* Get the user document and delete it. */
-      deleteDoc(doc(db, "users", userId));
+  /* 2. Get all Friends (relationships) and delete. */
+  const batch2 = writeBatch(db);
+  const q2 = query(
+    collection(db, "friends"),
+    where(`ids.${userId}`, "==", true)
+  );
+  await getDocs(q2).then((querySnapshot2) => {
+    querySnapshot2.forEach((doc) => {
+      batch2.delete(doc.ref);
     });
+    batch2.commit();
   });
+
+  /* 3. Get the user document and delete it. */
+  deleteDoc(doc(db, "users", userId));
 };
 
 export const searchUsers = async (
