@@ -26,7 +26,10 @@ export default function Quarters({ route }: QuartersProps) {
     <>
       <ScrollView
         style={{ backgroundColor: Colors[colorScheme].background }}
-        contentContainerStyle={{ alignItems: "center" }}
+        contentContainerStyle={{
+          alignItems: "center",
+          paddingBottom: Layout.buttonHeight.medium + Layout.spacing.medium,
+        }}
       >
         <View style={AppStyles.section}>
           {Object.entries(route.params.user.terms)
@@ -92,28 +95,37 @@ export default function Quarters({ route }: QuartersProps) {
         </View>
       </ScrollView>
       {/* TODO: edit quarters */}
-      {/* <View style={styles.ctaContainer}>
-        {route.params.user.id === context.user.id && editMode ? (
-          <>
-            <Button
-              text="Cancel"
-              onPress={() => {
-                setEditMode(false);
-              }}
-            />
-            <Button
-              text="Done"
-              onPress={() => {
-                // updateQuartersDBs();
-                setEditMode(false);
-              }}
-              emphasized
-            />
-          </>
-        ) : (
-          <Button text="Edit Quarters" onPress={() => setEditMode(true)} wide />
-        )}
-      </View> */}
+      {route.params.user.id === context.user.id && (
+        <View style={styles.ctaContainer}>
+          {editMode ? (
+            <>
+              <View style={{ width: "48%", backgroundColor: "transparent" }}>
+                <Button
+                  text="Cancel"
+                  onPress={() => {
+                    setEditMode(false);
+                  }}
+                />
+              </View>
+              <View style={{ width: "48%", backgroundColor: "transparent" }}>
+                <Button
+                  text="Done"
+                  onPress={() => {
+                    // updateQuartersDBs();
+                    setEditMode(false);
+                  }}
+                  emphasized
+                />
+              </View>
+            </>
+          ) : // <Button
+          //   text="Edit Quarters"
+          //   onPress={() => setEditMode(true)}
+          //   wide
+          // />
+          null}
+        </View>
+      )}
     </>
   );
 }
@@ -157,5 +169,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: -8,
     top: -8,
+    // backgroundColor: Colors.white,
+    // borderRadius: Layout.icon.medium / 2,
+    backgroundColor: "transparent",
   },
 });
