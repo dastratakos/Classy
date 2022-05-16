@@ -31,7 +31,8 @@ export default function Home() {
 
   const [refreshing, setRefreshing] = useState<boolean>(true);
 
-  const today = Timestamp.now().toDate().getDay() - 1;
+  // Dean, I had to get rid of the -1 ? or else it thought my "today" was -1
+  const today = Timestamp.now().toDate().getDay();
   const daysOfWeek = [
     "Monday",
     "Tuesday",
@@ -98,7 +99,6 @@ export default function Home() {
 
     setRefreshing(false);
   };
-
   return (
     <ScrollView
       style={{ backgroundColor: Colors[colorScheme].background }}
