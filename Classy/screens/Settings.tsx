@@ -205,7 +205,7 @@ export default function Settings() {
             actionSheetRef.current?.show();
           }}
         />
-        <Separator />
+        <Separator overrideStyles={{ marginTop: Layout.spacing.large }} />
         <View style={styles.inputContainer}>
           <View style={styles.item}>
             <View style={styles.field}>
@@ -313,13 +313,18 @@ export default function Settings() {
           </View>
         </View>
       </KeyboardAvoidingView>
-      <Separator />
+      <Separator overrideStyles={{ marginBottom: Layout.spacing.large }} />
       <Button
         text="Manage Account"
         onPress={() => navigation.navigate("ManageAccount")}
         wide
       />
-      <Separator />
+      <Separator
+        overrideStyles={{
+          marginTop: Layout.spacing.large,
+          marginBottom: Layout.spacing.large,
+        }}
+      />
       <View style={[AppStyles.row, { marginBottom: Layout.spacing.xxlarge }]}>
         <View style={{ width: "48%" }}>
           <Button text="Cancel" onPress={() => navigation.goBack()} />
