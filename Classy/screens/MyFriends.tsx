@@ -42,11 +42,24 @@ export default function MyFriends() {
   const tabs = [
     {
       label: "Friends",
-      component: <FriendList friends={friends} />,
+      component: (
+        <FriendList
+          friends={friends}
+          emptyPrimary="No friends yet"
+          emptySecondary="Find friends in the Search tab!"
+          requests={false}
+        />
+      ),
     },
     {
       label: "Requests",
-      component: <FriendList friends={requests} />,
+      component: (
+        <FriendList
+          friends={requests}
+          emptyPrimary="No friend requests"
+          requests={true}
+        />
+      ),
     },
   ];
 
