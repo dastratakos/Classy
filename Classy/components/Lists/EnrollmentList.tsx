@@ -4,29 +4,22 @@ import EmptyList from "../EmptyList";
 
 export default function EnrollmentList({
   enrollments,
-  emptyPrimary,
-  emptySecondary,
+  emptyElement,
 }: {
   enrollments: Enrollment[];
-  emptyPrimary?: string;
-  emptySecondary?: string;
+  emptyElement?: JSX.Element;
 }) {
+  if (enrollments.length === 0) return <>{emptyElement || <EmptyList />}</>;
+
   // TODO: use FlatList
   return (
     <>
-      {enrollments.length > 0 ? (
-        enrollments.map((enrollment, i) => (
-          <EnrollmentCard
-            enrollment={enrollment}
-            key={`${enrollment.courseId}`}
-          />
-        ))
-      ) : (
-        <EmptyList
-          primaryText={emptyPrimary ? emptyPrimary : ""}
-          secondaryText={emptySecondary ? emptySecondary : ""}
+      {enrollments.map((enrollment, i) => (
+        <EnrollmentCard
+          enrollment={enrollment}
+          key={`${enrollment.courseId}`}
         />
-      )}
+      ))}
     </>
   );
 }

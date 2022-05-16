@@ -1,5 +1,6 @@
 import * as Notifications from "expo-notifications";
 
+import { Enrollment, WeekSchedule } from "../types";
 import { Icon, Icon2, Text, View } from "../components/Themed";
 import {
   Platform,
@@ -14,6 +15,7 @@ import {
   getWeekFromEnrollments,
   termIdToFullName,
 } from "../utils";
+import { getFriendIds, getRequestIds } from "../services/friends";
 import { getUser, updateUser } from "../services/users";
 import { useContext, useEffect, useState } from "react";
 
@@ -23,10 +25,11 @@ import Button from "../components/Buttons/Button";
 import Calendar from "../components/Calendar";
 import Colors from "../constants/Colors";
 import Constants from "expo-constants";
-import { Enrollment, WeekSchedule } from "../types";
+import EmptyList from "../components/EmptyList";
 import EnrollmentList from "../components/Lists/EnrollmentList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
+import SVGNoCourses from "../assets/images/undraw/noCourses.svg";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
 import TabView from "../components/TabView";
@@ -35,7 +38,6 @@ import { auth } from "../firebase";
 import { getEnrollmentsForTerm } from "../services/enrollments";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { getFriendIds, getRequestIds } from "../services/friends";
 
 export default function Profile() {
   const context = useContext(AppContext);
@@ -228,7 +230,18 @@ export default function Profile() {
     },
     {
       label: "Courses",
-      component: <EnrollmentList enrollments={enrollments} emptyPrimary="No courses" emptySecondary="Add some from the search tab, or explore your friends' courses!" />,
+      component: (
+        <EnrollmentList
+          enrollments={enrollments}
+          emptyElement={
+            <EmptyList
+              SVGElement={SVGNoCourses}
+              primaryText="No courses this quarter"
+              secondaryText="Add some from the search tab, or explore your friends' courses!"
+            />
+          }
+        />
+      ),
     },
   ];
 

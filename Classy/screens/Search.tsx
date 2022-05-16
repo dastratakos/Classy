@@ -1,21 +1,23 @@
+import { Course, User } from "../types";
+import { FlatList, StyleSheet } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, FlatList } from "react-native";
-import { View } from "../components/Themed";
+import { getFriendIds, getNumFriendInCourse } from "../services/friends";
+import { searchCourses, searchMoreCourses } from "../services/courses";
+import { searchMoreUsers, searchUsers } from "../services/users";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
-import SearchBar from "../components/SearchBar";
-import useColorScheme from "../hooks/useColorScheme";
-import TabView from "../components/TabView";
-import { Course, User } from "../types";
-import { searchCourses, searchMoreCourses } from "../services/courses";
-import { searchMoreUsers, searchUsers } from "../services/users";
-import FriendCard from "../components/Cards/FriendCard";
-import CourseCard from "../components/Cards/CourseCard";
-import Layout from "../constants/Layout";
-import { getFriendIds, getNumFriendInCourse } from "../services/friends";
 import Colors from "../constants/Colors";
+import CourseCard from "../components/Cards/CourseCard";
 import EmptyList from "../components/EmptyList";
+import FriendCard from "../components/Cards/FriendCard";
+import Layout from "../constants/Layout";
+import SVGCourseSearch from "../assets/images/undraw/courseSearch.svg";
+import SVGVoid from "../assets/images/undraw/void.svg";
+import SearchBar from "../components/SearchBar";
+import TabView from "../components/TabView";
+import { View } from "../components/Themed";
+import useColorScheme from "../hooks/useColorScheme";
 
 export default function Search() {
   const context = useContext(AppContext);
@@ -97,7 +99,8 @@ export default function Search() {
           }}
           ListEmptyComponent={
             <EmptyList
-              primaryText={'No matching users for "' + searchPhrase + '"'}
+              SVGElement={SVGVoid}
+              primaryText={`No matching users for "${searchPhrase}"`}
               secondaryText="Try searching again using a different spelling"
             />
           }
@@ -127,6 +130,7 @@ export default function Search() {
           }}
           ListEmptyComponent={
             <EmptyList
+              SVGElement={searchPhrase != "" ? SVGVoid : SVGCourseSearch}
               primaryText={
                 searchPhrase != ""
                   ? 'No matching courses for "' + searchPhrase + '"'

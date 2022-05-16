@@ -15,7 +15,7 @@ import CourseOverview from "../components/Cards/CourseOverview";
 import EmptyList from "../components/EmptyList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
-import Relax from "../assets/images/undraw/relax.svg";
+import SVGRelax from "../assets/images/undraw/relax.svg";
 import Separator from "../components/Separator";
 import { Timestamp } from "firebase/firestore";
 import { getCurrentTermId } from "../utils";
@@ -138,6 +138,7 @@ export default function Home() {
               <ActivityIndicator />
             ) : (
               <EmptyList
+                SVGElement={SVGRelax}
                 primaryText="No classes"
                 secondaryText="Enjoy the day off!"
               />
@@ -164,7 +165,7 @@ export default function Home() {
               <ActivityIndicator />
             ) : (
               <EmptyList
-                SVGElement={Relax}
+                SVGElement={SVGRelax}
                 primaryText="No classes"
                 secondaryText="Enjoy the day off!"
               />

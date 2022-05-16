@@ -18,13 +18,24 @@ export default function EmptyList({
 
   return (
     <View style={styles.container}>
-      {SVGElement ? <SVGElement style={styles.svg} width={250} height={200} /> : null}
-      <Text style={styles.primary}>{primaryText}</Text>
-      <Text
-        style={[styles.secondary, { color: Colors[colorScheme].secondaryText }]}
-      >
-        {secondaryText}
-      </Text>
+      {SVGElement ? (
+        <SVGElement style={styles.svg} width={250} height={200} />
+      ) : null}
+      {primaryText !== "" || secondaryText !== "" ? (
+        <>
+          <Text style={styles.primary}>{primaryText}</Text>
+          <Text
+            style={[
+              styles.secondary,
+              { color: Colors[colorScheme].secondaryText },
+            ]}
+          >
+            {secondaryText}
+          </Text>
+        </>
+      ) : (
+        <Text style={styles.primary}>Nothing to see here</Text>
+      )}
     </View>
   );
 }
@@ -38,7 +49,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   svg: {
-    
+    marginVertical: Layout.spacing.medium,
   },
   primary: {
     fontSize: Layout.text.large,

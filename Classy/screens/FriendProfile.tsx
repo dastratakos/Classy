@@ -33,10 +33,13 @@ import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Calendar from "../components/Calendar";
 import Colors from "../constants/Colors";
+import EmptyList from "../components/EmptyList";
 import EnrollmentList from "../components/Lists/EnrollmentList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import ProgressBar from "../components/ProgressBar";
+import SVGNoCourses from "../assets/images/undraw/noCourses.svg";
+import SVGPrivate from "../assets/images/undraw/private.svg";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
 import TabView from "../components/TabView";
@@ -320,7 +323,17 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     },
     {
       label: "Courses",
-      component: <EnrollmentList enrollments={enrollments} emptyPrimary="No Courses" />,
+      component: (
+        <EnrollmentList
+          enrollments={enrollments}
+          emptyElement={
+            <EmptyList
+              SVGElement={SVGNoCourses}
+              primaryText="No courses this quarter"
+            />
+          }
+        />
+      ),
     },
   ];
 
@@ -508,12 +521,11 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       </View>
       <Separator />
       {user.isPrivate && !(friendStatus === "friends") ? (
-        <View
-          style={{ alignItems: "center", marginTop: Layout.spacing.xxxlarge }}
-        >
-          <Icon name="lock" size={100} />
-          <Text>This user is private</Text>
-        </View>
+        <EmptyList
+          SVGElement={SVGPrivate}
+          primaryText="This user is private"
+          secondaryText="Add them as a friend to see their courses"
+        />
       ) : (
         <View style={AppStyles.section}>
           <TabView
