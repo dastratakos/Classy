@@ -1,3 +1,4 @@
+import { ActivityIndicator, Text, View } from "../components/Themed";
 import { CourseOverview as CourseOverviewType, HomeData } from "../types";
 import {
   Pressable,
@@ -5,7 +6,6 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { ActivityIndicator, Text, View } from "../components/Themed";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -15,13 +15,14 @@ import CourseOverview from "../components/Cards/CourseOverview";
 import EmptyList from "../components/EmptyList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
+import Relax from "../assets/images/undraw/relax.svg";
 import Separator from "../components/Separator";
+import { Timestamp } from "firebase/firestore";
 import { getCurrentTermId } from "../utils";
 import { getEnrollmentsForTerm } from "../services/enrollments";
 import { getFriendsInCourse } from "../services/friends";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { Timestamp } from "firebase/firestore";
 
 export default function Home() {
   const navigation = useNavigation();
@@ -163,6 +164,7 @@ export default function Home() {
               <ActivityIndicator />
             ) : (
               <EmptyList
+                SVGElement={Relax}
                 primaryText="No classes"
                 secondaryText="Enjoy the day off!"
               />

@@ -3,11 +3,14 @@ import Layout from "../constants/Layout";
 import { StyleSheet } from "react-native";
 import useColorScheme from "../hooks/useColorScheme";
 import Colors from "../constants/Colors";
+import { FunctionComponent, SVGProps } from "react";
 
 export default function EmptyList({
+  SVGElement,
   primaryText = "",
   secondaryText = "",
 }: {
+  SVGElement?: FunctionComponent<SVGProps>;
   primaryText?: string;
   secondaryText?: string;
 }) {
@@ -15,6 +18,7 @@ export default function EmptyList({
 
   return (
     <View style={styles.container}>
+      {SVGElement ? <SVGElement style={styles.svg} width={250} height={200} /> : null}
       <Text style={styles.primary}>{primaryText}</Text>
       <Text
         style={[styles.secondary, { color: Colors[colorScheme].secondaryText }]}
@@ -32,6 +36,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "transparent",
+  },
+  svg: {
+    
   },
   primary: {
     fontSize: Layout.text.large,
