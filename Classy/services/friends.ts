@@ -179,25 +179,30 @@ export const blockUserWithDoc = async (
   });
 };
 
-export const getAllFriendsInCourse = async (
+export const getAllPeopleIdsInCourse = async (
   userId: string,
   courseId: number
 ) => {
   const allStudents = await getCourseStudents(courseId);
   const friendIds = await getFriendIds(userId);
 
-  const res = {};
+  const courseFriendIds = {};
+  // TODO: get all users who are from allStudents
+  const coursePublicIds = {};
   Object.keys(allStudents).forEach((term) => {
     if (!allStudents[`${term}`]) return;
 
     let friends: string[] = [];
+    let publicUsers: string[] = [];
     Object.entries(allStudents[`${term}`]).filter(([studentId, enrolled]) => {
       if (enrolled && friendIds.includes(studentId)) friends.push(studentId);
+      else if (enrolled && friendIds.includes(studentId)) publicUsers.push(studentId);
     });
-    res[`${term}`] = friends;
+    courseFriendIds[`${term}`] = friends;
+    coursePublicIds[`${term}`] = publicUsers;
   });
 
-  return res;
+  return { friendIds: courseFriendIds, publicIds: coursePublicIds};
 };
 
 export const getFriendsInCourse = async (

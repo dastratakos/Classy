@@ -153,7 +153,7 @@ export default function Search() {
                 secondaryText={
                   searchPhrase != ""
                     ? "Try searching again using a different spelling or keyword"
-                    : "Search by code or name\n(e.g. SOC1, SOC 1, or\nIntroduction to Sociology)"
+                    : 'Search by code or name\n(e.g. "SOC1", "SOC 1", or\n"Introduction to Sociology")'
                 }
               />
             )

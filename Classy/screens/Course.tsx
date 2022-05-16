@@ -21,7 +21,7 @@ import Layout from "../constants/Layout";
 import ReadMoreText from "../components/ReadMoreText";
 import SVGCamping from "../assets/images/undraw/camping.svg";
 import Separator from "../components/Separator";
-import { getAllFriendsInCourse } from "../services/friends";
+import { getAllPeopleIdsInCourse } from "../services/friends";
 import { getUser } from "../services/users";
 import { termIdToFullName } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
@@ -47,7 +47,7 @@ export default function Course({ route }: CourseProps) {
       setFavorited(
         await getIsFavorited(context.user.id, route.params.course.courseId)
       );
-      const friendIds = await getAllFriendsInCourse(
+      const friendIds = await getAllPeopleIdsInCourse(
         context.user.id,
         route.params.course.courseId
       );
@@ -60,8 +60,14 @@ export default function Course({ route }: CourseProps) {
         for (let id of friendIds[`${term}`]) {
           friends.push(await getUser(id));
         }
+        friends.sort((a, b) => {
+          if (!a.name) return 1;
+          if (!b.name) return -1;
+          return a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1;
+        });
         friendsDataObj[`${term}`] = friends;
       }
+
       setFriendsData(friendsDataObj);
 
       setIsLoading(false);
@@ -132,14 +138,17 @@ export default function Course({ route }: CourseProps) {
                 {"Friends in " + course.code.join(", ")}
               </Text>
               {/* TODO: use SectionList? */}
-              {Object.keys(friendsData).map((termId) => (
-                <View key={termId}>
-                  <Text style={styles.term}>
-                    {termIdToFullName(termId)} ({friendsData[termId].length})
-                  </Text>
-                  <FriendList friends={friendsData[termId]} />
-                </View>
-              ))}
+              {Object.keys(friendsData)
+                .sort()
+                .reverse()
+                .map((termId) => (
+                  <View key={termId}>
+                    <Text style={styles.term}>
+                      {termIdToFullName(termId)} ({friendsData[termId].length})
+                    </Text>
+                    <FriendList friends={friendsData[termId]} />
+                  </View>
+                ))}
             </>
           ) : (
             <EmptyList
