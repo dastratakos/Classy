@@ -154,7 +154,7 @@ export default function Profile() {
           <Text
             style={{ textAlign: "center", marginBottom: Layout.spacing.medium }}
           >
-            Please verify your email to use Plan-It.
+            Please verify your email to use Classy.
           </Text>
           <Button
             text="Resend Verification Email"
