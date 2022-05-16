@@ -5,16 +5,16 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import { DaySchedule, Event, WeekSchedule } from "../types";
 import { createRef, forwardRef, useCallback, useRef } from "react";
 
 import AppStyles from "../styles/AppStyles";
 import CalendarEvent from "./CalendarEvent";
+import CalendarGrid from "./CalendarGrid";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import { Timestamp } from "firebase/firestore";
 import useColorScheme from "../hooks/useColorScheme";
-import { DaySchedule, Event, WeekSchedule } from "../types";
-import CalendarGrid from "./CalendarGrid";
 
 export default function Calendar({ week }: { week: WeekSchedule }) {
   const colorScheme = useColorScheme();
@@ -264,7 +264,6 @@ export default function Calendar({ week }: { week: WeekSchedule }) {
         onLayout={() => {
           /* Default to Monday if it's a weekend. */
           const initialSelected = today >= 0 && today <= 4 ? today : 0;
-          console.log("initialSelected:", initialSelected);
           ref?.current?.scrollToOffset({
             offset: initialSelected * dayWidth,
             animated: false,

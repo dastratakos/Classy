@@ -43,13 +43,7 @@ export default function EnrollmentModal({
 
   return (
     <Modal isVisible={visible}>
-      <Pressable
-        style={styles.container}
-        onPress={() => {
-          console.log("closing");
-          setVisible(false);
-        }}
-      >
+      <Pressable style={styles.container} onPress={() => setVisible(false)}>
         <Pressable
           style={[
             styles.modalView,

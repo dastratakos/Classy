@@ -1,15 +1,15 @@
 import { Alert, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useContext, useState } from "react";
 import { Text, View } from "./Themed";
 
+import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
-import Layout from "../constants/Layout";
-import { Event } from "../types";
-import { getTimeString } from "../utils";
-import React, { useContext, useState } from "react";
 import EnrollmentModal from "./EnrollmentModal";
+import { Event } from "../types";
+import Layout from "../constants/Layout";
 import { deleteEnrollment } from "../services/enrollments";
-import AppContext from "../context/Context";
+import { getTimeString } from "../utils";
 
 export default function CalendarEvent({
   event,
@@ -55,12 +55,7 @@ export default function CalendarEvent({
       />
       <View style={[styles.leftPadding, { width: 45 + leftIndent }]} />
       <View style={[styles.event, { height }]}>
-        <TouchableOpacity
-          onPress={() => {
-            console.log("opening");
-            setModalVisible(true);
-          }}
-        >
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
           <Text style={styles.titleText}>{event.title}</Text>
           {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
           <Text style={styles.timeText}>
