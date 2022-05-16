@@ -1,6 +1,7 @@
 import * as Haptics from "expo-haptics";
 
 import {
+  Alert,
   KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
@@ -139,6 +140,23 @@ export default function Settings() {
       .catch((error) => setErrorMessage(error.message));
   };
 
+  const deleteAccountAlert = () => {
+    Alert.alert(
+      "Delete account",
+      "Are you sure? This action is irreversible.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: handleDeleteUserAndData,
+        },
+      ]
+    );
+  };
+
   // TODO: include notifications setting
 
   return (
@@ -229,7 +247,7 @@ export default function Settings() {
       </KeyboardAvoidingView>
       <Button text="Change Password" onPress={handleUpdatePassword} wide />
       <Separator />
-      <Button text="Delete Account" onPress={handleDeleteUserAndData} wide />
+      <Button text="Delete Account" onPress={deleteAccountAlert} wide />
       <Separator />
       <Button
         text="Log Out"
