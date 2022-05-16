@@ -28,7 +28,6 @@ export default function CalendarEvent({
 
   const handleDeleteEnrollment = async () => {
     setModalVisible(false);
-    console.log("handleDeleteEnrollment");
     await deleteEnrollment(event.enrollment);
   };
 
