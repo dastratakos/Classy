@@ -228,7 +228,7 @@ export default function EditCourse({ route }: EditCourseProps) {
         </View>
       </ScrollView>
       <View style={styles.ctaContainer}>
-        <View style={{ width: "48%" }}>
+        <View style={{ width: "48%", backgroundColor: "transparent" }}>
           <Button
             text="Cancel"
             onPress={() => {
@@ -237,7 +237,7 @@ export default function EditCourse({ route }: EditCourseProps) {
             }}
           />
         </View>
-        <View style={{ width: "48%" }}>
+        <View style={{ width: "48%", backgroundColor: "transparent" }}>
           <Button
             text="Save changes"
             onPress={handleSavePressed}

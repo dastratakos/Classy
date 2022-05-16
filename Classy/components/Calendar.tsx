@@ -5,23 +5,16 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import {
-  createRef,
-  forwardRef,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { createRef, forwardRef, useCallback, useRef } from "react";
 
 import AppStyles from "../styles/AppStyles";
 import CalendarEvent from "./CalendarEvent";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
-import { Text } from "./Themed";
 import { Timestamp } from "firebase/firestore";
 import useColorScheme from "../hooks/useColorScheme";
 import { DaySchedule, Event, WeekSchedule } from "../types";
+import CalendarGrid from "./CalendarGrid";
 
 export default function Calendar({ week }: { week: WeekSchedule }) {
   const colorScheme = useColorScheme();
@@ -41,25 +34,6 @@ export default function Calendar({ week }: { week: WeekSchedule }) {
   // TODO: compute earliest and latest events for all days ahead of time
   // earliest Stanford course is 6:00 AM and latest is 9:30 PM
   const times = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
-  const [currTime, setCurrTime] = useState<Timestamp>(Timestamp.now());
-
-  useEffect(() => {
-    setInterval(() => setCurrTime(Timestamp.now()), 1000);
-
-    /* Default to Monday if it's a weekend. */
-    const initialSelected = today >= 0 && today <= 4 ? today : 0;
-    console.log("initialSelected:", initialSelected);
-    ref?.current?.scrollToOffset({
-      offset: initialSelected * dayWidth,
-      animated: false,
-    });
-  }, []);
-
-  const getCurrTimeString = (currTime: Timestamp) => {
-    const now = currTime.toDate();
-    const minutes = `${now.getMinutes()}`.padStart(2, "0");
-    return `${((now.getHours() - 1) % 12) + 1}:${minutes}`;
-  };
 
   const getMarginTop = (time: Timestamp, timeAdjustment: number = 0) => {
     const offset = Layout.spacing.medium + Layout.spacing.xxxlarge / 2;
@@ -86,21 +60,6 @@ export default function Calendar({ week }: { week: WeekSchedule }) {
       hourDiff * Layout.spacing.xxxlarge +
       (minDiff * Layout.spacing.xxxlarge) / 60
     );
-  };
-
-  /**
-   * The current time is close to a specified hour if it is within 8 minutes.
-   * This was calculated using the height of an hour (Layout.spacing.xxxlarge)
-   * and the height of the time texts.
-   */
-  const currentTimeClose = (currTime: Timestamp, hour: number) => {
-    const now = currTime.toDate();
-    if (now.getHours() === hour - 1) {
-      return now.getMinutes() > 52;
-    } else if (now.getHours() === hour) {
-      return now.getMinutes() < 8;
-    }
-    return false;
   };
 
   const DayTab = forwardRef(
@@ -238,87 +197,30 @@ export default function Calendar({ week }: { week: WeekSchedule }) {
     );
   };
 
-  const Grid = () => {
-    return (
-      <View
-        style={[
-          {
-            marginTop: Layout.spacing.medium,
-            backgroundColor: "transparent",
-          },
-        ]}
-      >
-        {times.map((time, i) => (
-          <View
-            style={[
-              AppStyles.row,
-              {
-                height: Layout.spacing.xxxlarge,
-                backgroundColor: "transparent",
-              },
-            ]}
-            key={i}
-          >
-            <Text
-              style={[
-                styles.gridTimeText,
-                currentTimeClose(currTime, time)
-                  ? { color: "transparent" }
-                  : { color: Colors[colorScheme].secondaryText },
-              ]}
-            >
-              {((time - 1) % 12) + 1} {time > 11 ? "PM" : "AM"}
-            </Text>
-            <View
-              style={[
-                styles.gridLine,
-                {
-                  backgroundColor: Colors[colorScheme].secondaryText,
-                },
-              ]}
-            />
-          </View>
-        ))}
-      </View>
-    );
-  };
-
   const Day = ({ events, index }: { events: Event[]; index: number }) => {
     return (
       <View style={{ width: dayWidth }}>
-        <Grid />
-        {today === index && (
-          <View
-            style={[
-              AppStyles.row,
-              {
-                position: "absolute",
-                // subtract 6 for height of text
-                marginTop: getMarginTop(currTime) - 6,
-              },
-            ]}
-          >
-            <Text style={[styles.gridTimeText, { color: Colors.pink }]}>
-              {getCurrTimeString(currTime)}
-            </Text>
-            <View style={[styles.gridLine, { backgroundColor: Colors.pink }]} />
-            <View style={styles.currTimeDot} />
-          </View>
-        )}
+        <CalendarGrid times={times} index={index} today={today} />
         {events.map((event: Event, i: number) => {
           /* Handle overlapping events by indenting. */
           let leftIndent = 0;
-          // let prevIndex = i - 1;
-          // let currIndex = i;
-          // while (prevIndex >= 0) {
-          //   const prevEndTime = events[prevIndex].endInfo;
-          //   const currStartTime = events[currIndex].startInfo;
-          //   if (prevEndTime > currStartTime) {
-          //     leftIndent += Layout.spacing.xsmall;
-          //     currIndex = prevIndex;
-          //   }
-          //   prevIndex--;
-          // }
+          let prevIndex = i - 1;
+          let currIndex = i;
+          while (prevIndex >= 0) {
+            // TODO: -1 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
+            const prevEndTime = events[prevIndex].endInfo.toDate();
+            prevEndTime.setHours(prevEndTime.getHours() - 1);
+            const currStartTime = events[currIndex].startInfo.toDate();
+            if (
+              prevEndTime.getHours() > currStartTime.getHours() ||
+              (prevEndTime.getHours() === currStartTime.getHours() &&
+                prevEndTime.getMinutes() > currStartTime.getMinutes())
+            ) {
+              leftIndent += Layout.spacing.xsmall;
+              currIndex = prevIndex;
+            }
+            prevIndex--;
+          }
 
           return (
             <CalendarEvent
@@ -359,6 +261,15 @@ export default function Calendar({ week }: { week: WeekSchedule }) {
         renderItem={({ item, index }) => (
           <Day events={item.events} index={index} />
         )}
+        onLayout={() => {
+          /* Default to Monday if it's a weekend. */
+          const initialSelected = today >= 0 && today <= 4 ? today : 0;
+          console.log("initialSelected:", initialSelected);
+          ref?.current?.scrollToOffset({
+            offset: initialSelected * dayWidth,
+            animated: false,
+          });
+        }}
       />
     </>
   );

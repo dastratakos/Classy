@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Classy",
-    "slug": "PlanIt",
+    "slug": "Classy",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,9 +15,12 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dastratakos.Classy"
     },
     "android": {
       "adaptiveIcon": {

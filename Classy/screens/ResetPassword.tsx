@@ -42,7 +42,7 @@ export default function ResetPassword() {
     >
       <KeyboardAvoidingView style={styles.keyboardContainer} behavior="padding">
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Plan-It</Text>
+          <Text style={styles.title}>Classy</Text>
         </View>
         <Text style={AppStyles.errorText}>{errorMessage}</Text>
         <View style={styles.inputContainer}>

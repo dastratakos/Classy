@@ -70,9 +70,11 @@ export const getFriendsFromIds = async (friendIds: string[]) => {
     });
   });
 
-  friendsList.sort((a, b) =>
-    a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1
-  );
+  friendsList.sort((a, b) => {
+    if (!a.name) return 1;
+    if (!b.name) return -1;
+    return a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1;
+  });
   return friendsList;
 };
 
