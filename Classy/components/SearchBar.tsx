@@ -81,6 +81,7 @@ export default function SearchBar({
       >
         <RNButton
           title="Cancel"
+          color={Colors.lightBlue}
           onPress={() => {
             Keyboard.dismiss();
             onChangeText("");

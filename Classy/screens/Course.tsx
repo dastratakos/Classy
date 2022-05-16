@@ -1,38 +1,29 @@
 import * as Haptics from "expo-haptics";
 import * as WebBrowser from "expo-web-browser";
 
+import { Pressable, ScrollView, StyleSheet } from "react-native";
+import { ActivityIndicator, Icon, Text, View } from "../components/Themed";
 import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
-import { Icon, Text, View } from "../components/Themed";
-import { useCallback, useContext, useEffect, useState } from "react";
+  addFavorite,
+  deleteFavorite,
+  getIsFavorited,
+} from "../services/courses";
+import { useContext, useEffect, useState } from "react";
 
+import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
-import { CourseProps } from "../types";
+import { Course as CourseType, CourseProps, User } from "../types";
 import Layout from "../constants/Layout";
+import ReadMoreText from "../components/ReadMoreText";
 import Separator from "../components/Separator";
 import useColorScheme from "../hooks/useColorScheme";
-import ReadMoreText from "../components/ReadMoreText";
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
-import { db } from "../firebase";
-import friendsData from "./friendsData";
 import { useNavigation } from "@react-navigation/core";
-import AppContext from "../context/Context";
-import { G } from "react-native-svg";
+import { getAllFriendsInCourse } from "../services/friends";
+import { getUser } from "../services/users";
+import { termIdToFullName } from "../utils";
+import FriendList from "../components/Lists/FriendList";
 
 const exploreCoursesLink =
   "https://explorecourses.stanford.edu/search?view=catalog&filter-coursestatus-Active=on&page=0&catalog=&academicYear=&q=";
@@ -44,73 +35,47 @@ export default function Course({ route }: CourseProps) {
   const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
-  const [course, setCourse] = useState(route.params.course);
-  const [favorited, setFavorited] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // useEffect(() => {
-  //   getCourse(route.params.id);
-  // }, []);
-
-  // const getCourse = async (id: number) => {
-  //   console.log("getting course:", id);
-
-  //   const docRef = doc(db, "courses", `${id}`);
-  //   const docSnap = await getDoc(docRef);
-
-  //   if (docSnap.exists()) {
-  //     console.log("data:", docSnap.data());
-  //     setCourse(docSnap.data() as CourseType);
-  //     setIsLoading(false);
-  //   } else {
-  //     console.log(`Could not find course: ${id}.`);
-  //     alert(`Could not find course: ${id}.`);
-  //   }
-  // };
+  const course: CourseType = route.params.course;
+  const [friendsData, setFriendsData] = useState<Object>({});
+  const [favorited, setFavorited] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const getFavorited = async (id: number) => {
-      const q = query(
-        collection(db, "favorites"),
-        where("courseId", "==", id),
-        where("userId", "==", context.user.id)
+    const loadScreen = async () => {
+      setFavorited(
+        await getIsFavorited(context.user.id, route.params.course.courseId)
+      );
+      const friendIds = await getAllFriendsInCourse(
+        context.user.id,
+        route.params.course.courseId
       );
 
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        setFavorited(true);
-      });
+      let friendsDataObj = {};
+      for (let term of Object.keys(friendIds)) {
+        if (!friendIds[`${term}`].length) continue;
+
+        let friends: User[] = [];
+        for (let id of friendIds[`${term}`]) {
+          friends.push(await getUser(id));
+        }
+        friendsDataObj[`${term}`] = friends;
+      }
+      setFriendsData(friendsDataObj);
+
+      setIsLoading(false);
     };
 
-    getFavorited(route.params.course.courseId);
+    loadScreen();
   }, []);
 
   const handleFavoritePressed = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     if (!favorited) {
       setFavorited(true);
-
-      const data = {
-        code: course.code,
-        courseId: course.courseId,
-        title: course.title,
-        userId: context.user.id,
-      };
-
-      await addDoc(collection(db, "favorites"), data);
+      addFavorite(context.user.id, course);
     } else {
       setFavorited(false);
-
-      const q = query(
-        collection(db, "favorites"),
-        where("courseId", "==", course.courseId),
-        where("userId", "==", context.user.id)
-      );
-
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((res) => {
-        deleteDoc(doc(db, "favorites", res.id));
-      });
+      deleteFavorite(context.user.id, course.courseId);
     }
   };
 
@@ -120,7 +85,10 @@ export default function Course({ route }: CourseProps) {
     <>
       <ScrollView
         style={{ backgroundColor: Colors[colorScheme].background }}
-        contentContainerStyle={{ alignItems: "center" }}
+        contentContainerStyle={{
+          alignItems: "center",
+          paddingBottom: Layout.buttonHeight.medium + Layout.spacing.medium,
+        }}
       >
         <View style={AppStyles.section}>
           <Text style={styles.title}>{course.code.join(", ")}</Text>
@@ -136,17 +104,17 @@ export default function Course({ route }: CourseProps) {
               AppStyles.row,
               {
                 justifyContent: "space-between",
-                marginVertical: Layout.spacing.medium,
+                marginTop: Layout.spacing.small,
               },
             ]}
           >
-            <View style={{ width: "48%" }}>
+            <View style={{ width: "48%", backgroundColor: "transparent" }}>
               <Button
                 text="Explore Courses"
                 onPress={() => handleExplorePress(course.courseId)}
               />
             </View>
-            <View style={{ width: "48%" }}>
+            <View style={{ width: "48%", backgroundColor: "transparent" }}>
               <Button
                 text="Carta"
                 onPress={() => handleCartaPress(course.code[0])}
@@ -155,23 +123,20 @@ export default function Course({ route }: CourseProps) {
           </View>
         </View>
         <Separator />
-        {/* <View style={styles.friendsSection}>
-        <Text style={styles.friendsHeader}>Friends</Text>
-        <View style={AppStyles.section}>
-          // TODO: use SectionList?
-          {Object.keys(friendsData).map((termId) => (
-            <View key={termId}>
-              <Text style={styles.term}>
-                getTermString({termId}) ({friendsData[termId].length})
-              </Text>
-              // TODO: use FriendList
-              {friendsData[termId].map((friend) => (
-                <FriendCard friend={friend} key={friend.id} />
-              ))}
-            </View>
-          ))}
+        <View style={styles.friendsSection}>
+          <Text style={styles.friendsHeader}>{"Friends in " + course.code.join(", ")}</Text>
+          <View style={AppStyles.section}>
+            {/* TODO: use SectionList? */}
+            {Object.keys(friendsData).map((termId) => (
+              <View key={termId}>
+                <Text style={styles.term}>
+                  {termIdToFullName(termId)} ({friendsData[termId].length})
+                </Text>
+                <FriendList friends={friendsData[termId]} />
+              </View>
+            ))}
+          </View>
         </View>
-      </View> */}
       </ScrollView>
       <View style={styles.ctaContainer}>
         <View style={{ flexGrow: 1 }}>
@@ -179,12 +144,17 @@ export default function Course({ route }: CourseProps) {
             text="Add to Courses"
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate("AddEditCourse", { course });
+              navigation.navigate("AddCourse", { course });
             }}
             emphasized
           />
         </View>
-        <View style={styles.favoriteButtonContainer}>
+        <View
+          style={[
+            styles.favoriteButtonContainer,
+            { backgroundColor: Colors[colorScheme].cardBackground },
+          ]}
+        >
           <Pressable
             onPress={handleFavoritePressed}
             style={({ pressed }) => [
@@ -232,12 +202,10 @@ const styles = StyleSheet.create({
   friendsHeader: {
     fontSize: Layout.text.large,
     fontWeight: "500",
-    marginTop: Layout.spacing.small,
-    marginBottom: Layout.spacing.medium,
+    marginVertical: Layout.spacing.xxsmall,
   },
   term: {
     fontSize: Layout.text.medium,
-    fontWeight: "500",
   },
   ctaContainer: {
     ...AppStyles.row,

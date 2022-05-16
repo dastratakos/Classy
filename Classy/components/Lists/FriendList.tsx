@@ -1,4 +1,4 @@
-import FriendCard from "./FriendCard";
+import FriendCard from "../Cards/FriendCard";
 
 export default function FriendList({ friends }) {
   // TODO: use FlatList

@@ -1,45 +1,37 @@
 import { ScrollView, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
-import CourseList from "../components/CourseList";
-import { CoursesProps } from "../types";
+import { Enrollment, EnrollmentsProps, User } from "../types";
 import Layout from "../constants/Layout";
-import { db } from "../firebase";
 import { termIdToFullName } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { getEnrollmentsForTerm } from "../services/enrollments";
+import EnrollmentList from "../components/Lists/EnrollmentList";
 
-export default function Courses({ route }: CoursesProps) {
+export default function Enrollments({ route }: EnrollmentsProps) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+
   const context = useContext(AppContext);
 
-  const [courses, setCourses] = useState([]);
+  const myEnrollment = context.user.id == route.params.userId;
 
   useEffect(() => {
-    getCoursesForTerm(context.user.id, route.params.termId);
+    const loadScreen = async () => {
+      setEnrollments(
+        await getEnrollmentsForTerm(route.params.userId, route.params.termId)
+      );
+    };
+    loadScreen();
   }, []);
-
-  const getCoursesForTerm = async (id: string, termId: string) => {
-    const q = query(
-      collection(db, "enrollments"),
-      where("userId", "==", id),
-      where("termId", "==", termId)
-    );
-
-    const results = [];
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      results.push(doc.data());
-    });
-    setCourses(results);
-  };
 
   return (
     <>
@@ -51,13 +43,13 @@ export default function Courses({ route }: CoursesProps) {
           {termIdToFullName(route.params.termId)}
         </Text>
         <View style={AppStyles.section}>
-          <CourseList courses={courses} />
+          <EnrollmentList enrollments={enrollments} emptyPrimary="No courses" emptySecondary={myEnrollment ? "Add some from the search tab, or explore your friends' courses!" : ""}/>
         </View>
       </ScrollView>
       <View style={styles.ctaContainer}>
         <Button
           text={"View All Quarters"}
-          onPress={() => navigation.navigate("MyQuarters")}
+          onPress={() => navigation.goBack()}
           wide
         />
       </View>

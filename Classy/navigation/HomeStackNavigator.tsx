@@ -1,22 +1,23 @@
 import * as React from "react";
 
-import { MessagesStackScreenProps, ProfileStackScreenProps } from "../types";
+import { HomeStackScreenProps, ProfileStackScreenProps } from "../types";
 
-import AddEditCourse from "../screens/AddEditCourse";
+import AddCourse from "../screens/AddCourse";
 import AppContext from "../context/Context";
 import ChannelDetails from "../screens/ChannelDetails";
 import ChannelScreen from "../screens/ChannelScreen";
 import Course from "../screens/Course";
 import CourseSimilarity from "../screens/CourseSimilarity";
-import Courses from "../screens/Courses";
+import Enrollments from "../screens/Enrollments";
 import Favorites from "../screens/Favorites";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
+import Home from "../screens/Home";
 import { Icon } from "../components/Themed";
 import Layout from "../constants/Layout";
 import Messages from "../screens/Messages";
 import MyFriends from "../screens/MyFriends";
-import MyQuarters from "../screens/MyQuarters";
+import Quarters from "../screens/Quarters";
 import NewMessage from "../screens/NewMessage";
 import { Pressable } from "react-native";
 import Profile from "../screens/Profile";
@@ -24,18 +25,35 @@ import Settings from "../screens/Settings";
 import ThreadScreen from "../screens/ThreadScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useContext } from "react";
+import EditCourse from "../screens/EditCourse";
 
 const Stack = createNativeStackNavigator();
 
-export default function MessagesStackNavigator() {
+export default function HomeStackNavigator() {
   const context = useContext(AppContext);
 
   return (
-    <Stack.Navigator initialRouteName="Messages">
+    <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen
+        name="Home"
+        component={Home}
+        options={({ navigation }: HomeStackScreenProps<"Home">) => ({
+          headerRight: () => (
+            <Pressable
+              onPress={() => navigation.navigate("Messages")}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1,
+              })}
+            >
+              <Icon name="comments" size={Layout.icon.medium} />
+            </Pressable>
+          ),
+        })}
+      />
       <Stack.Screen
         name="Messages"
         component={Messages}
-        options={({ navigation }: MessagesStackScreenProps<"Messages">) => ({
+        options={({ navigation }: HomeStackScreenProps<"Messages">) => ({
           headerRight: () => (
             <Pressable
               onPress={() => navigation.navigate("NewMessage")}
@@ -51,7 +69,8 @@ export default function MessagesStackNavigator() {
       <Stack.Screen
         name="ChannelScreen"
         component={ChannelScreen}
-        options={({ navigation }: MessagesStackScreenProps<"Messages">) => ({
+        getId={() => new Date().getTime().toString()}
+        options={({ navigation }: HomeStackScreenProps<"Messages">) => ({
           title: context.channelName,
           headerRight: () => (
             <Pressable
@@ -68,11 +87,13 @@ export default function MessagesStackNavigator() {
       <Stack.Screen
         name="Thread"
         component={ThreadScreen}
+        getId={() => new Date().getTime().toString()}
         options={{ title: "Thread" }}
       />
       <Stack.Screen
         name="ChannelDetails"
         component={ChannelDetails}
+        getId={() => new Date().getTime().toString()}
         options={{ title: "Details" }}
       />
       <Stack.Screen
@@ -109,8 +130,8 @@ export default function MessagesStackNavigator() {
         getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen
-        name="Courses"
-        component={Courses}
+        name="Enrollments"
+        component={Enrollments}
         getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen
@@ -119,9 +140,14 @@ export default function MessagesStackNavigator() {
         getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen
-        name="AddEditCourse"
-        component={AddEditCourse}
-        options={{ title: "Add or Edit Course" }}
+        name="AddCourse"
+        component={AddCourse}
+        options={{ title: "Add Course" }}
+      />
+      <Stack.Screen
+        name="EditCourse"
+        component={EditCourse}
+        options={{ title: " Edit Course" }}
       />
       <Stack.Screen
         name="MyFriends"
@@ -147,8 +173,9 @@ export default function MessagesStackNavigator() {
         options={{ title: "Course Similarity" }}
       />
       <Stack.Screen
-        name="MyQuarters"
-        component={MyQuarters}
+        name="Quarters"
+        component={Quarters}
+        getId={() => new Date().getTime().toString()}
         options={{ title: "Quarters" }}
       />
     </Stack.Navigator>

@@ -10,23 +10,27 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../components/Themed";
-import { auth, db, storage } from "../firebase";
-import { doc, updateDoc } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { useContext, useRef, useState } from "react";
+import { useCallback, useContext, useRef, useState } from "react";
 
 import ActionSheet from "react-native-actionsheet";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
+import DropDownPicker from "react-native-dropdown-picker";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import { SaveFormat } from "expo-image-manipulator";
 import Separator from "../components/Separator";
+import { User } from "../types";
+import { auth } from "../firebase";
+import { generateSubstrings } from "../utils";
+import { majorList } from "../utils/majorList";
+import { updateUser } from "../services/users";
+import { uploadImage } from "../services/storage";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { generateSubstrings } from "../utils";
+import { yearList } from "../utils/yearList";
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -35,16 +39,24 @@ export default function Settings() {
 
   const [photoUrl, setPhotoUrl] = useState(context.user.photoUrl || "");
   const [name, setName] = useState(context.user.name || "");
-  const [major, setMajor] = useState(context.user.major || "");
+
+  const [major, setMajor] = useState(context.user.major || ""); // TODO: use array for multiple select
+  const [majorOpen, setMajorOpen] = useState(false);
+  const [majorItems, setMajorItems] = useState(majorList);
+  const onMajorOpen = useCallback(() => setGradYearOpen(false), []);
+  // DropDownPicker.setMode("BADGE"); // TODO: for multiple select
+
   const [gradYear, setGradYear] = useState(context.user.gradYear || "");
+  const [gradYearOpen, setGradYearOpen] = useState(false);
+  const [gradYearItems, setGradYearItems] = useState(yearList);
+  const onGradYearOpen = useCallback(() => setMajorOpen(false), []);
+
   const [interests, setInterests] = useState(context.user.interests || "");
 
   const [saveDisabled, setSaveDisabled] = useState(true);
-
   const [uploading, setUploading] = useState(false);
 
   const actionSheetRef = useRef();
-
   const actionSheetOptions = [
     "Remove current photo",
     "Choose from library",
@@ -53,63 +65,27 @@ export default function Settings() {
   ];
 
   const handleSavePress = () => {
-    context.setUser({
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    const newUser: User = {
       ...context.user,
-      name,
-      major,
-      gradYear,
-      interests,
-    });
-
-    setUserDB(context.user.id);
-
-    navigation.goBack();
-  };
-
-  const setUserDB = async (id: string) => {
-    const userRef = doc(db, "users", id);
-    await updateDoc(userRef, {
       name,
       major,
       gradYear,
       interests,
       photoUrl,
       keywords: generateSubstrings(name),
+    };
+
+    context.setUser(newUser);
+    updateUser(context.user.id, newUser);
+    context.streamClient.updateUser({
+      id: context.user.id,
+      name,
+      image: photoUrl,
     });
 
-    await context.streamClient.updateUser({ id, name });
-  };
-
-  /**
-   * Image functions from
-   * https://github.com/expo/examples/blob/master/with-firebase-storage-upload/App.js
-   */
-  const uploadImageAsync = async (uri: string) => {
-    // Why are we using XMLHttpRequest? See:
-    // https://github.com/expo/expo/issues/2402#issuecomment-443726662
-    const blob: Blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function () {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function (e) {
-        console.log(e);
-        reject(new TypeError("Network request failed"));
-      };
-      xhr.responseType = "blob";
-      xhr.open("GET", uri, true);
-      xhr.send(null);
-    });
-
-    const fileRef = ref(storage, `${context.user.id}/profilePhoto.jpg`);
-    const result = await uploadBytes(fileRef, blob)
-      .then(() => console.log("Successfully uploaded bytes"))
-      .catch((error) => console.log(error.message));
-
-    // We're done with the blob, close and release it
-    blob.close();
-
-    return await getDownloadURL(fileRef);
+    navigation.goBack();
   };
 
   const handleImagePicked = async (
@@ -129,15 +105,25 @@ export default function Settings() {
 
         console.log("compressed image:", compressedImage);
 
-        const uploadUrl = await uploadImageAsync(compressedImage.uri);
+        const uploadUrl = await uploadImage(
+          `${context.user.id}/profilePhoto.jpg`,
+          compressedImage.uri
+        );
         setPhotoUrl(uploadUrl);
 
-        context.setUser({
+        const newUser = {
           ...context.user,
-          photoUrl,
-        });
+          photoUrl: uploadUrl,
+        };
+        context.setUser(newUser);
 
-        setUserDB(context.user.id);
+        updateUser(context.user.id, newUser);
+
+        context.streamClient.updateUser({
+          id: context.user.id,
+          name,
+          image: photoUrl,
+        });
       }
     } catch (error) {
       console.log(error);
@@ -197,94 +183,134 @@ export default function Settings() {
       style={[
         styles.container,
         { backgroundColor: Colors[colorScheme].background },
+        // { alignItems: "center" },
       ]}
       contentContainerStyle={{ alignItems: "center" }}
     >
-      <ProfilePhoto
-        url={photoUrl}
-        size={Layout.photo.xlarge}
-        style={{ marginBottom: Layout.spacing.medium }}
-        loading={uploading}
-      />
-      <Button
-        text="Change profile photo"
-        onPress={() => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          actionSheetRef.current?.show();
-        }}
-      />
-      <Separator />
-      <KeyboardAvoidingView style={styles.inputContainer} behavior="padding">
-        <View style={AppStyles.row}>
-          <View style={styles.field}>
-            <Text>Name</Text>
+      <KeyboardAvoidingView
+        style={styles.keyboardContainer}
+        contentContainerStyle={{ alignItems: "center" }}
+        behavior="position"
+      >
+        <ProfilePhoto
+          url={photoUrl}
+          size={Layout.photo.xlarge}
+          style={{ marginBottom: Layout.spacing.medium }}
+          loading={uploading}
+        />
+        <Button
+          text="Change profile photo"
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            actionSheetRef.current?.show();
+          }}
+        />
+        <Separator />
+        <View style={styles.inputContainer}>
+          <View style={styles.item}>
+            <View style={styles.field}>
+              <Text>Name</Text>
+            </View>
+            <TextInput
+              placeholder="Name"
+              value={name}
+              onChangeText={(text) => {
+                setName(text);
+                setSaveDisabled(false);
+              }}
+              style={[styles.input, { color: Colors[colorScheme].text }]}
+              autoCapitalize="words"
+              textContentType="name"
+            />
           </View>
-          <TextInput
-            placeholder="Name"
-            value={name}
-            onChangeText={(text) => {
-              setName(text);
-              setSaveDisabled(false);
-            }}
-            style={[styles.input, { color: Colors[colorScheme].text }]}
-            autoCapitalize="words"
-            textContentType="name"
-          />
-        </View>
-        <View style={AppStyles.row}>
-          <View style={styles.field}>
-            <Text>Major</Text>
+          <View style={styles.item}>
+            <View style={styles.field}>
+              <Text>Major</Text>
+            </View>
+            <DropDownPicker
+              open={majorOpen}
+              onOpen={onMajorOpen}
+              value={major}
+              items={majorItems}
+              setOpen={setMajorOpen}
+              setValue={(text) => {
+                setMajor(text);
+                setSaveDisabled(false);
+              }}
+              setItems={setMajorItems}
+              // multiple
+              // min={0}
+              // max={2}
+              placeholder="Major"
+              placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
+              searchable
+              searchPlaceholder="Search..."
+              showBadgeDot={false}
+              dropDownDirection="TOP"
+              modalProps={{
+                animationType: "slide",
+              }}
+              theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+              addCustomItem
+              // style={{borderWidth: 0}}
+            />
           </View>
-          <TextInput
-            placeholder="Major"
-            value={major}
-            onChangeText={(text) => {
-              setMajor(text);
-              setSaveDisabled(false);
-            }}
-            style={[styles.input, { color: Colors[colorScheme].text }]}
-            autoCapitalize="words"
-          />
-        </View>
-        <View style={AppStyles.row}>
-          <View style={styles.field}>
-            <Text>Graduation Year</Text>
+          <View style={styles.item}>
+            <View style={styles.field}>
+              <Text>Graduation Year</Text>
+            </View>
+            <DropDownPicker
+              open={gradYearOpen}
+              onOpen={onGradYearOpen}
+              value={gradYear}
+              items={gradYearItems}
+              setOpen={setGradYearOpen}
+              setValue={setGradYear}
+              setItems={setGradYearItems}
+              // multiple
+              // min={0}
+              // max={2}
+              placeholder="Graduation Year"
+              placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
+              searchable
+              searchPlaceholder="Search..."
+              showBadgeDot={false}
+              dropDownDirection="TOP"
+              modalProps={{
+                animationType: "slide",
+              }}
+              theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+              // style={{borderWidth: 0}}
+            />
           </View>
-          <TextInput
-            placeholder="Graduation Year"
-            value={gradYear}
-            onChangeText={(text) => {
-              setGradYear(text);
-              setSaveDisabled(false);
-            }}
-            style={[styles.input, { color: Colors[colorScheme].text }]}
-            autoCapitalize="words"
-          />
-        </View>
-        <View style={AppStyles.row}>
-          <View style={styles.field}>
-            <Text>Clubs & Interests</Text>
+          <View style={styles.item}>
+            <View style={styles.field}>
+              <Text>Clubs & Interests</Text>
+            </View>
+            <TextInput
+              placeholder="Clubs & Interests"
+              value={interests}
+              onChangeText={(text) => {
+                setInterests(text);
+                setSaveDisabled(false);
+              }}
+              style={[styles.input, { color: Colors[colorScheme].text }]}
+              autoCapitalize="sentences"
+            />
           </View>
-          <TextInput
-            placeholder="Clubs & Interests"
-            value={interests}
-            onChangeText={(text) => {
-              setInterests(text);
-              setSaveDisabled(false);
-            }}
-            style={[styles.input, { color: Colors[colorScheme].text }]}
-            autoCapitalize="sentences"
-          />
-        </View>
-        <View style={AppStyles.row}>
-          <View style={styles.field}>
-            <Text>Email</Text>
+          <View style={styles.item}>
+            <View style={styles.field}>
+              <Text>Email</Text>
+            </View>
+            <Text
+              style={[
+                styles.input,
+                { color: Colors[colorScheme].secondaryText },
+              ]}
+            >
+              {auth.currentUser?.email}
+            </Text>
           </View>
-          <Text
-            style={[styles.input, { color: Colors[colorScheme].secondaryText }]}
-          >
-            {auth.currentUser?.email}
-          </Text>
         </View>
       </KeyboardAvoidingView>
       <Separator />
@@ -294,7 +320,7 @@ export default function Settings() {
         wide
       />
       <Separator />
-      <View style={AppStyles.row}>
+      <View style={[AppStyles.row, { marginBottom: Layout.spacing.xxlarge }]}>
         <View style={{ width: "48%" }}>
           <Button text="Cancel" onPress={() => navigation.goBack()} />
         </View>
@@ -323,15 +349,21 @@ const styles = StyleSheet.create({
   container: {
     padding: Layout.spacing.medium,
   },
+  keyboardContainer: {
+    width: "100%",
+  },
   inputContainer: {
     width: "100%",
   },
+  item: {
+    marginVertical: Layout.spacing.small,
+  },
   field: {
-    width: "40%",
-    paddingRight: Layout.spacing.large,
+    marginBottom: Layout.spacing.xsmall,
   },
   input: {
-    paddingVertical: Layout.spacing.xsmall,
-    width: "60%",
+    borderWidth: 1,
+    padding: Layout.spacing.medium,
+    borderRadius: Layout.radius.small,
   },
 });

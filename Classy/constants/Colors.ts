@@ -1,9 +1,11 @@
 const palette = {
   lightRed: "#ff6863",
   red: "#ff3742",
+  yellow: "#ffd670",
   deepRed: "#cb202d",
+  pink: "#ef476f",
   green: "#20e070",
-  lightBlue: "#2f95dc",
+  lightBlue: "#33c5ff",
   black: "#000000",
   lightBlack: "#111111",
   darkDarkGray: "#1e1e1e",
@@ -37,7 +39,7 @@ export default {
     cardBackground: palette.darkDarkGray,
     secondaryBackground: palette.darkDarkGray,
     tertiaryBackground: palette.darkGray,
-    tint: palette.white,
+    tint: palette.lightBlue,
     tabIconDefault: palette.lightLightGray,
     tabIconSelected: palette.white,
     border: palette.white,
@@ -55,4 +57,6 @@ export default {
   lightBlue: palette.lightBlue,
   black: palette.black,
   white: palette.white,
+  pink: palette.pink,
+  yellow: palette.yellow,
 };

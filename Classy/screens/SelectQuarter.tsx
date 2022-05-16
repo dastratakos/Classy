@@ -55,9 +55,15 @@ export default function SelectQuarter({ route }: SelectQuarterProps) {
           .sort()
           .reverse()
           .map(([year, terms]) => (
-            <View style={styles.yearContainer} key={year}>
+            <View
+              style={[
+                styles.yearContainer,
+                { backgroundColor: Colors[colorScheme].secondaryBackground },
+              ]}
+              key={year}
+            >
               <Text style={styles.year}>{year}</Text>
-              <View style={styles.quartersContainer}>
+              <View style={[styles.quartersContainer]}>
                 {Object.entries(terms)
                   .sort()
                   .map(([termId, available]) => {
@@ -74,6 +80,14 @@ export default function SelectQuarter({ route }: SelectQuarterProps) {
                           }}
                           disabled={!available}
                           emphasized={termId === context.selectedTerm}
+                          containerStyle={
+                            available && termId !== context.selectedTerm
+                              ? {
+                                  backgroundColor:
+                                    Colors[colorScheme].background,
+                                }
+                              : {}
+                          }
                         />
                       </View>
                     );
@@ -91,22 +105,27 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     marginTop: Layout.spacing.small,
+    paddingTop: Layout.spacing.small,
     marginBottom: Layout.spacing.large,
+    paddingBottom: Layout.spacing.small,
+    borderRadius: Layout.radius.large,
   },
   year: {
     fontSize: Layout.text.large,
     fontWeight: "500",
-    marginBottom: Layout.spacing.medium,
+    marginBottom: Layout.spacing.xxsmall,
   },
   quartersContainer: {
     width: "100%",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     flexWrap: "wrap",
+    backgroundColor: "transparent",
   },
   termButton: {
     width: "30%",
     marginVertical: Layout.spacing.small,
+    backgroundColor: "transparent",
   },
   ctaContainer: {
     ...AppStyles.row,

@@ -1,22 +1,23 @@
 import * as React from "react";
 
-import AddEditCourse from "../screens/AddEditCourse";
+import AddCourse from "../screens/AddCourse";
 import Course from "../screens/Course";
 import CourseSimilarity from "../screens/CourseSimilarity";
-import Courses from "../screens/Courses";
+import Enrollments from "../screens/Enrollments";
 import Favorites from "../screens/Favorites";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
 import { Icon } from "../components/Themed";
 import Layout from "../constants/Layout";
 import MyFriends from "../screens/MyFriends";
-import MyQuarters from "../screens/MyQuarters";
+import Quarters from "../screens/Quarters";
 import { Pressable } from "react-native";
 import Profile from "../screens/Profile";
 import { ProfileStackScreenProps } from "../types";
 import Search from "../screens/Search";
 import Settings from "../screens/Settings";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import EditCourse from "../screens/EditCourse";
 
 const Stack = createNativeStackNavigator();
 
@@ -53,8 +54,8 @@ export default function SearchStackNavigator() {
         getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen
-        name="Courses"
-        component={Courses}
+        name="Enrollments"
+        component={Enrollments}
         getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen
@@ -63,9 +64,14 @@ export default function SearchStackNavigator() {
         getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen
-        name="AddEditCourse"
-        component={AddEditCourse}
-        options={{ title: "Add or Edit Course" }}
+        name="AddCourse"
+        component={AddCourse}
+        options={{ title: "Add Course" }}
+      />
+      <Stack.Screen
+        name="EditCourse"
+        component={EditCourse}
+        options={{ title: " Edit Course" }}
       />
       <Stack.Screen
         name="MyFriends"
@@ -91,8 +97,9 @@ export default function SearchStackNavigator() {
         options={{ title: "Course Similarity" }}
       />
       <Stack.Screen
-        name="MyQuarters"
-        component={MyQuarters}
+        name="Quarters"
+        component={Quarters}
+        getId={() => new Date().getTime().toString()}
         options={{ title: "Quarters" }}
       />
     </Stack.Navigator>

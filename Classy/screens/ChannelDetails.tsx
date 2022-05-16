@@ -16,18 +16,16 @@ import ActionSheet from "react-native-actionsheet";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
-import { Channel as ChannelType } from "stream-chat";
 import Colors from "../constants/Colors";
-import FriendCard from "../components/FriendCard";
+import FriendCard from "../components/Cards/FriendCard";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import { SaveFormat } from "expo-image-manipulator";
 import Separator from "../components/Separator";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { db, storage } from "../firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { uploadImage } from "../services/storage";
+import { getChannelId } from "../services/messages";
 
 export default function ChannelDetails() {
   const context = useContext(AppContext);
@@ -59,44 +57,34 @@ export default function ChannelDetails() {
       const state = await context.channel.watch();
       setGroupName(state.channel.name);
       setPhotoUrl(state.channel.photoUrl);
-      const filteredMembers = state.members.filter((member) => {
-        console.log("role:", member.role);
-        if (member.user.id === context.user.id) {
-          setRole(member.role);
-          return false;
+
+      let membersList = state.members;
+      if (state.channel.name === "Direct Message") {
+        /* Direct Message. */
+        membersList = state.members.filter(
+          (member) => member.user.id !== context.user.id
+        );
+        setMembers(membersList);
+      } else {
+        /* Group Chat. */
+        membersList.forEach((member) => {
+          if (member.user.id === context.user.id) setRole(member.role);
+        });
+
+        console.log("photoUrl:", state.channel.photoUrl);
+        if (membersList.length > 1) {
+          /* Get two users and display both images. */
+          const photo0: string = membersList[0].user.image;
+          const photo1: string = membersList[1].user.image;
+          setPhotoUrls([photo0, photo1]);
         }
-        return true;
-      });
-      console.log("photoUrl:", state.channel.photoUrl);
-      if (filteredMembers.length > 1) {
-        /* Get two users and display both images. */
-        const photo0: string = filteredMembers[0].user.image;
-        const photo1: string = filteredMembers[1].user.image;
-        setPhotoUrls([photo0, photo1]);
+        if (!state.channel.photoUrl && membersList.length === 1) {
+          setPhotoUrl(membersList[0].user.image);
+        }
+        setMembers(membersList);
+
+        setChannelId(await getChannelId(membersList));
       }
-      if (!state.channel.photoUrl && filteredMembers.length === 1) {
-        setPhotoUrl(filteredMembers[0].user.image);
-      }
-      setMembers(filteredMembers);
-
-      const memberConstraints = [
-        where(`members.${context.user.id}`, "==", true),
-      ];
-      filteredMembers.forEach((member) => {
-        memberConstraints.push(where(`members.${member.user.id}`, "==", true));
-      });
-
-      const q = query(
-        collection(db, "channels"),
-        ...memberConstraints,
-        where("memberCount", "==", Object.keys(state.members).length)
-      );
-
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        setChannelId(doc.id);
-        console.log(`Found existing channel doc: ${doc.id}`);
-      });
     };
 
     getState();
@@ -174,38 +162,6 @@ export default function ChannelDetails() {
     setSaveDisabled(true);
   };
 
-  /**
-   * Image functions from
-   * https://github.com/expo/examples/blob/master/with-firebase-storage-upload/App.js
-   */
-  const uploadImageAsync = async (uri: string) => {
-    // Why are we using XMLHttpRequest? See:
-    // https://github.com/expo/expo/issues/2402#issuecomment-443726662
-    const blob: Blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function () {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function (e) {
-        console.log(e);
-        reject(new TypeError("Network request failed"));
-      };
-      xhr.responseType = "blob";
-      xhr.open("GET", uri, true);
-      xhr.send(null);
-    });
-
-    const fileRef = ref(storage, `${channelId}/profilePhoto.jpg`);
-    const result = await uploadBytes(fileRef, blob)
-      .then(() => console.log("Successfully uploaded bytes"))
-      .catch((error) => console.log(error.message));
-
-    // We're done with the blob, close and release it
-    blob.close();
-
-    return await getDownloadURL(fileRef);
-  };
-
   const handleImagePicked = async (
     pickerResult: ImagePicker.ImagePickerResult
   ) => {
@@ -223,7 +179,10 @@ export default function ChannelDetails() {
 
         console.log("compressed image:", compressedImage);
 
-        const uploadUrl = await uploadImageAsync(compressedImage.uri);
+        const uploadUrl = await uploadImage(
+          `${channelId}/groupPhoto.jpg`,
+          compressedImage.uri
+        );
         setPhotoUrl(uploadUrl);
 
         await context.channel.updatePartial({ set: { photoUrl: uploadUrl } });
@@ -329,10 +288,10 @@ export default function ChannelDetails() {
                 />
               </View>
               <View style={AppStyles.row}>
-                <View style={{ width: "48%" }}>
+                <View style={{ width: "48%", backgroundColor: "transparent" }}>
                   <Button text="Cancel" onPress={() => navigation.goBack()} />
                 </View>
-                <View style={{ width: "48%" }}>
+                <View style={{ width: "48%", backgroundColor: "transparent" }}>
                   <Button
                     text="Save Name"
                     onPress={handleSavePress}
@@ -351,7 +310,11 @@ export default function ChannelDetails() {
         {members.map((member) => {
           return (
             <FriendCard
-              friend={{ ...member.user, photoUrl: member.user.image }}
+              friend={{
+                ...member.user,
+                major: members.length > 1 ? member.role : null,
+                photoUrl: member.user.image,
+              }}
               key={member.user.id}
             />
           );

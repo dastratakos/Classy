@@ -1,24 +1,32 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { Text, View } from "./Themed";
+import { Text, View } from "../Themed";
 
-import Colors from "../constants/Colors";
-import Layout from "../constants/Layout";
+import Colors from "../../constants/Colors";
+import Layout from "../../constants/Layout";
 import { useNavigation } from "@react-navigation/core";
-import useColorScheme from "../hooks/useColorScheme";
-import { Course } from "../types";
-import AppStyles from "../styles/AppStyles";
+import useColorScheme from "../../hooks/useColorScheme";
+import { FavoritedCourse } from "../../types";
+import AppStyles from "../../styles/AppStyles";
+import { getCourse } from "../../services/courses";
 
-export default function CourseCard({
-  course,
-  numFriends,
-  emphasize,
+export default function FavoriteCard({
+  favorite,
+  key,
+  numFriends = 0,
+  emphasize = false,
 }: {
-  course: Course;
-  numFriends: string;
-  emphasize: boolean;
+  favorite: FavoritedCourse;
+  key: string;
+  numFriends?: number;
+  emphasize?: boolean;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+
+  const handleOnPress = async () => {
+    const course = await getCourse(favorite.courseId);
+    navigation.navigate("Course", { course });
+  }
 
   return (
     <View
@@ -29,22 +37,22 @@ export default function CourseCard({
       ]}
     >
       <TouchableOpacity
-        onPress={() => navigation.navigate("Course", { course })}
+        onPress={handleOnPress}
         style={styles.innerContainer}
       >
         <View style={styles.textContainer}>
           <Text style={styles.cardTitle} numberOfLines={1}>
-            {course.code.join(", ")}
+            {favorite.code.join(", ")}
             {emphasize ? " ⭐️" : null}
           </Text>
           <Text style={styles.cardSubtitle} numberOfLines={1}>
-            {course.title}
+            {favorite.title}
           </Text>
         </View>
         <View style={styles.numFriendsContainer}>
           <Text style={styles.numberText}>{numFriends}</Text>
           <Text style={styles.friendsText}>
-            {"friend" + (numFriends !== "1" ? "s" : "")}
+            {"friend" + (numFriends !== 1 ? "s" : "")}
           </Text>
         </View>
       </TouchableOpacity>
@@ -80,7 +88,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: Layout.photo.small,
     width: Layout.photo.small,
-    borderRadius: Layout.radius.small,
+    borderRadius: Layout.radius.xsmall,
     marginLeft: Layout.spacing.small,
     backgroundColor: "transparent",
   },

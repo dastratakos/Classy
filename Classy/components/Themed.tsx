@@ -9,7 +9,7 @@ import {
 } from "react-native";
 
 import Colors from "../constants/Colors";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
 import useColorScheme from "../hooks/useColorScheme";
 import AppStyles from "../styles/AppStyles";
 
@@ -66,6 +66,13 @@ export function Icon(props: IconProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
 
   return <FontAwesome style={[{ color }, style]} {...otherProps} />;
+}
+
+export function Icon2(props: IconProps) {
+  const { lightColor, darkColor, style, ...otherProps } = props;
+  const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
+
+  return <SimpleLineIcons style={[{ color }, style]} {...otherProps} />;
 }
 
 export function ActivityIndicator(props: ActivityIndicatorProps) {

@@ -10,26 +10,39 @@ import AppStyles from "../styles/AppStyles";
 import { useContext, useState } from "react";
 import AppContext from "../context/Context";
 import { termIdToQuarterName } from "../utils";
+import { QuartersProps } from "../types";
+import QuarterButton from "../components/Buttons/QuarterButton";
 
-export default function MyQuarters() {
+export default function Quarters({ route }: QuartersProps) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
 
   const [editMode, setEditMode] = useState(false);
 
+  if (!route.params.user.terms) return null;
+
   return (
     <>
       <ScrollView
         style={{ backgroundColor: Colors[colorScheme].background }}
-        contentContainerStyle={{ alignItems: "center" }}
+        contentContainerStyle={{
+          alignItems: "center",
+          paddingBottom: Layout.buttonHeight.medium + Layout.spacing.medium,
+        }}
       >
         <View style={AppStyles.section}>
-          {Object.entries(context.user.terms)
+          {Object.entries(route.params.user.terms)
             .sort()
             .reverse()
             .map(([year, terms]) => (
-              <View style={styles.yearContainer} key={year}>
+              <View
+                style={[
+                  styles.yearContainer,
+                  { backgroundColor: Colors[colorScheme].secondaryBackground },
+                ]}
+                key={year}
+              >
                 <Text style={styles.year}>{year}</Text>
                 <View style={styles.quartersContainer}>
                   {Object.entries(terms)
@@ -41,12 +54,14 @@ export default function MyQuarters() {
 
                       return (
                         <View style={styles.termButton} key={termId}>
-                          <Button
-                            text={`${termIdToQuarterName(
-                              termId
-                            )} (${numUnits})`}
+                          <QuarterButton
+                            text={termIdToQuarterName(termId)}
+                            num={`${numUnits}`}
                             onPress={() =>
-                              navigation.navigate("Courses", { termId })
+                              navigation.navigate("Enrollments", {
+                                userId: route.params.user.id,
+                                termId,
+                              })
                             }
                           />
                           {editMode && (
@@ -80,28 +95,37 @@ export default function MyQuarters() {
         </View>
       </ScrollView>
       {/* TODO: edit quarters */}
-      {/* <View style={styles.ctaContainer}>
-        {editMode ? (
-          <>
-            <Button
-              text="Cancel"
-              onPress={() => {
-                setEditMode(false);
-              }}
-            />
-            <Button
-              text="Done"
-              onPress={() => {
-                // updateQuartersDBs();
-                setEditMode(false);
-              }}
-              emphasized
-            />
-          </>
-        ) : (
-          <Button text="Edit Quarters" onPress={() => setEditMode(true)} wide />
-        )}
-      </View> */}
+      {route.params.user.id === context.user.id && (
+        <View style={styles.ctaContainer}>
+          {editMode ? (
+            <>
+              <View style={{ width: "48%", backgroundColor: "transparent" }}>
+                <Button
+                  text="Cancel"
+                  onPress={() => {
+                    setEditMode(false);
+                  }}
+                />
+              </View>
+              <View style={{ width: "48%", backgroundColor: "transparent" }}>
+                <Button
+                  text="Done"
+                  onPress={() => {
+                    // updateQuartersDBs();
+                    setEditMode(false);
+                  }}
+                  emphasized
+                />
+              </View>
+            </>
+          ) : // <Button
+          //   text="Edit Quarters"
+          //   onPress={() => setEditMode(true)}
+          //   wide
+          // />
+          null}
+        </View>
+      )}
     </>
   );
 }
@@ -111,7 +135,10 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     marginTop: Layout.spacing.small,
+    paddingTop: Layout.spacing.small,
     marginBottom: Layout.spacing.large,
+    paddingBottom: Layout.spacing.small,
+    borderRadius: Layout.radius.large,
   },
   year: {
     fontSize: Layout.text.large,
@@ -121,12 +148,14 @@ const styles = StyleSheet.create({
   quartersContainer: {
     width: "100%",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     flexWrap: "wrap",
+    backgroundColor: "transparent",
   },
   termButton: {
     width: "30%",
     marginVertical: Layout.spacing.small,
+    backgroundColor: "transparent",
   },
   ctaContainer: {
     ...AppStyles.row,
@@ -140,5 +169,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: -8,
     top: -8,
+    // backgroundColor: Colors.white,
+    // borderRadius: Layout.icon.medium / 2,
+    backgroundColor: "transparent",
   },
 });

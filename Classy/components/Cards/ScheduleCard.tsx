@@ -1,26 +1,28 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { Icon, Text, View } from "./Themed";
-import { componentToName, getTimeString } from "../utils";
+import { Icon, Text, View } from "../Themed";
+import { componentToName, getTimeString } from "../../utils";
 
-import AppStyles from "../styles/AppStyles";
-import Colors from "../constants/Colors";
-import Layout from "../constants/Layout";
-import { Schedule } from "../types";
-import useColorScheme from "../hooks/useColorScheme";
+import AppStyles from "../../styles/AppStyles";
+import Colors from "../../constants/Colors";
+import Layout from "../../constants/Layout";
+import { Schedule } from "../../types";
+import useColorScheme from "../../hooks/useColorScheme";
 
 export default function ScheduleCard({
   schedule,
   onPress,
   selected,
+  key,
 }: {
   schedule: Schedule;
   onPress: () => void;
   selected?: boolean;
+  key: string;
 }) {
   const colorScheme = useColorScheme();
 
   return (
-    <View style={[styles.container, AppStyles.boxShadow]}>
+    <View style={[styles.container, AppStyles.boxShadow]} key={key}>
       <TouchableOpacity
         onPress={onPress}
         style={[
@@ -28,13 +30,14 @@ export default function ScheduleCard({
           { backgroundColor: Colors[colorScheme].cardBackground },
         ]}
       >
-        <View style={AppStyles.row}>
+        <View style={[AppStyles.row, { backgroundColor: "transparent" }]}>
           <View style={styles.textContainer}>
             <Text style={styles.cardTitle} numberOfLines={1}>
               {schedule.sectionNumber} {componentToName(schedule.component)}
             </Text>
             <Text style={styles.cardSubtitle} numberOfLines={1}>
               {schedule.days.join(", ")}{" "}
+              {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
               {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
               {getTimeString(schedule.endInfo, "Africa/Casablanca")}
             </Text>
@@ -80,5 +83,6 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
     marginRight: Layout.spacing.small,
+    backgroundColor: "transparent",
   },
 });

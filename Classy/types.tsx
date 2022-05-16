@@ -16,7 +16,7 @@ import { Timestamp } from "firebase/firestore";
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList {}
+    interface RootParamList extends RootStackParamList { }
   }
 }
 
@@ -42,15 +42,36 @@ export type Course = {
   unitsMin: number;
 };
 
+export type FavoritedCourse = {
+  code: string[];
+  courseId: number;
+  title: string;
+  userId: string;
+};
+
+export type Enrollment = {
+  docId: string;
+  code: string[];
+  courseId: number;
+  grading: string; // Chosen grading basis
+  schedules: Schedule[]; // Chosen schedules
+  termId: string; // Chosen termId
+  title: string;
+  units: number; // Chosen number of units
+  userId: string;
+};
+
 export type Term = {
   schedules: Schedule[];
   students: string[];
 };
 
 export type Schedule = {
+  // classId: string;
   component: string;
   days: string[];
   endInfo: Timestamp;
+  grading: string;
   instructors: Instructor[];
   location: string;
   sectionNumber: string;
@@ -67,9 +88,37 @@ export type Instructor = {
   sunet: string;
 };
 
+export type Tab = {
+  label: string;
+  component: JSX.Element;
+};
+
+export type Event = {
+  title: string;
+  startInfo: Timestamp;
+  endInfo: Timestamp;
+  location: string;
+  enrollment: Enrollment;
+};
+
+export type Day = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday";
+
+export type DaySchedule = { day: Day; events: Event[] };
+
+export type WeekSchedule = DaySchedule[];
+
+export type HomeData = {
+  enrollment: Enrollment;
+  friends: User[];
+  startInfo: Timestamp;
+  endInfo: Timestamp;
+  component: string;
+}[]
+
 export type RootStackParamList = {
   AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;
-  MessagesStack: NavigatorScreenParams<MessagesStackParamList> | undefined;
+  HomeStack: NavigatorScreenParams<HomeStackParamList> | undefined;
+  ProfileStack: NavigatorScreenParams<ProfileStackParamList> | undefined;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Settings: undefined;
   ManageAccount: undefined;
@@ -77,7 +126,10 @@ export type RootStackParamList = {
 
   Login: { email?: string } | undefined;
   Register: { email?: string } | undefined;
+  Onboarding: undefined;
   ResetPassword: undefined;
+
+  Home: undefined;
 
   Messages: undefined;
   ChannelScreen: undefined;
@@ -87,23 +139,24 @@ export type RootStackParamList = {
 
   Profile: undefined;
   Favorites: undefined;
-  Courses: { termId: string };
+  Enrollments: { userId: string; termId: string };
   Course: { course: Course };
-  AddEditCourse: { course: Course };
-  MyQuarters: undefined;
+  AddCourse: { course: Course };
+  EditCourse: { enrollment: Enrollment };
+  Quarters: { user: User };
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
-  CourseSimilarity: { id: string };
+  CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>;
 
 export type RootTabParamList = {
-  MessagesStack: NavigatorScreenParams<MessagesStackParamList> | undefined;
-  SearchStack: NavigatorScreenParams<MessagesStackParamList> | undefined;
+  HomeStack: NavigatorScreenParams<HomeStackParamList> | undefined;
+  SearchStack: NavigatorScreenParams<SearchStackParamList> | undefined;
   ProfileStack: NavigatorScreenParams<ProfileStackParamList> | undefined;
 };
 
@@ -119,62 +172,67 @@ export type ProfileStackParamList = {
 
   Profile: undefined;
   Favorites: undefined;
-  Courses: { termId: string };
+  Enrollments: { userId: string; termId: string };
   Course: { course: Course };
-  AddEditCourse: { course: Course };
-  MyQuarters: undefined;
+  AddCourse: { course: Course };
+  EditCourse: { enrollment: Enrollment };
+  Quarters: { user: User };
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
-  CourseSimilarity: { id: string };
+  CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
 
 export type ProfileStackScreenProps<
   Screen extends keyof ProfileStackParamList
-> = NativeStackScreenProps<ProfileStackParamList>;
+  > = NativeStackScreenProps<ProfileStackParamList>;
 
 export type SearchStackParamList = {
   Search: undefined;
   Profile: undefined;
   Favorites: undefined;
-  Courses: { termId: string };
+  Enrollments: { userId: string; termId: string };
   Course: { course: Course };
-  AddEditCourse: { course: Course };
-  MyQuarters: undefined;
+  AddCourse: { course: Course };
+  EditCourse: { enrollment: Enrollment };
+  Quarters: { user: User };
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
-  CourseSimilarity: { id: string };
+  CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
 
 export type SearchStackScreenProps<Screen extends keyof SearchStackParamList> =
   NativeStackScreenProps<SearchStackParamList>;
 
-export type MessagesStackParamList = {
+export type HomeStackParamList = {
+  Home: undefined;
+
   Messages: undefined;
   ChannelScreen: undefined;
   ThreadScreen: { id: string };
   ChannelDetails: undefined;
   NewMessage: undefined;
 
-  Courses: { termId: string };
+  Enrollments: { userId: string; termId: string };
   Course: { course: Course };
-  AddEditCourse: { course: Course };
+  AddCourse: { course: Course };
+  EditCourse: { enrollment: Enrollment };
   MyFriends: undefined;
   Friends: { id: string };
   FriendProfile: { id: string };
-  CourseSimilarity: { id: string };
+  CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
 
-export type MessagesStackScreenProps<
-  Screen extends keyof MessagesStackParamList
-> = NativeStackScreenProps<MessagesStackParamList>;
+export type HomeStackScreenProps<Screen extends keyof HomeStackParamList> =
+  NativeStackScreenProps<HomeStackParamList>;
 
 export type AuthStackParamList = {
   Login: undefined;
   Register: undefined;
+  Onboarding: undefined;
 };
 
 export type AuthStackScreenProps<Screen extends keyof AuthStackParamList> =
@@ -188,9 +246,14 @@ export type RegisterProps = NativeStackScreenProps<
 
 export type CourseProps = NativeStackScreenProps<RootStackParamList, "Course">;
 
-export type AddEditCourseProps = NativeStackScreenProps<
+export type AddCourseProps = NativeStackScreenProps<
   RootStackParamList,
-  "AddEditCourse"
+  "AddCourse"
+>;
+
+export type EditCourseProps = NativeStackScreenProps<
+  RootStackParamList,
+  "EditCourse"
 >;
 
 export type ThreadScreenProps = NativeStackScreenProps<
@@ -213,14 +276,19 @@ export type CourseSimilarityProps = NativeStackScreenProps<
   "CourseSimilarity"
 >;
 
-export type CoursesProps = NativeStackScreenProps<
+export type EnrollmentsProps = NativeStackScreenProps<
   RootStackParamList,
-  "Courses"
+  "Enrollments"
 >;
 
 export type SelectQuarterProps = NativeStackScreenProps<
   RootStackParamList,
   "SelectQuarter"
+>;
+
+export type QuartersProps = NativeStackScreenProps<
+  RootStackParamList,
+  "Quarters"
 >;
 
 // Context
@@ -230,12 +298,15 @@ export type User = {
   email: string;
   name: string;
   major: string;
+  startYear: string;
   gradYear: string;
   interests: string;
   isPrivate: boolean;
   photoUrl: string;
   expoPushToken: string;
   terms: Object;
+  keywords: string[];
+  onboarded: boolean;
 };
 
 export type Context = {

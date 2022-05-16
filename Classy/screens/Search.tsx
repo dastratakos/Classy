@@ -1,98 +1,128 @@
-import React, { useContext, useState } from "react";
-import { ScrollView, StyleSheet, RefreshControl } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { StyleSheet, FlatList } from "react-native";
 import { View } from "../components/Themed";
-import { db } from "../firebase";
-import {
-  collection,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
-import Colors from "../constants/Colors";
 import SearchBar from "../components/SearchBar";
 import useColorScheme from "../hooks/useColorScheme";
 import TabView from "../components/TabView";
-import CourseList from "../components/CourseList";
-import FriendList from "../components/FriendList";
-import { Course } from "../types";
+import { Course, User } from "../types";
+import { searchCourses, searchMoreCourses } from "../services/courses";
+import { searchMoreUsers, searchUsers } from "../services/users";
+import FriendCard from "../components/Cards/FriendCard";
+import CourseCard from "../components/Cards/CourseCard";
+import Layout from "../constants/Layout";
+import { getFriendIds, getNumFriendInCourse } from "../services/friends";
+import Colors from "../constants/Colors";
+import EmptyList from "../components/EmptyList";
 
 export default function Search() {
   const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
-  const [searchPhrase, setSearchPhrase] = useState("");
-  const [focused, setFocused] = useState(false);
-  const [peopleSearchResults, setPeopleSearchResults] = useState([]);
-  const [courseSearchResults, setCourseSearchResults] = useState(
-    [] as Course[]
-  );
+  const [searchPhrase, setSearchPhrase] = useState<string>("");
+  const [friendIds, setFriendIds] = useState<string[]>([]);
+  const [focused, setFocused] = useState<boolean>(false);
+  const [userSearchResults, setUserSearchResults] = useState<User[]>([]);
+  const [courseSearchResults, setCourseSearchResults] = useState<Course[]>([]);
+  const [lastUser, setLastUser] = useState<User>({} as User);
+  const [lastCourse, setLastCourse] = useState<Course>({} as Course);
 
   const [refreshing, setRefreshing] = useState(false);
 
-  const searchPeople = async (search: string) => {
+  useEffect(() => {
+    const loadScreen = async () => {
+      setFriendIds(await getFriendIds(context.user.id));
+      handleSearchUsers("");
+    };
+    loadScreen();
+  }, []);
+
+  const handleSearchUsers = async (search: string) => {
     if (search === "") {
-      setPeopleSearchResults([]);
+      setUserSearchResults(await searchUsers(context.user.id, search, 25));
       return;
     }
 
-    // TODO: pagination
-    const q = query(
-      collection(db, "users"),
-      where("keywords", "array-contains", search.toLowerCase()),
-      orderBy("name"),
-      limit(3)
-    );
-
-    const people = [];
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      if (doc.id !== context.user.id) people.push(doc.data());
-    });
-    setPeopleSearchResults([...people]);
+    let res;
+    // if (!lastUser) {
+    // console.log("Searching users:", search);
+    res = await searchUsers(context.user.id, search);
+    setUserSearchResults([...res]);
+    // } else {
+    //   console.log("Searching more users:", search);
+    //   res = await searchMoreUsers(context.user.id, search, lastUser);
+    //   setUserSearchResults([...userSearchResults, ...res]);
+    // }
+    // console.log("user res:", res.length);
+    setLastUser(res[res.length - 1]);
+    setRefreshing(false);
   };
 
-  const searchCourses = async (search: string) => {
+  const handleSearchCourses = async (search: string) => {
     if (search === "") {
       setCourseSearchResults([]);
       return;
     }
-
-    // TODO: pagination
-    const q = query(
-      collection(db, "courses"),
-      where("keywords", "array-contains", search.toLowerCase().trim()),
-      orderBy("code"),
-      limit(3)
-    );
-
-    const courses: Course[] = [];
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      courses.push(doc.data() as Course);
-    });
-    setCourseSearchResults([...courses]);
-  };
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    searchPeople(searchPhrase);
-    searchCourses(searchPhrase);
+    let res;
+    // if (!lastCourse) {
+    // console.log("Searching courses:", search);
+    res = await searchCourses(search);
+    setCourseSearchResults([...res]);
+    // } else {
+    //   console.log("Searching more courses:", search);
+    //   res = await searchMoreCourses(search, lastCourse);
+    //   setCourseSearchResults([...courseSearchResults, ...res]);
+    // }
+    // console.log("course res:", res.length);
+    setLastCourse(res[res.length - 1]);
     setRefreshing(false);
   };
 
   const tabs = [
     {
       label: "People",
-      component: <FriendList friends={peopleSearchResults} />,
+      component: (
+        <FlatList
+          data={userSearchResults}
+          renderItem={({ item }) => <FriendCard friend={item} />}
+          keyExtractor={(item) => item.id}
+          onEndReached={() => handleSearchUsers(searchPhrase)}
+          onEndReachedThreshold={0}
+          refreshing={refreshing}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: Layout.spacing.medium,
+          }}
+          ListEmptyComponent={<EmptyList primaryText={"No matching users for \"" + searchPhrase + "\""} secondaryText="Try searching again using a different spelling"/>}
+        />
+      ),
     },
     {
       label: "Courses",
-      component: <CourseList courses={courseSearchResults} />,
+      component: (
+        <FlatList
+          data={courseSearchResults}
+          renderItem={({ item, index }) => (
+            <CourseCard
+              course={item}
+              key={index.toString()}
+              numFriends={0}
+              emphasize={false}
+            />
+          )}
+          keyExtractor={(item) => `${item.courseId}`}
+          onEndReached={() => handleSearchCourses(searchPhrase)}
+          onEndReachedThreshold={0}
+          refreshing={refreshing}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: Layout.spacing.medium,
+          }}
+          ListEmptyComponent={<EmptyList primaryText={searchPhrase!="" ? "No matching courses for \"" + searchPhrase + "\"" : "Find courses"} secondaryText={searchPhrase!="" ? "Try searching again using a different spelling or keyword" : "Search by code or name\ne.g. SOC1, SOC 1, or Introduction to Sociology"}/>}
+        />
+      ),
     },
   ];
 
@@ -104,24 +134,16 @@ export default function Search() {
           searchPhrase={searchPhrase}
           onChangeText={(text) => {
             setSearchPhrase(text);
-            searchPeople(text);
-            searchCourses(text);
+            setLastUser({} as User);
+            setLastCourse({} as Course);
+            handleSearchUsers(text);
+            handleSearchCourses(text);
           }}
           focused={focused}
           setFocused={setFocused}
         />
       </View>
-      <ScrollView
-        style={{ backgroundColor: Colors[colorScheme].background }}
-        contentContainerStyle={{ alignItems: "center" }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        <View style={AppStyles.section}>
-          <TabView tabs={tabs} />
-        </View>
-      </ScrollView>
+      <TabView tabs={tabs} addTabMargin selectedStyle={{ backgroundColor: Colors.pink }} />
     </View>
   );
 }

@@ -1,6 +1,6 @@
 import * as Notifications from "expo-notifications";
 
-import { Icon, Text, View } from "../components/Themed";
+import { Icon, Icon2, Text, View } from "../components/Themed";
 import {
   Platform,
   Pressable,
@@ -8,60 +8,73 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import {
-  Timestamp,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-  orderBy,
-} from "firebase/firestore";
 import { User, sendEmailVerification } from "firebase/auth";
-import { auth, db } from "../firebase";
+import {
+  getCurrentTermId,
+  getWeekFromEnrollments,
+  termIdToFullName,
+} from "../utils";
+import { getUser, updateUser } from "../services/users";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Calendar from "../components/Calendar";
-import CourseList from "../components/CourseList";
 import Colors from "../constants/Colors";
 import Constants from "expo-constants";
-import { Course } from "../types";
+import { Enrollment, WeekSchedule } from "../types";
+import EnrollmentList from "../components/Lists/EnrollmentList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
-import events from "./dummyEvents";
+import TabView from "../components/TabView";
+import { Timestamp } from "firebase/firestore";
+import { auth } from "../firebase";
+import { getEnrollmentsForTerm } from "../services/enrollments";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import TabView from "../components/TabView";
-import { getCurrentTermId, termIdToFullName } from "../utils";
+import { getFriendIds, getRequestIds } from "../services/friends";
 
 export default function Profile() {
   const context = useContext(AppContext);
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
-  const [courses, setCourses] = useState([] as Course[]);
-  const [refreshing, setRefreshing] = useState(true);
-  const [showEmailVerification, setShowEmailVerification] = useState(
+  const [numFriends, setNumFriends] = useState<string>("");
+  const [numRequests, setNumRequests] = useState<number>(0);
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [week, setWeek] = useState<WeekSchedule>([]);
+  const [refreshing, setRefreshing] = useState<boolean>(true);
+  const [showEmailVerification, setShowEmailVerification] = useState<boolean>(
     !auth.currentUser?.emailVerified
   );
   const [inClass, setInClass] = useState(false);
 
   useEffect(() => {
-    // if (!context.user && auth.currentUser) getUser(auth.currentUser.uid);
+    const loadScreen = async () => {
+      // if (!context.user && auth.currentUser) getUser(auth.currentUser.uid);
+      if (auth.currentUser) {
+        const user = await getUser(auth.currentUser.uid);
+        context.setUser({ ...context.user, ...user });
+        getFriendIds(context.user.id).then((res) =>
+          setNumFriends(`${res.length}`)
+        );
 
-    if (auth.currentUser) {
-      getUser(auth.currentUser.uid);
-      getCoursesForTerm(context.user.id, getCurrentTermId()).then(() =>
-        setInterval(checkInClass, 1000)
-      );
-    }
+        getRequestIds(context.user.id).then((res) =>
+          setNumRequests(res.length)
+        );
+
+        const res = await getEnrollmentsForTerm(
+          context.user.id,
+          getCurrentTermId()
+        );
+        setEnrollments(res);
+        setWeek(getWeekFromEnrollments(res));
+      }
+    };
+    loadScreen();
 
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) setShowEmailVerification(!user.emailVerified);
@@ -72,62 +85,58 @@ export default function Profile() {
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(checkInClass, 1000);
+    return () => clearInterval(interval);
+  }, [week]);
+
   const onRefresh = async () => {
     setRefreshing(true);
-    await getUser(context.user.id);
-    await getCoursesForTerm(context.user.id, getCurrentTermId());
+
+    const user = await getUser(context.user.id);
+    context.setUser({ ...context.user, ...user });
+    getFriendIds(context.user.id).then((res) => {
+      setNumFriends(`${res.length}`);
+    });
+
+    getRequestIds(context.user.id).then((res) => setNumRequests(res.length));
+
+    const res = await getEnrollmentsForTerm(
+      context.user.id,
+      getCurrentTermId()
+    );
+    setEnrollments(res);
+    setWeek(getWeekFromEnrollments(res));
+
     if (auth.currentUser)
       setShowEmailVerification(!auth.currentUser.emailVerified);
     console.log("emailVerified:", auth.currentUser?.emailVerified);
+
     checkInClass();
+
     setRefreshing(false);
-  };
-
-  const getUser = async (id: string) => {
-    const docRef = doc(db, "users", id);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      context.setUser({ ...context.user, ...docSnap.data() });
-    } else {
-      console.log(`Could not find user: ${id}`);
-    }
-  };
-
-  const getCoursesForTerm = async (id: string, termId: string) => {
-    const q = query(
-      collection(db, "enrollments"),
-      where("userId", "==", id),
-      where("termId", "==", termId),
-      orderBy("code")
-    );
-
-    const results = [];
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      results.push(doc.data());
-    });
-    setCourses(results);
   };
 
   const checkInClass = () => {
     const now = Timestamp.now().toDate();
     const today = now.getDay() - 1;
 
-    if (!events[today]) {
+    if (!week[today]) {
       setInClass(false);
       return;
     }
 
-    for (let event of events[today].events) {
+    for (let event of week[today].events) {
       const startInfo = event.startInfo.toDate();
       var startTime = new Date();
-      startTime.setHours(startInfo.getHours());
+      // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
+      startTime.setHours(startInfo.getHours() + 7);
       startTime.setMinutes(startInfo.getMinutes());
 
       const endInfo = event.endInfo.toDate();
       var endTime = new Date();
-      endTime.setHours(endInfo.getHours());
+      // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
+      endTime.setHours(endInfo.getHours() + 7);
       endTime.setMinutes(endInfo.getMinutes());
 
       if (startTime <= now && endTime >= now) {
@@ -145,7 +154,7 @@ export default function Profile() {
           <Text
             style={{ textAlign: "center", marginBottom: Layout.spacing.medium }}
           >
-            Please verify your email to use Plan-It.
+            Please verify your email to use Classy.
           </Text>
           <Button
             text="Resend Verification Email"
@@ -175,8 +184,7 @@ export default function Profile() {
     registerForPushNotificationsAsync().then((expoPushToken) => {
       if (expoPushToken) {
         context.setUser({ ...context.user, expoPushToken });
-        const userRef = doc(db, "users", context.user.id);
-        updateDoc(userRef, { expoPushToken });
+        updateUser(context.user.id, { expoPushToken });
       }
     });
   }, []);
@@ -216,11 +224,11 @@ export default function Profile() {
   const tabs = [
     {
       label: "Calendar",
-      component: <Calendar events={events} />,
+      component: <Calendar week={week} />,
     },
     {
       label: "Courses",
-      component: <CourseList courses={courses} />,
+      component: <EnrollmentList enrollments={enrollments} emptyPrimary="No courses" emptySecondary="Add some from the search tab, or explore your friends' courses!" />,
     },
   ];
 
@@ -233,13 +241,13 @@ export default function Profile() {
       }
     >
       {/* TODO: this needs to refresh to go away if we are verified */}
-      {showEmailVerification && showSendVerificationEmail()}
+      {/* {showEmailVerification && showSendVerificationEmail()} */}
       <View style={AppStyles.section}>
         <View style={AppStyles.row}>
           <View style={[AppStyles.row, { flex: 1 }]}>
             <ProfilePhoto
               url={context.user.photoUrl}
-              size={Layout.photo.medium}
+              size={Layout.photo.large}
               style={{ marginRight: Layout.spacing.large }}
             />
             <View style={{ flexGrow: 1 }}>
@@ -279,7 +287,7 @@ export default function Profile() {
             {context.user.major ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon name="pencil" size={Layout.icon.medium} />
+                  <Icon2 name="pencil" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{context.user.major}</Text>
               </View>
@@ -288,7 +296,7 @@ export default function Profile() {
             {context.user.gradYear ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon name="graduation-cap" size={Layout.icon.medium} />
+                  <Icon2 name="graduation" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{context.user.gradYear}</Text>
               </View>
@@ -297,32 +305,35 @@ export default function Profile() {
             {context.user.interests ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon name="puzzle-piece" size={Layout.icon.medium} />
+                  <Icon2 name="puzzle" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{context.user.interests}</Text>
               </View>
             ) : null}
           </View>
           <SquareButton
-            num={`${context.friendIds.length}`}
-            text={"friend" + (context.friendIds.length === 1 ? "" : "s")}
+            num={`${numFriends}`}
+            text={"friend" + (numFriends === "1" ? "" : "s")}
             size={Layout.buttonHeight.large}
             onPress={() => navigation.navigate("MyFriends")}
+            indicator={numRequests > 0}
           />
         </View>
-        <View style={[AppStyles.row, { marginBottom: Layout.spacing.medium }]}>
+        <View style={[AppStyles.row]}>
           <Text style={styles.term}>
             {termIdToFullName(getCurrentTermId())}
           </Text>
           <Button
-            text="View All"
-            onPress={() => navigation.navigate("MyQuarters")}
+            text="View All Quarters"
+            onPress={() =>
+              navigation.navigate("Quarters", { user: context.user })
+            }
           />
         </View>
       </View>
       <Separator />
       <View style={AppStyles.section}>
-        <TabView tabs={tabs} />
+        <TabView tabs={tabs} selectedStyle={{ backgroundColor: Colors.pink }} />
       </View>
     </ScrollView>
   );
@@ -354,6 +365,7 @@ const styles = StyleSheet.create({
     width: 30,
     marginRight: 15,
     alignItems: "center",
+    marginBottom: Layout.spacing.xsmall,
   },
   closeButton: {
     position: "absolute",
@@ -362,5 +374,6 @@ const styles = StyleSheet.create({
   },
   term: {
     fontSize: Layout.text.large,
+    fontWeight: "500",
   },
 });

@@ -1,3 +1,5 @@
+import * as Haptics from "expo-haptics";
+
 import {
   KeyboardAvoidingView,
   Pressable,
@@ -5,19 +7,20 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../components/Themed";
-import { Timestamp, doc, setDoc } from "firebase/firestore";
-import { auth, createUserWithEmailAndPassword, db } from "../firebase";
+import { auth, createUserWithEmailAndPassword } from "../firebase";
 import { useContext, useState } from "react";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
+import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import { RegisterProps } from "../types";
 import { sendEmailVerification } from "firebase/auth";
+import { setUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import Button from "../components/Buttons/Button";
+import { Timestamp } from "firebase/firestore";
 
 export default function Register({ route }: RegisterProps) {
   const [email, setEmail] = useState(route.params?.email || "");
@@ -35,29 +38,29 @@ export default function Register({ route }: RegisterProps) {
       return;
     }
 
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     createUserWithEmailAndPassword(auth, email, password)
       .then((response) => {
         if (auth.currentUser) sendEmailVerification(auth.currentUser);
 
         const uid = response.user.uid;
+
+        connectStreamChatUser(uid);
         const data = {
           id: uid,
           email,
+          interests: "",
           createdAt: Timestamp.now(),
           isPrivate: false,
-        };
-        connectStreamChatUser(uid);
-        setDoc(doc(db, "users", uid), data)
-          .then(() => {
-            // TODO: navigate to onboarding
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "Root" }],
-            });
-          })
-          .catch((error) => {
-            setErrorMessage(error);
-          });
+        }
+        setUser(data);
+
+        context.setUser({
+          ...context.user,
+          ...data,
+        });
+        navigation.navigate("Onboarding");
       })
       .catch((error) => setErrorMessage(error.message));
   };
@@ -145,7 +148,7 @@ export default function Register({ route }: RegisterProps) {
           />
           <View style={{ height: Layout.spacing.large }} />
 
-          <Button text="Register" onPress={createUser} wide />
+          <Button text="Register" onPress={createUser} emphasized wide />
         </View>
       </KeyboardAvoidingView>
       <View

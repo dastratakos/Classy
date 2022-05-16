@@ -1,20 +1,13 @@
+import * as Haptics from "expo-haptics";
+
 import {
   KeyboardAvoidingView,
   Pressable,
   StyleSheet,
   TextInput,
 } from "react-native";
-import { LoginProps, User } from "../types";
 import { Text, View } from "../components/Themed";
-import { auth, db, signInWithEmailAndPassword } from "../firebase";
-import {
-  collection,
-  doc,
-  getDoc,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { auth, signInWithEmailAndPassword } from "../firebase";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -22,6 +15,9 @@ import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
+import { LoginProps } from "../types";
+import { getFriendIds } from "../services/friends";
+import { getUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
@@ -66,48 +62,17 @@ export default function Login({ route }: LoginProps) {
 
   const setUp = async (id: string) => {
     const user = await getUser(id);
-    getFriendIds(id);
+    context.setUser(user);
+
+    context.setFriendIds(await getFriendIds(id));
     connectStreamChatUser(id, user.name, user.photoUrl);
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "Root" }],
-    });
-  };
 
-  const getUser = async (id: string) => {
-    const docRef = doc(db, "users", id);
-    const docSnap = await getDoc(docRef);
-
-    console.log("user = ", docSnap.data());
-
-    if (docSnap.exists()) {
-      const user = { ...context.user, ...docSnap.data() };
-      context.setUser(user);
-      return user;
-    } else {
-      console.log(`Could not find user: ${id}`);
-      return {} as User;
-    }
-  };
-
-  const getFriendIds = async (id: string) => {
-    const q = query(
-      collection(db, "friends"),
-      where(`ids.${id}`, "==", true),
-      where("status", "==", "friends")
-    );
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const friendIds = [] as string[];
-      querySnapshot.forEach((doc) => {
-        for (let key in doc.data().ids) {
-          if (key !== id) {
-            friendIds.push(key);
-            return;
-          }
-        }
+    if (user.onboarded)
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Root" }],
       });
-      context.setFriendIds(friendIds);
-    });
+    else navigation.navigate("Onboarding");
   };
 
   const signIn = () => {
@@ -115,6 +80,8 @@ export default function Login({ route }: LoginProps) {
       setErrorMessage("Please enter an email and a password.");
       return;
     }
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     signInWithEmailAndPassword(auth, email, password)
       .then((response) => {
@@ -181,7 +148,7 @@ export default function Login({ route }: LoginProps) {
         </View>
         <View style={{ height: Layout.spacing.large }} />
 
-        <Button text="Log In" onPress={signIn} wide />
+        <Button text="Log In" onPress={signIn} emphasized wide />
       </KeyboardAvoidingView>
       <View
         style={[
