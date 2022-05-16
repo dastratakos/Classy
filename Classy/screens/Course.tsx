@@ -1,8 +1,9 @@
 import * as Haptics from "expo-haptics";
 import * as WebBrowser from "expo-web-browser";
 
-import { Pressable, ScrollView, StyleSheet } from "react-native";
 import { ActivityIndicator, Icon, Text, View } from "../components/Themed";
+import { CourseProps, Course as CourseType, User } from "../types";
+import { Pressable, ScrollView, StyleSheet } from "react-native";
 import {
   addFavorite,
   deleteFavorite,
@@ -14,16 +15,17 @@ import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
-import { Course as CourseType, CourseProps, User } from "../types";
+import EmptyList from "../components/EmptyList";
+import FriendList from "../components/Lists/FriendList";
 import Layout from "../constants/Layout";
 import ReadMoreText from "../components/ReadMoreText";
+import SVGCamping from "../assets/images/undraw/camping.svg";
 import Separator from "../components/Separator";
-import useColorScheme from "../hooks/useColorScheme";
-import { useNavigation } from "@react-navigation/core";
 import { getAllFriendsInCourse } from "../services/friends";
 import { getUser } from "../services/users";
 import { termIdToFullName } from "../utils";
-import FriendList from "../components/Lists/FriendList";
+import useColorScheme from "../hooks/useColorScheme";
+import { useNavigation } from "@react-navigation/core";
 
 const exploreCoursesLink =
   "https://explorecourses.stanford.edu/search?view=catalog&filter-coursestatus-Active=on&page=0&catalog=&academicYear=&q=";
@@ -123,19 +125,28 @@ export default function Course({ route }: CourseProps) {
           </View>
         </View>
         <Separator />
-        <View style={styles.friendsSection}>
-          <Text style={styles.friendsHeader}>{"Friends in " + course.code.join(", ")}</Text>
-          <View style={AppStyles.section}>
-            {/* TODO: use SectionList? */}
-            {Object.keys(friendsData).map((termId) => (
-              <View key={termId}>
-                <Text style={styles.term}>
-                  {termIdToFullName(termId)} ({friendsData[termId].length})
-                </Text>
-                <FriendList friends={friendsData[termId]} />
-              </View>
-            ))}
-          </View>
+        <View style={AppStyles.section}>
+          {Object.keys(friendsData).length > 0 ? (
+            <>
+              <Text style={styles.friendsHeader}>
+                {"Friends in " + course.code.join(", ")}
+              </Text>
+              {/* TODO: use SectionList? */}
+              {Object.keys(friendsData).map((termId) => (
+                <View key={termId}>
+                  <Text style={styles.term}>
+                    {termIdToFullName(termId)} ({friendsData[termId].length})
+                  </Text>
+                  <FriendList friends={friendsData[termId]} />
+                </View>
+              ))}
+            </>
+          ) : (
+            <EmptyList
+              SVGElement={SVGCamping}
+              primaryText="No one in this course yet!"
+            />
+          )}
         </View>
       </ScrollView>
       <View style={styles.ctaContainer}>
@@ -194,10 +205,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: Colors.green,
     marginBottom: Layout.spacing.small,
-  },
-  friendsSection: {
-    width: "100%",
-    alignItems: "center",
   },
   friendsHeader: {
     fontSize: Layout.text.large,

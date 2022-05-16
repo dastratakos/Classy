@@ -16,7 +16,7 @@ import SVGCourseSearch from "../assets/images/undraw/courseSearch.svg";
 import SVGVoid from "../assets/images/undraw/void.svg";
 import SearchBar from "../components/SearchBar";
 import TabView from "../components/TabView";
-import { View } from "../components/Themed";
+import { ActivityIndicator, View } from "../components/Themed";
 import useColorScheme from "../hooks/useColorScheme";
 
 export default function Search() {
@@ -31,17 +31,21 @@ export default function Search() {
   const [lastUser, setLastUser] = useState<User>({} as User);
   const [lastCourse, setLastCourse] = useState<Course>({} as Course);
 
-  const [refreshing, setRefreshing] = useState(false);
+  const [usersRefreshing, setUsersRefreshing] = useState<boolean>(true);
+  const [coursesRefreshing, setCoursesRefreshing] = useState<boolean>(true);
 
   useEffect(() => {
     const loadScreen = async () => {
       setFriendIds(await getFriendIds(context.user.id));
       handleSearchUsers("");
+      handleSearchCourses("");
     };
     loadScreen();
   }, []);
 
   const handleSearchUsers = async (search: string) => {
+    setUsersRefreshing(true);
+
     if (search === "") {
       setUserSearchResults(await searchUsers(context.user.id, search, 25));
       return;
@@ -59,12 +63,15 @@ export default function Search() {
     // }
     // console.log("user res:", res.length);
     setLastUser(res[res.length - 1]);
-    setRefreshing(false);
+    setUsersRefreshing(false);
   };
 
   const handleSearchCourses = async (search: string) => {
+    setCoursesRefreshing(true);
+
     if (search === "") {
       setCourseSearchResults([]);
+      setCoursesRefreshing(false);
       return;
     }
     let res;
@@ -79,7 +86,7 @@ export default function Search() {
     // }
     // console.log("course res:", res.length);
     setLastCourse(res[res.length - 1]);
-    setRefreshing(false);
+    setCoursesRefreshing(false);
   };
 
   const tabs = [
@@ -92,17 +99,21 @@ export default function Search() {
           keyExtractor={(item) => item.id}
           onEndReached={() => handleSearchUsers(searchPhrase)}
           onEndReachedThreshold={0}
-          refreshing={refreshing}
+          refreshing={usersRefreshing}
           contentContainerStyle={{
             flexGrow: 1,
             paddingHorizontal: Layout.spacing.medium,
           }}
           ListEmptyComponent={
-            <EmptyList
-              SVGElement={SVGVoid}
-              primaryText={`No matching users for "${searchPhrase}"`}
-              secondaryText="Try searching again using a different spelling"
-            />
+            usersRefreshing ? (
+              <ActivityIndicator />
+            ) : (
+              <EmptyList
+                SVGElement={SVGVoid}
+                primaryText={`No matching users for "${searchPhrase}"`}
+                secondaryText="Try searching again using a different spelling"
+              />
+            )
           }
         />
       ),
@@ -123,25 +134,29 @@ export default function Search() {
           keyExtractor={(item) => `${item.courseId}`}
           onEndReached={() => handleSearchCourses(searchPhrase)}
           onEndReachedThreshold={0}
-          refreshing={refreshing}
+          refreshing={coursesRefreshing}
           contentContainerStyle={{
             flexGrow: 1,
             paddingHorizontal: Layout.spacing.medium,
           }}
           ListEmptyComponent={
-            <EmptyList
-              SVGElement={searchPhrase != "" ? SVGVoid : SVGCourseSearch}
-              primaryText={
-                searchPhrase != ""
-                  ? 'No matching courses for "' + searchPhrase + '"'
-                  : "Find courses"
-              }
-              secondaryText={
-                searchPhrase != ""
-                  ? "Try searching again using a different spelling or keyword"
-                  : "Search by code or name\n(e.g. SOC1, SOC 1, or\nIntroduction to Sociology)"
-              }
-            />
+            coursesRefreshing ? (
+              <ActivityIndicator />
+            ) : (
+              <EmptyList
+                SVGElement={searchPhrase != "" ? SVGVoid : SVGCourseSearch}
+                primaryText={
+                  searchPhrase != ""
+                    ? 'No matching courses for "' + searchPhrase + '"'
+                    : "Find courses"
+                }
+                secondaryText={
+                  searchPhrase != ""
+                    ? "Try searching again using a different spelling or keyword"
+                    : "Search by code or name\n(e.g. SOC1, SOC 1, or\nIntroduction to Sociology)"
+                }
+              />
+            )
           }
         />
       ),
