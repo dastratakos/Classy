@@ -223,7 +223,7 @@ export default function Profile() {
     },
     {
       label: "Courses",
-      component: <EnrollmentList enrollments={enrollments} />,
+      component: <EnrollmentList enrollments={enrollments} emptyPrimary="No courses" emptySecondary="Add some from the search tab, or explore your friends' courses!" />,
     },
   ];
 

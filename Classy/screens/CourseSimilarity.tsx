@@ -25,8 +25,11 @@ export default function CourseSimilarity({ route }: CourseSimilarityProps) {
           )}% course similarity`}
           containerStyle={{ marginVertical: Layout.spacing.medium }}
         />
-        <Text style={styles.title}>Overlapping courses</Text>
-        <EnrollmentList enrollments={route.params.overlap} />
+        {route.params.overlap.length > 0 && <Text style={styles.title}>Overlapping courses</Text>}
+        <EnrollmentList
+          enrollments={route.params.overlap}
+          emptyPrimary="No overlapping courses"
+        />
       </View>
     </ScrollView>
   );

@@ -313,7 +313,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     },
     {
       label: "Courses",
-      component: <EnrollmentList enrollments={enrollments} />,
+      component: <EnrollmentList enrollments={enrollments} emptyPrimary="No Courses" />,
     },
   ];
 

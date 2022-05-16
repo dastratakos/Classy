@@ -20,6 +20,10 @@ export default function Enrollments({ route }: EnrollmentsProps) {
 
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
 
+  const context = useContext(AppContext);
+
+  const myEnrollment = context.user.id == route.params.userId;
+
   useEffect(() => {
     const loadScreen = async () => {
       setEnrollments(
@@ -39,7 +43,7 @@ export default function Enrollments({ route }: EnrollmentsProps) {
           {termIdToFullName(route.params.termId)}
         </Text>
         <View style={AppStyles.section}>
-          <EnrollmentList enrollments={enrollments} />
+          <EnrollmentList enrollments={enrollments} emptyPrimary="No courses" emptySecondary={myEnrollment ? "Add some from the search tab, or explore your friends' courses!" : ""}/>
         </View>
       </ScrollView>
       <View style={styles.ctaContainer}>
