@@ -15,6 +15,7 @@ import CourseCard from "../components/Cards/CourseCard";
 import Layout from "../constants/Layout";
 import { getFriendIds, getNumFriendInCourse } from "../services/friends";
 import Colors from "../constants/Colors";
+import EmptyList from "../components/EmptyList";
 
 export default function Search() {
   const context = useContext(AppContext);
@@ -94,6 +95,7 @@ export default function Search() {
             flexGrow: 1,
             paddingHorizontal: Layout.spacing.medium,
           }}
+          ListEmptyComponent={<EmptyList primaryText={"No matching users for \"" + searchPhrase + "\""} secondaryText="Try searching again using a different spelling"/>}
         />
       ),
     },
@@ -118,6 +120,7 @@ export default function Search() {
             flexGrow: 1,
             paddingHorizontal: Layout.spacing.medium,
           }}
+          ListEmptyComponent={<EmptyList primaryText={searchPhrase!="" ? "No matching courses for \"" + searchPhrase + "\"" : "Find courses"} secondaryText={searchPhrase!="" ? "Try searching again using a different spelling or keyword" : "Search by code or name\ne.g. SOC1, SOC 1, or Introduction to Sociology"}/>}
         />
       ),
     },
