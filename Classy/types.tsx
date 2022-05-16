@@ -16,7 +16,7 @@ import { Timestamp } from "firebase/firestore";
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList { }
+    interface RootParamList extends RootStackParamList {}
   }
 }
 
@@ -107,13 +107,15 @@ export type DaySchedule = { day: Day; events: Event[] };
 
 export type WeekSchedule = DaySchedule[];
 
-export type HomeData = {
+export type CourseOverview = {
   enrollment: Enrollment;
   friends: User[];
   startInfo: Timestamp;
   endInfo: Timestamp;
   component: string;
-}[]
+};
+
+export type HomeData = { today: CourseOverview[]; nextUp: CourseOverview[] };
 
 export type RootStackParamList = {
   AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;
@@ -186,7 +188,7 @@ export type ProfileStackParamList = {
 
 export type ProfileStackScreenProps<
   Screen extends keyof ProfileStackParamList
-  > = NativeStackScreenProps<ProfileStackParamList>;
+> = NativeStackScreenProps<ProfileStackParamList>;
 
 export type SearchStackParamList = {
   Search: undefined;

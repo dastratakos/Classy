@@ -1,31 +1,22 @@
-import { Enrollment, User } from "../types";
 import { FlatList, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "./Themed";
 import { componentToName, getTimeString } from "../utils";
 
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
+import { CourseOverview } from "../types";
 import Layout from "../constants/Layout";
 import Modal from "react-native-modal";
 import ProfilePhoto from "../components/ProfilePhoto";
-import { Timestamp } from "firebase/firestore";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
 export default function CourseOverviewModal({
-  enrollment,
-  friends,
-  startInfo,
-  endInfo,
-  component,
+  data,
   visible,
   setVisible,
 }: {
-  enrollment: Enrollment;
-  friends: User[];
-  startInfo: Timestamp;
-  endInfo: Timestamp;
-  component: string;
+  data: CourseOverview;
   visible: boolean;
   setVisible: (arg0: boolean) => void;
 }) {
@@ -43,13 +34,13 @@ export default function CourseOverviewModal({
           ]}
         >
           <Text style={styles.code}>
-            {enrollment.code.join(", ")}{" "}
-            {component && componentToName(component)}
+            {data.enrollment.code.join(", ")}{" "}
+            {data.component && componentToName(data.component)}
           </Text>
           <Text style={{ marginTop: Layout.spacing.xxsmall }}>
             {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
-            {getTimeString(startInfo, "Africa/Casablanca")} -{" "}
-            {getTimeString(endInfo, "America/Danmarkshavn")}
+            {getTimeString(data.startInfo, "Africa/Casablanca")} -{" "}
+            {getTimeString(data.endInfo, "America/Danmarkshavn")}
           </Text>
           <Text
             style={{
@@ -58,7 +49,7 @@ export default function CourseOverviewModal({
               alignSelf: "center",
             }}
           >
-            Class Friends ({friends.length})
+            Class Friends ({data.friends.length})
           </Text>
 
           <View
@@ -69,7 +60,7 @@ export default function CourseOverviewModal({
             }}
           >
             <FlatList
-              data={friends}
+              data={data.friends}
               renderItem={({ item }) => (
                 <View
                   style={[

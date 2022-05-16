@@ -5,10 +5,10 @@ import useColorScheme from "../hooks/useColorScheme";
 import Colors from "../constants/Colors";
 
 export default function EmptyList({
-  primaryText,
+  primaryText = "",
   secondaryText = "",
 }: {
-  primaryText: string;
+  primaryText?: string;
   secondaryText?: string;
 }) {
   const colorScheme = useColorScheme();
@@ -16,7 +16,11 @@ export default function EmptyList({
   return (
     <View style={styles.container}>
       <Text style={styles.primary}>{primaryText}</Text>
-      <Text style={[styles.secondary, {color: Colors[colorScheme].secondaryText}]}>{secondaryText}</Text>
+      <Text
+        style={[styles.secondary, { color: Colors[colorScheme].secondaryText }]}
+      >
+        {secondaryText}
+      </Text>
     </View>
   );
 }
@@ -27,6 +31,7 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "transparent",
   },
   primary: {
     fontSize: Layout.text.large,
@@ -35,6 +40,6 @@ const styles = StyleSheet.create({
   secondary: {
     fontSize: Layout.text.medium,
     padding: Layout.spacing.xsmall,
-    textAlign: "center"
+    textAlign: "center",
   },
 });

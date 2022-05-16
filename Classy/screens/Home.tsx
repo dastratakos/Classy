@@ -1,46 +1,46 @@
+import { CourseOverview as CourseOverviewType, HomeData } from "../types";
 import {
   Pressable,
   RefreshControl,
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { Text, View } from "../components/Themed";
+import { ActivityIndicator, Text, View } from "../components/Themed";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import CourseOverview from "../components/Cards/CourseOverview";
-import { HomeData } from "../types";
+import EmptyList from "../components/EmptyList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
-import { Timestamp } from "firebase/firestore";
-import dummyData from "./homeData";
+import Separator from "../components/Separator";
 import { getCurrentTermId } from "../utils";
 import { getEnrollmentsForTerm } from "../services/enrollments";
 import { getFriendsInCourse } from "../services/friends";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { Timestamp } from "firebase/firestore";
 
 export default function Home() {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
 
-  const [homeData, setHomeData] = useState<HomeData>([]);
+  const [homeData, setHomeData] = useState<HomeData>({ today: [], nextUp: [] });
 
   const [refreshing, setRefreshing] = useState<boolean>(true);
 
-  // Dean, I had to get rid of the -1 ? or else it thought my "today" was -1
   const today = Timestamp.now().toDate().getDay();
   const daysOfWeek = [
+    "Sunday",
     "Monday",
     "Tuesday",
     "Wednesday",
     "Thursday",
     "Friday",
     "Saturday",
-    "Sunday",
   ];
 
   useEffect(() => {
@@ -55,7 +55,8 @@ export default function Home() {
       getCurrentTermId()
     );
 
-    let homeDataArr = [];
+    let todayArr: CourseOverviewType[] = [];
+    let nextUpArr: CourseOverviewType[] = [];
     for (let enrollment of res) {
       const friends = await getFriendsInCourse(
         context.user.id,
@@ -65,40 +66,32 @@ export default function Home() {
 
       for (let schedule of enrollment.schedules) {
         if (schedule.days.includes(daysOfWeek[today])) {
-          const component = schedule.component;
-          const startInfo = schedule.startInfo;
-          const endInfo = schedule.endInfo;
-          homeDataArr.push({
+          todayArr.push({
             enrollment,
             friends,
-            startInfo,
-            endInfo,
-            component,
+            startInfo: schedule.startInfo,
+            endInfo: schedule.endInfo,
+            component: schedule.component,
+          });
+        }
+        if (schedule.days.includes(daysOfWeek[today < 5 ? today + 1 : 1])) {
+          nextUpArr.push({
+            enrollment,
+            friends,
+            startInfo: schedule.startInfo,
+            endInfo: schedule.endInfo,
+            component: schedule.component,
           });
         }
       }
     }
-    homeDataArr.sort((a, b) => a.startInfo > b.startInfo);
-    setHomeData(homeDataArr);
-
-    // let dummyDataArr = [];
-    // for (let object of dummyData) {
-    //   const enrollment = object.enrollment;
-    //   const friends = object.friends;
-    //   for (let schedule of enrollment.schedules) {
-    //     if (schedule.days.includes(daysOfWeek[today])) {
-    //       const component = schedule.component;
-    //       const startInfo = schedule.startInfo;
-    //       const endInfo = schedule.endInfo;
-    //       dummyDataArr.push({ enrollment, friends, startInfo, endInfo, component });
-    //     };
-    //   };
-    // };
-
-    // setHomeData(dummyDataArr);
+    todayArr.sort((a, b) => (a.startInfo > b.startInfo ? 1 : -1));
+    nextUpArr.sort((a, b) => (a.startInfo > b.startInfo ? 1 : -1));
+    setHomeData({ today: todayArr, nextUp: nextUpArr });
 
     setRefreshing(false);
   };
+
   return (
     <ScrollView
       style={{ backgroundColor: Colors[colorScheme].background }}
@@ -133,18 +126,49 @@ export default function Home() {
             </Pressable>
           </View>
         </View>
-        <View>
-          {homeData.map((item) => (
-            <CourseOverview
-              key={`${item.enrollment.courseId}`}
-              enrollment={item.enrollment}
-              friends={item.friends}
-              startInfo={item.startInfo}
-              endInfo={item.endInfo}
-              component={item.component}
-            />
-          ))}
-        </View>
+      </View>
+      <View style={AppStyles.section}>
+        {homeData.today.map((item) => (
+          <CourseOverview key={`${item.enrollment.courseId}`} data={item} />
+        ))}
+        {homeData.today.length === 0 && (
+          <>
+            {refreshing ? (
+              <ActivityIndicator />
+            ) : (
+              <EmptyList
+                primaryText="No classes"
+                secondaryText="Enjoy the day off!"
+              />
+            )}
+          </>
+        )}
+      </View>
+      <Separator />
+      <View style={AppStyles.section}>
+        <Text style={styles.subtitle}>
+          <Text>Up next on </Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {daysOfWeek[today < 5 ? today + 1 : 1]}
+          </Text>
+        </Text>
+      </View>
+      <View style={AppStyles.section}>
+        {homeData.nextUp.map((item) => (
+          <CourseOverview key={`${item.enrollment.courseId}`} data={item} />
+        ))}
+        {homeData.nextUp.length === 0 && (
+          <>
+            {refreshing ? (
+              <ActivityIndicator />
+            ) : (
+              <EmptyList
+                primaryText="No classes"
+                secondaryText="Enjoy the day off!"
+              />
+            )}
+          </>
+        )}
       </View>
     </ScrollView>
   );

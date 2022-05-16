@@ -30,13 +30,11 @@ export default function EnrollmentModal({
 
   const onEdit = () => {
     setVisible(false);
-    console.log("onEdit");
     navigation.navigate("EditCourse", { enrollment });
   };
 
   const onViewMore = async () => {
     setVisible(false);
-    console.log("onViewMore");
     const course = await getCourse(enrollment.courseId);
     navigation.navigate("Course", { course });
   };

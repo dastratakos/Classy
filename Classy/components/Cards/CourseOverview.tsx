@@ -1,4 +1,3 @@
-import { Enrollment, User } from "../../types";
 import { Pressable, StyleSheet } from "react-native";
 import { Text, View } from "../Themed";
 import { componentToName, getTimeString } from "../../utils";
@@ -6,27 +5,20 @@ import { componentToName, getTimeString } from "../../utils";
 import AppStyles from "../../styles/AppStyles";
 import Colors from "../../constants/Colors";
 import CourseOverviewModal from "../CourseOverviewModal";
+import { CourseOverview as CourseOverviewType } from "../../types";
 import Layout from "../../constants/Layout";
 import ProfilePhoto from "../ProfilePhoto";
-import { Timestamp } from "firebase/firestore";
 import useColorScheme from "../../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { useState } from "react";
+import EmptyList from "../EmptyList";
 
 export default function CourseOverview({
   key,
-  enrollment,
-  friends,
-  startInfo,
-  endInfo,
-  component,
+  data,
 }: {
   key: string;
-  enrollment: Enrollment;
-  friends: User[];
-  startInfo: Timestamp;
-  endInfo: Timestamp;
-  component: string;
+  data: CourseOverviewType;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -36,27 +28,19 @@ export default function CourseOverview({
   return (
     <View key={key}>
       <CourseOverviewModal
-        enrollment={enrollment}
-        friends={friends}
-        startInfo={startInfo}
-        endInfo={endInfo}
-        component={component}
+        data={data}
         visible={modalVisible}
         setVisible={setModalVisible}
       />
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: Colors.pink },
-        ]}
-      >
+      <View style={[styles.container, { backgroundColor: Colors.pink }]}>
         <Text style={styles.code}>
-          {enrollment.code.join(", ")} {component && componentToName(component)}
+          {data.enrollment.code.join(", ")}{" "}
+          {data.component && componentToName(data.component)}
         </Text>
         <Text style={{ marginTop: Layout.spacing.xxsmall }}>
           {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
-          {getTimeString(startInfo, "Africa/Casablanca")} -{" "}
-          {getTimeString(endInfo, "America/Danmarkshavn")}
+          {getTimeString(data.startInfo, "Africa/Casablanca")} -{" "}
+          {getTimeString(data.endInfo, "America/Danmarkshavn")}
         </Text>
         <Text
           style={{
@@ -65,13 +49,11 @@ export default function CourseOverview({
             alignSelf: "center",
           }}
         >
-          Class Friends ({friends.length})
+          Class Friends ({data.friends.length})
         </Text>
-        <View
-          style={{ backgroundColor: "transparent"}}
-        >
-          {friends.length > 0 &&
-            friends.slice(0, 3).map((item) => (
+        <View style={{ backgroundColor: "transparent" }}>
+          {data.friends.length > 0 &&
+            data.friends.slice(0, 3).map((item) => (
               <View
                 key={item.id}
                 style={[
@@ -105,15 +87,18 @@ export default function CourseOverview({
                 </Pressable>
               </View>
             ))}
-          {friends.length === 0 && (
-            <Text
-              style={{ alignSelf: "center", marginTop: Layout.spacing.small }}
+          {data.friends.length === 0 && (
+            <View
+              style={{
+                marginTop: Layout.spacing.small,
+                backgroundColor: "transparent",
+              }}
             >
-              No friends in this class yet!
-            </Text>
+              <EmptyList primaryText="No friends in this class yet!" />
+            </View>
           )}
         </View>
-        {friends.length > 3 && (
+        {data.friends.length > 3 && (
           <Pressable onPress={() => setModalVisible(true)}>
             <Text
               style={{
