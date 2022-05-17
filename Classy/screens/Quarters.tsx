@@ -57,7 +57,7 @@ export default function Quarters({ route }: QuartersProps) {
                       /* Summer term with no units. */
                       if (parseInt(termId) % 10 === 8 && numUnits === 0)
                         return null;
-
+                      const color = numUnits > 0 ? quarterColors.get(termIdToQuarterName(termId)) : {};
                       return (
                         <View style={styles.termButton} key={termId}>
                           <QuarterButton
@@ -69,7 +69,7 @@ export default function Quarters({ route }: QuartersProps) {
                                 termId,
                               })
                             }
-                            color={quarterColors.get(termIdToQuarterName(termId))}
+                            color={color}
                           />
                           {editMode && (
                             <View style={styles.minusButton}>
