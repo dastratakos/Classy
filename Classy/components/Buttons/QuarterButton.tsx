@@ -13,6 +13,7 @@ export default function QuarterButton({
   disabled = false,
   loading = false,
   emphasized = false,
+  color,
 }: {
   num: string;
   text: string;
@@ -20,6 +21,7 @@ export default function QuarterButton({
   disabled?: boolean;
   loading?: boolean;
   emphasized?: boolean;
+  color?: Object;
 }) {
   const colorScheme = useColorScheme();
 
@@ -33,7 +35,7 @@ export default function QuarterButton({
       >
         <Text style={styles.text}>{text}</Text>
         <View
-          style={[styles.unitContainer, { backgroundColor: "transparent" }]}
+          style={styles.unitContainer}
         >
           <Text style={styles.number}>{num}</Text>
           <Text style={styles.unitsText}>Units</Text>
@@ -68,7 +70,7 @@ export default function QuarterButton({
             {text}
           </Text>
           <View
-            style={[styles.unitContainer, { backgroundColor: "transparent" }]}
+            style={styles.unitContainer}
           >
             <Text
               style={[styles.number, { color: Colors[colorScheme].background }]}
@@ -82,11 +84,11 @@ export default function QuarterButton({
     );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, color]}>
       <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
         <Text style={styles.text}>{text}</Text>
         <View
-          style={[styles.unitContainer, { backgroundColor: "transparent" }]}
+          style={styles.unitContainer}
         >
           <Text style={styles.number}>{num}</Text>
           <Text style={styles.unitsText}>Units</Text>
@@ -105,7 +107,7 @@ const styles = StyleSheet.create({
   innerContainer: {
     width: "100%",
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     borderRadius: Layout.radius.medium,
     justifyContent: "space-around",
     alignItems: "center",
@@ -115,6 +117,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    backgroundColor: "transparent"
   },
   number: {
     fontSize: Layout.text.xlarge,
@@ -123,6 +126,6 @@ const styles = StyleSheet.create({
     fontSize: Layout.text.small,
   },
   text: {
-    fontSize: Layout.text.large,
+    fontSize: Layout.text.medium,
   },
 });

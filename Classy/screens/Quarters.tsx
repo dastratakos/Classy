@@ -22,6 +22,12 @@ export default function Quarters({ route }: QuartersProps) {
 
   if (!route.params.user.terms) return null;
 
+  const quarterColors = new Map([
+    ["Aut", {backgroundColor: Colors.deepRed}],
+    ["Win", {backgroundColor: Colors.green}],
+    ["Spr", {backgroundColor: Colors.yellow}],
+    ["Sum", {backgroundColor: Colors.lightBlue}]
+  ])
   return (
     <>
       <ScrollView
@@ -63,6 +69,7 @@ export default function Quarters({ route }: QuartersProps) {
                                 termId,
                               })
                             }
+                            color={quarterColors.get(termIdToQuarterName(termId))}
                           />
                           {editMode && (
                             <View style={styles.minusButton}>
@@ -153,8 +160,8 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   termButton: {
-    width: "30%",
-    marginVertical: Layout.spacing.small,
+    width: "22%",
+    marginBottom: Layout.spacing.small,
     backgroundColor: "transparent",
   },
   ctaContainer: {
