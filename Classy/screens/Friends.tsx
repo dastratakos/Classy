@@ -34,7 +34,7 @@ export default function Friends({ route }: FriendsProps) {
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={AppStyles.section}>
-        <FriendList friends={friends} />
+        <FriendList friends={friends} emptyPrimary="No friends yet" requests={false} />
       </View>
     </ScrollView>
   );

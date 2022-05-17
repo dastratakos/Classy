@@ -182,7 +182,9 @@ export default function Settings() {
           wide
         />
       )}
-      <Separator />
+      <Separator overrideStyles={{
+          marginTop: Layout.spacing.large,
+        }}/>
       <KeyboardAvoidingView style={styles.inputContainer}>
         {errorMessage ? (
           <Text style={AppStyles.errorText}>{errorMessage}</Text>
@@ -246,14 +248,20 @@ export default function Settings() {
         />
       </KeyboardAvoidingView>
       <Button text="Change Password" onPress={handleUpdatePassword} wide />
-      <Separator />
-      <Button text="Delete Account" onPress={deleteAccountAlert} wide />
-      <Separator />
+      <Separator overrideStyles={{
+          marginTop: Layout.spacing.large,
+          marginBottom: Layout.spacing.large,
+        }}/>
+      <Button text="Delete Account" onPress={deleteAccountAlert} wide textStyle={{color: Colors.pink}} />
+      <Separator overrideStyles={{
+          marginTop: Layout.spacing.large,
+          marginBottom: Layout.spacing.large,
+        }}/>
       <Button
         text="Log Out"
         onPress={handleSignOut}
         wide
-        textStyle={{ color: Colors.pink }}
+        containerStyle={{backgroundColor: Colors.pink}}
       />
     </ScrollView>
   );
