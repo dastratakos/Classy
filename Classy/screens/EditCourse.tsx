@@ -2,7 +2,7 @@ import * as Haptics from "expo-haptics";
 
 import { ActivityIndicator, Text, View } from "../components/Themed";
 import { Course, EditCourseProps, Schedule } from "../types";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { termIdToName } from "../utils";
 import { useContext, useEffect, useState } from "react";
 
@@ -39,6 +39,8 @@ export default function EditCourse({ route }: EditCourseProps) {
 
   useEffect(() => {
     const loadScreen = async () => {
+      context.setSelectedColor(enrollment.color || Colors.pink);
+
       const course = await getCourse(enrollment.courseId);
       setCourse(course);
 
@@ -63,6 +65,31 @@ export default function EditCourse({ route }: EditCourseProps) {
 
     loadScreen();
   }, []);
+
+  const handleSavePressed = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    setSaveLoading(true);
+
+    /* Build schedulesList. */
+    let schedulesList: Schedule[] = [];
+    selectedScheduleIndices.forEach((i) =>
+      schedulesList.push(terms[`${context.selectedTerm}`][i])
+    );
+
+    await updateEnrollment(
+      enrollment,
+      context.selectedColor || Colors.pink,
+      grading,
+      schedulesList,
+      context.selectedTerm,
+      selectedUnits,
+      context.user.id
+    );
+
+    setSaveLoading(false);
+    navigation.goBack();
+  };
 
   const Schedules = () => {
     if (context.selectedTerm === "") return null;
@@ -99,30 +126,6 @@ export default function EditCourse({ route }: EditCourseProps) {
     );
   };
 
-  const handleSavePressed = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-
-    setSaveLoading(true);
-
-    /* Build schedulesList. */
-    let schedulesList: Schedule[] = [];
-    selectedScheduleIndices.forEach((i) =>
-      schedulesList.push(terms[`${context.selectedTerm}`][i])
-    );
-
-    await updateEnrollment(
-      enrollment,
-      grading,
-      schedulesList,
-      context.selectedTerm,
-      selectedUnits,
-      context.user.id
-    );
-
-    setSaveLoading(false);
-    navigation.goBack();
-  };
-
   if (loading) return <ActivityIndicator />;
 
   return (
@@ -134,6 +137,19 @@ export default function EditCourse({ route }: EditCourseProps) {
         <View style={AppStyles.section}>
           <Text style={styles.title}>{course.code.join(", ")}</Text>
           <Text style={styles.title}>{course.title}</Text>
+          <View style={styles.row}>
+            <Text style={styles.subheading}>Color</Text>
+            <TouchableOpacity
+              style={[
+                styles.colorPicker,
+                { backgroundColor: context.selectedColor },
+              ]}
+              onPress={() => {
+                setSaveDisabled(false);
+                navigation.navigate("SelectColor");
+              }}
+            />
+          </View>
           <View style={styles.row}>
             <Text style={styles.subheading}>Quarter</Text>
             <Button
@@ -270,6 +286,12 @@ const styles = StyleSheet.create({
   },
   subheading: {
     fontSize: Layout.text.large,
+  },
+  colorPicker: {
+    ...AppStyles.boxShadow,
+    height: Layout.buttonHeight.medium,
+    width: 2 * Layout.buttonHeight.medium,
+    borderRadius: Layout.radius.medium,
   },
   gradingBasisWrap: {
     marginVertical: Layout.spacing.medium,

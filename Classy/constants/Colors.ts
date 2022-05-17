@@ -1,9 +1,9 @@
 const palette = {
   lightRed: "#ff6863",
   red: "#ff3742",
-  yellow: "#ffd670",
   deepRed: "#cb202d",
   pink: "#ef476f",
+  yellow: "#ffd670",
   green: "#20e070",
   lightBlue: "#33c5ff",
   black: "#000000",
@@ -60,3 +60,20 @@ export default {
   pink: palette.pink,
   yellow: palette.yellow,
 };
+
+export const enrollmentColors = [
+  // "#E64C66",
+  palette.pink,
+  palette.deepRed,
+  "#E0A458",
+  // "#FFD166",
+  palette.yellow,
+  "#06D6A0",
+  // "#58FCEC",
+  palette.lightBlue,
+  "#5E72EB",
+  "#DEC0F1",
+  "#8783D1",
+  "#5B4587",
+  "#858585",
+];

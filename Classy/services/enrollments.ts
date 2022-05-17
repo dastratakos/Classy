@@ -108,6 +108,7 @@ export const addEnrollment = async (
 
 export const updateEnrollment = async (
   oldEnrollment: Enrollment,
+  color: string,
   grading: string,
   schedules: Schedule[],
   termId: string,
@@ -116,6 +117,7 @@ export const updateEnrollment = async (
 ) => {
   /* 1. Update doc in enrollments collection. */
   const data = {
+    color,
     grading,
     schedules,
     termId,

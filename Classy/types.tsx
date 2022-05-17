@@ -59,6 +59,7 @@ export type Enrollment = {
   title: string;
   units: number; // Chosen number of units
   userId: string;
+  color: string;
 };
 
 export type Term = {
@@ -146,6 +147,7 @@ export type RootStackParamList = {
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
   Quarters: { user: User };
+  SelectColor: undefined;
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
   Friends: { id: string };
@@ -179,6 +181,7 @@ export type ProfileStackParamList = {
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
   Quarters: { user: User };
+  SelectColor: undefined;
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
   Friends: { id: string };
@@ -199,6 +202,7 @@ export type SearchStackParamList = {
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
   Quarters: { user: User };
+  SelectColor: undefined;
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
   Friends: { id: string };
@@ -326,6 +330,8 @@ export type Context = {
   setThread: (arg0: MessageType) => void;
   selectedTerm: string;
   setSelectedTerm: (arg0: string) => void;
+  selectedColor: string;
+  setSelectedColor: (arg0: string) => void;
 };
 
 // Stream Chat

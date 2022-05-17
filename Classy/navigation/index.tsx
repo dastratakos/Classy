@@ -20,6 +20,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import AuthStackNavigator from "./AuthStackNavigator";
 import ManageAccount from "../screens/ManageAccount";
 import SearchStackNavigator from "./SearchStackNavigator";
+import SelectColor from "../screens/SelectColor";
 import SelectQuarter from "../screens/SelectQuarter";
 import Layout from "../constants/Layout";
 
@@ -73,6 +74,11 @@ function RootNavigator() {
           name="SelectQuarter"
           component={SelectQuarter}
           options={{ title: "Select Quarter" }}
+        />
+        <Stack.Screen
+          name="SelectColor"
+          component={SelectColor}
+          options={{ title: "Select Color" }}
         />
       </Stack.Group>
     </Stack.Navigator>

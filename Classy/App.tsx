@@ -26,6 +26,7 @@ export default function App() {
   const [channelName, setChannelName] = useState();
   const [thread, setThread] = useState();
   const [selectedTerm, setSelectedTerm] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
 
   const globalVariables = {
     user,
@@ -42,6 +43,8 @@ export default function App() {
     setThread,
     selectedTerm,
     setSelectedTerm,
+    selectedColor,
+    setSelectedColor
   };
 
   const isLoadingComplete = useCachedResources();

@@ -54,7 +54,12 @@ export default function CalendarEvent({
         editable={event.enrollment.userId === context.user.id}
       />
       <View style={[styles.leftPadding, { width: 45 + leftIndent }]} />
-      <View style={[styles.event, { height }]}>
+      <View
+        style={[
+          styles.event,
+          { height, backgroundColor: event.enrollment.color || Colors.pink },
+        ]}
+      >
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <Text style={styles.titleText}>{event.title}</Text>
           {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
@@ -84,7 +89,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: Layout.spacing.small,
     flex: 1,
     borderRadius: Layout.radius.xsmall,
-    backgroundColor: Colors.pink,
     overflow: "hidden",
     opacity: 0.9,
   },

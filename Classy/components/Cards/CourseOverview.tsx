@@ -32,7 +32,12 @@ export default function CourseOverview({
         visible={modalVisible}
         setVisible={setModalVisible}
       />
-      <View style={[styles.container, { backgroundColor: Colors.pink }]}>
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: data.enrollment.color || Colors.pink },
+        ]}
+      >
         <Text style={styles.code}>
           {data.enrollment.code.join(", ")}{" "}
           {data.component && componentToName(data.component)}
