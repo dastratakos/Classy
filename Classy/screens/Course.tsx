@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
     fontSize: Layout.text.large,
     fontWeight: "500",
     marginVertical: Layout.spacing.xxsmall,
+    textAlign: "center"
   },
   term: {
     fontSize: Layout.text.medium,
