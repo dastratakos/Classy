@@ -1,5 +1,5 @@
-import { Pressable, StyleSheet, ScrollView } from "react-native";
-import { Text, View } from "./Themed";
+import { FlatList, Pressable, StyleSheet } from "react-native";
+import { Icon, Text, View } from "./Themed";
 import { getTimeString, termIdToFullName } from "../utils";
 
 import AppStyles from "../styles/AppStyles";
@@ -11,7 +11,6 @@ import Modal from "react-native-modal";
 import { getCourse } from "../services/courses";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { FlatList } from "react-native-gesture-handler";
 
 export default function EnrollmentModal({
   enrollment,
@@ -42,115 +41,118 @@ export default function EnrollmentModal({
 
   return (
     <Modal isVisible={visible}>
-      <Pressable style={styles.container} onPress={() => setVisible(false)}>
-        <Pressable
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: Colors[colorScheme].cardBackground },
+        ]}
+      >
+        <View style={styles.titleRow}>
+          <Text style={styles.codes}>{enrollment.code.join(", ")}</Text>
+          <Pressable style={{}} onPress={() => setVisible(false)}>
+            <Icon name="close" size={Layout.icon.medium} />
+          </Pressable>
+        </View>
+        <Text
           style={[
-            styles.modalView,
-            { backgroundColor: Colors[colorScheme].cardBackground },
+            styles.title,
+            {
+              color: Colors[colorScheme].secondaryText,
+            },
           ]}
         >
-          <Text style={styles.codes}>{enrollment.code.join(", ")}</Text>
-          <Text
-            style={[
-              styles.title,
-              {
-                color: Colors[colorScheme].secondaryText,
-              },
-            ]}
-          >
-            {enrollment.title}
+          {enrollment.title}
+        </Text>
+        <View style={styles.textwrap}>
+          <Text style={styles.descrip}>Quarter: </Text>
+          <Text style={[styles.descrip, { fontWeight: "500" }]}>
+            {termIdToFullName(enrollment.termId)}
           </Text>
-          <View style={styles.textwrap}>
-            <Text style={styles.descrip}>Quarter: </Text>
-            <Text style={[styles.descrip, { fontWeight: "500" }]}>
-              {termIdToFullName(enrollment.termId)}
-            </Text>
-          </View>
-          <View style={styles.textwrap}>
-            <Text style={styles.descrip}>Units: </Text>
-            <Text style={[styles.descrip, { fontWeight: "500" }]}>
-              {enrollment.units}
-            </Text>
-          </View>
-          <View style={styles.textwrap}>
-            <Text style={styles.descrip}>Class Times: </Text>
-          </View>
+        </View>
+        <View style={styles.textwrap}>
+          <Text style={styles.descrip}>Units: </Text>
+          <Text style={[styles.descrip, { fontWeight: "500" }]}>
+            {enrollment.units}
+          </Text>
+        </View>
+        <View style={styles.textwrap}>
+          <Text style={styles.descrip}>Class Times: </Text>
+        </View>
 
-          {enrollment.schedules.length > 5 ? (
-            <FlatList
-              data={enrollment.schedules}
-              style={{ height: 100 }}
-              keyExtractor={(_, index) => index.toString()}
-              renderItem={({ item }) => (
-                <Text style={styles.schedText}>
-                  {item.days.join(", ")}{" "}
-                  {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
-                  {getTimeString(item.startInfo, "Africa/Casablanca")} -{" "}
-                  {getTimeString(item.endInfo, "America/Danmarkshavn")}
-                </Text>
-              )}
-            />
-          ) : (
-            <View style={styles.classTimesWrap}>
-              {enrollment.schedules.map((schedule, i) => (
-                <Text style={styles.schedText}>
-                  {schedule.days.join(", ")}{" "}
-                  {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
-                  {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
-                  {getTimeString(schedule.endInfo, "America/Danmarkshavn")}
-                </Text>
-              ))}
-            </View>
-          )}
+        {enrollment.schedules.length > 5 ? (
+          <FlatList
+            data={enrollment.schedules}
+            style={{ width: "100%", maxHeight: 200 }}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item }) => (
+              <Text style={styles.schedText}>
+                {item.days.join(", ")}{" "}
+                {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
+                {getTimeString(item.startInfo, "Africa/Casablanca")} -{" "}
+                {getTimeString(item.endInfo, "America/Danmarkshavn")}
+              </Text>
+            )}
+          />
+        ) : (
+          <View style={styles.classTimesWrap}>
+            {enrollment.schedules.map((schedule, i) => (
+              <Text style={styles.schedText} key={i}>
+                {schedule.days.join(", ")}{" "}
+                {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
+                {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
+                {getTimeString(schedule.endInfo, "America/Danmarkshavn")}
+              </Text>
+            ))}
+          </View>
+        )}
 
-          {editable ? (
-            <View style={styles.buttonwrap}>
-              <View style={styles.buttonbox}>
-                <Button text="Edit" onPress={onEdit} emphasized />
-              </View>
-              <View
-                style={[
-                  styles.buttonbox,
-                  { paddingHorizontal: Layout.spacing.small },
-                ]}
-              >
-                <Button
-                  text="View More"
-                  onPress={onViewMore}
-                  containerStyle={{
-                    backgroundColor: Colors[colorScheme].background,
-                  }}
-                />
-              </View>
-              <View style={styles.buttonbox}>
-                <Button
-                  text="Delete"
-                  onPress={deleteFunc}
-                  containerStyle={{ backgroundColor: Colors.pink }}
-                  textStyle={{ color: Colors.white }}
-                />
-              </View>
+        {editable ? (
+          <View style={styles.buttonwrap}>
+            <View style={styles.buttonbox}>
+              <Button text="Edit" onPress={onEdit} emphasized />
             </View>
-          ) : (
-            <View style={styles.wideButtonWrap}>
-              <Button wide emphasized text="View More" onPress={onViewMore} />
+            <View
+              style={[
+                styles.buttonbox,
+                { paddingHorizontal: Layout.spacing.small },
+              ]}
+            >
+              <Button
+                text="View More"
+                onPress={onViewMore}
+                containerStyle={{
+                  backgroundColor: Colors[colorScheme].background,
+                }}
+              />
             </View>
-          )}
-        </Pressable>
-      </Pressable>
+            <View style={styles.buttonbox}>
+              <Button
+                text="Delete"
+                onPress={deleteFunc}
+                containerStyle={{ backgroundColor: Colors.pink }}
+                textStyle={{ color: Colors.white }}
+              />
+            </View>
+          </View>
+        ) : (
+          <View style={styles.wideButtonWrap}>
+            <Button wide emphasized text="View More" onPress={onViewMore} />
+          </View>
+        )}
+      </View>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  modalView: {
     ...AppStyles.boxShadow,
     borderRadius: Layout.radius.large,
     padding: Layout.spacing.large,
+    alignItems: "flex-start",
+  },
+  titleRow: {
+    ...AppStyles.row,
     alignItems: "flex-start",
   },
   codes: {

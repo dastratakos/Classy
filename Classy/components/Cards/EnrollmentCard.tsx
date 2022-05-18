@@ -13,12 +13,10 @@ import AppContext from "../../context/Context";
 
 export default function EnrollmentCard({
   enrollment,
-  key,
   numFriends = 0,
   emphasize = false,
 }: {
   enrollment: Enrollment;
-  key: string;
   numFriends?: number;
   emphasize?: boolean;
 }) {
@@ -46,7 +44,7 @@ export default function EnrollmentCard({
   };
 
   return (
-    <View key={key}>
+    <View>
       <EnrollmentModal
         enrollment={enrollment}
         deleteFunc={deleteEnrollmentAlert}

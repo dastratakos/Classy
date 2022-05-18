@@ -1,6 +1,7 @@
+import EmptyList from "../EmptyList";
 import { Enrollment } from "../../types";
 import EnrollmentCard from "../Cards/EnrollmentCard";
-import EmptyList from "../EmptyList";
+import { View } from "../Themed";
 
 export default function EnrollmentList({
   enrollments,
@@ -14,11 +15,10 @@ export default function EnrollmentList({
   // TODO: use FlatList
   return (
     <>
-      {enrollments.map((enrollment, i) => (
-        <EnrollmentCard
-          enrollment={enrollment}
-          key={`${enrollment.courseId}`}
-        />
+      {enrollments.map((enrollment) => (
+        <View key={enrollment.courseId.toString()}>
+          <EnrollmentCard enrollment={enrollment} />
+        </View>
       ))}
     </>
   );
