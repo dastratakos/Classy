@@ -25,7 +25,7 @@ export default function SelectColor() {
     >
       <View style={styles.container}>
         {enrollmentColors.map((color, i) => (
-          <View style={styles.colorContainer}>
+          <View style={styles.colorContainer} key={i}>
             <TouchableOpacity
               style={[styles.color, { backgroundColor: color }]}
               key={i}
