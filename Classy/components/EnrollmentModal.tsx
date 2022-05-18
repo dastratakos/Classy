@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet, ScrollView } from "react-native";
 import { Text, View } from "./Themed";
 import { getTimeString, termIdToFullName } from "../utils";
 
@@ -11,6 +11,7 @@ import Modal from "react-native-modal";
 import { getCourse } from "../services/courses";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { FlatList } from "react-native-gesture-handler";
 
 export default function EnrollmentModal({
   enrollment,
@@ -74,16 +75,33 @@ export default function EnrollmentModal({
           <View style={styles.textwrap}>
             <Text style={styles.descrip}>Class Times: </Text>
           </View>
-          <View style={styles.classTimesWrap}>
-            {enrollment.schedules.map((schedule, i) => (
-              <Text style={styles.schedText}>
-                {schedule.days.join(", ")}{" "}
-                {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
-                {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
-                {getTimeString(schedule.endInfo, "America/Danmarkshavn")}
-              </Text>
-            ))}
-          </View>
+
+          {enrollment.schedules.length > 5 ? (
+            <FlatList
+              data={enrollment.schedules}
+              style={{ height: 100 }}
+              renderItem={({ item }) => (
+                <Text style={styles.schedText}>
+                  {item.days.join(", ")}{" "}
+                  {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
+                  {getTimeString(item.startInfo, "Africa/Casablanca")} -{" "}
+                  {getTimeString(item.endInfo, "America/Danmarkshavn")}
+                </Text>
+              )}
+            />
+          ) : (
+            <View style={styles.classTimesWrap}>
+              {enrollment.schedules.map((schedule, i) => (
+                <Text style={styles.schedText}>
+                  {schedule.days.join(", ")}{" "}
+                  {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
+                  {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
+                  {getTimeString(schedule.endInfo, "America/Danmarkshavn")}
+                </Text>
+              ))}
+            </View>
+          )}
+
           {editable ? (
             <View style={styles.buttonwrap}>
               <View style={styles.buttonbox}>
@@ -152,6 +170,7 @@ const styles = StyleSheet.create({
   classTimesWrap: {
     width: "100%",
     backgroundColor: "transparent",
+    height: 200,
   },
   schedText: {
     fontSize: Layout.text.large,
