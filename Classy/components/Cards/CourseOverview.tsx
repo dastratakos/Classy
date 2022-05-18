@@ -19,17 +19,22 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
 
   const [modalVisible, setModalVisible] = useState(false);
 
+  let midway = data.friends.length / 2;
+  if (data.friends.length % 2 !== 0) {
+    midway++;
+  }
+
   return (
     <View>
-      <CourseOverviewModal
+      {/* <CourseOverviewModal
         data={data}
         visible={modalVisible}
         setVisible={setModalVisible}
-      />
+      /> */}
       <View
         style={[
           styles.container,
-          { backgroundColor: data.enrollment.color || Colors.pink },
+          { backgroundColor: (data.enrollment.color || Colors.pink) + "AA" },
         ]}
       >
         <Text style={styles.code}>
@@ -41,63 +46,98 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
           {getTimeString(data.startInfo, "Africa/Casablanca")} -{" "}
           {getTimeString(data.endInfo, "America/Danmarkshavn")}
         </Text>
-        <Text
+        <Text style={styles.classFriendsText}>
+          {data.friends.length} Class Friends
+        </Text>
+        <View
           style={{
-            fontWeight: "bold",
-            marginTop: Layout.spacing.small,
-            alignSelf: "center",
+            backgroundColor: "transparent",
+            flexDirection: "row",
+            justifyContent: "space-around",
           }}
         >
-          Class Friends ({data.friends.length})
-        </Text>
-        <View style={{ backgroundColor: "transparent" }}>
-          {data.friends.length > 0 &&
-            data.friends.slice(0, 3).map((item) => (
-              <View
-                key={item.id}
-                style={[
-                  styles.friendContainer,
-                  AppStyles.boxShadow,
-                  { backgroundColor: Colors[colorScheme].secondaryBackground },
-                ]}
-              >
-                <Pressable
+          {/*ToDO : only show a certain num of friends, then allow for showing more*/}
+          {/*Do this with data.friends.slice(0, num to show).map.... */}
+          <View style={styles.friendColumnContainer}>
+            {data.friends.length > 0 &&
+              data.friends.slice(0, midway).map((item) => (
+                <View
                   key={item.id}
-                  style={[AppStyles.row, { backgroundColor: "transparent" }]}
-                  onPress={() =>
-                    navigation.navigate("FriendProfile", { id: item.id })
-                  }
+                  style={[
+                    styles.friendContainer,
+                    AppStyles.boxShadow,
+                    {
+                      backgroundColor: Colors[colorScheme].background,
+                    },
+                  ]}
                 >
-                  <ProfilePhoto
-                    url={item.photoUrl}
-                    size={Layout.photo.xsmall}
-                  />
-                  <View
-                    style={{
-                      backgroundColor: "transparent",
-                      flexGrow: 1,
-                    }}
+                  <Pressable
+                    key={item.id}
+                    style={[AppStyles.row, { backgroundColor: "transparent" }]}
+                    onPress={() =>
+                      navigation.navigate("FriendProfile", { id: item.id })
+                    }
                   >
-                    <Text style={{ fontSize: Layout.text.large }}>
-                      {" "}
-                      {item.name}
-                    </Text>
-                  </View>
-                </Pressable>
-              </View>
-            ))}
-          {data.friends.length === 0 && (
-            <View
-              style={{
-                marginTop: Layout.spacing.small,
-                backgroundColor: "transparent",
-              }}
-            >
-              <EmptyList primaryText="No friends in this class yet!" />
-            </View>
-          )}
+                    <ProfilePhoto
+                      url={item.photoUrl}
+                      size={Layout.photo.xsmall}
+                    />
+                    <View style={styles.friendNameWrap}>
+                      <Text numberOfLines={1} style={styles.friendNameText}>
+                        {item.name}
+                      </Text>
+                    </View>
+                  </Pressable>
+                </View>
+              ))}
+          </View>
+          {/*second half of friends */}
+          <View style={styles.friendColumnContainer}>
+            {data.friends.length > 0 &&
+              data.friends.slice(midway).map((item) => (
+                <View
+                  key={item.id}
+                  style={[
+                    styles.friendContainer,
+                    AppStyles.boxShadow,
+                    {
+                      backgroundColor: Colors[colorScheme].background,
+                    },
+                  ]}
+                >
+                  <Pressable
+                    key={item.id}
+                    style={[AppStyles.row, { backgroundColor: "transparent" }]}
+                    onPress={() =>
+                      navigation.navigate("FriendProfile", { id: item.id })
+                    }
+                  >
+                    <ProfilePhoto
+                      url={item.photoUrl}
+                      size={Layout.photo.xsmall}
+                    />
+                    <View style={styles.friendNameWrap}>
+                      <Text numberOfLines={1} style={styles.friendNameText}>
+                        {item.name}
+                      </Text>
+                    </View>
+                  </Pressable>
+                </View>
+              ))}
+          </View>
         </View>
-        {data.friends.length > 3 && (
+        {data.friends.length === 0 && (
+          <View
+            style={{
+              marginTop: Layout.spacing.small,
+              backgroundColor: "transparent",
+            }}
+          >
+            <EmptyList primaryText="No friends in this class yet!" />
+          </View>
+        )}
+        {/*TODO: allow for expanding nicely */}
+        {/* {data.friends.length > 3 && (
           <Pressable onPress={() => setModalVisible(true)}>
             <Text
               style={{
@@ -109,7 +149,7 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
               Show More
             </Text>
           </Pressable>
-        )}
+        )} */}
       </View>
     </View>
   );
@@ -137,5 +177,24 @@ const styles = StyleSheet.create({
   schedText: {
     fontSize: Layout.text.medium,
     fontWeight: "500",
+  },
+  friendColumnContainer: {
+    backgroundColor: "transparent",
+    width: "48%",
+  },
+  classFriendsText: {
+    fontWeight: "bold",
+    marginTop: Layout.spacing.small,
+    marginBottom: Layout.spacing.xsmall,
+    alignSelf: "center",
+  },
+  friendNameWrap: {
+    backgroundColor: "transparent",
+    flexGrow: 1,
+  },
+  friendNameText: {
+    fontSize: Layout.text.medium,
+    paddingLeft: Layout.spacing.xsmall,
+    width: 100,
   },
 });
