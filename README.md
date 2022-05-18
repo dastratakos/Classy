@@ -30,6 +30,13 @@ Then, type `Shift + i` to select an iOS simulator to run the app on.
 
 Backend - Firebase
 
+To publish the app to the App Store, use the following commands:
+
+```sh
+expo build:ios
+eas submit -p ios --latest
+```
+
 ## Team
 | <img src=images/grace.JPG width=160/> | <img src=images/mel.jpeg width=160/> | <img src=images/tara.jpeg width=160/> | <img src=images/jiwon.jpeg width=160/> | <img src=images/dean.jpg width=160/> |
 | :---: | :---: | :---: | :---: | :---: |
