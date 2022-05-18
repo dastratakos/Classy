@@ -47,7 +47,7 @@ export default function Course({ route }: CourseProps) {
       setFavorited(
         await getIsFavorited(context.user.id, route.params.course.courseId)
       );
-      const friendIds = await getAllPeopleIdsInCourse(
+      const { friendIds, publicIds } = await getAllPeopleIdsInCourse(
         context.user.id,
         route.params.course.courseId
       );
@@ -67,6 +67,8 @@ export default function Course({ route }: CourseProps) {
         });
         friendsDataObj[`${term}`] = friends;
       }
+
+      console.log("friendsDataObj:", friendsDataObj);
 
       setFriendsData(friendsDataObj);
 
@@ -219,7 +221,7 @@ const styles = StyleSheet.create({
     fontSize: Layout.text.large,
     fontWeight: "500",
     marginVertical: Layout.spacing.xxsmall,
-    textAlign: "center"
+    textAlign: "center",
   },
   term: {
     fontSize: Layout.text.medium,
