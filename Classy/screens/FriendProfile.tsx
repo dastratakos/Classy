@@ -383,93 +383,88 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     >
       <View style={AppStyles.section}>
         <View style={AppStyles.row}>
-          <View style={[AppStyles.row, { flex: 1 }]}>
-            <ProfilePhoto
-              url={user.photoUrl}
-              size={Layout.photo.large}
-              style={{ marginRight: Layout.spacing.large }}
-            />
-            <View style={{ flexGrow: 1 }}>
-              <Text style={styles.name}>{user.name}</Text>
+          <ProfilePhoto
+            url={user.photoUrl}
+            size={Layout.photo.large}
+            style={{ marginRight: Layout.spacing.large }}
+          />
+          <View style={{ flexGrow: 1 }}>
+            <Text style={styles.name}>{user.name}</Text>
+            <View
+              style={[AppStyles.row, { marginVertical: Layout.spacing.xsmall }]}
+            >
               <View
                 style={[
-                  AppStyles.row,
-                  { marginVertical: Layout.spacing.xsmall },
+                  styles.status,
+                  inClass ? styles.inClass : styles.notInClass,
+                ]}
+              />
+              <Text
+                style={[
+                  styles.statusText,
+                  { color: Colors[colorScheme].secondaryText },
                 ]}
               >
-                <View
-                  style={[
-                    styles.status,
-                    inClass ? styles.inClass : styles.notInClass,
-                  ]}
-                />
-                <Text
-                  style={[
-                    styles.statusText,
-                    { color: Colors[colorScheme].secondaryText },
-                  ]}
-                >
-                  {inClass ? "In class" : "Not in class"}
-                </Text>
-              </View>
-              <View style={[AppStyles.row, { justifyContent: "flex-start" }]}>
-                {friendStatusLoading ? (
-                  <View style={{ marginRight: Layout.spacing.small }}>
-                    <Button
-                      onPress={() => console.log("Loading pressed")}
-                      loading
-                    />
-                  </View>
-                ) : (
-                  <>
-                    {friendStatus === "not friends" && (
-                      <View style={{ marginRight: Layout.spacing.small }}>
-                        <Button
-                          text="Add Friend"
-                          onPress={handleAddFriend}
-                          disabled={addFriendDisabled}
-                          emphasized
-                        />
-                      </View>
-                    )}
-                    {friendStatus === "request sent" && (
-                      <View style={{ marginRight: Layout.spacing.small }}>
-                        <Button
-                          text="Requested"
-                          onPress={cancelFriendRequestAlert}
-                        />
-                      </View>
-                    )}
-                    {friendStatus === "request received" && (
-                      <View style={{ marginRight: Layout.spacing.small }}>
-                        <Button
-                          text="Accept"
-                          onPress={handleAcceptRequest}
-                          emphasized
-                        />
-                      </View>
-                    )}
-                  </>
-                )}
-                <Button
-                  text="Message"
-                  onPress={handleMessagePressed}
-                  loading={messageButtonLoading}
-                />
-                <Pressable
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    actionSheetRef.current?.show();
-                  }}
-                  style={({ pressed }) => [
-                    styles.ellipsis,
-                    { opacity: pressed ? 0.5 : 1 },
-                    { backgroundColor: Colors[colorScheme].cardBackground },
-                  ]}
-                >
-                  <Icon name="ellipsis-h" size={Layout.icon.medium} />
-                </Pressable>
-              </View>
+                {inClass ? "In class" : "Not in class"}
+              </Text>
+            </View>
+            <View style={[AppStyles.row, { justifyContent: "flex-start" }]}>
+              {friendStatusLoading ? (
+                <View style={{ marginRight: Layout.spacing.small }}>
+                  <Button
+                    onPress={() => console.log("Loading pressed")}
+                    loading
+                  />
+                </View>
+              ) : (
+                <>
+                  {friendStatus === "not friends" && (
+                    <View style={{ marginRight: Layout.spacing.small }}>
+                      <Button
+                        text="Add Friend"
+                        onPress={handleAddFriend}
+                        disabled={addFriendDisabled}
+                        emphasized
+                      />
+                    </View>
+                  )}
+                  {friendStatus === "request sent" && (
+                    <View style={{ marginRight: Layout.spacing.small }}>
+                      <Button
+                        text="Requested"
+                        onPress={cancelFriendRequestAlert}
+                      />
+                    </View>
+                  )}
+                  {friendStatus === "request received" && (
+                    <View style={{ marginRight: Layout.spacing.small }}>
+                      <Button
+                        text="Accept"
+                        onPress={handleAcceptRequest}
+                        emphasized
+                      />
+                    </View>
+                  )}
+                </>
+              )}
+              <Button
+                text="Message"
+                onPress={handleMessagePressed}
+                loading={messageButtonLoading}
+              />
+              <Pressable
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  actionSheetRef.current?.show();
+                }}
+                style={({ pressed }) => [
+                  styles.ellipsis,
+                  { opacity: pressed ? 0.5 : 1 },
+                  { backgroundColor: Colors[colorScheme].cardBackground },
+                ]}
+              >
+                <Icon name="ellipsis-h" size={Layout.icon.medium} />
+              </Pressable>
             </View>
           </View>
         </View>

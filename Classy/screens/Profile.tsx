@@ -281,41 +281,36 @@ export default function Profile() {
       {/* {showEmailVerification && showSendVerificationEmail()} */}
       <View style={AppStyles.section}>
         <View style={AppStyles.row}>
-          <View style={[AppStyles.row, { flex: 1 }]}>
-            <ProfilePhoto
-              url={context.user.photoUrl}
-              size={Layout.photo.large}
-              style={{ marginRight: Layout.spacing.large }}
-            />
-            <View style={{ flexGrow: 1 }}>
-              <Text style={styles.name}>{context.user.name}</Text>
+          <ProfilePhoto
+            url={context.user.photoUrl}
+            size={Layout.photo.large}
+            style={{ marginRight: Layout.spacing.large }}
+          />
+          <View style={{ flexGrow: 1 }}>
+            <Text style={styles.name}>{context.user.name}</Text>
+            <View
+              style={[AppStyles.row, { marginVertical: Layout.spacing.xsmall }]}
+            >
               <View
                 style={[
-                  AppStyles.row,
-                  { marginVertical: Layout.spacing.xsmall },
+                  styles.status,
+                  inClass ? styles.inClass : styles.notInClass,
+                ]}
+              />
+              <Text
+                style={[
+                  styles.statusText,
+                  { color: Colors[colorScheme].secondaryText },
                 ]}
               >
-                <View
-                  style={[
-                    styles.status,
-                    inClass ? styles.inClass : styles.notInClass,
-                  ]}
-                />
-                <Text
-                  style={[
-                    styles.statusText,
-                    { color: Colors[colorScheme].secondaryText },
-                  ]}
-                >
-                  {inClass ? "In class" : "Not in class"}
-                </Text>
-              </View>
-              <Button
-                text="Edit Profile"
-                onPress={() => navigation.navigate("Settings")}
-                wide
-              />
+                {inClass ? "In class" : "Not in class"}
+              </Text>
             </View>
+            <Button
+              text="Edit Profile"
+              onPress={() => navigation.navigate("Settings")}
+              wide
+            />
           </View>
         </View>
         <View style={[AppStyles.row, { marginVertical: 15 }]}>
