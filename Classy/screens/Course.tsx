@@ -182,81 +182,87 @@ export default function Course({ route }: CourseProps) {
         </View>
         <Separator />
         <View style={AppStyles.section}>
-          <View
-            style={[AppStyles.row, { marginBottom: Layout.spacing.medium }]}
-          >
-            <View style={{ width: Layout.icon.medium }} />
-            <View style={{ width: "75%" }}>
-              <DropDownPicker
-                open={quarterOpen}
-                // onOpen={onQuarterOpen}
-                value={quarter}
-                items={quarterItems}
-                setOpen={setQuarterOpen}
-                setValue={(text) => {
-                  setQuarter(text);
-                }}
-                setItems={setQuarterItems}
-                // multiple
-                // min={0}
-                // max={2}
-                placeholder="Quarter"
-                placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
-                showBadgeDot={false}
-                dropDownDirection="TOP"
-                theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-                style={{ backgroundColor: Colors[colorScheme].background }}
-                dropDownContainerStyle={{
-                  backgroundColor: Colors[colorScheme].background,
-                }}
-              />
-            </View>
-            <Popover
-              isVisible={popoverVisible}
-              onRequestClose={() => setPopoverVisible(false)}
-              from={
-                <TouchableOpacity onPress={() => setPopoverVisible(true)}>
-                  <Icon3 name="filter" size={Layout.icon.medium} />
-                </TouchableOpacity>
-              }
-            >
-              {["All", "Friends", "Public"].map((mode, i) => (
-                <>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setPopoverVisible(false);
-                      setFilter(mode);
-                    }}
-                    style={{ ...AppStyles.row, padding: Layout.spacing.small }}
-                  >
-                    <Text style={{ marginRight: Layout.spacing.medium }}>
-                      {mode}
-                    </Text>
-                    {filter === mode ? (
-                      <Icon name="check" size={Layout.icon.small} />
-                    ) : (
-                      <View
-                        style={{
-                          height: Layout.icon.small,
-                          width: Layout.icon.small,
-                        }}
-                      />
-                    )}
-                  </TouchableOpacity>
-                  {i < 2 && (
-                    <View
-                      style={{
-                        height: 1,
-                        backgroundColor: Colors[colorScheme].tertiaryBackground,
-                      }}
-                    />
-                  )}
-                </>
-              ))}
-            </Popover>
-          </View>
           {Object.keys(peopleData).length > 0 ? (
             <>
+              <View
+                style={[AppStyles.row, { marginBottom: Layout.spacing.medium }]}
+              >
+                <View style={{ width: Layout.icon.medium }} />
+                <View style={{ width: "75%" }}>
+                  <DropDownPicker
+                    open={quarterOpen}
+                    // onOpen={onQuarterOpen}
+                    value={quarter}
+                    items={quarterItems}
+                    setOpen={setQuarterOpen}
+                    setValue={(text) => {
+                      setQuarter(text);
+                    }}
+                    setItems={setQuarterItems}
+                    // multiple
+                    // min={0}
+                    // max={2}
+                    placeholder="Quarter"
+                    placeholderStyle={{
+                      color: Colors[colorScheme].secondaryText,
+                    }}
+                    showBadgeDot={false}
+                    dropDownDirection="TOP"
+                    theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+                    style={{ backgroundColor: Colors[colorScheme].background }}
+                    dropDownContainerStyle={{
+                      backgroundColor: Colors[colorScheme].background,
+                    }}
+                  />
+                </View>
+                <Popover
+                  isVisible={popoverVisible}
+                  onRequestClose={() => setPopoverVisible(false)}
+                  from={
+                    <TouchableOpacity onPress={() => setPopoverVisible(true)}>
+                      <Icon3 name="filter" size={Layout.icon.medium} />
+                    </TouchableOpacity>
+                  }
+                >
+                  {["All", "Friends", "Public"].map((mode, i) => (
+                    <>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setPopoverVisible(false);
+                          setFilter(mode);
+                        }}
+                        style={{
+                          ...AppStyles.row,
+                          padding: Layout.spacing.small,
+                        }}
+                      >
+                        <Text style={{ marginRight: Layout.spacing.medium }}>
+                          {mode}
+                        </Text>
+                        {filter === mode ? (
+                          <Icon name="check" size={Layout.icon.small} />
+                        ) : (
+                          <View
+                            style={{
+                              height: Layout.icon.small,
+                              width: Layout.icon.small,
+                            }}
+                          />
+                        )}
+                      </TouchableOpacity>
+                      {i < 2 && (
+                        <View
+                          style={{
+                            height: 1,
+                            backgroundColor:
+                              Colors[colorScheme].tertiaryBackground,
+                          }}
+                        />
+                      )}
+                    </>
+                  ))}
+                </Popover>
+              </View>
               {/* TODO: use SectionList? */}
               {Object.keys(peopleData)
                 .sort()
