@@ -154,12 +154,29 @@ export const generateTerms = (
 ) => {
   let res = terms;
   if (!res) res = {};
+
+  /* Remove empty years. */
+  for (const yearKey of Object.keys(res)) {
+    let empty = true;
+    for (const termId of Object.keys(res[yearKey])) {
+      if (res[yearKey][termId] > 0) {
+        empty = false;
+        break;
+      }
+    }
+
+    if (empty) {
+      delete res[yearKey]
+    }
+  }
+
+  /* Add and fill in the years in the range of startYear to gradYear. */
   for (let year = parseInt(startYear); year < parseInt(endYear); year++) {
     const yearKey = `${year}-${(year % 100) + 1}`;
 
     if (!res[yearKey]) res[yearKey] = {};
 
-    for (let quarter of [2, 4, 6]) {
+    for (let quarter of [2, 4, 6, 8]) {
       const termId = `${(year + 1 - 1900) * 10 + quarter}`;
       if (res[yearKey][termId]) continue;
       res[yearKey][termId] = 0;

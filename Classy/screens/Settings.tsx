@@ -26,7 +26,7 @@ import { User } from "../types";
 import { auth } from "../firebase";
 import { generateSubstrings } from "../utils";
 import { majorList } from "../utils/majorList";
-import { updateUser } from "../services/users";
+import { generateTerms, updateUser } from "../services/users";
 import { uploadImage } from "../services/storage";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
@@ -43,13 +43,27 @@ export default function Settings() {
   const [major, setMajor] = useState(context.user.major || ""); // TODO: use array for multiple select
   const [majorOpen, setMajorOpen] = useState(false);
   const [majorItems, setMajorItems] = useState(majorList);
-  const onMajorOpen = useCallback(() => setGradYearOpen(false), []);
+  const onMajorOpen = useCallback(() => {
+    setStartYearOpen(false);
+    setGradYearOpen(false);
+  }, []);
   // DropDownPicker.setMode("BADGE"); // TODO: for multiple select
+
+  const [startYear, setStartYear] = useState(context.user.startYear || "");
+  const [startYearOpen, setStartYearOpen] = useState(false);
+  const [startYearItems, setStartYearItems] = useState(yearList);
+  const onStartYearOpen = useCallback(() => {
+    setMajorOpen(false);
+    setGradYearOpen(false);
+  }, []);
 
   const [gradYear, setGradYear] = useState(context.user.gradYear || "");
   const [gradYearOpen, setGradYearOpen] = useState(false);
   const [gradYearItems, setGradYearItems] = useState(yearList);
-  const onGradYearOpen = useCallback(() => setMajorOpen(false), []);
+  const onGradYearOpen = useCallback(() => {
+    setMajorOpen(false);
+    setStartYearOpen(false);
+  }, []);
 
   const [interests, setInterests] = useState(context.user.interests || "");
 
@@ -67,14 +81,21 @@ export default function Settings() {
   const handleSavePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
+    if (startYear > gradYear) {
+      alert("Error: StartYear cannot be after Graduation Year");
+      return;
+    }
+
     const newUser: User = {
       ...context.user,
       name,
       major,
+      startYear,
       gradYear,
       interests,
       photoUrl,
       keywords: generateSubstrings(name),
+      terms: generateTerms(context.user.terms, startYear, gradYear),
     };
 
     context.setUser(newUser);
@@ -255,36 +276,71 @@ export default function Settings() {
               // style={{borderWidth: 0}}
             />
           </View>
-          <View style={styles.item}>
-            <View style={styles.field}>
-              <Text>Graduation Year</Text>
+          <View style={AppStyles.row}>
+            <View style={[styles.item, { width: "48%" }]}>
+              <View style={styles.field}>
+                <Text>Start Year</Text>
+              </View>
+              <DropDownPicker
+                open={startYearOpen}
+                onOpen={onStartYearOpen}
+                value={startYear}
+                items={startYearItems}
+                setOpen={setStartYearOpen}
+                setValue={(text) => {
+                  setStartYear(text);
+                  setSaveDisabled(false);
+                }}
+                setItems={setStartYearItems}
+                // multiple
+                // min={0}
+                // max={2}
+                placeholder="Start Year"
+                placeholderStyle={{
+                  color: Colors[colorScheme].secondaryText,
+                }}
+                searchable
+                searchPlaceholder="Search..."
+                showBadgeDot={false}
+                dropDownDirection="TOP"
+                modalProps={{
+                  animationType: "slide",
+                }}
+                theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+              />
             </View>
-            <DropDownPicker
-              open={gradYearOpen}
-              onOpen={onGradYearOpen}
-              value={gradYear}
-              items={gradYearItems}
-              setOpen={setGradYearOpen}
-              setValue={(text) => {
-                setGradYear(text);
-                setSaveDisabled(false);
-              }}
-              setItems={setGradYearItems}
-              // multiple
-              // min={0}
-              // max={2}
-              placeholder="Graduation Year"
-              placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
-              searchable
-              searchPlaceholder="Search..."
-              showBadgeDot={false}
-              dropDownDirection="TOP"
-              modalProps={{
-                animationType: "slide",
-              }}
-              theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-              // style={{borderWidth: 0}}
-            />
+            <View style={[styles.item, { width: "48%" }]}>
+              <View style={styles.field}>
+                <Text>Graduation Year</Text>
+              </View>
+              <DropDownPicker
+                open={gradYearOpen}
+                onOpen={onGradYearOpen}
+                value={gradYear}
+                items={gradYearItems}
+                setOpen={setGradYearOpen}
+                setValue={(text) => {
+                  setGradYear(text);
+                  setSaveDisabled(false);
+                }}
+                setItems={setGradYearItems}
+                // multiple
+                // min={0}
+                // max={2}
+                placeholder="Graduation Year"
+                placeholderStyle={{
+                  color: Colors[colorScheme].secondaryText,
+                }}
+                searchable
+                searchPlaceholder="Search..."
+                showBadgeDot={false}
+                dropDownDirection="TOP"
+                modalProps={{
+                  animationType: "slide",
+                }}
+                theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+              />
+            </View>
           </View>
           <View style={styles.item}>
             <View style={styles.field}>
