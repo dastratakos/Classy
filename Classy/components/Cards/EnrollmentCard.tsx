@@ -108,8 +108,7 @@ const styles = StyleSheet.create({
   numFriendsContainer: {
     alignItems: "center",
     justifyContent: "center",
-    height: Layout.photo.small,
-    width: Layout.photo.small,
+    width: 55,
     borderRadius: Layout.radius.xsmall,
     marginLeft: Layout.spacing.small,
     backgroundColor: "transparent",

@@ -3,7 +3,12 @@ import * as Haptics from "expo-haptics";
 import { ActivityIndicator, Text, View } from "../components/Themed";
 import { AddCourseProps, Schedule } from "../types";
 import { ScrollView, StyleSheet } from "react-native";
-import { getCurrentTermId, termIdToName } from "../utils";
+import {
+  getCurrentTermId,
+  sendPushNotification,
+  termIdToFullName,
+  termIdToName,
+} from "../utils";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -15,6 +20,7 @@ import ScheduleCard from "../components/Cards/ScheduleCard";
 import SquareButton from "../components/Buttons/SquareButton";
 import { addEnrollment } from "../services/enrollments";
 import { getCourseTerms } from "../services/courses";
+import { getFriendsInCourse } from "../services/friends";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
@@ -114,6 +120,29 @@ export default function AddCourse({ route }: AddCourseProps) {
       context.user
     );
 
+    /* Get friends in this course. */
+    const friends = await getFriendsInCourse(
+      context.user.id,
+      course.courseId,
+      context.selectedTerm
+    );
+
+    console.log("friends in course:", friends);
+
+    const quarterText =
+      context.selectedTerm === getCurrentTermId()
+        ? "this quarter"
+        : termIdToFullName(context.selectedTerm);
+
+    for (let friend of friends) {
+      sendPushNotification(
+        friend.expoPushToken,
+        `${context.user.name} just enrolled in ${course.code.join(", ")}: ${
+          course.title
+        } for ${quarterText}`
+      );
+    }
+
     setDoneLoading(false);
     navigation.goBack();
     navigation.navigate("ProfileStack", { screen: "Profile" });
@@ -204,6 +233,7 @@ export default function AddCourse({ route }: AddCourseProps) {
                           setGrading(grad);
                         }}
                         emphasized={grading === grad}
+                        key={i.toString()}
                       />
                     )
                   )}
