@@ -265,7 +265,10 @@ export default function Settings() {
               value={gradYear}
               items={gradYearItems}
               setOpen={setGradYearOpen}
-              setValue={setGradYear}
+              setValue={(text) => {
+                setGradYear(text);
+                setSaveDisabled(false);
+              }}
               setItems={setGradYearItems}
               // multiple
               // min={0}
