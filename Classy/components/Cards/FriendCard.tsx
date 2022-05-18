@@ -1,5 +1,5 @@
-import { Text, View } from "../Themed";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { Icon2, Text, View } from "../Themed";
+import { StyleSheet, Pressable, TouchableOpacity } from "react-native";
 
 import AppStyles from "../../styles/AppStyles";
 import Colors from "../../constants/Colors";
@@ -12,6 +12,7 @@ import ProfilePhoto from "../ProfilePhoto";
 
 export default function FriendCard({
   friend,
+  isRequest = false,
 }: {
   friend: {
     id: string;
@@ -20,6 +21,7 @@ export default function FriendCard({
     gradYear?: string;
     photoUrl: string;
   };
+  isRequest: boolean
 }) {
   const context = useContext(AppContext);
   const navigation = useNavigation();
@@ -57,6 +59,16 @@ export default function FriendCard({
             </Text>
           ) : null}
         </View>
+        {isRequest &&
+          <View style={styles.acceptRejectContainer}>
+            <Pressable onPress={() => console.log("Accept")}>
+              <Icon2 name="check" size={Layout.icon.large} />
+            </Pressable>
+            <Pressable onPress={() => console.log("Decline")}>
+              <Icon2 name="close" size={Layout.icon.large} />
+            </Pressable>
+          </View>
+        }
       </TouchableOpacity>
     </View>
   );
@@ -84,5 +96,15 @@ const styles = StyleSheet.create({
   },
   cardSubtitle: {
     fontSize: Layout.text.medium,
+  },
+  acceptRejectContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: Layout.photo.small,
+    width: Layout.photo.medium,
+    borderRadius: Layout.radius.xsmall,
+    marginLeft: Layout.spacing.small,
+    backgroundColor: "transparent",
   },
 });
