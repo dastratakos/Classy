@@ -24,7 +24,7 @@ export default function CourseOverviewModal({
   const colorScheme = useColorScheme();
 
   return (
-    <Modal isVisible={visible}>
+    <Modal isVisible={visible} onBackdropPress={() => setVisible(false)}>
       <View
         style={[
           styles.container,
@@ -32,15 +32,10 @@ export default function CourseOverviewModal({
           { maxHeight: "50%" },
         ]}
       >
-        <View style={styles.titleRow}>
-          <Text style={styles.code}>
-            {data.enrollment.code.join(", ")}{" "}
-            {data.component && componentToName(data.component)}
-          </Text>
-          <Pressable style={{}} onPress={() => setVisible(false)}>
-            <Icon name="close" size={Layout.icon.medium} />
-          </Pressable>
-        </View>
+        <Text style={styles.code}>
+          {data.enrollment.code.join(", ")}{" "}
+          {data.component && componentToName(data.component)}
+        </Text>
         <Text style={{ marginTop: Layout.spacing.xxsmall }}>
           {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
           {getTimeString(data.startInfo, "Africa/Casablanca")} -{" "}

@@ -40,19 +40,14 @@ export default function EnrollmentModal({
   };
 
   return (
-    <Modal isVisible={visible}>
+    <Modal isVisible={visible} onBackdropPress={() => setVisible(false)}>
       <View
         style={[
           styles.container,
           { backgroundColor: Colors[colorScheme].cardBackground },
         ]}
       >
-        <View style={styles.titleRow}>
-          <Text style={styles.codes}>{enrollment.code.join(", ")}</Text>
-          <Pressable style={{}} onPress={() => setVisible(false)}>
-            <Icon name="close" size={Layout.icon.medium} />
-          </Pressable>
-        </View>
+        <Text style={styles.codes}>{enrollment.code.join(", ")}</Text>
         <Text
           style={[
             styles.title,
