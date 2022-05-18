@@ -61,7 +61,7 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
       <Pressable
         style={[
           styles.container,
-          { backgroundColor: (data.enrollment.color || Colors.pink) + "AA" },
+          { backgroundColor: (data.enrollment.color || Colors.pink + "AA")},
         ]}
         onPress={() => setModalVisible(true)}
       >

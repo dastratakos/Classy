@@ -53,12 +53,14 @@ export default function SelectColor() {
 const styles = StyleSheet.create({
   container: {
     marginTop: Layout.spacing.medium,
+    marginLeft: Layout.spacing.medium,
+    marginRight: Layout.spacing.medium,
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
   },
   colorContainer: {
-    width: "20%",
+    width: "15%",
     paddingVertical: Layout.spacing.medium,
     alignItems: "center",
   },
