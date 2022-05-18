@@ -95,7 +95,8 @@ export const addEnrollment = async (
   let newTerms = user.terms;
 
   if (yearKey in newTerms) {
-    newTerms[yearKey][termId] += units;
+    if (termId in newTerms[yearKey]) newTerms[yearKey][termId] += units;
+    else newTerms[yearKey][termId] = units;
   } else {
     newTerms[yearKey] = {};
     for (let quarter of ["2", "4", "6", "8"]) {
