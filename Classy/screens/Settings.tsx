@@ -100,10 +100,12 @@ export default function Settings() {
 
     context.setUser(newUser);
     updateUser(context.user.id, newUser);
-    context.streamClient.updateUser({
+    context.streamClient.partialUpdateUser({
       id: context.user.id,
-      name,
-      image: photoUrl,
+      set: {
+        name: name,
+        image: photoUrl,
+      },
     });
 
     navigation.goBack();
@@ -140,10 +142,12 @@ export default function Settings() {
 
         updateUser(context.user.id, newUser);
 
-        context.streamClient.updateUser({
+        context.streamClient.partialUpdateUser({
           id: context.user.id,
-          name,
-          image: photoUrl,
+          set: {
+            name: name,
+            image: photoUrl,
+          },
         });
       }
     } catch (error) {
