@@ -19,10 +19,10 @@ export default function Quarters({ route }: QuartersProps) {
   if (!route.params.user.terms) return null;
 
   const quarterColors = new Map([
-    ["Aut", { backgroundColor: Colors.deepRed }],
-    ["Win", { backgroundColor: Colors.green }],
-    ["Spr", { backgroundColor: Colors.yellow }],
-    ["Sum", { backgroundColor: Colors.lightBlue }],
+    ["Aut", { backgroundColor: Colors.quarters.autumn }],
+    ["Win", { backgroundColor: Colors.quarters.winter }],
+    ["Spr", { backgroundColor: Colors.quarters.spring }],
+    ["Sum", { backgroundColor: Colors.quarters.summer }],
   ]);
 
   return (
