@@ -56,7 +56,7 @@ export default function MyFriends() {
         <FriendList
           friends={requests}
           emptyPrimary="No friend requests"
-          requests
+          // requests
         />
       ),
     },
