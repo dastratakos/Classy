@@ -11,7 +11,6 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { User } from "../types";
-import { getCurrentTermId } from "../utils";
 import { getCourseStudents } from "./courses";
 import { getPublicUserIds, getUser } from "./users";
 

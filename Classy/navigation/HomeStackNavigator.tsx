@@ -62,7 +62,7 @@ export default function HomeStackNavigator() {
                 >
                   <View
                     style={{
-                      backgroundColor: Colors.deepRed,
+                      backgroundColor: Colors.pink,
                       height: 20,
                       minWidth: 20,
                       paddingHorizontal: 4,
