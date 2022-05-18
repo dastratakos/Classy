@@ -242,21 +242,27 @@ export const getFriendsInCourse = async (
 
 export const getNumFriendsInCourse = async (
   courseId: number,
-  friendIds: string[]
+  friendIds: string[],
+  termId: string
 ) => {
-  const currentTermId = getCurrentTermId();
-
-  const docRef = doc(doc(db, "courses", `${courseId}`), "terms", currentTermId);
+  const docRef = doc(doc(db, "courses", `${courseId}`), "terms", termId);
   const docSnap = await getDoc(docRef);
 
-  if (docSnap.exists() && docSnap.data().students) {
+  if (docSnap.exists()) {
+    if (!docSnap.data().students) {
+      console.log(
+        `No students doc for termId ${termId} for course ${courseId}`
+      );
+      return 0;
+    }
+
     const students = docSnap.data().students;
     const filtered = Object.entries(students).filter(
       ([studentId, enrolled]) => enrolled && friendIds.includes(studentId)
     );
     return filtered.length;
   } else {
-    console.log(`No termId ${currentTermId} for course ${courseId}`);
+    console.log(`No termId ${termId} for course ${courseId}`);
     return 0;
   }
 };

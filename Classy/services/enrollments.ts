@@ -37,7 +37,11 @@ export const getEnrollmentsForTerm = async (
   /* Collect number of friends per enrollment. */
   const friendIds = await getFriendIds(myId);
   for (let i = 0; i < res.length; i++) {
-    res[i].numFriends = await getNumFriendsInCourse(res[i].courseId, friendIds);
+    res[i].numFriends = await getNumFriendsInCourse(
+      res[i].courseId,
+      friendIds,
+      termId
+    );
   }
 
   return res;
