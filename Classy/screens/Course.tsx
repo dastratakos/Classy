@@ -1,9 +1,20 @@
 import * as Haptics from "expo-haptics";
 import * as WebBrowser from "expo-web-browser";
 
-import { ActivityIndicator, Icon, Text, View } from "../components/Themed";
+import {
+  ActivityIndicator,
+  Icon,
+  Icon3,
+  Text,
+  View,
+} from "../components/Themed";
 import { CourseProps, Course as CourseType, User } from "../types";
-import { Pressable, ScrollView, StyleSheet } from "react-native";
+import {
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import {
   addFavorite,
   deleteFavorite,
@@ -15,6 +26,7 @@ import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
+import DropDownPicker from "react-native-dropdown-picker";
 import EmptyList from "../components/EmptyList";
 import FriendList from "../components/Lists/FriendList";
 import Layout from "../constants/Layout";
@@ -38,45 +50,75 @@ export default function Course({ route }: CourseProps) {
   const colorScheme = useColorScheme();
 
   const course: CourseType = route.params.course;
-  const [friendsData, setFriendsData] = useState<Object>({});
+  const [peopleData, setPeopleData] = useState<Object>({});
   const [favorited, setFavorited] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = useState<boolean>(true);
+
+  const [quarter, setQuarter] = useState("all");
+  const [quarterOpen, setQuarterOpen] = useState(false);
+  const [quarterItems, setQuarterItems] = useState([]);
+
+  const [filter, setFilter] = useState<string>("all");
 
   useEffect(() => {
-    const loadScreen = async () => {
-      setFavorited(
-        await getIsFavorited(context.user.id, route.params.course.courseId)
-      );
-      const { friendIds, publicIds } = await getAllPeopleIdsInCourse(
-        context.user.id,
-        route.params.course.courseId
-      );
-
-      let friendsDataObj = {};
-      for (let term of Object.keys(friendIds)) {
-        if (!friendIds[`${term}`].length) continue;
-
-        let friends: User[] = [];
-        for (let id of friendIds[`${term}`]) {
-          friends.push(await getUser(id));
-        }
-        friends.sort((a, b) => {
-          if (!a.name) return 1;
-          if (!b.name) return -1;
-          return a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1;
-        });
-        friendsDataObj[`${term}`] = friends;
-      }
-
-      console.log("friendsDataObj:", friendsDataObj);
-
-      setFriendsData(friendsDataObj);
-
-      setIsLoading(false);
-    };
-
-    loadScreen();
+    onRefresh();
   }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+
+    setFavorited(
+      await getIsFavorited(context.user.id, route.params.course.courseId)
+    );
+    const people = await getAllPeopleIdsInCourse(
+      context.user.id,
+      route.params.course.courseId
+    );
+
+    let quarterArr = [];
+
+    let peopleObj = {};
+    for (let term of Object.keys(people)) {
+      if (
+        !people[`${term}`].friendIds.length &&
+        !people[`${term}`].publicIds.length
+      )
+        continue;
+
+      quarterArr.push({ label: termIdToFullName(term), value: term });
+
+      /* Gather friends. */
+      let friends: User[] = [];
+      for (let id of people[`${term}`].friendIds)
+        friends.push(await getUser(id));
+      friends.sort((a, b) => {
+        if (!a.name) return 1;
+        if (!b.name) return -1;
+        return a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1;
+      });
+
+      /* Gather public users. */
+      let publicUsers: User[] = [];
+      for (let id of people[`${term}`].publicIds)
+        publicUsers.push(await getUser(id));
+      publicUsers.sort((a, b) => {
+        if (!a.name) return 1;
+        if (!b.name) return -1;
+        return a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1;
+      });
+
+      peopleObj[`${term}`] = { friends, publicUsers };
+    }
+
+    // quarterArr.sort((a, b) => (a.value > b.value ? 1 : -1));
+    setQuarterItems([{ label: "All Quarters", value: "all" }, ...quarterArr]);
+
+    setPeopleData(peopleObj);
+
+    console.log("peopleObj:", peopleObj);
+
+    setRefreshing(false);
+  };
 
   const handleFavoritePressed = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -89,7 +131,7 @@ export default function Course({ route }: CourseProps) {
     }
   };
 
-  if (isLoading) return <ActivityIndicator />;
+  if (refreshing) return <ActivityIndicator />;
 
   return (
     <>
@@ -99,6 +141,9 @@ export default function Course({ route }: CourseProps) {
           alignItems: "center",
           paddingBottom: Layout.buttonHeight.medium + Layout.spacing.medium,
         }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         <View style={AppStyles.section}>
           <Text style={styles.title}>{course.code.join(", ")}</Text>
@@ -134,22 +179,69 @@ export default function Course({ route }: CourseProps) {
         </View>
         <Separator />
         <View style={AppStyles.section}>
-          {Object.keys(friendsData).length > 0 ? (
+          <View
+            style={[AppStyles.row, { marginBottom: Layout.spacing.medium }]}
+          >
+            <View style={{ width: Layout.icon.medium }} />
+            <View style={{ width: "50%" }}>
+              <DropDownPicker
+                open={quarterOpen}
+                // onOpen={onQuarterOpen}
+                value={quarter}
+                items={quarterItems}
+                setOpen={setQuarterOpen}
+                setValue={(text) => {
+                  setQuarter(text);
+                }}
+                setItems={setQuarterItems}
+                // multiple
+                // min={0}
+                // max={2}
+                placeholder="Quarter"
+                placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
+                showBadgeDot={false}
+                dropDownDirection="TOP"
+                theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+                style={{ backgroundColor: Colors[colorScheme].background }}
+                dropDownContainerStyle={{
+                  backgroundColor: Colors[colorScheme].background,
+                }}
+              />
+            </View>
+            <Pressable onPress={() => console.log("filter pressed")}>
+              <Icon3 name="filter" size={Layout.icon.medium} />
+            </Pressable>
+          </View>
+          {Object.keys(peopleData).length > 0 ? (
             <>
-              <Text style={styles.friendsHeader}>
-                {"Friends in " + course.code.join(", ")}
-              </Text>
               {/* TODO: use SectionList? */}
-              {Object.keys(friendsData)
+              {Object.keys(peopleData)
                 .sort()
                 .reverse()
                 .map((termId) => (
-                  <View key={termId}>
-                    <Text style={styles.term}>
-                      {termIdToFullName(termId)} ({friendsData[termId].length})
-                    </Text>
-                    <FriendList friends={friendsData[termId]} />
-                  </View>
+                  <>
+                    {(quarter === "all" || quarter === termId) && (
+                      <View key={termId}>
+                        <Text style={styles.term}>
+                          {termIdToFullName(termId)} (
+                          {peopleData[termId].friends.length +
+                            peopleData[termId].publicUsers.length}
+                          )
+                        </Text>
+                        {filter !== "public" && (
+                          <FriendList
+                            friends={peopleData[termId].friends}
+                          />
+                        )}
+                        {filter !== "friends" && (
+                          <FriendList
+                            friends={peopleData[termId].publicUsers}
+                            // requests
+                          />
+                        )}
+                      </View>
+                    )}
+                  </>
                 ))}
             </>
           ) : (

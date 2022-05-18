@@ -239,6 +239,9 @@ export default function AddProfileDetails({
                 theme={colorScheme === "light" ? "LIGHT" : "DARK"}
                 addCustomItem
                 style={{ backgroundColor: Colors[colorScheme].background }}
+                dropDownContainerStyle={{
+                  backgroundColor: Colors[colorScheme].background,
+                }}
               />
             </View>
             <View style={AppStyles.row}>
@@ -270,6 +273,9 @@ export default function AddProfileDetails({
                   }}
                   theme={colorScheme === "light" ? "LIGHT" : "DARK"}
                   style={{ backgroundColor: Colors[colorScheme].background }}
+                  dropDownContainerStyle={{
+                    backgroundColor: Colors[colorScheme].background,
+                  }}
                 />
               </View>
               <View style={[styles.item, { width: "48%" }]}>
@@ -300,6 +306,9 @@ export default function AddProfileDetails({
                   }}
                   theme={colorScheme === "light" ? "LIGHT" : "DARK"}
                   style={{ backgroundColor: Colors[colorScheme].background }}
+                  dropDownContainerStyle={{
+                    backgroundColor: Colors[colorScheme].background,
+                  }}
                 />
               </View>
             </View>

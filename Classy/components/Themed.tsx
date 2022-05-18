@@ -7,11 +7,11 @@ import {
   Text as DefaultText,
   View as DefaultView,
 } from "react-native";
+import { FontAwesome, Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 
-import Colors from "../constants/Colors";
-import { FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
-import useColorScheme from "../hooks/useColorScheme";
 import AppStyles from "../styles/AppStyles";
+import Colors from "../constants/Colors";
+import useColorScheme from "../hooks/useColorScheme";
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
@@ -73,6 +73,13 @@ export function Icon2(props: IconProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
 
   return <SimpleLineIcons style={[{ color }, style]} {...otherProps} />;
+}
+
+export function Icon3(props: IconProps) {
+  const { lightColor, darkColor, style, ...otherProps } = props;
+  const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
+
+  return <Ionicons style={[{ color }, style]} {...otherProps} />;
 }
 
 export function ActivityIndicator(props: ActivityIndicatorProps) {

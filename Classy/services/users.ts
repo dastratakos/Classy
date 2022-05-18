@@ -31,6 +31,17 @@ export const getUser = async (id: string) => {
   }
 };
 
+// TODO: this function needs to be optimized. Too many reads.
+export const getPublicUserIds = async (userId: string) => {
+  const q = query(collection(db, "users"), where("isPrivate", "==", false));
+  const publicUserIds: string[] = [];
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => publicUserIds.push(doc.data().id));
+
+  console.log("publicUserIds:", publicUserIds);
+  return publicUserIds;
+};
+
 export type NewUser = {
   id: string;
   email: string;
@@ -166,7 +177,7 @@ export const generateTerms = (
     }
 
     if (empty) {
-      delete res[yearKey]
+      delete res[yearKey];
     }
   }
 

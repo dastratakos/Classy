@@ -47,7 +47,6 @@ export default function MyFriends() {
           friends={friends}
           emptyPrimary="No friends yet"
           emptySecondary="Find friends in the Search tab!"
-          requests={false}
         />
       ),
     },
@@ -57,7 +56,7 @@ export default function MyFriends() {
         <FriendList
           friends={requests}
           emptyPrimary="No friend requests"
-          requests={true}
+          requests
         />
       ),
     },

@@ -21,7 +21,7 @@ export default function FriendCard({
     gradYear?: string;
     photoUrl: string;
   };
-  isRequest: boolean
+  isRequest?: boolean;
 }) {
   const context = useContext(AppContext);
   const navigation = useNavigation();
@@ -59,16 +59,21 @@ export default function FriendCard({
             </Text>
           ) : null}
         </View>
-        {isRequest &&
+        {isRequest && (
           <View style={styles.acceptRejectContainer}>
             <Pressable onPress={() => console.log("Accept")}>
-              <Icon2 name="check" size={Layout.icon.large} />
+              <Icon2
+                name="check"
+                size={Layout.icon.large}
+                lightColor={Colors[colorScheme].tint}
+                darkColor={Colors[colorScheme].tint}
+              />
             </Pressable>
             <Pressable onPress={() => console.log("Decline")}>
               <Icon2 name="close" size={Layout.icon.large} />
             </Pressable>
           </View>
-        }
+        )}
       </TouchableOpacity>
     </View>
   );

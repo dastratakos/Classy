@@ -13,7 +13,7 @@ import { db } from "../firebase";
 import { User } from "../types";
 import { getCurrentTermId } from "../utils";
 import { getCourseStudents } from "./courses";
-import { getUser } from "./users";
+import { getPublicUserIds, getUser } from "./users";
 
 export const getFriendIds = async (userId: string) => {
   const q = query(
@@ -185,10 +185,9 @@ export const getAllPeopleIdsInCourse = async (
 ) => {
   const allStudents = await getCourseStudents(courseId);
   const friendIds = await getFriendIds(userId);
+  const publicIds = await getPublicUserIds(userId);
 
-  const courseFriendIds = {};
-  // TODO: get all users who are from allStudents
-  const coursePublicIds = {};
+  const res = {};
   Object.keys(allStudents).forEach((term) => {
     if (!allStudents[`${term}`]) return;
 
@@ -196,13 +195,17 @@ export const getAllPeopleIdsInCourse = async (
     let publicUsers: string[] = [];
     Object.entries(allStudents[`${term}`]).filter(([studentId, enrolled]) => {
       if (enrolled && friendIds.includes(studentId)) friends.push(studentId);
-      else if (enrolled && friendIds.includes(studentId)) publicUsers.push(studentId);
+      else if (
+        enrolled &&
+        publicIds.includes(studentId) &&
+        studentId !== userId
+      )
+        publicUsers.push(studentId);
     });
-    courseFriendIds[`${term}`] = friends;
-    coursePublicIds[`${term}`] = publicUsers;
+    res[`${term}`] = { friendIds: friends, publicIds: publicUsers };
   });
 
-  return { friendIds: courseFriendIds, publicIds: coursePublicIds};
+  return res;
 };
 
 export const getFriendsInCourse = async (
