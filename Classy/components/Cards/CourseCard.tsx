@@ -43,12 +43,6 @@ export default function CourseCard({
             {course.title}
           </Text>
         </View>
-        <View style={styles.numFriendsContainer}>
-          <Text style={styles.numberText}>{numFriends}</Text>
-          <Text style={styles.friendsText}>
-            {"friend" + (numFriends !== 1 ? "s" : "")}
-          </Text>
-        </View>
       </TouchableOpacity>
     </View>
   );

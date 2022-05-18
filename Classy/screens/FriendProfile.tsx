@@ -442,7 +442,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                     {friendStatus === "request received" && (
                       <View style={{ marginRight: Layout.spacing.small }}>
                         <Button
-                          text="Accept request"
+                          text="Accept"
                           onPress={handleAcceptRequest}
                           emphasized
                         />
