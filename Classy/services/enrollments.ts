@@ -1,4 +1,4 @@
-import { Course, Enrollment, Schedule } from "../types";
+import { Course, Enrollment, Schedule, User } from "../types";
 import {
   addDoc,
   collection,
@@ -72,7 +72,7 @@ export const addEnrollment = async (
   schedules: Schedule[],
   termId: string,
   units: number,
-  userId: string
+  user: User
 ) => {
   /* 1. Create doc in enrollments collection. */
   const data = {
@@ -83,21 +83,31 @@ export const addEnrollment = async (
     termId,
     title: course.title,
     units,
-    userId,
+    userId: user.id,
   };
 
   await addDoc(collection(db, "enrollments"), data);
 
   /* 2. Update number of units in user doc in users collection. */
-  const year = termIdToYear(termId);
-  const termKey = `terms.${year}.${termId}`;
-  let userData = {};
-  userData[termKey] = increment(units);
+  const yearKey = termIdToYear(termId);
+  console.log("yearKey:", yearKey);
 
-  await updateDoc(doc(db, "users", userId), userData);
+  let newTerms = user.terms;
 
-  /* 3. Updates students list for that term in courses collection. */
-  const studentsKey = `students.${userId}`;
+  if (yearKey in newTerms) {
+    newTerms[yearKey][termId] += units;
+  } else {
+    newTerms[yearKey] = {};
+    for (let quarter of ["2", "4", "6", "8"]) {
+      const termIdKey = termId.substring(0, 3) + quarter;
+      newTerms[yearKey][termIdKey] = termIdKey === termId ? units : 0;
+    }
+  }
+
+  await updateDoc(doc(db, "users", user.id), { terms: newTerms });
+
+  /* 3. Update students list for that term in courses collection. */
+  const studentsKey = `students.${user.id}`;
   let courseData = {};
   courseData[studentsKey] = true;
   await updateDoc(

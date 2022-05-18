@@ -110,7 +110,7 @@ export default function AddCourse({ route }: AddCourseProps) {
       schedulesList,
       context.selectedTerm,
       selectedUnits,
-      context.user.id
+      context.user
     );
 
     setDoneLoading(false);
