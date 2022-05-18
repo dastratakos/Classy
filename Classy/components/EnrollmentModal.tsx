@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
   },
   titleRow: {
     ...AppStyles.row,
+    backgroundColor: "transparent",
     alignItems: "flex-start",
   },
   codes: {
