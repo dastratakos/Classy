@@ -24,7 +24,7 @@ export default function FriendList({
   return (
     <>
       {friends.map((friend) => (
-        <FriendCard friend={friend} key={friend.id} />
+        <FriendCard friend={friend} key={friend.id} isRequest={requests}/>
       ))}
     </>
   );
