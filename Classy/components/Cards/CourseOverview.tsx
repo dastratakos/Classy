@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet, Alert } from "react-native";
 import { Text, View } from "../Themed";
 import { componentToName, getTimeString } from "../../utils";
 
@@ -12,6 +12,8 @@ import useColorScheme from "../../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { useState } from "react";
 import EmptyList from "../EmptyList";
+import EnrollmentModal from "../EnrollmentModal";
+import { deleteEnrollment } from "../../services/enrollments";
 
 export default function CourseOverview({ data }: { data: CourseOverviewType }) {
   const navigation = useNavigation();
@@ -24,6 +26,24 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
     midway++;
   }
 
+  const handleDeleteEnrollment = async () => {
+    setModalVisible(false);
+    await deleteEnrollment(data.enrollment);
+  };
+
+  const deleteEnrollmentAlert = () => {
+    Alert.alert("Delete course", `Are you sure?`, [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: handleDeleteEnrollment,
+      },
+    ]);
+  };
+
   return (
     <View>
       {/* <CourseOverviewModal
@@ -31,11 +51,19 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
         visible={modalVisible}
         setVisible={setModalVisible}
       /> */}
-      <View
+      <EnrollmentModal 
+        enrollment={data.enrollment}
+        visible={modalVisible}
+        setVisible={setModalVisible}
+        editable
+        deleteFunc={deleteEnrollmentAlert}
+      />
+      <Pressable
         style={[
           styles.container,
           { backgroundColor: (data.enrollment.color || Colors.pink) + "AA" },
         ]}
+        onPress={() => setModalVisible(true)}
       >
         <Text style={styles.code}>
           {data.enrollment.code.join(", ")}{" "}
@@ -150,7 +178,7 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
             </Text>
           </Pressable>
         )} */}
-      </View>
+      </Pressable>
     </View>
   );
 }
