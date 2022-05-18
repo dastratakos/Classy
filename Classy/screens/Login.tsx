@@ -1,12 +1,13 @@
 import * as Haptics from "expo-haptics";
 
 import {
+  Image,
   KeyboardAvoidingView,
   Pressable,
   StyleSheet,
   TextInput,
 } from "react-native";
-import { Text, View } from "../components/Themed";
+import { ActivityIndicator, Text, View } from "../components/Themed";
 import { auth, signInWithEmailAndPassword } from "../firebase";
 import { useContext, useEffect, useState } from "react";
 
@@ -22,13 +23,15 @@ import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
 export default function Login({ route }: LoginProps) {
+  const context = useContext(AppContext);
+  const navigation = useNavigation();
+  const colorScheme = useColorScheme();
+
   const [email, setEmail] = useState(route.params?.email || "");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const context = useContext(AppContext);
-  const navigation = useNavigation();
-  const colorScheme = useColorScheme();
+  const [loading, setLoading] = useState<boolean>(true);
 
   const connectStreamChatUser = async (
     id: string,
@@ -61,11 +64,10 @@ export default function Login({ route }: LoginProps) {
   useEffect(() => {
     if (auth.currentUser) {
       setUp(auth.currentUser.uid);
+      setLoading(false);
     } else {
       const unsubscribe = auth.onAuthStateChanged((user) => {
-        if (user) {
-          setUp(user.uid);
-        }
+        if (user) setUp(user.uid);
       });
 
       return unsubscribe;
@@ -106,6 +108,15 @@ export default function Login({ route }: LoginProps) {
       })
       .catch((error) => setErrorMessage(error.message));
   };
+
+  if (loading)
+    return (
+      <Image
+        source={require("../assets/images/splash.png")}
+        style={{ height: Layout.window.height, width: Layout.window.width }}
+        resizeMode="cover"
+      />
+    );
 
   return (
     <View

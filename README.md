@@ -33,7 +33,7 @@ Backend - Firebase
 To publish the app to the App Store, use the following commands:
 
 ```sh
-expo build:ios
+eas build -p ios
 eas submit -p ios --latest
 ```
 
