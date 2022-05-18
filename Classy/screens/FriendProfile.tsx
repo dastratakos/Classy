@@ -111,6 +111,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     });
 
     const res2 = await getEnrollmentsForTerm(
+      context.user.id,
       route.params.id,
       getCurrentTermId()
     );

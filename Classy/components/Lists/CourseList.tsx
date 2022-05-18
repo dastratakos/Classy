@@ -8,7 +8,7 @@ export default function CourseList({ courses }: { courses: Course[] }) {
     <>
       {courses.map((course) => (
         <View key={course.courseId.toString()}>
-          <CourseCard course={course} numFriends={0} emphasize={false} />
+          <CourseCard course={course} emphasize={false} />
         </View>
       ))}
     </>

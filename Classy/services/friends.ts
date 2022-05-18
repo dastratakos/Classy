@@ -240,7 +240,7 @@ export const getFriendsInCourse = async (
   }
 };
 
-export const getNumFriendInCourse = async (
+export const getNumFriendsInCourse = async (
   courseId: number,
   friendIds: string[]
 ) => {
@@ -249,7 +249,7 @@ export const getNumFriendInCourse = async (
   const docRef = doc(doc(db, "courses", `${courseId}`), "terms", currentTermId);
   const docSnap = await getDoc(docRef);
 
-  if (docSnap.exists()) {
+  if (docSnap.exists() && docSnap.data().students) {
     const students = docSnap.data().students;
     const filtered = Object.entries(students).filter(
       ([studentId, enrolled]) => enrolled && friendIds.includes(studentId)

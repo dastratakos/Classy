@@ -1,7 +1,7 @@
 import { Course, User } from "../types";
 import { FlatList, StyleSheet } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import { getFriendIds, getNumFriendInCourse } from "../services/friends";
+import { getFriendIds } from "../services/friends";
 import { searchCourses, searchMoreCourses } from "../services/courses";
 import { searchMoreUsers, searchUsers } from "../services/users";
 
@@ -125,7 +125,7 @@ export default function Search() {
           data={courseSearchResults}
           renderItem={({ item }) => (
             <View key={item.courseId.toString()}>
-              <CourseCard course={item} numFriends={0} emphasize={false} />
+              <CourseCard course={item} emphasize={false} />
             </View>
           )}
           keyExtractor={(item) => item.courseId.toString()}

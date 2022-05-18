@@ -3,7 +3,7 @@ import * as Haptics from "expo-haptics";
 import { ActivityIndicator, Text, View } from "../components/Themed";
 import { Course, EditCourseProps, Schedule } from "../types";
 import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
-import { termIdToName } from "../utils";
+import { getCourse, getCourseTerms } from "../services/courses";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -13,10 +13,10 @@ import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import ScheduleCard from "../components/Cards/ScheduleCard";
 import SquareButton from "../components/Buttons/SquareButton";
+import { termIdToName } from "../utils";
+import { updateEnrollment } from "../services/enrollments";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { getCourse, getCourseTerms } from "../services/courses";
-import { updateEnrollment } from "../services/enrollments";
 
 export default function EditCourse({ route }: EditCourseProps) {
   const context = useContext(AppContext);
@@ -110,16 +110,17 @@ export default function EditCourse({ route }: EditCourseProps) {
       >
         {terms[`${context.selectedTerm}`].map(
           (schedule: Schedule, i: number) => (
-            <ScheduleCard
-              schedule={schedule}
-              key={`${i}`}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                setSaveDisabled(false);
-                handleScheduleSelected(i);
-              }}
-              selected={selectedScheduleIndices.has(i)}
-            />
+            <View key={i.toString()}>
+              <ScheduleCard
+                schedule={schedule}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  setSaveDisabled(false);
+                  handleScheduleSelected(i);
+                }}
+                selected={selectedScheduleIndices.has(i)}
+              />
+            </View>
           )
         )}
       </View>

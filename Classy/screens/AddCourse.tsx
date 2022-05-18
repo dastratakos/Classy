@@ -13,10 +13,10 @@ import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import ScheduleCard from "../components/Cards/ScheduleCard";
 import SquareButton from "../components/Buttons/SquareButton";
+import { addEnrollment } from "../services/enrollments";
+import { getCourseTerms } from "../services/courses";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { getCourseTerms } from "../services/courses";
-import { addEnrollment } from "../services/enrollments";
 
 export default function AddCourse({ route }: AddCourseProps) {
   const context = useContext(AppContext);
@@ -78,15 +78,16 @@ export default function AddCourse({ route }: AddCourseProps) {
       >
         {terms[`${context.selectedTerm}`].map(
           (schedule: Schedule, i: number) => (
-            <ScheduleCard
-              schedule={schedule}
-              key={`${i}`}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                handleScheduleSelected(i);
-              }}
-              selected={selectedScheduleIndices.has(i)}
-            />
+            <View key={i.toString()}>
+              <ScheduleCard
+                schedule={schedule}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  handleScheduleSelected(i);
+                }}
+                selected={selectedScheduleIndices.has(i)}
+              />
+            </View>
           )
         )}
       </View>

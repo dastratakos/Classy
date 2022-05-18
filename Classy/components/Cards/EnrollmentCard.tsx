@@ -13,11 +13,9 @@ import AppContext from "../../context/Context";
 
 export default function EnrollmentCard({
   enrollment,
-  numFriends = 0,
   emphasize = false,
 }: {
   enrollment: Enrollment;
-  numFriends?: number;
   emphasize?: boolean;
 }) {
   const context = useContext(AppContext);
@@ -73,9 +71,9 @@ export default function EnrollmentCard({
             </Text>
           </View>
           <View style={styles.numFriendsContainer}>
-            <Text style={styles.numberText}>{numFriends}</Text>
+            <Text style={styles.numberText}>{enrollment.numFriends}</Text>
             <Text style={styles.friendsText}>
-              {"friend" + (numFriends !== 1 ? "s" : "")}
+              {"friend" + (enrollment.numFriends !== 1 ? "s" : "")}
             </Text>
           </View>
         </TouchableOpacity>

@@ -118,8 +118,6 @@ export default function Course({ route }: CourseProps) {
 
     setPeopleData(peopleObj);
 
-    console.log("peopleObj:", peopleObj);
-
     setRefreshing(false);
   };
 
@@ -225,7 +223,7 @@ export default function Course({ route }: CourseProps) {
                   }
                 >
                   {["All", "Friends", "Public"].map((mode, i) => (
-                    <>
+                    <View key={mode}>
                       <TouchableOpacity
                         onPress={() => {
                           setPopoverVisible(false);
@@ -259,7 +257,7 @@ export default function Course({ route }: CourseProps) {
                           }}
                         />
                       )}
-                    </>
+                    </View>
                   ))}
                 </Popover>
               </View>
@@ -278,11 +276,15 @@ export default function Course({ route }: CourseProps) {
                           )
                         </Text>
                         {filter !== "Public" && (
-                          <FriendList friends={peopleData[termId].friends} />
+                          <FriendList
+                            friends={peopleData[termId].friends}
+                            showEmptyElement={false}
+                          />
                         )}
                         {filter !== "Friends" && (
                           <FriendList
                             friends={peopleData[termId].publicUsers}
+                            showEmptyElement={false}
                             // requests
                           />
                         )}

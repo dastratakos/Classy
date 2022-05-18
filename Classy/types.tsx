@@ -10,8 +10,8 @@ import {
 
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { Channel as ChannelType } from "stream-chat";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MessageType } from "stream-chat-expo";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Timestamp } from "firebase/firestore";
 
 declare global {
@@ -47,6 +47,7 @@ export type FavoritedCourse = {
   courseId: number;
   title: string;
   userId: string;
+  numFriends: number;
 };
 
 export type Enrollment = {
@@ -60,6 +61,7 @@ export type Enrollment = {
   units: number; // Chosen number of units
   userId: string;
   color: string;
+  numFriends: number;
 };
 
 export type Term = {

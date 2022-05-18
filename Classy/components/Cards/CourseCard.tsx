@@ -10,11 +10,9 @@ import AppStyles from "../../styles/AppStyles";
 
 export default function CourseCard({
   course,
-  numFriends = 0,
   emphasize = false,
 }: {
   course: Course;
-  numFriends?: number;
   emphasize?: boolean;
 }) {
   const navigation = useNavigation();
@@ -68,15 +66,6 @@ const styles = StyleSheet.create({
   },
   cardSubtitle: {
     fontSize: Layout.text.medium,
-  },
-  numFriendsContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: Layout.photo.small,
-    width: Layout.photo.small,
-    borderRadius: Layout.radius.xsmall,
-    marginLeft: Layout.spacing.small,
-    backgroundColor: "transparent",
   },
   numberText: {
     fontSize: Layout.text.xlarge,

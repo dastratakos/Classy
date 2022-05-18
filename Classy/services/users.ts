@@ -38,7 +38,6 @@ export const getPublicUserIds = async (userId: string) => {
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => publicUserIds.push(doc.data().id));
 
-  console.log("publicUserIds:", publicUserIds);
   return publicUserIds;
 };
 

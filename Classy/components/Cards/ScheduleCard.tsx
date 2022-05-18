@@ -12,17 +12,15 @@ export default function ScheduleCard({
   schedule,
   onPress,
   selected,
-  key,
 }: {
   schedule: Schedule;
   onPress: () => void;
   selected?: boolean;
-  key: string;
 }) {
   const colorScheme = useColorScheme();
 
   return (
-    <View style={[styles.container, AppStyles.boxShadow]} key={key}>
+    <View style={[styles.container, AppStyles.boxShadow]}>
       <TouchableOpacity
         onPress={onPress}
         style={[

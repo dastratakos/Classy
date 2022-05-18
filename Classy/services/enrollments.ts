@@ -14,8 +14,13 @@ import {
 
 import { db } from "../firebase";
 import { termIdToYear } from "../utils";
+import { getFriendIds, getNumFriendsInCourse } from "./friends";
 
-export const getEnrollmentsForTerm = async (userId: string, termId: string) => {
+export const getEnrollmentsForTerm = async (
+  myId: string,
+  userId: string,
+  termId: string
+) => {
   const q = query(
     collection(db, "enrollments"),
     where("userId", "==", userId),
@@ -28,6 +33,13 @@ export const getEnrollmentsForTerm = async (userId: string, termId: string) => {
   querySnapshot.forEach((doc) => {
     res.push({ ...doc.data(), docId: doc.id } as Enrollment);
   });
+
+  /* Collect number of friends per enrollment. */
+  const friendIds = await getFriendIds(myId);
+  for (let i = 0; i < res.length; i++) {
+    res[i].numFriends = await getNumFriendsInCourse(res[i].courseId, friendIds);
+  }
+
   return res;
 };
 

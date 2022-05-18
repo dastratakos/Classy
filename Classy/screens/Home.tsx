@@ -53,6 +53,7 @@ export default function Home() {
 
     const res = await getEnrollmentsForTerm(
       context.user.id,
+      context.user.id,
       getCurrentTermId()
     );
 

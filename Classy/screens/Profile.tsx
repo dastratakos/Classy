@@ -79,6 +79,7 @@ export default function Profile() {
 
         const res = await getEnrollmentsForTerm(
           context.user.id,
+          context.user.id,
           getCurrentTermId()
         );
         setEnrollments(res);
@@ -116,6 +117,7 @@ export default function Profile() {
     getRequestIds(context.user.id).then((res) => setNumRequests(res.length));
 
     const res = await getEnrollmentsForTerm(
+      context.user.id,
       context.user.id,
       getCurrentTermId()
     );

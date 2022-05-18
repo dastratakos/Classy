@@ -8,15 +8,17 @@ export default function FriendList({
   friends,
   emptyPrimary = "Nothing to see here",
   emptySecondary = "",
+  showEmptyElement = true,
   requests = false,
 }: {
   friends: User[];
   emptyPrimary?: string;
   emptySecondary?: string;
+  showEmptyElement?: boolean;
   requests?: boolean;
 }) {
   // TODO: use FlatList
-  if (friends.length === 0)
+  if (friends.length === 0 && showEmptyElement)
     return (
       <EmptyList
         SVGElement={requests ? SVGNoRequests : SVGNoFriends}

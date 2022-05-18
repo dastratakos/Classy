@@ -32,7 +32,11 @@ export default function Enrollments({ route }: EnrollmentsProps) {
   useEffect(() => {
     const loadScreen = async () => {
       setEnrollments(
-        await getEnrollmentsForTerm(route.params.userId, route.params.termId)
+        await getEnrollmentsForTerm(
+          context.user.id,
+          route.params.userId,
+          route.params.termId
+        )
       );
 
       setQuarterName(termIdToQuarterName(route.params.termId));
