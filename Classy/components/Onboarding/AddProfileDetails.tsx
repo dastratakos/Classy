@@ -238,7 +238,7 @@ export default function AddProfileDetails({
                 }}
                 theme={colorScheme === "light" ? "LIGHT" : "DARK"}
                 addCustomItem
-                // style={{borderWidth: 0}}
+                style={{ backgroundColor: Colors[colorScheme].background }}
               />
             </View>
             <View style={AppStyles.row}>
@@ -269,6 +269,7 @@ export default function AddProfileDetails({
                     animationType: "slide",
                   }}
                   theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+                  style={{ backgroundColor: Colors[colorScheme].background }}
                 />
               </View>
               <View style={[styles.item, { width: "48%" }]}>
@@ -298,6 +299,7 @@ export default function AddProfileDetails({
                     animationType: "slide",
                   }}
                   theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+                  style={{ backgroundColor: Colors[colorScheme].background }}
                 />
               </View>
             </View>
