@@ -10,12 +10,10 @@ import AppStyles from "../../styles/AppStyles";
 
 export default function CourseCard({
   course,
-  key,
   numFriends = 0,
   emphasize = false,
 }: {
   course: Course;
-  key: string
   numFriends?: number;
   emphasize?: boolean;
 }) {

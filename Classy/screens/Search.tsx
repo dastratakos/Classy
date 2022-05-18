@@ -123,13 +123,10 @@ export default function Search() {
       component: (
         <FlatList
           data={courseSearchResults}
-          renderItem={({ item, index }) => (
-            <CourseCard
-              course={item}
-              key={index.toString()}
-              numFriends={0}
-              emphasize={false}
-            />
+          renderItem={({ item }) => (
+            <View key={item.courseId.toString()}>
+              <CourseCard course={item} numFriends={0} emphasize={false} />
+            </View>
           )}
           keyExtractor={(item) => item.courseId.toString()}
           onEndReached={() => handleSearchCourses(searchPhrase)}
