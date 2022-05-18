@@ -130,7 +130,9 @@ export default function Home() {
       </View>
       <View style={AppStyles.section}>
         {homeData.today.map((item) => (
-          <CourseOverview key={`${item.enrollment.courseId}`} data={item} />
+          <View key={item.enrollment.courseId.toString()}>
+            <CourseOverview data={item} />
+          </View>
         ))}
         {homeData.today.length === 0 && (
           <>
@@ -157,7 +159,9 @@ export default function Home() {
       </View>
       <View style={AppStyles.section}>
         {homeData.nextUp.map((item) => (
-          <CourseOverview key={`${item.enrollment.courseId}`} data={item} />
+          <View key={item.enrollment.courseId.toString()}>
+            <CourseOverview data={item} />
+          </View>
         ))}
         {homeData.nextUp.length === 0 && (
           <>

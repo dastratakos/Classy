@@ -13,20 +13,14 @@ import { useNavigation } from "@react-navigation/core";
 import { useState } from "react";
 import EmptyList from "../EmptyList";
 
-export default function CourseOverview({
-  key,
-  data,
-}: {
-  key: string;
-  data: CourseOverviewType;
-}) {
+export default function CourseOverview({ data }: { data: CourseOverviewType }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
-    <View key={key}>
+    <View>
       <CourseOverviewModal
         data={data}
         visible={modalVisible}
