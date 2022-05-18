@@ -1,31 +1,32 @@
 import * as React from "react";
 
 import { HomeStackScreenProps, ProfileStackScreenProps } from "../types";
+import { Icon, Text, View } from "../components/Themed";
 
 import AddCourse from "../screens/AddCourse";
 import AppContext from "../context/Context";
 import ChannelDetails from "../screens/ChannelDetails";
 import ChannelScreen from "../screens/ChannelScreen";
+import Colors from "../constants/Colors";
 import Course from "../screens/Course";
 import CourseSimilarity from "../screens/CourseSimilarity";
+import EditCourse from "../screens/EditCourse";
 import Enrollments from "../screens/Enrollments";
 import Favorites from "../screens/Favorites";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
 import Home from "../screens/Home";
-import { Icon } from "../components/Themed";
 import Layout from "../constants/Layout";
 import Messages from "../screens/Messages";
 import MyFriends from "../screens/MyFriends";
-import Quarters from "../screens/Quarters";
 import NewMessage from "../screens/NewMessage";
 import { Pressable } from "react-native";
 import Profile from "../screens/Profile";
+import Quarters from "../screens/Quarters";
 import Settings from "../screens/Settings";
 import ThreadScreen from "../screens/ThreadScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useContext } from "react";
-import EditCourse from "../screens/EditCourse";
 
 const Stack = createNativeStackNavigator();
 
@@ -46,6 +47,36 @@ export default function HomeStackNavigator() {
               })}
             >
               <Icon name="comments" size={Layout.icon.medium} />
+              {context.totalUnreadCount > 0 && (
+                <View
+                  style={{
+                    backgroundColor: "transparent",
+                    height: 20,
+                    width: 50,
+                    alignItems: "flex-end",
+                    justifyContent: "center",
+                    position: "absolute",
+                    top: -8,
+                    right: -8,
+                  }}
+                >
+                  <View
+                    style={{
+                      backgroundColor: Colors.deepRed,
+                      height: 20,
+                      minWidth: 20,
+                      paddingHorizontal: 4,
+                      borderRadius: 10,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text style={{ color: Colors.white }}>
+                      {context.totalUnreadCount}
+                    </Text>
+                  </View>
+                </View>
+              )}
             </Pressable>
           ),
         })}

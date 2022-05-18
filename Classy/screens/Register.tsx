@@ -53,7 +53,7 @@ export default function Register({ route }: RegisterProps) {
           interests: "",
           createdAt: Timestamp.now(),
           isPrivate: false,
-        }
+        };
         setUser(data);
 
         context.setUser({
@@ -74,12 +74,24 @@ export default function Register({ route }: RegisterProps) {
     if (name) streamChatUser.name = name;
     if (photoUrl) streamChatUser.photoUrl = photoUrl;
 
-    await context.streamClient.connectUser(
+    const user = await context.streamClient.connectUser(
       streamChatUser,
       context.streamClient.devToken(streamChatUser.id)
     );
-    console.log("User connected:");
-    console.log(streamChatUser);
+    console.log("User connected:", user);
+
+    context.setTotalUnreadCount(user.me.total_unread_count);
+
+    context.streamClient.on((event) => {
+      if (event.total_unread_count !== undefined) {
+        console.log("Total unread count:", event.total_unread_count);
+        context.setTotalUnreadCount(user.me.total_unread_count);
+      }
+
+      if (event.unread_channels !== undefined) {
+        console.log("Unread channels:", event.unread_channels);
+      }
+    });
   };
 
   return (

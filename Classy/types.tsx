@@ -330,6 +330,8 @@ export type Context = {
   setChannelName: (arg0: string) => void;
   thread: undefined;
   setThread: (arg0: MessageType) => void;
+  totalUnreadCount: number;
+  setTotalUnreadCount: (arg0: number) => void;
   selectedTerm: string;
   setSelectedTerm: (arg0: string) => void;
   selectedColor: string;

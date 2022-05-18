@@ -25,6 +25,7 @@ export default function App() {
   const [channel, setChannel] = useState();
   const [channelName, setChannelName] = useState();
   const [thread, setThread] = useState();
+  const [totalUnreadCount, setTotalUnreadCount] = useState<number>(0);
   const [selectedTerm, setSelectedTerm] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
 
@@ -41,10 +42,12 @@ export default function App() {
     setChannelName,
     thread,
     setThread,
+    totalUnreadCount,
+    setTotalUnreadCount,
     selectedTerm,
     setSelectedTerm,
     selectedColor,
-    setSelectedColor
+    setSelectedColor,
   };
 
   const isLoadingComplete = useCachedResources();
@@ -54,7 +57,7 @@ export default function App() {
     colors: {
       accent_blue: Colors.light.tint,
       accent_green: Colors.green,
-      accent_red: Colors.red,
+      accent_red: Colors.deepRed,
       bg_gradient_end: Colors[colorScheme].background,
       bg_gradient_start: Colors[colorScheme].background,
       black: Colors[colorScheme].text,

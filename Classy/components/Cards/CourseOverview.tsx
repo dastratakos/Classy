@@ -51,7 +51,7 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
         visible={modalVisible}
         setVisible={setModalVisible}
       /> */}
-      <EnrollmentModal 
+      <EnrollmentModal
         enrollment={data.enrollment}
         visible={modalVisible}
         setVisible={setModalVisible}
@@ -61,7 +61,7 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
       <Pressable
         style={[
           styles.container,
-          { backgroundColor: (data.enrollment.color || Colors.pink + "AA")},
+          { backgroundColor: data.enrollment.color || Colors.pink + "AA" },
         ]}
         onPress={() => setModalVisible(true)}
       >
@@ -75,7 +75,9 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
           {getTimeString(data.endInfo, "America/Danmarkshavn")}
         </Text>
         <Text style={styles.classFriendsText}>
-          {data.friends.length} Class Friends
+          {`${data.friends.length} Class Friend${
+            data.friends.length === 1 ? "" : "s"
+          }`}
         </Text>
         <View
           style={{
