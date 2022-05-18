@@ -1,6 +1,7 @@
 import { ActivityIndicator, Text, View } from "../components/Themed";
 import { Enrollment, EnrollmentsProps, User } from "../types";
 import { ScrollView, StyleSheet } from "react-native";
+import { termIdToFullName, termIdToQuarterName } from "../utils";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -10,9 +11,12 @@ import Colors from "../constants/Colors";
 import EmptyList from "../components/EmptyList";
 import EnrollmentList from "../components/Lists/EnrollmentList";
 import Layout from "../constants/Layout";
+import SVGAutumn from "../assets/images/undraw/autumn.svg";
 import SVGNoCourses from "../assets/images/undraw/noCourses.svg";
+import SVGSpring from "../assets/images/undraw/spring.svg";
+import SVGSummer from "../assets/images/undraw/summer.svg";
+import SVGWinter from "../assets/images/undraw/winter.svg";
 import { getEnrollmentsForTerm } from "../services/enrollments";
-import { termIdToFullName } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
@@ -22,6 +26,7 @@ export default function Enrollments({ route }: EnrollmentsProps) {
   const context = useContext(AppContext);
 
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [quarterName, setQuarterName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -29,6 +34,9 @@ export default function Enrollments({ route }: EnrollmentsProps) {
       setEnrollments(
         await getEnrollmentsForTerm(route.params.userId, route.params.termId)
       );
+
+      setQuarterName(termIdToQuarterName(route.params.termId));
+
       setLoading(false);
     };
     loadScreen();
@@ -51,7 +59,17 @@ export default function Enrollments({ route }: EnrollmentsProps) {
               enrollments={enrollments}
               emptyElement={
                 <EmptyList
-                  SVGElement={SVGNoCourses}
+                  SVGElement={
+                    quarterName === "Aut"
+                      ? SVGAutumn
+                      : quarterName === "Win"
+                      ? SVGWinter
+                      : quarterName === "Spr"
+                      ? SVGSpring
+                      : quarterName === "Sum"
+                      ? SVGSummer
+                      : SVGNoCourses
+                  }
                   primaryText="No courses this quarter"
                   secondaryText={
                     context.user.id == route.params.userId

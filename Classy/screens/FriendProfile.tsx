@@ -23,6 +23,7 @@ import {
   getWeekFromEnrollments,
   sendPushNotification,
   termIdToFullName,
+  termIdToQuarterName,
 } from "../utils";
 import { getEnrollmentsForTerm, getOverlap } from "../services/enrollments";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -38,8 +39,12 @@ import EnrollmentList from "../components/Lists/EnrollmentList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import ProgressBar from "../components/ProgressBar";
+import SVGAutumn from "../assets/images/undraw/autumn.svg";
 import SVGNoCourses from "../assets/images/undraw/noCourses.svg";
 import SVGPrivate from "../assets/images/undraw/private.svg";
+import SVGSpring from "../assets/images/undraw/spring.svg";
+import SVGSummer from "../assets/images/undraw/summer.svg";
+import SVGWinter from "../assets/images/undraw/winter.svg";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
 import TabView from "../components/TabView";
@@ -61,6 +66,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const [overlap, setOverlap] = useState<Enrollment[]>([]);
   const [numFriends, setNumFriends] = useState<string>("");
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [quarterName, setQuarterName] = useState<string>("");
   const [week, setWeek] = useState<WeekSchedule>([]);
   const [inClass, setInClass] = useState<boolean>(false);
 
@@ -93,6 +99,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const onRefresh = async () => {
     setRefreshing(true);
     setUser(await getUser(route.params.id));
+
+    setQuarterName(termIdToQuarterName(getCurrentTermId()));
 
     const res = await getFriendStatus(context.user.id, route.params.id);
     setFriendStatus(res.friendStatus);
@@ -328,7 +336,17 @@ export default function FriendProfile({ route }: FriendProfileProps) {
           enrollments={enrollments}
           emptyElement={
             <EmptyList
-              SVGElement={SVGNoCourses}
+              SVGElement={
+                quarterName === "Aut"
+                  ? SVGAutumn
+                  : quarterName === "Win"
+                  ? SVGWinter
+                  : quarterName === "Spr"
+                  ? SVGSpring
+                  : quarterName === "Sum"
+                  ? SVGSummer
+                  : SVGNoCourses
+              }
               primaryText="No courses this quarter"
             />
           }

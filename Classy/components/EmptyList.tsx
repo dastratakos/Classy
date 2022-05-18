@@ -1,9 +1,10 @@
-import { View, Text } from "../components/Themed";
+import { FunctionComponent, SVGProps } from "react";
+import { Text, View } from "../components/Themed";
+
+import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import { StyleSheet } from "react-native";
 import useColorScheme from "../hooks/useColorScheme";
-import Colors from "../constants/Colors";
-import { FunctionComponent, SVGProps } from "react";
 
 export default function EmptyList({
   SVGElement,

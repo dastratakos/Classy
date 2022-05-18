@@ -14,6 +14,7 @@ import {
   getCurrentTermId,
   getWeekFromEnrollments,
   termIdToFullName,
+  termIdToQuarterName,
 } from "../utils";
 import { getFriendIds, getRequestIds } from "../services/friends";
 import { getUser, updateUser } from "../services/users";
@@ -29,7 +30,11 @@ import EmptyList from "../components/EmptyList";
 import EnrollmentList from "../components/Lists/EnrollmentList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
+import SVGAutumn from "../assets/images/undraw/autumn.svg";
 import SVGNoCourses from "../assets/images/undraw/noCourses.svg";
+import SVGSpring from "../assets/images/undraw/spring.svg";
+import SVGSummer from "../assets/images/undraw/summer.svg";
+import SVGWinter from "../assets/images/undraw/winter.svg";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
 import TabView from "../components/TabView";
@@ -47,6 +52,7 @@ export default function Profile() {
   const [numFriends, setNumFriends] = useState<string>("");
   const [numRequests, setNumRequests] = useState<number>(0);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [quarterName, setQuarterName] = useState<string>("");
   const [week, setWeek] = useState<WeekSchedule>([]);
   const [refreshing, setRefreshing] = useState<boolean>(true);
   const [showEmailVerification, setShowEmailVerification] = useState<boolean>(
@@ -60,6 +66,9 @@ export default function Profile() {
       if (auth.currentUser) {
         const user = await getUser(auth.currentUser.uid);
         context.setUser({ ...context.user, ...user });
+
+        setQuarterName(termIdToQuarterName(getCurrentTermId()));
+
         getFriendIds(context.user.id).then((res) =>
           setNumFriends(`${res.length}`)
         );
@@ -97,6 +106,9 @@ export default function Profile() {
 
     const user = await getUser(context.user.id);
     context.setUser({ ...context.user, ...user });
+
+    setQuarterName(termIdToQuarterName(getCurrentTermId()));
+
     getFriendIds(context.user.id).then((res) => {
       setNumFriends(`${res.length}`);
     });
@@ -235,7 +247,17 @@ export default function Profile() {
           enrollments={enrollments}
           emptyElement={
             <EmptyList
-              SVGElement={SVGNoCourses}
+              SVGElement={
+                quarterName === "Aut"
+                  ? SVGAutumn
+                  : quarterName === "Win"
+                  ? SVGWinter
+                  : quarterName === "Spr"
+                  ? SVGSpring
+                  : quarterName === "Sum"
+                  ? SVGSummer
+                  : SVGNoCourses
+              }
               primaryText="No courses this quarter"
               secondaryText="Add some from the search tab, or explore your friends' courses!"
             />
