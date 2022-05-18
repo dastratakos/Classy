@@ -80,6 +80,7 @@ export default function EnrollmentModal({
             <FlatList
               data={enrollment.schedules}
               style={{ height: 100 }}
+              keyExtractor={(_, index) => index.toString()}
               renderItem={({ item }) => (
                 <Text style={styles.schedText}>
                   {item.days.join(", ")}{" "}
@@ -170,7 +171,6 @@ const styles = StyleSheet.create({
   classTimesWrap: {
     width: "100%",
     backgroundColor: "transparent",
-    height: 200,
   },
   schedText: {
     fontSize: Layout.text.large,

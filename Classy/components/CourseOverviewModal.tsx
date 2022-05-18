@@ -94,7 +94,7 @@ export default function CourseOverviewModal({
                   </Pressable>
                 </View>
               )}
-              keyExtractor={(item) => `${item.id}`}
+              keyExtractor={(item) => item.id.toString()}
               style={{ flexGrow: 0 }}
             />
           </View>

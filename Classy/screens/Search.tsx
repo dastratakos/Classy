@@ -131,7 +131,7 @@ export default function Search() {
               emphasize={false}
             />
           )}
-          keyExtractor={(item) => `${item.courseId}`}
+          keyExtractor={(item) => item.courseId.toString()}
           onEndReached={() => handleSearchCourses(searchPhrase)}
           onEndReachedThreshold={0}
           refreshing={coursesRefreshing}
