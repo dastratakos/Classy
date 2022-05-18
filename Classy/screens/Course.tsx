@@ -14,6 +14,7 @@ import {
   RefreshControl,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import {
   addFavorite,
@@ -30,6 +31,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import EmptyList from "../components/EmptyList";
 import FriendList from "../components/Lists/FriendList";
 import Layout from "../constants/Layout";
+import Popover from "react-native-popover-view";
 import ReadMoreText from "../components/ReadMoreText";
 import SVGCamping from "../assets/images/undraw/camping.svg";
 import Separator from "../components/Separator";
@@ -58,7 +60,8 @@ export default function Course({ route }: CourseProps) {
   const [quarterOpen, setQuarterOpen] = useState(false);
   const [quarterItems, setQuarterItems] = useState([]);
 
-  const [filter, setFilter] = useState<string>("all");
+  const [filter, setFilter] = useState<string>("All");
+  const [popoverVisible, setPopoverVisible] = useState<boolean>(false);
 
   useEffect(() => {
     onRefresh();
@@ -110,7 +113,7 @@ export default function Course({ route }: CourseProps) {
       peopleObj[`${term}`] = { friends, publicUsers };
     }
 
-    // quarterArr.sort((a, b) => (a.value > b.value ? 1 : -1));
+    quarterArr.sort((a, b) => (a.value < b.value ? 1 : -1));
     setQuarterItems([{ label: "All Quarters", value: "all" }, ...quarterArr]);
 
     setPeopleData(peopleObj);
@@ -183,7 +186,7 @@ export default function Course({ route }: CourseProps) {
             style={[AppStyles.row, { marginBottom: Layout.spacing.medium }]}
           >
             <View style={{ width: Layout.icon.medium }} />
-            <View style={{ width: "50%" }}>
+            <View style={{ width: "75%" }}>
               <DropDownPicker
                 open={quarterOpen}
                 // onOpen={onQuarterOpen}
@@ -208,9 +211,49 @@ export default function Course({ route }: CourseProps) {
                 }}
               />
             </View>
-            <Pressable onPress={() => console.log("filter pressed")}>
-              <Icon3 name="filter" size={Layout.icon.medium} />
-            </Pressable>
+            <Popover
+              isVisible={popoverVisible}
+              onRequestClose={() => setPopoverVisible(false)}
+              from={
+                <TouchableOpacity onPress={() => setPopoverVisible(true)}>
+                  <Icon3 name="filter" size={Layout.icon.medium} />
+                </TouchableOpacity>
+              }
+            >
+              {["All", "Friends", "Public"].map((mode, i) => (
+                <>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setPopoverVisible(false);
+                      setFilter(mode);
+                    }}
+                    style={{ ...AppStyles.row, padding: Layout.spacing.small }}
+                  >
+                    <Text style={{ marginRight: Layout.spacing.medium }}>
+                      {mode}
+                    </Text>
+                    {filter === mode ? (
+                      <Icon name="check" size={Layout.icon.small} />
+                    ) : (
+                      <View
+                        style={{
+                          height: Layout.icon.small,
+                          width: Layout.icon.small,
+                        }}
+                      />
+                    )}
+                  </TouchableOpacity>
+                  {i < 2 && (
+                    <View
+                      style={{
+                        height: 1,
+                        backgroundColor: Colors[colorScheme].tertiaryBackground,
+                      }}
+                    />
+                  )}
+                </>
+              ))}
+            </Popover>
           </View>
           {Object.keys(peopleData).length > 0 ? (
             <>
@@ -228,12 +271,10 @@ export default function Course({ route }: CourseProps) {
                             peopleData[termId].publicUsers.length}
                           )
                         </Text>
-                        {filter !== "public" && (
-                          <FriendList
-                            friends={peopleData[termId].friends}
-                          />
+                        {filter !== "Public" && (
+                          <FriendList friends={peopleData[termId].friends} />
                         )}
-                        {filter !== "friends" && (
+                        {filter !== "Friends" && (
                           <FriendList
                             friends={peopleData[termId].publicUsers}
                             // requests
