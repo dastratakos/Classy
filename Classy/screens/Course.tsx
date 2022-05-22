@@ -302,7 +302,7 @@ export default function Course({ route }: CourseProps) {
         </View>
       </ScrollView>
       <View style={styles.ctaContainer}>
-        <View style={{ flexGrow: 1 }}>
+        <View style={{ flexGrow: 1, backgroundColor: "transparent" }}>
           <Button
             text="Add to Courses"
             onPress={() => {

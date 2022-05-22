@@ -66,6 +66,7 @@ export default function Login({ route }: LoginProps) {
       setUp(auth.currentUser.uid);
       setLoading(false);
     } else {
+      setLoading(false);
       const unsubscribe = auth.onAuthStateChanged((user) => {
         if (user) setUp(user.uid);
       });
