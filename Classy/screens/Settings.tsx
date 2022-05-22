@@ -10,7 +10,7 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../components/Themed";
-import { useCallback, useContext, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import ActionSheet from "react-native-actionsheet";
 import AppContext from "../context/Context";
@@ -77,6 +77,17 @@ export default function Settings() {
     "Take photo",
     "Cancel",
   ];
+
+  useEffect(() => {
+    const majorObject = {
+      label: major,
+      value: major,
+    };
+    if (!majorItems.includes(majorObject)) {
+      // majorItems.push(majorObject);
+      setMajorItems([...majorItems, majorObject])
+    }
+  }, []);
 
   const handleSavePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

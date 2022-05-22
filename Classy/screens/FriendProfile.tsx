@@ -388,7 +388,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             size={Layout.photo.large}
             style={{ marginRight: Layout.spacing.large }}
           />
-          <View style={{ flexGrow: 1 }}>
+          <View style={{width: "100%" ,flexShrink: 1}}>
             <Text style={styles.name}>{user.name}</Text>
             <View
               style={[AppStyles.row, { marginVertical: Layout.spacing.xsmall }]}
