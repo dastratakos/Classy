@@ -264,7 +264,7 @@ export default function ChannelDetails() {
                 }}
               />
             ) : null}
-            <Separator />
+            <Separator overrideStyles={{width: "100%", marginTop: Layout.spacing.medium}} />
             <KeyboardAvoidingView
               style={styles.inputContainer}
               behavior="padding"
@@ -273,7 +273,7 @@ export default function ChannelDetails() {
                 style={[AppStyles.row, { marginBottom: Layout.spacing.large }]}
               >
                 <View style={styles.field}>
-                  <Text>Group name</Text>
+                  <Text style={{fontWeight: "500"}}>Group name</Text>
                 </View>
                 <TextInput
                   placeholder="Name"
@@ -302,7 +302,7 @@ export default function ChannelDetails() {
                 </View>
               </View>
             </KeyboardAvoidingView>
-            <Separator />
+            <Separator overrideStyles={{width: "100%", marginTop: Layout.spacing.large}} />
           </>
         ) : null}
         <Text style={styles.title}>Members</Text>
@@ -342,18 +342,18 @@ const styles = StyleSheet.create({
   title: {
     fontSize: Layout.text.large,
     fontWeight: "500",
-    marginTop: Layout.spacing.small,
-    marginBottom: Layout.spacing.medium,
+    marginVertical: Layout.spacing.xsmall,
   },
   inputContainer: {
     width: "100%",
   },
   field: {
-    width: "40%",
-    paddingRight: Layout.spacing.large,
+    width: "50%",
   },
   input: {
     paddingVertical: Layout.spacing.xsmall,
-    width: "60%",
+    width: "50%",
+    paddingHorizontal: Layout.spacing.small,
+    borderBottomWidth: 0.5,
   },
 });
