@@ -133,7 +133,6 @@ export default function Course({ route }: CourseProps) {
   };
 
   if (refreshing) return <ActivityIndicator />;
-
   return (
     <>
       <ScrollView
@@ -178,15 +177,16 @@ export default function Course({ route }: CourseProps) {
             </View>
           </View>
         </View>
-        <Separator />
+        <Separator overrideStyles={{marginBottom: 0}}/>
         <View style={AppStyles.section}>
           {Object.keys(peopleData).length > 0 ? (
             <>
+              <Text style={styles.friendsHeader} numberOfLines={1}>{"People in " + course.code.join(", ")}</Text>
               <View
                 style={[AppStyles.row, { marginBottom: Layout.spacing.medium }]}
               >
-                <View style={{ width: Layout.icon.medium }} />
-                <View style={{ width: "75%" }}>
+                {/* <View style={{ width: Layout.icon.medium }} /> */}
+                <View style={{ width: 0, flexGrow: 1, marginRight: Layout.spacing.small }}>
                   <DropDownPicker
                     open={quarterOpen}
                     // onOpen={onQuarterOpen}
@@ -238,7 +238,7 @@ export default function Course({ route }: CourseProps) {
                           {mode}
                         </Text>
                         {filter === mode ? (
-                          <Icon name="check" size={Layout.icon.small} />
+                          <Icon3 name="checkmark" size={Layout.icon.small} />
                         ) : (
                           <View
                             style={{
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
   friendsHeader: {
     fontSize: Layout.text.large,
     fontWeight: "500",
-    marginVertical: Layout.spacing.xxsmall,
+    marginBottom: Layout.spacing.small,
     textAlign: "center",
   },
   term: {
