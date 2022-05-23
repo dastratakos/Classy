@@ -85,7 +85,7 @@ export default function Settings() {
     };
     if (!majorItems.includes(majorObject)) {
       // majorItems.push(majorObject);
-      setMajorItems([...majorItems, majorObject])
+      setMajorItems([...majorItems, majorObject]);
     }
   }, []);
 
@@ -215,203 +215,210 @@ export default function Settings() {
   };
 
   return (
-    <ScrollView
-      style={[
-        styles.container,
-        { backgroundColor: Colors[colorScheme].background },
-        // { alignItems: "center" },
-      ]}
-      contentContainerStyle={{ alignItems: "center" }}
-    >
-      <KeyboardAvoidingView
-        style={styles.keyboardContainer}
+    <>
+      <ScrollView
+        style={[
+          styles.container,
+          { backgroundColor: Colors[colorScheme].background },
+          // { alignItems: "center" },
+        ]}
         contentContainerStyle={{ alignItems: "center" }}
-        behavior="position"
       >
-        <ProfilePhoto
-          url={photoUrl}
-          size={Layout.photo.xlarge}
-          style={{ marginBottom: Layout.spacing.medium }}
-          loading={uploading}
+        <KeyboardAvoidingView
+          style={styles.keyboardContainer}
+          contentContainerStyle={{ alignItems: "center" }}
+          behavior="position"
+        >
+          <ProfilePhoto
+            url={photoUrl}
+            size={Layout.photo.xlarge}
+            style={{ marginBottom: Layout.spacing.medium }}
+            loading={uploading}
+          />
+          <Button
+            text="Change profile photo"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              actionSheetRef.current?.show();
+            }}
+          />
+          <Separator
+            overrideStyles={{ marginTop: Layout.spacing.large, width: "100%" }}
+          />
+          <View style={styles.inputContainer}>
+            <View style={styles.item}>
+              <View style={styles.field}>
+                <Text>Name</Text>
+              </View>
+              <TextInput
+                placeholder="Name"
+                value={name}
+                onChangeText={(text) => {
+                  setName(text);
+                  setSaveDisabled(false);
+                }}
+                style={[styles.input, { color: Colors[colorScheme].text }]}
+                autoCapitalize="words"
+                textContentType="name"
+              />
+            </View>
+            <View style={styles.item}>
+              <View style={styles.field}>
+                <Text>Major</Text>
+              </View>
+              <DropDownPicker
+                open={majorOpen}
+                onOpen={onMajorOpen}
+                value={major}
+                items={majorItems}
+                setOpen={setMajorOpen}
+                setValue={(text) => {
+                  setMajor(text);
+                  setSaveDisabled(false);
+                }}
+                setItems={setMajorItems}
+                // multiple
+                // min={0}
+                // max={2}
+                placeholder="Major"
+                placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
+                searchable
+                searchPlaceholder="Search..."
+                showBadgeDot={false}
+                dropDownDirection="TOP"
+                modalProps={{
+                  animationType: "slide",
+                }}
+                theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+                addCustomItem
+                style={{ backgroundColor: Colors[colorScheme].background }}
+                dropDownContainerStyle={{
+                  backgroundColor: Colors[colorScheme].background,
+                }}
+              />
+            </View>
+            <View style={AppStyles.row}>
+              <View style={[styles.item, { width: "48%" }]}>
+                <View style={styles.field}>
+                  <Text>Start Year</Text>
+                </View>
+                <DropDownPicker
+                  open={startYearOpen}
+                  onOpen={onStartYearOpen}
+                  value={startYear}
+                  items={startYearItems}
+                  setOpen={setStartYearOpen}
+                  setValue={(text) => {
+                    setStartYear(text);
+                    setSaveDisabled(false);
+                  }}
+                  setItems={setStartYearItems}
+                  // multiple
+                  // min={0}
+                  // max={2}
+                  placeholder="Start Year"
+                  placeholderStyle={{
+                    color: Colors[colorScheme].secondaryText,
+                  }}
+                  searchable
+                  searchPlaceholder="Search..."
+                  showBadgeDot={false}
+                  dropDownDirection="TOP"
+                  modalProps={{
+                    animationType: "slide",
+                  }}
+                  theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+                  style={{ backgroundColor: Colors[colorScheme].background }}
+                  dropDownContainerStyle={{
+                    backgroundColor: Colors[colorScheme].background,
+                  }}
+                />
+              </View>
+              <View style={[styles.item, { width: "48%" }]}>
+                <View style={styles.field}>
+                  <Text>Graduation Year</Text>
+                </View>
+                <DropDownPicker
+                  open={gradYearOpen}
+                  onOpen={onGradYearOpen}
+                  value={gradYear}
+                  items={gradYearItems}
+                  setOpen={setGradYearOpen}
+                  setValue={(text) => {
+                    setGradYear(text);
+                    setSaveDisabled(false);
+                  }}
+                  setItems={setGradYearItems}
+                  // multiple
+                  // min={0}
+                  // max={2}
+                  placeholder="Graduation Year"
+                  placeholderStyle={{
+                    color: Colors[colorScheme].secondaryText,
+                  }}
+                  searchable
+                  searchPlaceholder="Search..."
+                  showBadgeDot={false}
+                  dropDownDirection="TOP"
+                  modalProps={{
+                    animationType: "slide",
+                  }}
+                  theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+                  style={{ backgroundColor: Colors[colorScheme].background }}
+                  dropDownContainerStyle={{
+                    backgroundColor: Colors[colorScheme].background,
+                  }}
+                />
+              </View>
+            </View>
+            <View style={styles.item}>
+              <View style={styles.field}>
+                <Text>Clubs & Interests</Text>
+              </View>
+              <TextInput
+                placeholder="Clubs & Interests"
+                value={interests}
+                onChangeText={(text) => {
+                  setInterests(text);
+                  setSaveDisabled(false);
+                }}
+                style={[styles.input, { color: Colors[colorScheme].text }]}
+                autoCapitalize="sentences"
+              />
+            </View>
+            <View style={styles.item}>
+              <View style={styles.field}>
+                <Text>Email</Text>
+              </View>
+              <Text
+                style={[
+                  styles.input,
+                  { color: Colors[colorScheme].secondaryText },
+                ]}
+              >
+                {auth.currentUser?.email}
+              </Text>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+        <Separator
+          overrideStyles={{ marginBottom: Layout.spacing.large, width: "100%" }}
         />
         <Button
-          text="Change profile photo"
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            actionSheetRef.current?.show();
-          }}
+          text="Manage Account"
+          onPress={() => navigation.navigate("ManageAccount")}
+          wide
+          containerStyle={{ marginBottom: 2 * Layout.spacing.xxlarge }}
         />
-        <Separator overrideStyles={{ marginTop: Layout.spacing.large, width: "100%" }} />
-        <View style={styles.inputContainer}>
-          <View style={styles.item}>
-            <View style={styles.field}>
-              <Text>Name</Text>
-            </View>
-            <TextInput
-              placeholder="Name"
-              value={name}
-              onChangeText={(text) => {
-                setName(text);
-                setSaveDisabled(false);
-              }}
-              style={[styles.input, { color: Colors[colorScheme].text }]}
-              autoCapitalize="words"
-              textContentType="name"
-            />
-          </View>
-          <View style={styles.item}>
-            <View style={styles.field}>
-              <Text>Major</Text>
-            </View>
-            <DropDownPicker
-              open={majorOpen}
-              onOpen={onMajorOpen}
-              value={major}
-              items={majorItems}
-              setOpen={setMajorOpen}
-              setValue={(text) => {
-                setMajor(text);
-                setSaveDisabled(false);
-              }}
-              setItems={setMajorItems}
-              // multiple
-              // min={0}
-              // max={2}
-              placeholder="Major"
-              placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
-              searchable
-              searchPlaceholder="Search..."
-              showBadgeDot={false}
-              dropDownDirection="TOP"
-              modalProps={{
-                animationType: "slide",
-              }}
-              theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-              addCustomItem
-              style={{ backgroundColor: Colors[colorScheme].background }}
-              dropDownContainerStyle={{
-                backgroundColor: Colors[colorScheme].background,
-              }}
-            />
-          </View>
-          <View style={AppStyles.row}>
-            <View style={[styles.item, { width: "48%" }]}>
-              <View style={styles.field}>
-                <Text>Start Year</Text>
-              </View>
-              <DropDownPicker
-                open={startYearOpen}
-                onOpen={onStartYearOpen}
-                value={startYear}
-                items={startYearItems}
-                setOpen={setStartYearOpen}
-                setValue={(text) => {
-                  setStartYear(text);
-                  setSaveDisabled(false);
-                }}
-                setItems={setStartYearItems}
-                // multiple
-                // min={0}
-                // max={2}
-                placeholder="Start Year"
-                placeholderStyle={{
-                  color: Colors[colorScheme].secondaryText,
-                }}
-                searchable
-                searchPlaceholder="Search..."
-                showBadgeDot={false}
-                dropDownDirection="TOP"
-                modalProps={{
-                  animationType: "slide",
-                }}
-                theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-                style={{ backgroundColor: Colors[colorScheme].background }}
-                dropDownContainerStyle={{
-                  backgroundColor: Colors[colorScheme].background,
-                }}
-              />
-            </View>
-            <View style={[styles.item, { width: "48%" }]}>
-              <View style={styles.field}>
-                <Text>Graduation Year</Text>
-              </View>
-              <DropDownPicker
-                open={gradYearOpen}
-                onOpen={onGradYearOpen}
-                value={gradYear}
-                items={gradYearItems}
-                setOpen={setGradYearOpen}
-                setValue={(text) => {
-                  setGradYear(text);
-                  setSaveDisabled(false);
-                }}
-                setItems={setGradYearItems}
-                // multiple
-                // min={0}
-                // max={2}
-                placeholder="Graduation Year"
-                placeholderStyle={{
-                  color: Colors[colorScheme].secondaryText,
-                }}
-                searchable
-                searchPlaceholder="Search..."
-                showBadgeDot={false}
-                dropDownDirection="TOP"
-                modalProps={{
-                  animationType: "slide",
-                }}
-                theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-                style={{ backgroundColor: Colors[colorScheme].background }}
-                dropDownContainerStyle={{
-                  backgroundColor: Colors[colorScheme].background,
-                }}
-              />
-            </View>
-          </View>
-          <View style={styles.item}>
-            <View style={styles.field}>
-              <Text>Clubs & Interests</Text>
-            </View>
-            <TextInput
-              placeholder="Clubs & Interests"
-              value={interests}
-              onChangeText={(text) => {
-                setInterests(text);
-                setSaveDisabled(false);
-              }}
-              style={[styles.input, { color: Colors[colorScheme].text }]}
-              autoCapitalize="sentences"
-            />
-          </View>
-          <View style={styles.item}>
-            <View style={styles.field}>
-              <Text>Email</Text>
-            </View>
-            <Text
-              style={[
-                styles.input,
-                { color: Colors[colorScheme].secondaryText },
-              ]}
-            >
-              {auth.currentUser?.email}
-            </Text>
-          </View>
-        </View>
-      </KeyboardAvoidingView>
-      <Separator overrideStyles={{ marginBottom: Layout.spacing.large, width: "100%" }} />
-      <Button
-        text="Manage Account"
-        onPress={() => navigation.navigate("ManageAccount")}
-        wide
-      />
-      <Separator
-        overrideStyles={{
-          marginTop: Layout.spacing.large,
-          marginBottom: Layout.spacing.large,
-          width: "100%"
-        }}
-      />
-      <View style={[AppStyles.row, { marginBottom: Layout.spacing.xxlarge }]}>
+        <ActionSheet
+          ref={actionSheetRef}
+          options={actionSheetOptions}
+          cancelButtonIndex={actionSheetOptions.length - 1}
+          destructiveButtonIndex={0}
+          onPress={handleActionSheetOptionPressed}
+        />
+      </ScrollView>
+      <View style={styles.ctaContainer}>
         <View style={{ width: "48%" }}>
           <Button text="Cancel" onPress={() => navigation.goBack()} />
         </View>
@@ -424,15 +431,7 @@ export default function Settings() {
           />
         </View>
       </View>
-
-      <ActionSheet
-        ref={actionSheetRef}
-        options={actionSheetOptions}
-        cancelButtonIndex={actionSheetOptions.length - 1}
-        destructiveButtonIndex={0}
-        onPress={handleActionSheetOptionPressed}
-      />
-    </ScrollView>
+    </>
   );
 }
 
@@ -456,5 +455,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: Layout.spacing.medium,
     borderRadius: Layout.radius.small,
+  },
+  ctaContainer: {
+    ...AppStyles.row,
+    position: "absolute",
+    bottom: Layout.spacing.medium,
+    left: Layout.spacing.medium,
+    right: Layout.spacing.medium,
+    backgroundColor: "transparent",
   },
 });
