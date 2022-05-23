@@ -10,7 +10,7 @@ import {
   TextInput,
 } from "react-native";
 import { Text, View } from "../Themed";
-import React, { useCallback, useContext, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import ActionSheet from "react-native-actionsheet";
 import AppContext from "../../context/Context";
@@ -83,6 +83,17 @@ export default function AddProfileDetails({
 
   const actionSheetRef = useRef();
 
+  useEffect(() => {
+    const majorObject = {
+      label: major,
+      value: major,
+    };
+    if (!majorItems.includes(majorObject)) {
+      // majorItems.push(majorObject);
+      setMajorItems([...majorItems, majorObject]);
+    }
+  }, []);
+  
   const actionSheetOptions = [
     "Remove current photo",
     "Choose from library",
@@ -215,6 +226,7 @@ export default function AddProfileDetails({
             <View style={styles.item}>
               <View style={styles.field}>
                 <Text>Major</Text>
+                <Text style={{color: Colors[colorScheme].secondaryText}}>Choose an official major, or enter your own!</Text>
               </View>
               <DropDownPicker
                 open={majorOpen}
