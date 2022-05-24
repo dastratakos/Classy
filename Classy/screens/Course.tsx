@@ -140,7 +140,12 @@ export default function Course({ route }: CourseProps) {
       });
     }
   };
-
+  let friendTitle = "Everyone";
+  if (filter === "Public") {
+    friendTitle = "Public Profiles";
+  } else if (filter === "Friends") {
+    friendTitle = "Friends";
+  }
   if (refreshing) return <ActivityIndicator />;
   return (
     <>
@@ -191,7 +196,7 @@ export default function Course({ route }: CourseProps) {
           {Object.keys(peopleData).length > 0 ? (
             <>
               <Text style={styles.friendsHeader} numberOfLines={1}>
-                {"People in " + course.code.join(", ")}
+                {friendTitle + " in " + course.code.join(", ")}
               </Text>
               <View
                 style={[AppStyles.row, { marginBottom: Layout.spacing.medium }]}
