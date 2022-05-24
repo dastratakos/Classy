@@ -35,6 +35,7 @@ import Popover from "react-native-popover-view";
 import ReadMoreText from "../components/ReadMoreText";
 import SVGCamping from "../assets/images/undraw/camping.svg";
 import Separator from "../components/Separator";
+import Toast from "react-native-toast-message";
 import { getAllPeopleIdsInCourse } from "../services/friends";
 import { getUser } from "../services/users";
 import { termIdToFullName } from "../utils";
@@ -126,9 +127,19 @@ export default function Course({ route }: CourseProps) {
     if (!favorited) {
       setFavorited(true);
       addFavorite(context.user.id, course);
+      Toast.show({
+        type: "info",
+        text1: "Added course to favorites",
+      });
+      console.log("add");
     } else {
       setFavorited(false);
       deleteFavorite(context.user.id, course.courseId);
+      Toast.show({
+        type: "info",
+        text1: "Removed course from favorites",
+      });
+      console.log("remove");
     }
   };
 
@@ -177,16 +188,24 @@ export default function Course({ route }: CourseProps) {
             </View>
           </View>
         </View>
-        <Separator overrideStyles={{marginBottom: 0}}/>
+        <Separator overrideStyles={{ marginBottom: 0 }} />
         <View style={AppStyles.section}>
           {Object.keys(peopleData).length > 0 ? (
             <>
-              <Text style={styles.friendsHeader} numberOfLines={1}>{"People in " + course.code.join(", ")}</Text>
+              <Text style={styles.friendsHeader} numberOfLines={1}>
+                {"People in " + course.code.join(", ")}
+              </Text>
               <View
                 style={[AppStyles.row, { marginBottom: Layout.spacing.medium }]}
               >
                 {/* <View style={{ width: Layout.icon.medium }} /> */}
-                <View style={{ width: 0, flexGrow: 1, marginRight: Layout.spacing.small }}>
+                <View
+                  style={{
+                    width: 0,
+                    flexGrow: 1,
+                    marginRight: Layout.spacing.small,
+                  }}
+                >
                   <DropDownPicker
                     open={quarterOpen}
                     // onOpen={onQuarterOpen}
