@@ -146,6 +146,17 @@ export default function Course({ route }: CourseProps) {
   } else if (filter === "Friends") {
     friendTitle = "Friends";
   }
+
+  let gers = "";
+  for (let i = 0; i < course.gers.length; i++) {
+    if (course.gers[i] !== "") {
+      gers += course.gers[i] + ", ";
+    }
+  }
+  if (gers.length !== 0) {
+    gers = gers.substring(0, gers.length - 2);
+  }
+
   if (refreshing) return <ActivityIndicator />;
   return (
     <>
@@ -165,7 +176,7 @@ export default function Course({ route }: CourseProps) {
           <Text style={styles.unitsWays}>
             Units: {course.unitsMin}
             {course.unitsMin === course.unitsMax ? "" : `-${course.unitsMax}`},
-            GERS: {course.gers || "None"}
+            GERS: {gers || "None"}
           </Text>
           <ReadMoreText text={course.description} />
           <View
