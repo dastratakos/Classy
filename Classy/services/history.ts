@@ -1,23 +1,10 @@
-import { Course, History, Schedule, User } from "../types";
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  setDoc,
-  startAfter,
-  where,
-} from "firebase/firestore";
+import { Course, History, User } from "../types";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 import { HistoryIds } from "../types";
 import { db } from "../firebase";
-import { getUser } from "./users";
 import { getCourse } from "./courses";
+import { getUser } from "./users";
 
 export const getHistory = async (id: string) => {
   const docRef = doc(db, "history", id);
@@ -35,7 +22,7 @@ export const getHistory = async (id: string) => {
     return { people, courses } as History;
   } else {
     console.log(`Could not find history for user: ${id}`);
-    return {} as History;
+    return { people: [], courses: [] };
   }
 };
 
