@@ -14,10 +14,16 @@ export const getHistory = async (id: string) => {
     let history = docSnap.data() as HistoryIds;
 
     let people: User[] = [];
-    for (let id of history.people) people.push(await getUser(id));
+    for (let id of history.people) {
+      const user = await getUser(id);
+      if (user.id) people.push(user);
+    }
 
     let courses: Course[] = [];
-    for (let id of history.courses) courses.push(await getCourse(id));
+    for (let id of history.courses) {
+      const course = await getCourse(id);
+      if (course.courseId) courses.push(course);
+    }
 
     return { people, courses } as History;
   } else {
