@@ -288,8 +288,12 @@ export default function Course({ route }: CourseProps) {
                       <View key={termId}>
                         <Text style={styles.term}>
                           {termIdToFullName(termId)} (
-                          {peopleData[termId].friends.length +
-                            peopleData[termId].publicUsers.length}
+                          {(filter !== "Public"
+                            ? peopleData[termId].friends.length
+                            : 0) +
+                            (filter !== "Friends"
+                              ? peopleData[termId].publicUsers.length
+                              : 0)}
                           )
                         </Text>
                         {filter !== "Public" && (
