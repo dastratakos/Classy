@@ -285,8 +285,9 @@ export default function Profile() {
             url={context.user.photoUrl}
             size={Layout.photo.large}
             style={{ marginRight: Layout.spacing.large }}
+            withModal
           />
-          <View style={{width: "100%" ,flexShrink: 1}}>
+          <View style={{ width: "100%", flexShrink: 1 }}>
             <Text style={styles.name}>{context.user.name}</Text>
             <View
               style={[AppStyles.row, { marginVertical: Layout.spacing.xsmall }]}
@@ -317,7 +318,7 @@ export default function Profile() {
           <View style={{ flex: 1, marginRight: Layout.spacing.small }}>
             {/* Major */}
             {context.user.major ? (
-              <View style={[AppStyles.row, {justifyContent: "center"}]}>
+              <View style={[AppStyles.row, { justifyContent: "center" }]}>
                 <View style={styles.iconWrapper}>
                   <Icon2 name="pencil" size={Layout.icon.small} />
                 </View>

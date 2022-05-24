@@ -107,8 +107,10 @@ export default function ChannelDetails() {
           url={photoUrl}
           size={Layout.photo.xlarge}
           style={{ marginBottom: Layout.spacing.medium }}
+          withModal
         />
       );
+
     else if (photoUrls.length !== 2)
       return (
         <ProfilePhoto
@@ -173,7 +175,7 @@ export default function ChannelDetails() {
       if (!pickerResult.cancelled) {
         const compressedImage = await ImageManipulator.manipulateAsync(
           pickerResult.uri,
-          [{ resize: { width: 200, height: 200 } }],
+          [{ resize: { width: 750, height: 750 } }],
           { format: SaveFormat.JPEG }
         );
 
@@ -264,7 +266,12 @@ export default function ChannelDetails() {
                 }}
               />
             ) : null}
-            <Separator overrideStyles={{width: "100%", marginTop: Layout.spacing.medium}} />
+            <Separator
+              overrideStyles={{
+                width: "100%",
+                marginTop: Layout.spacing.medium,
+              }}
+            />
             <KeyboardAvoidingView
               style={styles.inputContainer}
               behavior="padding"
@@ -273,7 +280,7 @@ export default function ChannelDetails() {
                 style={[AppStyles.row, { marginBottom: Layout.spacing.large }]}
               >
                 <View style={styles.field}>
-                  <Text style={{fontWeight: "500"}}>Group name</Text>
+                  <Text style={{ fontWeight: "500" }}>Group name</Text>
                 </View>
                 <TextInput
                   placeholder="Name"
@@ -302,7 +309,12 @@ export default function ChannelDetails() {
                 </View>
               </View>
             </KeyboardAvoidingView>
-            <Separator overrideStyles={{width: "100%", marginTop: Layout.spacing.large}} />
+            <Separator
+              overrideStyles={{
+                width: "100%",
+                marginTop: Layout.spacing.large,
+              }}
+            />
           </>
         ) : null}
         <Text style={styles.title}>Members</Text>

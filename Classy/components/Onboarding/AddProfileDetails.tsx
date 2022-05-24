@@ -112,7 +112,7 @@ export default function AddProfileDetails({
       if (!pickerResult.cancelled) {
         const compressedImage = await ImageManipulator.manipulateAsync(
           pickerResult.uri,
-          [{ resize: { width: 200, height: 200 } }],
+          [{ resize: { width: 750, height: 750 } }],
           { format: SaveFormat.JPEG }
         );
 

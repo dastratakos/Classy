@@ -387,6 +387,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             url={user.photoUrl}
             size={Layout.photo.large}
             style={{ marginRight: Layout.spacing.large }}
+            withModal
           />
           <View style={{width: "100%" ,flexShrink: 1}}>
             <Text style={styles.name}>{user.name}</Text>

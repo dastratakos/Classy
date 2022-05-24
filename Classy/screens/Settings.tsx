@@ -133,7 +133,7 @@ export default function Settings() {
       if (!pickerResult.cancelled) {
         const compressedImage = await ImageManipulator.manipulateAsync(
           pickerResult.uri,
-          [{ resize: { width: 200, height: 200 } }],
+          [{ resize: { width: 750, height: 750 } }],
           { format: SaveFormat.JPEG }
         );
 
@@ -234,6 +234,7 @@ export default function Settings() {
             size={Layout.photo.xlarge}
             style={{ marginBottom: Layout.spacing.medium }}
             loading={uploading}
+            withModal
           />
           <Button
             text="Change profile photo"
