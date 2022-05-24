@@ -26,25 +26,32 @@ export const getCourse = async (courseId: number) => {
   return res;
 };
 
-export const searchCourses = async (search: string) => {
+export const searchCourses = async (search: string, maxLimit: number = 3) => {
   if (search === "") return [];
 
   const q = query(
     collection(db, "courses"),
     where("keywords", "array-contains", search.toLowerCase().trim()),
     orderBy("code"),
-    limit(3)
+    limit(maxLimit)
   );
 
-  const res: Course[] = [];
+  const courses: Course[] = [];
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    res.push(doc.data() as Course);
+    courses.push(doc.data() as Course);
   });
-  return res;
+
+  const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+  return { courses, lastVisible };
 };
 
-export const searchMoreCourses = async (search: string, lastCourse: Course) => {
+export const searchMoreCourses = async (
+  search: string,
+  lastCourse: Course,
+  maxLimit: number = 10
+) => {
   if (search === "") return [];
 
   const q = query(
@@ -52,15 +59,19 @@ export const searchMoreCourses = async (search: string, lastCourse: Course) => {
     where("keywords", "array-contains", search.toLowerCase().trim()),
     orderBy("code"),
     startAfter(lastCourse),
-    limit(3)
+    limit(maxLimit)
   );
 
-  const res: Course[] = [];
+  const courses: Course[] = [];
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    res.push(doc.data() as Course);
+    courses.push(doc.data() as Course);
   });
-  return res;
+  console.log("In searchMoreCourses, courses.length =", courses.length);
+
+  const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+  return { courses, lastVisible };
 };
 
 export const getCourseTerms = async (courseId: number) => {

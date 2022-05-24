@@ -1,6 +1,11 @@
 import { ActivityIndicator, Icon, Text, View } from "../components/Themed";
+import {
+  BackHandler,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { Course, History, User } from "../types";
-import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { getHistory, setHistory } from "../services/history";
 import { searchCourses, searchMoreCourses } from "../services/courses";
@@ -27,17 +32,27 @@ export default function Search() {
   const [searchPhrase, setSearchPhrase] = useState<string>("");
   const [friendIds, setFriendIds] = useState<string[]>([]);
   const [focused, setFocused] = useState<boolean>(false);
+
   const [userSearchResults, setUserSearchResults] = useState<User[]>([]);
-  const [courseSearchResults, setCourseSearchResults] = useState<Course[]>([]);
+  const [showFullUserResults, setShowFullUserResults] =
+    useState<boolean>(false);
   const [lastUser, setLastUser] = useState<User>({} as User);
+  const [usersRefreshing, setUsersRefreshing] = useState<boolean>(true);
+  const [stopUserSearch, setStopUserSearch] = useState<boolean>(false);
+
+  const [courseSearchResults, setCourseSearchResults] = useState<Course[]>([]);
+  const [showFullCourseResults, setShowFullCourseResults] =
+    useState<boolean>(false);
   const [lastCourse, setLastCourse] = useState<Course>({} as Course);
+  const [coursesRefreshing, setCoursesRefreshing] = useState<boolean>(true);
+  const [stopCourseSearch, setStopCourseSearch] = useState<boolean>(false);
+
   const [fullHistory, setFullHistory] = useState<History>({
     people: [],
     courses: [],
   } as History);
 
-  const [usersRefreshing, setUsersRefreshing] = useState<boolean>(true);
-  const [coursesRefreshing, setCoursesRefreshing] = useState<boolean>(true);
+  const [historyLoading, setHistoryLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const loadScreen = async () => {
@@ -50,59 +65,9 @@ export default function Search() {
   }, []);
 
   const collectHistory = async (id: string) => {
-    setUsersRefreshing(true);
-    setCoursesRefreshing(true);
+    setHistoryLoading(true);
     setFullHistory(await getHistory(id));
-    setUsersRefreshing(false);
-    setCoursesRefreshing(false);
-  };
-
-  const handleSearchUsers = async (search: string) => {
-    setUsersRefreshing(true);
-
-    if (search === "") {
-      // setUserSearchResults(await searchUsers(context.user.id, search, 25));
-      setUserSearchResults([]);
-      setUsersRefreshing(false);
-      return;
-    }
-
-    let res;
-    // if (!lastUser) {
-    // console.log("Searching users:", search);
-    res = await searchUsers(context.user.id, search);
-    setUserSearchResults([...res]);
-    // } else {
-    //   console.log("Searching more users:", search);
-    //   res = await searchMoreUsers(context.user.id, search, lastUser);
-    //   setUserSearchResults([...userSearchResults, ...res]);
-    // }
-    // console.log("user res:", res.length);
-    setLastUser(res[res.length - 1]);
-    setUsersRefreshing(false);
-  };
-
-  const handleSearchCourses = async (search: string) => {
-    setCoursesRefreshing(true);
-
-    if (search === "") {
-      setCourseSearchResults([]);
-      setCoursesRefreshing(false);
-      return;
-    }
-    let res;
-    // if (!lastCourse) {
-    // console.log("Searching courses:", search);
-    res = await searchCourses(search);
-    setCourseSearchResults([...res]);
-    // } else {
-    //   console.log("Searching more courses:", search);
-    //   res = await searchMoreCourses(search, lastCourse);
-    //   setCourseSearchResults([...courseSearchResults, ...res]);
-    // }
-    // console.log("course res:", res.length);
-    setLastCourse(res[res.length - 1]);
-    setCoursesRefreshing(false);
+    setHistoryLoading(false);
   };
 
   const handleClearPeoplePressed = async () => {
@@ -163,51 +128,145 @@ export default function Search() {
     setHistory(context.user.id, newHistory);
   };
 
-  const PeopleHistory = () => {
-    if (usersRefreshing) return <ActivityIndicator />;
+  const handleSearchUsers = async (search: string) => {
+    setUsersRefreshing(true);
 
-    return (
-      // TODO: make history deletable
-      <>
-        {fullHistory.people && fullHistory.people.length > 0 && (
-          <View
-            style={{
-              ...AppStyles.row,
-              paddingHorizontal: Layout.spacing.medium,
-            }}
-          >
-            <Text style={{ fontWeight: "500" }}>Recent searches</Text>
-            <TouchableOpacity onPress={handleClearPeoplePressed}>
-              <Text style={{ color: Colors.lightBlue }}>Clear</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        <FlatList
-          data={fullHistory.people}
-          renderItem={({ item }) => (
-            <View style={{ ...AppStyles.row }}>
-              <FriendCard
-                friend={item}
-                rightElement={
-                  <TouchableOpacity
-                    onPress={() => handleRemovePersonFromHistory(item.id)}
-                    style={{ marginLeft: Layout.spacing.xsmall }}
-                  >
-                    <Icon name="close" size={Layout.icon.small} />
-                  </TouchableOpacity>
-                }
-                onPress={() => handleAddPersonToHistory(item)}
-              />
-            </View>
-          )}
-          keyExtractor={(item) => item.id}
-          refreshing={usersRefreshing}
-          contentContainerStyle={{
-            flexGrow: 1,
+    if (search === "") {
+      setUserSearchResults([]);
+      setUsersRefreshing(false);
+      return;
+    }
+
+    let { users, lastVisible } = await searchUsers(context.user.id, search);
+    setUserSearchResults([...users]);
+
+    console.log("users.length =", users.length);
+
+    setLastUser(lastVisible);
+    setUsersRefreshing(false);
+  };
+
+  const handleSearchMoreUsers = async () => {
+    if (stopUserSearch) return;
+
+    setUsersRefreshing(true);
+
+    if (!lastUser) {
+      console.log("Searching users:", searchPhrase);
+      let { users, lastVisible } = await searchUsers(
+        context.user.id,
+        searchPhrase,
+        10
+      );
+      setUserSearchResults([...users]);
+      setLastUser(lastVisible);
+
+      if (users.length === 0) setStopUserSearch(true);
+    } else {
+      console.log("Searching more users:", searchPhrase);
+      let { users, lastVisible } = await searchMoreUsers(
+        context.user.id,
+        searchPhrase,
+        lastUser
+      );
+      setUserSearchResults([...userSearchResults, ...users]);
+      setLastUser(lastVisible);
+
+      if (users.length === 0) setStopUserSearch(true);
+    }
+
+    setUsersRefreshing(false);
+  };
+
+  const handleSearchCourses = async (search: string) => {
+    setCoursesRefreshing(true);
+
+    if (search === "") {
+      setCourseSearchResults([]);
+      setCoursesRefreshing(false);
+      return;
+    }
+    let { courses, lastVisible } = await searchCourses(search);
+    setCourseSearchResults([...courses]);
+
+    console.log("courses.length =", courses.length);
+
+    setLastCourse(lastVisible);
+    // console.log("Set last course to", lastVisible);
+    setCoursesRefreshing(false);
+  };
+
+  const handleSearchMoreCourses = async () => {
+    if (stopCourseSearch) return;
+
+    setCoursesRefreshing(true);
+
+    console.log("last course:", lastCourse.title);
+
+    if (!lastCourse) {
+      console.log("Searching courses:", searchPhrase);
+      let { courses, lastVisible } = await searchCourses(searchPhrase, 10);
+      setCourseSearchResults([...courses]);
+      setLastCourse(lastVisible);
+
+      if (courses.length === 0) setStopCourseSearch(true);
+    } else {
+      console.log("Searching more courses:", searchPhrase);
+      let { courses, lastVisible } = await searchMoreCourses(
+        searchPhrase,
+        lastCourse
+      );
+      setCourseSearchResults([...courseSearchResults, ...courses]);
+      setLastCourse(lastVisible);
+
+      if (courses.length === 0) setStopCourseSearch(true);
+    }
+
+    setCoursesRefreshing(false);
+  };
+
+  const PeopleHistory = () => (
+    <>
+      {fullHistory.people && fullHistory.people.length > 0 && (
+        <View
+          style={{
+            ...AppStyles.row,
             paddingHorizontal: Layout.spacing.medium,
           }}
-          ListEmptyComponent={
-            usersRefreshing ? (
+        >
+          <Text style={{ fontWeight: "500" }}>Recent searches</Text>
+          <TouchableOpacity onPress={handleClearPeoplePressed}>
+            <Text style={{ color: Colors.lightBlue }}>Clear</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+      <FlatList
+        data={fullHistory.people}
+        renderItem={({ item }) => (
+          <View style={{ ...AppStyles.row }}>
+            <FriendCard
+              friend={item}
+              rightElement={
+                <TouchableOpacity
+                  onPress={() => handleRemovePersonFromHistory(item.id)}
+                  style={{ marginLeft: Layout.spacing.xsmall }}
+                >
+                  <Icon name="close" size={Layout.icon.small} />
+                </TouchableOpacity>
+              }
+              onPress={() => handleAddPersonToHistory(item)}
+            />
+          </View>
+        )}
+        keyExtractor={(item) => item.id}
+        refreshing={historyLoading}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingHorizontal: Layout.spacing.medium,
+        }}
+        ListEmptyComponent={
+          <>
+            {historyLoading ? (
               <ActivityIndicator />
             ) : (
               <EmptyList
@@ -215,46 +274,88 @@ export default function Search() {
                 primaryText="Find people"
                 secondaryText="Search by first or last name"
               />
+            )}
+          </>
+        }
+      />
+    </>
+  );
+
+  const PeopleResults = () => (
+    <>
+      {showFullUserResults ? (
+        <FlatList
+          data={userSearchResults}
+          renderItem={({ item }) => (
+            <FriendCard
+              friend={item}
+              onPress={() => handleAddPersonToHistory(item)}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+          onEndReached={() => {
+            if (!usersRefreshing) handleSearchMoreUsers();
+          }}
+          onEndReachedThreshold={0}
+          refreshing={usersRefreshing}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: Layout.spacing.medium,
+          }}
+        />
+      ) : (
+        <FlatList
+          data={userSearchResults}
+          renderItem={({ item }) => (
+            <FriendCard
+              friend={item}
+              onPress={() => handleAddPersonToHistory(item)}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+          refreshing={usersRefreshing}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: Layout.spacing.medium,
+          }}
+          ListFooterComponent={
+            <>
+              {/* Only display if we have at least 3 matching users */}
+              {userSearchResults.length === 3 && (
+                <TouchableOpacity
+                  onPress={() => {
+                    handleSearchMoreUsers();
+                    setShowFullUserResults(true);
+                  }}
+                  style={{
+                    alignSelf: "center",
+                    marginTop: Layout.spacing.small,
+                  }}
+                >
+                  <Text style={{ color: Colors.lightBlue }}>
+                    See all results
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </>
+          }
+          ListEmptyComponent={
+            usersRefreshing ? (
+              <ActivityIndicator />
+            ) : (
+              <EmptyList
+                SVGElement={SVGVoid}
+                primaryText={`No matching users for "${searchPhrase}"`}
+                secondaryText="Try searching again using a different spelling"
+              />
             )
           }
         />
-      </>
-    );
-  };
-
-  const PeopleResults = () => (
-    <FlatList
-      data={userSearchResults}
-      renderItem={({ item }) => (
-        <FriendCard
-          friend={item}
-          onPress={() => handleAddPersonToHistory(item)}
-        />
       )}
-      keyExtractor={(item) => item.id}
-      // onEndReached={() => handleSearchUsers(searchPhrase)}
-      // onEndReachedThreshold={0}
-      refreshing={usersRefreshing}
-      contentContainerStyle={{
-        flexGrow: 1,
-        paddingHorizontal: Layout.spacing.medium,
-      }}
-      ListEmptyComponent={
-        usersRefreshing ? (
-          <ActivityIndicator />
-        ) : (
-          <EmptyList
-            SVGElement={SVGVoid}
-            primaryText={`No matching users for "${searchPhrase}"`}
-            secondaryText="Try searching again using a different spelling"
-          />
-        )
-      }
-    />
+    </>
   );
 
   const CoursesHistory = () => (
-    // TODO: make history deletable
     <>
       {fullHistory.courses && fullHistory.courses.length > 0 && (
         <View
@@ -289,19 +390,21 @@ export default function Search() {
           </View>
         )}
         keyExtractor={(item) => item.courseId.toString()}
-        refreshing={coursesRefreshing}
+        refreshing={historyLoading}
         contentContainerStyle={{
           flexGrow: 1,
           paddingHorizontal: Layout.spacing.medium,
         }}
         ListEmptyComponent={
-          coursesRefreshing ? (
+          historyLoading ? (
             <ActivityIndicator />
           ) : (
             <EmptyList
               SVGElement={SVGSearch}
               primaryText="Find courses"
-              secondaryText='Search by code or name\n(e.g. "SOC1", "SOC 1", or\n"Introduction to Sociology")'
+              secondaryText={
+                'Search by code or name\n(e.g. "SOC1", "SOC 1", or\n"Introduction to Sociology")'
+              }
             />
           )
         }
@@ -310,37 +413,85 @@ export default function Search() {
   );
 
   const CoursesResults = () => (
-    <FlatList
-      data={courseSearchResults}
-      renderItem={({ item }) => (
-        <View key={item.courseId.toString()}>
-          <CourseCard
-            course={item}
-            emphasize={false}
-            onPress={() => handleAddCourseToHistory(item)}
-          />
-        </View>
+    <>
+      {showFullCourseResults ? (
+        <FlatList
+          data={courseSearchResults}
+          renderItem={({ item }) => (
+            <View key={item.courseId.toString()}>
+              <CourseCard
+                course={item}
+                emphasize={false}
+                onPress={() => handleAddCourseToHistory(item)}
+              />
+            </View>
+          )}
+          keyExtractor={(item) => item.courseId.toString()}
+          onEndReached={() => {
+            if (!coursesRefreshing) handleSearchMoreCourses();
+          }}
+          onEndReachedThreshold={0}
+          refreshing={coursesRefreshing}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: Layout.spacing.medium,
+          }}
+        />
+      ) : (
+        <FlatList
+          data={courseSearchResults}
+          renderItem={({ item }) => (
+            <View key={item.courseId.toString()}>
+              <CourseCard
+                course={item}
+                emphasize={false}
+                onPress={() => handleAddCourseToHistory(item)}
+              />
+            </View>
+          )}
+          keyExtractor={(item) => item.courseId.toString()}
+          refreshing={coursesRefreshing}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: Layout.spacing.medium,
+          }}
+          ListFooterComponent={
+            <>
+              {/* Only display if we have at least 3 matching courses */}
+              {courseSearchResults.length === 3 && (
+                <TouchableOpacity
+                  onPress={() => {
+                    handleSearchMoreCourses();
+                    setShowFullCourseResults(true);
+                  }}
+                  style={{
+                    alignSelf: "center",
+                    marginTop: Layout.spacing.small,
+                  }}
+                >
+                  <Text style={{ color: Colors.lightBlue }}>
+                    See all results
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </>
+          }
+          ListEmptyComponent={
+            coursesRefreshing ? (
+              <ActivityIndicator />
+            ) : (
+              <EmptyList
+                SVGElement={SVGVoid}
+                primaryText={'No matching courses for "' + searchPhrase + '"'}
+                secondaryText={
+                  'Search by code or name\n(e.g. "SOC1", "SOC 1", or\n"Introduction to Sociology")'
+                }
+              />
+            )
+          }
+        />
       )}
-      keyExtractor={(item) => item.courseId.toString()}
-      // onEndReached={() => handleSearchCourses(searchPhrase)}
-      // onEndReachedThreshold={0}
-      refreshing={coursesRefreshing}
-      contentContainerStyle={{
-        flexGrow: 1,
-        paddingHorizontal: Layout.spacing.medium,
-      }}
-      ListEmptyComponent={
-        coursesRefreshing ? (
-          <ActivityIndicator />
-        ) : (
-          <EmptyList
-            SVGElement={SVGVoid}
-            primaryText={'No matching courses for "' + searchPhrase + '"'}
-            secondaryText='Search by code or name\n(e.g. "SOC1", "SOC 1", or\n"Introduction to Sociology")'
-          />
-        )
-      }
-    />
+    </>
   );
 
   const tabs = [
@@ -368,6 +519,10 @@ export default function Search() {
             setSearchPhrase(text);
             setLastUser({} as User);
             setLastCourse({} as Course);
+            setShowFullUserResults(false);
+            setShowFullCourseResults(false);
+            setStopUserSearch(false);
+            setStopCourseSearch(false);
             handleSearchUsers(text);
             handleSearchCourses(text);
           }}

@@ -104,20 +104,7 @@ export const searchUsers = async (
   search: string,
   maxLimit: number = 3
 ) => {
-  if (search === "") {
-    const qAll = query(
-      collection(db, "users"),
-      orderBy("name"),
-      limit(maxLimit)
-    );
-
-    const res: User[] = [];
-    const querySnapshot = await getDocs(qAll);
-    querySnapshot.forEach((doc) => {
-      if (doc.id !== userId) res.push(doc.data() as User);
-    });
-    return res;
-  }
+  if (search === "") return [];
 
   const q = query(
     collection(db, "users"),
@@ -126,18 +113,22 @@ export const searchUsers = async (
     limit(maxLimit)
   );
 
-  const res: User[] = [];
+  const users: User[] = [];
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    if (doc.id !== userId) res.push(doc.data() as User);
+    if (doc.id !== userId) users.push(doc.data() as User);
   });
-  return res;
+
+  const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+  return { users, lastVisible };
 };
 
 export const searchMoreUsers = async (
   userId: string,
   search: string,
-  lastUser: User
+  lastUser: User,
+  maxLimit: number = 10
 ) => {
   if (search === "") return [];
 
@@ -146,15 +137,18 @@ export const searchMoreUsers = async (
     where("keywords", "array-contains", search.toLowerCase()),
     orderBy("name"),
     startAfter(lastUser),
-    limit(3)
+    limit(maxLimit)
   );
 
-  const res: User[] = [];
+  const users: User[] = [];
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    if (doc.id !== userId) res.push(doc.data() as User);
+    if (doc.id !== userId) users.push(doc.data() as User);
   });
-  return res;
+
+  const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+  return { users, lastVisible };
 };
 
 export const generateTerms = (
