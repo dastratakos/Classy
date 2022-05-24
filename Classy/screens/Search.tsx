@@ -302,6 +302,7 @@ export default function Search() {
             flexGrow: 1,
             paddingHorizontal: Layout.spacing.medium,
           }}
+          ListFooterComponent={stopUserSearch ? null : <ActivityIndicator />}
         />
       ) : (
         <FlatList
@@ -436,6 +437,7 @@ export default function Search() {
             flexGrow: 1,
             paddingHorizontal: Layout.spacing.medium,
           }}
+          ListFooterComponent={stopCourseSearch ? null : <ActivityIndicator />}
         />
       ) : (
         <FlatList
