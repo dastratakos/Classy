@@ -265,7 +265,9 @@ export default function Settings() {
             <View style={styles.item}>
               <View style={styles.field}>
                 <Text>Major</Text>
-                <Text style={{color: Colors[colorScheme].secondaryText}}>Choose an official major, or enter your own!</Text>
+                <Text style={{ color: Colors[colorScheme].secondaryText }}>
+                  Choose an official major, or enter your own!
+                </Text>
               </View>
               <DropDownPicker
                 open={majorOpen}
@@ -420,10 +422,10 @@ export default function Settings() {
         />
       </ScrollView>
       <View style={styles.ctaContainer}>
-        <View style={{ width: "48%" }}>
+        <View style={{ width: "48%", backgroundColor: "transparent" }}>
           <Button text="Cancel" onPress={() => navigation.goBack()} />
         </View>
-        <View style={{ width: "48%" }}>
+        <View style={{ width: "48%", backgroundColor: "transparent" }}>
           <Button
             text="Save Changes"
             onPress={handleSavePress}
