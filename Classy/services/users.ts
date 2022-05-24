@@ -95,6 +95,24 @@ export const deleteUserCompletely = async (userId: string) => {
     batch2.commit();
   });
 
+  // TODO: Remove from chats
+
+  /* 3. Get all Favorites and delete. */
+  const batch3 = writeBatch(db);
+  const q3 = query(
+    collection(db, "favorites"),
+    where("userId", "==", userId)
+  );
+  await getDocs(q3).then((querySnapshot3) => {
+    querySnapshot3.forEach((doc) => {
+      batch3.delete(doc.ref);
+    });
+    batch3.commit();
+  });
+
+  /* 4. Delete search history. */
+  deleteDoc(doc(db, "history", userId));
+
   /* 3. Get the user document and delete it. */
   deleteDoc(doc(db, "users", userId));
 };
