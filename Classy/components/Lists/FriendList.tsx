@@ -1,8 +1,14 @@
-import FriendCard from "../Cards/FriendCard";
 import EmptyList from "../EmptyList";
+import FriendCard from "../Cards/FriendCard";
 import SVGNoFriends from "../../assets/images/undraw/noFriends.svg";
 import SVGNoRequests from "../../assets/images/undraw/noRequests.svg";
 import { User } from "../../types";
+import { View } from "../Themed";
+import { Pressable, StyleSheet } from "react-native";
+import { Icon2 } from "../Themed";
+import Layout from "../../constants/Layout";
+import Colors from "../../constants/Colors";
+import useColorScheme from "../../hooks/useColorScheme";
 
 export default function FriendList({
   friends,
@@ -17,6 +23,8 @@ export default function FriendList({
   showEmptyElement?: boolean;
   requests?: boolean;
 }) {
+  const colorScheme = useColorScheme();
+
   // TODO: use FlatList
   if (friends.length === 0 && showEmptyElement)
     return (
@@ -29,8 +37,44 @@ export default function FriendList({
   return (
     <>
       {friends.map((friend) => (
-        <FriendCard friend={friend} key={friend.id} isRequest={requests} />
+        <View key={friend.id}>
+          <FriendCard
+            friend={friend}
+            rightElement={
+              requests ? (
+                <View style={styles.acceptRejectContainer}>
+                  <Pressable onPress={() => console.log("Accept")}>
+                    <Icon2
+                      name="check"
+                      size={Layout.icon.large}
+                      lightColor={Colors[colorScheme].tint}
+                      darkColor={Colors[colorScheme].tint}
+                    />
+                  </Pressable>
+                  <Pressable onPress={() => console.log("Decline")}>
+                    <Icon2 name="close" size={Layout.icon.large} />
+                  </Pressable>
+                </View>
+              ) : (
+                <></>
+              )
+            }
+          />
+        </View>
       ))}
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  acceptRejectContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: Layout.photo.small,
+    width: Layout.photo.medium,
+    borderRadius: Layout.radius.xsmall,
+    marginLeft: Layout.spacing.small,
+    backgroundColor: "transparent",
+  },
+});

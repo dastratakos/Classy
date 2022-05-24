@@ -50,6 +50,20 @@ export type FavoritedCourse = {
   numFriends: number;
 };
 
+/**
+ * Lists of the last 10 searches for courses and people. Courses is a list of
+ * courseIds and people is a list of userIds.
+ */
+export type HistoryIds = {
+  courses: number[];
+  people: string[];
+}
+
+export type History = {
+  courses: Course[];
+  people: User[];
+}
+
 export type Enrollment = {
   docId: string;
   code: string[];

@@ -266,7 +266,7 @@ export default function Course({ route }: CourseProps) {
                 .sort()
                 .reverse()
                 .map((termId) => (
-                  <>
+                  <View key={termId}>
                     {(quarter === "all" || quarter === termId) && (
                       <View key={termId}>
                         <Text style={styles.term}>
@@ -290,7 +290,7 @@ export default function Course({ route }: CourseProps) {
                         )}
                       </View>
                     )}
-                  </>
+                  </View>
                 ))}
             </>
           ) : (
