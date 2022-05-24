@@ -1,10 +1,5 @@
 import { ActivityIndicator, Icon, Text, View } from "../components/Themed";
-import {
-  BackHandler,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { Course, History, User } from "../types";
 import React, { useContext, useEffect, useState } from "react";
 import { getHistory, setHistory } from "../services/history";
@@ -302,7 +297,18 @@ export default function Search() {
             flexGrow: 1,
             paddingHorizontal: Layout.spacing.medium,
           }}
-          ListFooterComponent={stopUserSearch ? null : <ActivityIndicator />}
+          ListFooterComponent={
+            stopUserSearch ? null : (
+              <View
+                style={{
+                  marginTop: Layout.spacing.small,
+                  marginBottom: Layout.spacing.medium,
+                }}
+              >
+                <ActivityIndicator />
+              </View>
+            )
+          }
         />
       ) : (
         <FlatList
@@ -437,7 +443,18 @@ export default function Search() {
             flexGrow: 1,
             paddingHorizontal: Layout.spacing.medium,
           }}
-          ListFooterComponent={stopCourseSearch ? null : <ActivityIndicator />}
+          ListFooterComponent={
+            stopCourseSearch ? null : (
+              <View
+                style={{
+                  marginTop: Layout.spacing.small,
+                  marginBottom: Layout.spacing.medium,
+                }}
+              >
+                <ActivityIndicator />
+              </View>
+            )
+          }
         />
       ) : (
         <FlatList
