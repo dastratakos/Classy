@@ -11,9 +11,13 @@ import AppStyles from "../../styles/AppStyles";
 export default function CourseCard({
   course,
   emphasize = false,
+  rightElement,
+  onPress = () => {},
 }: {
   course: Course;
   emphasize?: boolean;
+  rightElement?: JSX.Element;
+  onPress?: () => void;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -27,7 +31,10 @@ export default function CourseCard({
       ]}
     >
       <TouchableOpacity
-        onPress={() => navigation.navigate("Course", { course })}
+        onPress={() => {
+          onPress();
+          navigation.navigate("Course", { course });
+        }}
         style={styles.innerContainer}
       >
         <View style={styles.textContainer}>
@@ -39,6 +46,7 @@ export default function CourseCard({
             {course.title}
           </Text>
         </View>
+        {rightElement}
       </TouchableOpacity>
     </View>
   );

@@ -12,7 +12,8 @@ import ProfilePhoto from "../ProfilePhoto";
 
 export default function FriendCard({
   friend,
-  isRequest = false,
+  rightElement,
+  onPress = () => {},
 }: {
   friend: {
     id: string;
@@ -21,7 +22,8 @@ export default function FriendCard({
     gradYear?: string;
     photoUrl: string;
   };
-  isRequest?: boolean;
+  rightElement?: JSX.Element;
+  onPress?: () => void;
 }) {
   const context = useContext(AppContext);
   const navigation = useNavigation();
@@ -37,6 +39,7 @@ export default function FriendCard({
     >
       <TouchableOpacity
         onPress={() => {
+          onPress();
           if (friend.id === context.user.id) navigation.navigate("Profile");
           else navigation.navigate("FriendProfile", { id: friend.id });
         }}
@@ -44,7 +47,7 @@ export default function FriendCard({
       >
         <ProfilePhoto
           url={friend.photoUrl}
-          size={Layout.photo.small}
+          size={Layout.photo.xsmall}
           style={{ marginRight: Layout.spacing.small }}
         />
         <View style={styles.textContainer}>
@@ -59,21 +62,7 @@ export default function FriendCard({
             </Text>
           ) : null}
         </View>
-        {isRequest && (
-          <View style={styles.acceptRejectContainer}>
-            <Pressable onPress={() => console.log("Accept")}>
-              <Icon2
-                name="check"
-                size={Layout.icon.large}
-                lightColor={Colors[colorScheme].tint}
-                darkColor={Colors[colorScheme].tint}
-              />
-            </Pressable>
-            <Pressable onPress={() => console.log("Decline")}>
-              <Icon2 name="close" size={Layout.icon.large} />
-            </Pressable>
-          </View>
-        )}
+        {rightElement}
       </TouchableOpacity>
     </View>
   );
