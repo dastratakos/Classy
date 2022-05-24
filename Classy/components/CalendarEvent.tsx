@@ -94,12 +94,15 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontWeight: "500",
+    color: Colors.black
   },
   timeText: {
     fontSize: Layout.text.small,
+    color: Colors.black
   },
   locationText: {
     fontSize: Layout.text.small,
     fontStyle: "italic",
+    color: Colors.black
   },
 });
