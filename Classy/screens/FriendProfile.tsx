@@ -67,7 +67,11 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const [numFriends, setNumFriends] = useState<string>("");
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [quarterName, setQuarterName] = useState<string>("");
-  const [week, setWeek] = useState<WeekSchedule>([]);
+  const [weekRes, setWeekRes] = useState<{
+    week: WeekSchedule;
+    startCalendarHour: number;
+    endCalendarHour: number;
+  }>({ week: [], startCalendarHour: 8, endCalendarHour: 6 });
   const [inClass, setInClass] = useState<boolean>(false);
 
   const [refreshing, setRefreshing] = useState(false);
@@ -94,7 +98,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   useEffect(() => {
     const interval = setInterval(checkInClass, 1000);
     return () => clearInterval(interval);
-  }, [week]);
+  }, [weekRes]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -116,8 +120,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       getCurrentTermId()
     );
     setEnrollments(res2);
-    const weekRes = getWeekFromEnrollments(res2);
-    setWeek(weekRes);
+    setWeekRes(getWeekFromEnrollments(res2));
 
     const res3 = await getOverlap(context.user.id, route.params.id);
     setCourseSimilarity(res3.courseSimilarity);
@@ -130,12 +133,12 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     const now = Timestamp.now().toDate();
     const today = now.getDay() - 1;
 
-    if (!week[today]) {
+    if (!weekRes.week[today]) {
       setInClass(false);
       return;
     }
 
-    for (let event of week[today].events) {
+    for (let event of weekRes.week[today].events) {
       const startInfo = event.startInfo.toDate();
       var startTime = new Date();
       // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
@@ -328,7 +331,13 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const tabs = [
     {
       label: "Calendar",
-      component: <Calendar week={week} />,
+      component: (
+        <Calendar
+          week={weekRes.week}
+          startCalendarHour={weekRes.startCalendarHour}
+          endCalendarHour={weekRes.endCalendarHour}
+        />
+      ),
     },
     {
       label: "Courses",
@@ -389,7 +398,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             style={{ marginRight: Layout.spacing.large }}
             withModal
           />
-          <View style={{width: "100%" ,flexShrink: 1}}>
+          <View style={{ width: "100%", flexShrink: 1 }}>
             <Text style={styles.name}>{user.name}</Text>
             <View
               style={[AppStyles.row, { marginVertical: Layout.spacing.xsmall }]}

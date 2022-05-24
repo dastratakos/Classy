@@ -6,7 +6,14 @@ import {
   View,
 } from "react-native";
 import { DaySchedule, Event, WeekSchedule } from "../types";
-import { createRef, forwardRef, useCallback, useRef } from "react";
+import {
+  createRef,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import AppStyles from "../styles/AppStyles";
 import CalendarEvent from "./CalendarEvent";
@@ -16,7 +23,15 @@ import Layout from "../constants/Layout";
 import { Timestamp } from "firebase/firestore";
 import useColorScheme from "../hooks/useColorScheme";
 
-export default function Calendar({ week }: { week: WeekSchedule }) {
+export default function Calendar({
+  week,
+  startCalendarHour,
+  endCalendarHour,
+}: {
+  week: WeekSchedule;
+  startCalendarHour: number;
+  endCalendarHour: number;
+}) {
   const colorScheme = useColorScheme();
 
   const ref = useRef();
@@ -33,7 +48,13 @@ export default function Calendar({ week }: { week: WeekSchedule }) {
 
   // TODO: compute earliest and latest events for all days ahead of time
   // earliest Stanford course is 6:00 AM and latest is 9:30 PM
-  const times = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+  // const [times, setTimes] = useState<number[]>([
+  //   8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+  // ]);
+  const times = Array.from(
+    { length: endCalendarHour - startCalendarHour + 1 },
+    (_, i) => i + startCalendarHour
+  );
 
   const getMarginTop = (time: Timestamp, timeAdjustment: number = 0) => {
     const offset = Layout.spacing.medium + Layout.spacing.xxxlarge / 2;

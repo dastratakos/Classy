@@ -190,6 +190,9 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
     Friday: 4,
   };
 
+  let startCalendarHour = 8;
+  let endCalendarHour = 18;
+
   for (let enrollment of enrollments) {
     for (let schedule of enrollment.schedules) {
       const title =
@@ -201,6 +204,18 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
         location: schedule.location,
         enrollment: enrollment,
       };
+      if (
+        schedule.startInfo &&
+        // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
+        schedule.startInfo.toDate().getHours() + 7 < startCalendarHour
+      )
+        startCalendarHour = schedule.startInfo.toDate().getHours() + 7;
+      if (
+        schedule.endInfo &&
+        // TODO: 8 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
+        schedule.endInfo.toDate().getHours() + 8 > endCalendarHour
+      )
+        endCalendarHour = schedule.endInfo.toDate().getHours() + 8;
       for (let day of schedule.days) {
         const index = dayIndices[`${day}`];
         week[index].events.push(event);
@@ -212,5 +227,5 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
     week[i].events.sort((a: Event, b: Event) => a.startInfo > b.startInfo);
   }
 
-  return week;
+  return { week, startCalendarHour, endCalendarHour };
 };

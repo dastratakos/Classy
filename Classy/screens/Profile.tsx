@@ -53,7 +53,11 @@ export default function Profile() {
   const [numRequests, setNumRequests] = useState<number>(0);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [quarterName, setQuarterName] = useState<string>("");
-  const [week, setWeek] = useState<WeekSchedule>([]);
+  const [weekRes, setWeekRes] = useState<{
+    week: WeekSchedule;
+    startCalendarHour: number;
+    endCalendarHour: number;
+  }>({ week: [], startCalendarHour: 8, endCalendarHour: 6 });
   const [refreshing, setRefreshing] = useState<boolean>(true);
   const [showEmailVerification, setShowEmailVerification] = useState<boolean>(
     !auth.currentUser?.emailVerified
@@ -83,7 +87,7 @@ export default function Profile() {
           getCurrentTermId()
         );
         setEnrollments(res);
-        setWeek(getWeekFromEnrollments(res));
+        setWeekRes(getWeekFromEnrollments(res));
       }
     };
     loadScreen();
@@ -100,7 +104,7 @@ export default function Profile() {
   useEffect(() => {
     const interval = setInterval(checkInClass, 1000);
     return () => clearInterval(interval);
-  }, [week]);
+  }, [weekRes]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -122,7 +126,7 @@ export default function Profile() {
       getCurrentTermId()
     );
     setEnrollments(res);
-    setWeek(getWeekFromEnrollments(res));
+    setWeekRes(getWeekFromEnrollments(res));
 
     if (auth.currentUser)
       setShowEmailVerification(!auth.currentUser.emailVerified);
@@ -137,12 +141,12 @@ export default function Profile() {
     const now = Timestamp.now().toDate();
     const today = now.getDay() - 1;
 
-    if (!week[today]) {
+    if (!weekRes.week[today]) {
       setInClass(false);
       return;
     }
 
-    for (let event of week[today].events) {
+    for (let event of weekRes.week[today].events) {
       const startInfo = event.startInfo.toDate();
       var startTime = new Date();
       // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
@@ -240,7 +244,13 @@ export default function Profile() {
   const tabs = [
     {
       label: "Calendar",
-      component: <Calendar week={week} />,
+      component: (
+        <Calendar
+          week={weekRes.week}
+          startCalendarHour={weekRes.startCalendarHour}
+          endCalendarHour={weekRes.endCalendarHour}
+        />
+      ),
     },
     {
       label: "Courses",
