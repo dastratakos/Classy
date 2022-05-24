@@ -131,7 +131,6 @@ export default function Course({ route }: CourseProps) {
         type: "info",
         text1: "Added course to favorites",
       });
-      console.log("add");
     } else {
       setFavorited(false);
       deleteFavorite(context.user.id, course.courseId);
@@ -139,7 +138,6 @@ export default function Course({ route }: CourseProps) {
         type: "info",
         text1: "Removed course from favorites",
       });
-      console.log("remove");
     }
   };
 
