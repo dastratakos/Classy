@@ -17,15 +17,12 @@ import SVGSearch from "../assets/images/undraw/courseSearch.svg";
 import SVGVoid from "../assets/images/undraw/void.svg";
 import SearchBar from "../components/SearchBar";
 import TabView from "../components/TabView";
-import { getFriendIds } from "../services/friends";
 import useColorScheme from "../hooks/useColorScheme";
 
 export default function Search() {
   const context = useContext(AppContext);
-  const colorScheme = useColorScheme();
 
   const [searchPhrase, setSearchPhrase] = useState<string>("");
-  const [friendIds, setFriendIds] = useState<string[]>([]);
   const [focused, setFocused] = useState<boolean>(false);
 
   const [userSearchResults, setUserSearchResults] = useState<User[]>([]);
@@ -51,7 +48,6 @@ export default function Search() {
 
   useEffect(() => {
     const loadScreen = async () => {
-      // setFriendIds(await getFriendIds(context.user.id));
       collectHistory(context.user.id);
       handleSearchUsers("");
       handleSearchCourses("");
@@ -187,7 +183,6 @@ export default function Search() {
     console.log("courses.length =", courses.length);
 
     setLastCourse(lastVisible);
-    // console.log("Set last course to", lastVisible);
     setCoursesRefreshing(false);
   };
 
@@ -195,8 +190,6 @@ export default function Search() {
     if (stopCourseSearch) return;
 
     setCoursesRefreshing(true);
-
-    console.log("last course:", lastCourse.title);
 
     if (!lastCourse) {
       console.log("Searching courses:", searchPhrase);
