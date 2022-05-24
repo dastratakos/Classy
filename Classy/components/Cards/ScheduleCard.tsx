@@ -37,7 +37,7 @@ export default function ScheduleCard({
               {schedule.days.join(", ")}{" "}
               {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
               {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
-              {getTimeString(schedule.endInfo, "Africa/Casablanca")}
+              {getTimeString(schedule.endInfo, "America/Danmarkshavn")}
             </Text>
           </View>
           <Icon
