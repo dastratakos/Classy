@@ -332,10 +332,17 @@ export type User = {
 };
 
 export type Context = {
+  // Firestore
   user: User;
   setUser: (arg0: User) => void;
   friendIds: string[];
   setFriendIds: (arg0: string[]) => void;
+  requestIds: string[];
+  setRequestIds: (arg0: string[]) => void;
+  currentEnrollments: Enrollment[],
+  setCurrentEnrollments: (arg0: Enrollment[]) => void;
+
+  // StreamChat
   streamClient: StreamChatGenerics;
   setStreamClient: (arg0: StreamChatGenerics) => void;
   channel: ChannelType;
@@ -346,6 +353,8 @@ export type Context = {
   setThread: (arg0: MessageType) => void;
   totalUnreadCount: number;
   setTotalUnreadCount: (arg0: number) => void;
+
+  // Modal selections
   selectedTerm: string;
   setSelectedTerm: (arg0: string) => void;
   selectedColor: string;
