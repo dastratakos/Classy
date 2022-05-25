@@ -13,15 +13,39 @@ export default function CourseCard({
   emphasize = false,
   rightElement,
   onPress = () => {},
+  searchTerm,
 }: {
   course: Course;
   emphasize?: boolean;
   rightElement?: JSX.Element;
   onPress?: () => void;
+  searchTerm?: string;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+  if ( searchTerm && !searchTerm.includes(" ")) { // if no space, add in for code matching
+    const numIndex = searchTerm.search(/[^A-Za-z]/);
+    if (numIndex > 0) {
+      searchTerm = searchTerm.substring(0, numIndex).toUpperCase() + " " + searchTerm.substring(numIndex);
+    } else {
+      searchTerm = searchTerm.toUpperCase();
+    }
+  } else if (searchTerm) {
+    searchTerm = searchTerm.toUpperCase();
+  }
 
+  let codesList = [];
+  if (searchTerm) {
+    let placeholder = [];
+    for (let i = 0; i < course.code.length; i++) {
+      if(course.code[i].startsWith(searchTerm)) {
+        codesList.push(course.code[i]);
+      } else {
+        placeholder.push(course.code[i]);
+      }
+    }
+    codesList = codesList.concat(placeholder);
+  }
   return (
     <View
       style={[
@@ -39,7 +63,8 @@ export default function CourseCard({
       >
         <View style={styles.textContainer}>
           <Text style={styles.cardTitle} numberOfLines={1}>
-            {course.code.join(", ")}
+            {/* {course.code.join(", ")} */}
+            {searchTerm ? codesList.join(", ") : course.code.join(", ")}
             {emphasize ? " ⭐️" : null}
           </Text>
           <Text style={styles.cardSubtitle} numberOfLines={1}>

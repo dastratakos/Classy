@@ -423,6 +423,7 @@ export default function Search() {
                 course={item}
                 emphasize={false}
                 onPress={() => handleAddCourseToHistory(item)}
+                searchTerm={searchPhrase}
               />
             </View>
           )}
@@ -458,6 +459,7 @@ export default function Search() {
                 course={item}
                 emphasize={false}
                 onPress={() => handleAddCourseToHistory(item)}
+                searchTerm={searchPhrase}
               />
             </View>
           )}
