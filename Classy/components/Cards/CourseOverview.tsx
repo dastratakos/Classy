@@ -83,78 +83,40 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
           style={{
             backgroundColor: "transparent",
             flexDirection: "row",
-            justifyContent: "space-around",
+            flexWrap: "wrap",
+            justifyContent: "space-between",
           }}
         >
-          {/*ToDO : only show a certain num of friends, then allow for showing more*/}
-          {/*Do this with data.friends.slice(0, num to show).map.... */}
-          <View style={styles.friendColumnContainer}>
-            {data.friends.length > 0 &&
-              data.friends.slice(0, midway).map((item) => (
-                <View
+          {/* TODO: only show a certain num of friends, then allow for showing more */}
+          {/* Do this with data.friends.slice(0, num to show).map.... */}
+          {data.friends.length > 0 &&
+            data.friends.map((item) => (
+              <View
+                key={item.id}
+                style={[
+                  styles.friendContainer,
+                  { backgroundColor: Colors[colorScheme].background },
+                ]}
+              >
+                <Pressable
                   key={item.id}
-                  style={[
-                    styles.friendContainer,
-                    AppStyles.boxShadow,
-                    {
-                      backgroundColor: Colors[colorScheme].background,
-                    },
-                  ]}
+                  style={[AppStyles.row, { backgroundColor: "transparent" }]}
+                  onPress={() =>
+                    navigation.navigate("FriendProfile", { id: item.id })
+                  }
                 >
-                  <Pressable
-                    key={item.id}
-                    style={[AppStyles.row, { backgroundColor: "transparent" }]}
-                    onPress={() =>
-                      navigation.navigate("FriendProfile", { id: item.id })
-                    }
-                  >
-                    <ProfilePhoto
-                      url={item.photoUrl}
-                      size={Layout.photo.xsmall}
-                    />
-                    <View style={styles.friendNameWrap}>
-                      <Text numberOfLines={1} style={styles.friendNameText}>
-                        {item.name}
-                      </Text>
-                    </View>
-                  </Pressable>
-                </View>
-              ))}
-          </View>
-          {/*second half of friends */}
-          <View style={styles.friendColumnContainer}>
-            {data.friends.length > 0 &&
-              data.friends.slice(midway).map((item) => (
-                <View
-                  key={item.id}
-                  style={[
-                    styles.friendContainer,
-                    AppStyles.boxShadow,
-                    {
-                      backgroundColor: Colors[colorScheme].background,
-                    },
-                  ]}
-                >
-                  <Pressable
-                    key={item.id}
-                    style={[AppStyles.row, { backgroundColor: "transparent" }]}
-                    onPress={() =>
-                      navigation.navigate("FriendProfile", { id: item.id })
-                    }
-                  >
-                    <ProfilePhoto
-                      url={item.photoUrl}
-                      size={Layout.photo.xsmall}
-                    />
-                    <View style={styles.friendNameWrap}>
-                      <Text numberOfLines={1} style={styles.friendNameText}>
-                        {item.name}
-                      </Text>
-                    </View>
-                  </Pressable>
-                </View>
-              ))}
-          </View>
+                  <ProfilePhoto
+                    url={item.photoUrl}
+                    size={Layout.photo.xsmall}
+                  />
+                  <View style={styles.friendNameWrap}>
+                    <Text numberOfLines={1} style={styles.friendNameText}>
+                      {item.name}
+                    </Text>
+                  </View>
+                </Pressable>
+              </View>
+            ))}
         </View>
         {data.friends.length === 0 && (
           <View
@@ -194,11 +156,12 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   friendContainer: {
+    ...AppStyles.boxShadow,
     paddingHorizontal: Layout.spacing.xsmall,
     paddingVertical: Layout.spacing.xsmall,
     borderRadius: Layout.radius.medium,
     marginVertical: Layout.spacing.xxsmall,
-    width: "100%",
+    width: "49%",
   },
   code: {
     fontSize: Layout.text.xlarge,
@@ -207,10 +170,6 @@ const styles = StyleSheet.create({
   schedText: {
     fontSize: Layout.text.medium,
     fontWeight: "500",
-  },
-  friendColumnContainer: {
-    backgroundColor: "transparent",
-    width: "48%",
   },
   classFriendsText: {
     fontWeight: "bold",
