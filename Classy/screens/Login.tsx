@@ -62,10 +62,19 @@ export default function Login({ route }: LoginProps) {
 
   /* Check if user is signed in. */
   useEffect(() => {
-    if (auth.currentUser) {
-      setUp(auth.currentUser.uid);
-      setLoading(false);
-    } else {
+    const loadScreen = async () => {
+      if (auth.currentUser) {
+        console.log("hello 1");
+        await setUp(auth.currentUser.uid);
+        setLoading(false);
+        console.log("hello 2");
+      }
+    };
+
+    loadScreen();
+
+    if (!auth.currentUser) {
+      console.log("hello 3");
       setLoading(false);
       const unsubscribe = auth.onAuthStateChanged((user) => {
         if (user) setUp(user.uid);
