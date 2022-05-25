@@ -149,6 +149,7 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
 
 const styles = StyleSheet.create({
   container: {
+    ...AppStyles.boxShadow,
     paddingHorizontal: Layout.spacing.medium,
     paddingVertical: Layout.spacing.small,
     borderRadius: Layout.radius.large,
