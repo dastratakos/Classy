@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
+  Pressable
 } from "react-native";
 import { Text, View } from "../components/Themed";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -26,6 +27,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { uploadImage } from "../services/storage";
 import { getChannelId } from "../services/messages";
+import { Icon3 } from "../components/Themed";
 
 export default function ChannelDetails() {
   const context = useContext(AppContext);
@@ -250,74 +252,58 @@ export default function ChannelDetails() {
       <View style={[AppStyles.section, { alignItems: "center" }]}>
         {members.length > 1 ? (
           <>
-            <RenderPhoto />
-            {role === "owner" ? (
-              <Button
-                text="Change group photo"
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  if (channelId) {
-                    actionSheetRef.current?.show();
-                  } else {
-                    alert(
-                      "Sorry, we are unable to change the group photo right now"
-                    );
-                  }
-                }}
-              />
-            ) : null}
-            <Separator
-              overrideStyles={{
-                width: "100%",
-                marginTop: Layout.spacing.medium,
-              }}
-            />
-            <KeyboardAvoidingView
-              style={styles.inputContainer}
-              behavior="padding"
-            >
-              <View
-                style={[AppStyles.row, { marginBottom: Layout.spacing.large }]}
-              >
-                <View style={styles.field}>
-                  <Text style={{ fontWeight: "500" }}>Group name</Text>
-                </View>
-                <TextInput
-                  placeholder="Name"
-                  value={groupName}
-                  onChangeText={(text) => {
-                    setGroupName(text);
-                    setSaveDisabled(false);
-                  }}
-                  style={[styles.input, { color: Colors[colorScheme].text }]}
-                  autoCapitalize="words"
-                  textContentType="name"
-                />
-              </View>
-              <View style={AppStyles.row}>
-                <View style={{ width: "48%", backgroundColor: "transparent" }}>
-                  <Button text="Cancel" onPress={() => navigation.goBack()} />
-                </View>
-                <View style={{ width: "48%", backgroundColor: "transparent" }}>
-                  <Button
-                    text="Save Name"
-                    onPress={handleSavePress}
-                    loading={saveLoading}
-                    disabled={saveDisabled}
-                    emphasized
+            <Pressable onPress={() => {
+              (role === "owner" && actionSheetRef.current?.show())
+            }}>
+              <RenderPhoto />
+            </Pressable>
+            {role === "owner" ?
+              <>
+                <KeyboardAvoidingView style={{ alignItems: "center", width: "100%" }}>
+                  <TextInput
+                    placeholder="Name"
+                    value={groupName}
+                    onChangeText={(text) => {
+                      setGroupName(text);
+                      setSaveDisabled(false);
+                    }}
+                    style={[styles.input, styles.groupName, { fontWeight: "bold" }]}
+                    autoCapitalize="words"
+                    textContentType="name"
                   />
+                </KeyboardAvoidingView>
+                <View style={[AppStyles.row, { marginTop: Layout.spacing.medium }]}>
+                  <View style={{ width: "48%", backgroundColor: "transparent" }}>
+                    <Button text="Cancel" onPress={() => navigation.goBack()} />
+                  </View>
+                  <View style={{ width: "48%", backgroundColor: "transparent" }}>
+                    <Button
+                      text="Save Name"
+                      onPress={handleSavePress}
+                      loading={saveLoading}
+                      disabled={saveDisabled}
+                      emphasized
+                    />
+                  </View>
                 </View>
-              </View>
-            </KeyboardAvoidingView>
-            <Separator
-              overrideStyles={{
-                width: "100%",
-                marginTop: Layout.spacing.large,
-              }}
-            />
+              </>
+              : <Text style={[styles.groupName, { fontWeight: "bold" }]}>{groupName}</Text>
+            }
+
+            <Separator overrideStyles={{ width: "100%", marginTop: Layout.spacing.large }} />
           </>
         ) : null}
-        <Text style={styles.title}>Members</Text>
+        <View style={styles.innerContainer}>
+          <Text style={[styles.title, { flex: 1 }]}>Members</Text>
+          {role === "owner" ? (
+            <Pressable onPress={() => console.log("Add member")}>
+              <Icon3
+                name="person-add"
+                size={Layout.icon.medium}
+              />
+            </Pressable>
+          ) : null}
+        </View>
         {/* TODO: use FlatList */}
         {members.map((member) => {
           return (
@@ -327,6 +313,16 @@ export default function ChannelDetails() {
                 major: members.length > 1 ? member.role : null,
                 photoUrl: member.user.image,
               }}
+              rightElement={
+                (role === "owner" ? (
+                  <Pressable onPress={() => console.log("Remove member")}>
+                    <Icon3
+                      name="close"
+                      size={Layout.icon.medium}
+                    />
+                  </Pressable>
+                ) : <></>)
+              }
               key={member.user.id}
             />
           );
@@ -351,6 +347,15 @@ export default function ChannelDetails() {
 }
 
 const styles = StyleSheet.create({
+  groupName: {
+    fontSize: Layout.text.xlarge,
+    fontWeight: "500",
+  },
+  innerContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
   title: {
     fontSize: Layout.text.large,
     fontWeight: "500",
@@ -367,5 +372,6 @@ const styles = StyleSheet.create({
     width: "50%",
     paddingHorizontal: Layout.spacing.small,
     borderBottomWidth: 0.5,
+    textAlign: "center"
   },
 });
