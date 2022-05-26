@@ -69,7 +69,11 @@ function RootNavigator() {
         options={{ title: "Oops!" }}
       />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
-        <Stack.Screen name="ManageAccount" component={ManageAccount} />
+        <Stack.Screen
+          name="ManageAccount"
+          component={ManageAccount}
+          options={{ title: "Manage Account" }}
+        />
         <Stack.Screen
           name="SelectQuarter"
           component={SelectQuarter}
@@ -107,9 +111,7 @@ function BottomTabNavigator() {
         options={{
           title: "Home",
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="home" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
       <BottomTab.Screen
