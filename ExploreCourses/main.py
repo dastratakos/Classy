@@ -1,3 +1,4 @@
+from datetime import timedelta, timezone
 import pickle
 
 from firestore_connection import FirestoreConnection
@@ -38,6 +39,62 @@ def load_courses(from_pkl=True):
     return all_courses
 
 
+def analyze_start_and_end_times(all_courses):
+    earliest_start_hour = 8
+    earliest_start_minute = 0
+    earliest_start_code = []
+
+    latest_end_hour = 6
+    latest_end_minute = 0
+    latest_end_code = []
+
+    for course in all_courses.values():
+        if 1226 not in course.terms:
+            continue
+        # print(course.terms[1226])
+        for sched in course.terms[1226]:
+            if (sched["startInfo"] and sched["startInfo"].hour != 0):
+                start_hour = sched["startInfo"].hour
+                start_minute = sched["startInfo"].minute
+
+                if (start_hour < earliest_start_hour or
+                    (start_hour == earliest_start_hour and
+                     start_minute < earliest_start_minute)):
+                    earliest_start_hour = start_hour
+                    earliest_start_minute = start_minute
+                    earliest_start_code = course.code
+
+            if (sched["endInfo"] and sched["endInfo"].hour != 0):
+                end_hour = sched["endInfo"].hour
+                end_minute = sched["endInfo"].minute
+
+                if (end_hour > latest_end_hour or
+                    (end_hour == latest_end_hour and
+                     end_minute > latest_end_minute)):
+                    latest_end_hour = end_hour
+                    latest_end_minute = end_minute
+                    latest_end_code = course.code
+
+    print(
+        f"Earliest start time: {earliest_start_hour}:{earliest_start_minute} ({earliest_start_code})")
+    print(
+        f"Latest end time: {latest_end_hour}:{latest_end_minute} ({latest_end_code})")
+
+
+def analyze_time_adjustment(all_courses):
+    def utc_to_local(utc_dt):
+        return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None) + timedelta(hours=7)
+
+    for course in all_courses.values():
+
+        for term in course.terms.values():
+
+            for sched in term:
+                print("old:", sched["startInfo"], sched["startInfo"].tzname())
+                print("new:", utc_to_local(sched["startInfo"]), utc_to_local(
+                    sched["startInfo"]).tzname())
+
+
 if __name__ == "__main__":
     """
     Step 1: Download all courses from 2021-2022 to 2016-2017.
@@ -47,19 +104,23 @@ if __name__ == "__main__":
     """
     Step 2: Load all courses into dictionary of Course objects.
     """
-    # all_courses = load_courses(from_pkl=True)
+    all_courses = load_courses(from_pkl=True)
+    # analyze_time_adjustment(all_courses)
+    # analyze_start_and_end_times(all_courses)
 
     """
     Step 3: Create a FirestoreConnection object and upload each course.
     """
     firestore_connection = FirestoreConnection()
-    
+
     # firestore_connection.read_course(next(iter(all_courses.items())))
-    # firestore_connection.read_data(collection="users")
+    # firestore_connection.read_data(collection="courses")
     # firestore_connection.add_courses(all_courses)
     # firestore_connection.add_terms(all_courses)
+    # firestore_connection.adjust_enrollment_times(all_courses)
     # firestore_connection.add_keywords_to_users()
-    
+    # firestore_connection.adjust_course_times()
+
     # while True:
     #     search = input("Enter a search word: ")
     #     firestore_connection.search(search)
