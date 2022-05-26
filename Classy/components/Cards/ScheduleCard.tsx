@@ -34,10 +34,8 @@ export default function ScheduleCard({
               {schedule.sectionNumber} {componentToName(schedule.component)}
             </Text>
             <Text style={styles.cardSubtitle} numberOfLines={1}>
-              {schedule.days.join(", ")}{" "}
-              {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
-              {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
-              {getTimeString(schedule.endInfo, "America/Danmarkshavn")}
+              {schedule.days.join(", ")} {getTimeString(schedule.startInfo)} -{" "}
+              {getTimeString(schedule.endInfo)}
             </Text>
           </View>
           <Icon

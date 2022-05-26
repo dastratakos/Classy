@@ -81,10 +81,8 @@ export default function EnrollmentModal({
             keyExtractor={(_, index) => index.toString()}
             renderItem={({ item }) => (
               <Text style={styles.schedText}>
-                {item.days.join(", ")}{" "}
-                {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
-                {getTimeString(item.startInfo, "Africa/Casablanca")} -{" "}
-                {getTimeString(item.endInfo, "America/Danmarkshavn")}
+                {item.days.join(", ")} {getTimeString(item.startInfo)} -{" "}
+                {getTimeString(item.endInfo)}
               </Text>
             )}
           />
@@ -92,10 +90,8 @@ export default function EnrollmentModal({
           <View style={styles.classTimesWrap}>
             {enrollment.schedules.map((schedule, i) => (
               <Text style={styles.schedText} key={i}>
-                {schedule.days.join(", ")}{" "}
-                {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
-                {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
-                {getTimeString(schedule.endInfo, "America/Danmarkshavn")}
+                {schedule.days.join(", ")} {getTimeString(schedule.startInfo)} -{" "}
+                {getTimeString(schedule.endInfo)}
               </Text>
             ))}
           </View>

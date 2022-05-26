@@ -139,18 +139,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     }
 
     for (let event of weekRes.week[today].events) {
-      const startInfo = event.startInfo.toDate();
-      var startTime = new Date();
-      // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
-      startTime.setHours(startInfo.getHours() + 7);
-      startTime.setMinutes(startInfo.getMinutes());
-
-      const endInfo = event.endInfo.toDate();
-      var endTime = new Date();
-      // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
-      endTime.setHours(endInfo.getHours() + 7);
-      endTime.setMinutes(endInfo.getMinutes());
-
+      const startTime = event.startInfo.toDate();
+      const endTime = event.endInfo.toDate();
       if (startTime <= now && endTime >= now) {
         setInClass(true);
         return;

@@ -1,5 +1,6 @@
+import { Enrollment, Event, WeekSchedule } from "../types";
+
 import { Timestamp } from "firebase/firestore";
-import { Day, Enrollment, Event, WeekSchedule } from "../types";
 
 export const generateSubstrings = (text: string) => {
   let substrings: string[] = [];
@@ -204,18 +205,16 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
         location: schedule.location,
         enrollment: enrollment,
       };
-      if (
-        schedule.startInfo &&
-        // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
-        schedule.startInfo.toDate().getHours() + 7 < startCalendarHour
-      )
-        startCalendarHour = schedule.startInfo.toDate().getHours() + 7;
-      if (
-        schedule.endInfo &&
-        // TODO: 8 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
-        schedule.endInfo.toDate().getHours() + 8 > endCalendarHour
-      )
-        endCalendarHour = schedule.endInfo.toDate().getHours() + 8;
+
+      if (schedule.startInfo) {
+        const startHour = schedule.startInfo.toDate().getHours();
+        if (startHour < startCalendarHour) startCalendarHour = startHour;
+      }
+      if (schedule.endInfo) {
+        const endHour = schedule.endInfo.toDate().getHours() + 1;
+        if (endHour > endCalendarHour) endCalendarHour = endHour;
+      }
+
       for (let day of schedule.days) {
         const index = dayIndices[`${day}`];
         week[index].events.push(event);
@@ -224,8 +223,19 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
   }
 
   for (let i = 0; i < week.length; i++) {
-    week[i].events.sort((a: Event, b: Event) => a.startInfo > b.startInfo);
+    week[i].events = week[i].events.sort((a: Event, b: Event) => {
+      if (!a.startInfo) return 1;
+      if (!b.startInfo) return -1;
+
+      const aDate = a.startInfo.toDate();
+      const bDate = b.startInfo.toDate();
+      if (aDate.getHours() === bDate.getHours())
+        return aDate.getMinutes() > bDate.getMinutes() ? 1 : -1;
+      return aDate.getHours() > bDate.getHours() ? 1 : -1;
+    });
   }
+
+  console.log("week:", week);
 
   return { week, startCalendarHour, endCalendarHour };
 };

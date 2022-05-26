@@ -59,73 +59,47 @@ export default function CalendarGrid({
     return false;
   };
 
-  const Grid = ({ index }: { index: number }) => {
-    return (
-      <View
-        style={[
-          {
-            marginTop: Layout.spacing.medium,
-            backgroundColor: "transparent",
-          },
-        ]}
-      >
-        {times.map((time, i) => (
-          <View
-            style={[
-              AppStyles.row,
-              {
-                height: Layout.spacing.xxxlarge,
-                backgroundColor: "transparent",
-              },
-            ]}
-            key={i}
-          >
-            <Text
-              style={[
-                styles.gridTimeText,
-                today === index && currentTimeClose(currTime, time)
-                  ? { color: "transparent" }
-                  : { color: Colors[colorScheme].secondaryText },
-              ]}
-            >
-              {((time - 1) % 12) + 1} {time > 11 ? "PM" : "AM"}
-            </Text>
-            <View
-              style={[
-                styles.gridLine,
-                {
-                  backgroundColor: Colors[colorScheme].secondaryText,
-                },
-              ]}
-            />
-          </View>
-        ))}
-      </View>
-    );
-  };
-
   return (
-    <>
-      <Grid index={index} />
-      {today === index && (
+    <View
+      style={[
+        {
+          marginTop: Layout.spacing.medium,
+          backgroundColor: "transparent",
+        },
+      ]}
+    >
+      {times.map((time, i) => (
         <View
           style={[
             AppStyles.row,
             {
-              position: "absolute",
-              // subtract 6 for height of text
-              marginTop: getMarginTop(currTime) - 6,
+              height: Layout.spacing.xxxlarge,
+              backgroundColor: "transparent",
             },
           ]}
+          key={i}
         >
-          <Text style={[styles.gridTimeText, { color: Colors.pink }]}>
-            {getCurrTimeString(currTime)}
+          <Text
+            style={[
+              styles.gridTimeText,
+              today === index && currentTimeClose(currTime, time)
+                ? { color: "transparent" }
+                : { color: Colors[colorScheme].secondaryText },
+            ]}
+          >
+            {((time - 1) % 12) + 1} {time % 24 > 11 ? "PM" : "AM"}
           </Text>
-          <View style={[styles.gridLine, { backgroundColor: Colors.pink }]} />
-          <View style={styles.currTimeDot} />
+          <View
+            style={[
+              styles.gridLine,
+              {
+                backgroundColor: Colors[colorScheme].secondaryText,
+              },
+            ]}
+          />
         </View>
-      )}
-    </>
+      ))}
+    </View>
   );
 }
 

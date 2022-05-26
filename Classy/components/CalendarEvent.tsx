@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, TouchableOpacity } from "react-native";
+import { Alert, Pressable, StyleSheet } from "react-native";
 import React, { useContext, useState } from "react";
 import { Text, View } from "./Themed";
 
@@ -53,24 +53,23 @@ export default function CalendarEvent({
         setVisible={setModalVisible}
         editable={event.enrollment.userId === context.user.id}
       />
-      <View style={[styles.leftPadding, { width: 45 + leftIndent }]} />
-      <View
+      <Pressable
         style={[
           styles.event,
-          { height, backgroundColor: event.enrollment.color || Colors.pink },
+          {
+            height,
+            backgroundColor: event.enrollment.color || Colors.pink,
+            marginLeft: 45 + leftIndent,
+          },
         ]}
+        onPress={() => setModalVisible(true)}
       >
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Text style={styles.titleText}>{event.title}</Text>
-          {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
-          <Text style={styles.timeText}>
-            {getTimeString(event.startInfo, "Africa/Casablanca") +
-              " - " +
-              getTimeString(event.endInfo, "America/Danmarkshavn")}
-          </Text>
-          <Text style={styles.locationText}>{event.location}</Text>
-        </TouchableOpacity>
-      </View>
+        <Text style={styles.titleText}>{event.title}</Text>
+        <Text style={styles.timeText}>
+          {getTimeString(event.startInfo)} - {getTimeString(event.endInfo)}
+        </Text>
+        <Text style={styles.locationText}>{event.location}</Text>
+      </Pressable>
     </View>
   );
 }
@@ -79,9 +78,6 @@ const styles = StyleSheet.create({
   container: {
     ...AppStyles.row,
     position: "absolute",
-    backgroundColor: "transparent",
-  },
-  leftPadding: {
     backgroundColor: "transparent",
   },
   event: {
@@ -94,15 +90,15 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontWeight: "500",
-    color: Colors.black
+    color: Colors.black,
   },
   timeText: {
     fontSize: Layout.text.small,
-    color: Colors.black
+    color: Colors.black,
   },
   locationText: {
     fontSize: Layout.text.small,
     fontStyle: "italic",
-    color: Colors.black
+    color: Colors.black,
   },
 });

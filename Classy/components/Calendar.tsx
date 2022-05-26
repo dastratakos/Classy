@@ -6,16 +6,10 @@ import {
   View,
 } from "react-native";
 import { DaySchedule, Event, WeekSchedule } from "../types";
-import {
-  createRef,
-  forwardRef,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { createRef, forwardRef, useCallback, useRef } from "react";
 
 import AppStyles from "../styles/AppStyles";
+import CalendarCurrTime from "./CalendarCurrTime";
 import CalendarEvent from "./CalendarEvent";
 import CalendarGrid from "./CalendarGrid";
 import Colors from "../constants/Colors";
@@ -46,11 +40,6 @@ export default function Calendar({
   const d = new Date();
   const today = d.getDay() - 1;
 
-  // TODO: compute earliest and latest events for all days ahead of time
-  // earliest Stanford course is 6:00 AM and latest is 9:30 PM
-  // const [times, setTimes] = useState<number[]>([
-  //   8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-  // ]);
   const times = Array.from(
     { length: endCalendarHour - startCalendarHour + 1 },
     (_, i) => i + startCalendarHour
@@ -228,9 +217,7 @@ export default function Calendar({
           let prevIndex = i - 1;
           let currIndex = i;
           while (prevIndex >= 0) {
-            // TODO: -1 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
             const prevEndTime = events[prevIndex].endInfo.toDate();
-            prevEndTime.setHours(prevEndTime.getHours() - 1);
             const currStartTime = events[currIndex].startInfo.toDate();
             if (
               prevEndTime.getHours() > currStartTime.getHours() ||
@@ -246,14 +233,16 @@ export default function Calendar({
           return (
             <CalendarEvent
               event={event}
-              // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
-              marginTop={getMarginTop(event.startInfo, 7)}
+              marginTop={getMarginTop(event.startInfo)}
               height={getHeight(event.startInfo, event.endInfo)}
               leftIndent={leftIndent}
               key={i}
             />
           );
         })}
+        {today === index && (
+          <CalendarCurrTime startCalendarHour={startCalendarHour} />
+        )}
       </View>
     );
   };

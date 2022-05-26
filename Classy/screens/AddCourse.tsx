@@ -105,6 +105,8 @@ export default function AddCourse({ route }: AddCourseProps) {
 
     setDoneLoading(true);
 
+    // TODO: check if you are already enrolled in this course for selectedQuarter
+
     /* Build schedulesList. */
     let schedulesList: Schedule[] = [];
     selectedScheduleIndices.forEach((i) =>

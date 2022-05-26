@@ -37,9 +37,7 @@ export default function CourseOverviewModal({
           {data.component && componentToName(data.component)}
         </Text>
         <Text style={{ marginTop: Layout.spacing.xxsmall }}>
-          {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
-          {getTimeString(data.startInfo, "Africa/Casablanca")} -{" "}
-          {getTimeString(data.endInfo, "America/Danmarkshavn")}
+          {getTimeString(data.startInfo)} - {getTimeString(data.endInfo)}
         </Text>
         <Text
           style={{
