@@ -119,21 +119,21 @@ function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="ProfileStack"
-        component={ProfileStackNavigator}
-        options={{
-          title: "Profile",
-          headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-        }}
-      />
-      <BottomTab.Screen
         name="NotificationStack"
         component={NotificationStackNavigator}
         options={{
           title: "Notifications",
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="bell" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="ProfileStack"
+        component={ProfileStackNavigator}
+        options={{
+          title: "Profile",
+          headerShown: false,
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />
     </BottomTab.Navigator>
