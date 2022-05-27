@@ -227,10 +227,20 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
       if (!a.startInfo) return 1;
       if (!b.startInfo) return -1;
 
+      /* Sort by ascending start times. */
       const aDate = a.startInfo.toDate();
       const bDate = b.startInfo.toDate();
-      if (aDate.getHours() === bDate.getHours())
+      if (aDate.getHours() === bDate.getHours()) {
+        if (aDate.getMinutes() === bDate.getMinutes()) {
+          /* If start times are the same, sort by descending end times. */
+          const aEndDate = a.endInfo.toDate();
+          const bEndDate = b.endInfo.toDate();
+          if (aEndDate.getHours() === bEndDate.getHours())
+            return aEndDate.getMinutes() < bDate.getMinutes() ? 1 : -1;
+          return aEndDate.getHours() < bEndDate.getHours() ? 1 : -1;
+        }
         return aDate.getMinutes() > bDate.getMinutes() ? 1 : -1;
+      }
       return aDate.getHours() > bDate.getHours() ? 1 : -1;
     });
   }

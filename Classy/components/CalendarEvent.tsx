@@ -15,12 +15,14 @@ export default function CalendarEvent({
   event,
   marginTop,
   height,
-  leftIndent = 0,
+  width,
+  left = 0,
 }: {
   event: Event;
   marginTop: number;
   height: number;
-  leftIndent: number;
+  width: number;
+  left?: number;
 }) {
   const context = useContext(AppContext);
 
@@ -45,7 +47,7 @@ export default function CalendarEvent({
   };
 
   return (
-    <View style={[styles.container, { marginTop: marginTop }]}>
+    <>
       <EnrollmentModal
         enrollment={event.enrollment}
         deleteFunc={deleteEnrollmentAlert}
@@ -56,11 +58,8 @@ export default function CalendarEvent({
       <Pressable
         style={[
           styles.event,
-          {
-            height,
-            backgroundColor: event.enrollment.color || Colors.pink,
-            marginLeft: 45 + leftIndent,
-          },
+          { marginTop, height, width, left },
+          { backgroundColor: event.enrollment.color || Colors.pink },
         ]}
         onPress={() => setModalVisible(true)}
       >
@@ -70,7 +69,7 @@ export default function CalendarEvent({
         </Text>
         <Text style={styles.locationText}>{event.location}</Text>
       </Pressable>
-    </View>
+    </>
   );
 }
 
@@ -81,9 +80,12 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   event: {
+    position: "absolute",
     paddingVertical: Layout.spacing.xxsmall,
     paddingHorizontal: Layout.spacing.small,
-    flex: 1,
+    // flex: 1,
+    width: "33%",
+    // left: 100,
     borderRadius: Layout.radius.xsmall,
     overflow: "hidden",
     opacity: 0.9,

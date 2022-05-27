@@ -9,8 +9,10 @@ import { Timestamp } from "firebase/firestore";
 
 export default function CalendarCurrTime({
   startCalendarHour,
+  timesWidth,
 }: {
   startCalendarHour: number;
+  timesWidth: number;
 }) {
   const [currTime, setCurrTime] = useState<Timestamp>(Timestamp.now());
 
@@ -48,7 +50,12 @@ export default function CalendarCurrTime({
         },
       ]}
     >
-      <Text style={[styles.gridTimeText, { color: Colors.pink }]}>
+      <Text
+        style={[
+          styles.gridTimeText,
+          { color: Colors.pink, width: timesWidth - 5 },
+        ]}
+      >
         {getCurrTimeString(currTime)}
       </Text>
       <View style={[styles.gridLine, { backgroundColor: Colors.pink }]} />
@@ -60,9 +67,8 @@ export default function CalendarCurrTime({
 const styles = StyleSheet.create({
   gridTimeText: {
     fontWeight: "600",
-    width: 45,
     textAlign: "right",
-    paddingRight: 10,
+    paddingRight: 5,
     fontSize: Layout.text.small,
     backgroundColor: "transparent",
   },

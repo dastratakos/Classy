@@ -12,10 +12,12 @@ export default function CalendarGrid({
   times,
   index,
   today,
+  timesWidth,
 }: {
   times: number[];
   index: number;
   today: number;
+  timesWidth: number;
 }) {
   const colorScheme = useColorScheme();
 
@@ -25,24 +27,6 @@ export default function CalendarGrid({
     const interval = setInterval(() => setCurrTime(Timestamp.now()), 1000);
     return () => clearInterval(interval);
   }, []);
-
-  const getCurrTimeString = (currTime: Timestamp) => {
-    const now = currTime.toDate();
-    const minutes = `${now.getMinutes()}`.padStart(2, "0");
-    return `${((now.getHours() - 1) % 12) + 1}:${minutes}`;
-  };
-
-  const getMarginTop = (time: Timestamp, timeAdjustment: number = 0) => {
-    const offset = Layout.spacing.medium + Layout.spacing.xxxlarge / 2;
-    const t = time.toDate();
-    const hourDiff = t.getHours() - times[0] + timeAdjustment;
-
-    return (
-      offset +
-      hourDiff * Layout.spacing.xxxlarge +
-      (t.getMinutes() * Layout.spacing.xxxlarge) / 60
-    );
-  };
 
   /**
    * The current time is close to a specified hour if it is within 8 minutes.
@@ -82,6 +66,7 @@ export default function CalendarGrid({
           <Text
             style={[
               styles.gridTimeText,
+              { width: timesWidth },
               today === index && currentTimeClose(currTime, time)
                 ? { color: "transparent" }
                 : { color: Colors[colorScheme].secondaryText },
@@ -106,7 +91,6 @@ export default function CalendarGrid({
 const styles = StyleSheet.create({
   gridTimeText: {
     fontWeight: "600",
-    width: 45,
     textAlign: "right",
     paddingRight: 10,
     fontSize: Layout.text.small,
@@ -116,13 +100,5 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 1,
     borderRadius: 1,
-  },
-  currTimeDot: {
-    position: "absolute",
-    left: 45 - Layout.spacing.xsmall / 2,
-    height: Layout.spacing.xsmall,
-    width: Layout.spacing.xsmall,
-    borderRadius: Layout.spacing.xsmall / 2,
-    backgroundColor: Colors.pink,
   },
 });

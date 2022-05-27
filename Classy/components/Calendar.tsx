@@ -17,6 +17,8 @@ import Layout from "../constants/Layout";
 import { Timestamp } from "firebase/firestore";
 import useColorScheme from "../hooks/useColorScheme";
 
+const CALENDAR_TIMES_WIDTH = 45;
+
 export default function Calendar({
   week,
   startCalendarHour,
@@ -33,8 +35,7 @@ export default function Calendar({
   /* Create new data structure with ref property. */
   const newEvents = week.map((item) => ({ ...item, ref: createRef() }));
 
-  const { width } = Dimensions.get("screen");
-  const dayWidth = width - 2 * Layout.spacing.medium;
+  const dayWidth = Layout.window.width - 2 * Layout.spacing.medium;
   const scrollX = useRef(new Animated.Value(0)).current;
 
   const d = new Date();
@@ -210,10 +211,15 @@ export default function Calendar({
   const Day = ({ events, index }: { events: Event[]; index: number }) => {
     return (
       <View style={{ width: dayWidth }}>
-        <CalendarGrid times={times} index={index} today={today} />
+        <CalendarGrid
+          times={times}
+          index={index}
+          today={today}
+          timesWidth={CALENDAR_TIMES_WIDTH}
+        />
         {events.map((event: Event, i: number) => {
           /* Handle overlapping events by indenting. */
-          let leftIndent = 0;
+          let left = CALENDAR_TIMES_WIDTH;
           let prevIndex = i - 1;
           let currIndex = i;
           while (prevIndex >= 0) {
@@ -224,24 +230,36 @@ export default function Calendar({
               (prevEndTime.getHours() === currStartTime.getHours() &&
                 prevEndTime.getMinutes() > currStartTime.getMinutes())
             ) {
-              leftIndent += Layout.spacing.xsmall;
+              left += Layout.spacing.xsmall;
               currIndex = prevIndex;
             }
             prevIndex--;
           }
+
+          /* Handle side by side events with indents and width. */
+          let width = dayWidth - left;
+          // width /= 4;
+
+          // if (i % 4 === 1) left += width;
+          // if (i % 4 === 2) left += 2 * width;
+          // if (i % 4 === 3) left += 3 * width;
 
           return (
             <CalendarEvent
               event={event}
               marginTop={getMarginTop(event.startInfo)}
               height={getHeight(event.startInfo, event.endInfo)}
-              leftIndent={leftIndent}
+              width={width}
+              left={left}
               key={i}
             />
           );
         })}
         {today === index && (
-          <CalendarCurrTime startCalendarHour={startCalendarHour} />
+          <CalendarCurrTime
+            startCalendarHour={startCalendarHour}
+            timesWidth={CALENDAR_TIMES_WIDTH}
+          />
         )}
       </View>
     );
@@ -297,26 +315,5 @@ const styles = StyleSheet.create({
     height: 30,
     width: 30,
     borderRadius: 30 / 2,
-  },
-  gridTimeText: {
-    fontWeight: "600",
-    width: 45,
-    textAlign: "right",
-    paddingRight: 10,
-    fontSize: Layout.text.small,
-    backgroundColor: "transparent",
-  },
-  gridLine: {
-    flex: 1,
-    height: 1,
-    borderRadius: 1,
-  },
-  currTimeDot: {
-    position: "absolute",
-    left: 45 - Layout.spacing.xsmall / 2,
-    height: Layout.spacing.xsmall,
-    width: Layout.spacing.xsmall,
-    borderRadius: Layout.spacing.xsmall / 2,
-    backgroundColor: Colors.pink,
   },
 });
