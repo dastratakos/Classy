@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import { ColorSchemeName } from "react-native";
 import {
   DarkTheme,
   DefaultTheme,
@@ -8,20 +7,22 @@ import {
 } from "@react-navigation/native";
 import { RootStackParamList, RootTabParamList } from "../types";
 
+import AuthStackNavigator from "./AuthStackNavigator";
+import { ColorSchemeName } from "react-native";
 import Colors from "../constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
-import LinkingConfiguration from "./LinkingConfiguration";
 import HomeStackNavigator from "./HomeStackNavigator";
-import ProfileStackNavigator from "./ProfileStackNavigator";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import useColorScheme from "../hooks/useColorScheme";
-import AuthStackNavigator from "./AuthStackNavigator";
+import Layout from "../constants/Layout";
+import LinkingConfiguration from "./LinkingConfiguration";
 import ManageAccount from "../screens/ManageAccount";
+import NotificationStackNavigator from "./NotificationStackNavigator";
+import ProfileStackNavigator from "./ProfileStackNavigator";
 import SearchStackNavigator from "./SearchStackNavigator";
 import SelectColor from "../screens/SelectColor";
 import SelectQuarter from "../screens/SelectQuarter";
-import Layout from "../constants/Layout";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import useColorScheme from "../hooks/useColorScheme";
 
 /**
  * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
@@ -124,6 +125,15 @@ function BottomTabNavigator() {
           title: "Profile",
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="NotificationStack"
+        component={NotificationStackNavigator}
+        options={{
+          title: "Notifications",
+          headerShown: false,
+          tabBarIcon: ({ color }) => <TabBarIcon name="bell" color={color} />,
         }}
       />
     </BottomTab.Navigator>
