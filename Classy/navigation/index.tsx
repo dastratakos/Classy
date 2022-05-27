@@ -12,7 +12,6 @@ import Colors from "../constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import LinkingConfiguration from "./LinkingConfiguration";
 import HomeStackNavigator from "./HomeStackNavigator";
-import NotFoundScreen from "../screens/NotFoundScreen";
 import ProfileStackNavigator from "./ProfileStackNavigator";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -62,11 +61,6 @@ function RootNavigator() {
         name="Root"
         component={BottomTabNavigator}
         options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="NotFound"
-        component={NotFoundScreen}
-        options={{ title: "Oops!" }}
       />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen
