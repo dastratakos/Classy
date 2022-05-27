@@ -1,4 +1,3 @@
-import { StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
 
 import AppStyles from "../../styles/AppStyles";
@@ -6,6 +5,8 @@ import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
 import { Text } from "./../Themed";
 import { Timestamp } from "firebase/firestore";
+import { View } from "react-native";
+import gridStyles from "./gridStyles";
 import useColorScheme from "../../hooks/useColorScheme";
 
 export default function CalendarGrid({
@@ -65,7 +66,7 @@ export default function CalendarGrid({
         >
           <Text
             style={[
-              styles.gridTimeText,
+              gridStyles.gridTimeText,
               { width: timesWidth },
               today === index && currentTimeClose(currTime, time)
                 ? { color: "transparent" }
@@ -76,7 +77,7 @@ export default function CalendarGrid({
           </Text>
           <View
             style={[
-              styles.gridLine,
+              gridStyles.gridLine,
               {
                 backgroundColor: Colors[colorScheme].secondaryText,
               },
@@ -87,18 +88,3 @@ export default function CalendarGrid({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  gridTimeText: {
-    fontWeight: "600",
-    textAlign: "right",
-    paddingRight: 10,
-    fontSize: Layout.text.small,
-    backgroundColor: "transparent",
-  },
-  gridLine: {
-    flex: 1,
-    height: 1,
-    borderRadius: 1,
-  },
-});

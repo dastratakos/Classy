@@ -6,6 +6,8 @@ import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
 import { Text } from "./../Themed";
 import { Timestamp } from "firebase/firestore";
+import gridStyles from "./gridStyles";
+import { getMarginTop } from "./utils";
 
 export default function CalendarCurrTime({
   startCalendarHour,
@@ -27,18 +29,6 @@ export default function CalendarCurrTime({
     return `${((now.getHours() - 1) % 12) + 1}:${minutes}`;
   };
 
-  const getMarginTop = (time: Timestamp, timeAdjustment: number = 0) => {
-    const offset = Layout.spacing.medium + Layout.spacing.xxxlarge / 2;
-    const t = time.toDate();
-    const hourDiff = t.getHours() - startCalendarHour + timeAdjustment;
-
-    return (
-      offset +
-      hourDiff * Layout.spacing.xxxlarge +
-      (t.getMinutes() * Layout.spacing.xxxlarge) / 60
-    );
-  };
-
   return (
     <View
       style={[
@@ -46,37 +36,25 @@ export default function CalendarCurrTime({
         {
           position: "absolute",
           // subtract 6 for height of text
-          marginTop: getMarginTop(currTime) - 6,
+          marginTop: getMarginTop(currTime, startCalendarHour) - 6,
         },
       ]}
     >
       <Text
         style={[
-          styles.gridTimeText,
-          { color: Colors.pink, width: timesWidth - 5 },
+          gridStyles.gridTimeText,
+          { color: Colors.pink, width: timesWidth - 5, paddingRight: 5 },
         ]}
       >
         {getCurrTimeString(currTime)}
       </Text>
-      <View style={[styles.gridLine, { backgroundColor: Colors.pink }]} />
+      <View style={[gridStyles.gridLine, { backgroundColor: Colors.pink }]} />
       <View style={styles.currTimeDot} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  gridTimeText: {
-    fontWeight: "600",
-    textAlign: "right",
-    paddingRight: 5,
-    fontSize: Layout.text.small,
-    backgroundColor: "transparent",
-  },
-  gridLine: {
-    flex: 1,
-    height: 1,
-    borderRadius: 1,
-  },
   currTimeDot: {
     position: "absolute",
     left: 45 - Layout.spacing.xsmall / 2,

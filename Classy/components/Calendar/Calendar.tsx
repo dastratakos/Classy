@@ -16,6 +16,7 @@ import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
 import { Timestamp } from "firebase/firestore";
 import useColorScheme from "../../hooks/useColorScheme";
+import { getHeight, getMarginTop } from "./utils";
 
 const CALENDAR_TIMES_WIDTH = 45;
 
@@ -45,33 +46,6 @@ export default function Calendar({
     { length: endCalendarHour - startCalendarHour + 1 },
     (_, i) => i + startCalendarHour
   );
-
-  const getMarginTop = (time: Timestamp, timeAdjustment: number = 0) => {
-    const offset = Layout.spacing.medium + Layout.spacing.xxxlarge / 2;
-    const t = time.toDate();
-    const hourDiff = t.getHours() - times[0] + timeAdjustment;
-
-    return (
-      offset +
-      hourDiff * Layout.spacing.xxxlarge +
-      (t.getMinutes() * Layout.spacing.xxxlarge) / 60
-    );
-  };
-
-  const getHeight = (startTime: Timestamp, endTime: Timestamp) => {
-    const startHours = startTime.toDate().getHours();
-    const endHours = endTime.toDate().getHours();
-    const hourDiff = endHours - startHours;
-
-    const startMinutes = startTime.toDate().getMinutes();
-    const endMinutes = endTime.toDate().getMinutes();
-    const minDiff = endMinutes - startMinutes;
-
-    return (
-      hourDiff * Layout.spacing.xxxlarge +
-      (minDiff * Layout.spacing.xxxlarge) / 60
-    );
-  };
 
   const DayTab = forwardRef(
     (
@@ -247,7 +221,7 @@ export default function Calendar({
           return (
             <CalendarEvent
               event={event}
-              marginTop={getMarginTop(event.startInfo)}
+              marginTop={getMarginTop(event.startInfo, times[0])}
               height={getHeight(event.startInfo, event.endInfo)}
               width={width}
               left={left}
