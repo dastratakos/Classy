@@ -1,10 +1,10 @@
 import { StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
 
-import AppStyles from "../styles/AppStyles";
-import Colors from "../constants/Colors";
-import Layout from "../constants/Layout";
-import { Text } from "./Themed";
+import AppStyles from "../../styles/AppStyles";
+import Colors from "../../constants/Colors";
+import Layout from "../../constants/Layout";
+import { Text } from "./../Themed";
 import { Timestamp } from "firebase/firestore";
 
 export default function CalendarCurrTime({

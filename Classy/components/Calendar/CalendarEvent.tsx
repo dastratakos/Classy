@@ -1,15 +1,15 @@
 import { Alert, Pressable, StyleSheet } from "react-native";
 import React, { useContext, useState } from "react";
-import { Text, View } from "./Themed";
+import { Text, View } from "./../Themed";
 
-import AppContext from "../context/Context";
-import AppStyles from "../styles/AppStyles";
-import Colors from "../constants/Colors";
-import EnrollmentModal from "./EnrollmentModal";
-import { Event } from "../types";
-import Layout from "../constants/Layout";
-import { deleteEnrollment } from "../services/enrollments";
-import { getTimeString } from "../utils";
+import AppContext from "../../context/Context";
+import AppStyles from "../../styles/AppStyles";
+import Colors from "../../constants/Colors";
+import EnrollmentModal from "./../EnrollmentModal";
+import { Event } from "../../types";
+import Layout from "../../constants/Layout";
+import { deleteEnrollment } from "../../services/enrollments";
+import { getTimeString } from "../../utils";
 
 export default function CalendarEvent({
   event,

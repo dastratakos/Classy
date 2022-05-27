@@ -23,7 +23,7 @@ import { useContext, useEffect, useState } from "react";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
-import Calendar from "../components/Calendar";
+import Calendar from "../components/Calendar/Calendar";
 import Colors from "../constants/Colors";
 import Constants from "expo-constants";
 import EmptyList from "../components/EmptyList";

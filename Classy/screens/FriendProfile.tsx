@@ -32,7 +32,7 @@ import ActionSheet from "react-native-actionsheet";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
-import Calendar from "../components/Calendar";
+import Calendar from "../components/Calendar/Calendar";
 import Colors from "../constants/Colors";
 import EmptyList from "../components/EmptyList";
 import EnrollmentList from "../components/Lists/EnrollmentList";
