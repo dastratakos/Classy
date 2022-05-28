@@ -16,7 +16,9 @@ import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
 import { Timestamp } from "firebase/firestore";
 import useColorScheme from "../../hooks/useColorScheme";
-import { getHeight, getMarginTop } from "./utils";
+import { calculateHeight, calculateTop } from "./utils";
+import { getStyledEvents } from "./layout";
+import { ActivityIndicator } from "../Themed";
 
 const CALENDAR_TIMES_WIDTH = 45;
 
@@ -51,19 +53,27 @@ export default function Calendar({
     (
       {
         day,
+        numDays,
         i,
         onItemPress,
-      }: { day: string; i: number; onItemPress: () => void },
+      }: { day: string; numDays: number; i: number; onItemPress: () => void },
       ref
     ) => {
-      const inputRange = [0, 1, 2, 3, 4].map((num) => num * dayWidth);
+      const inputRange = Array.from(
+        { length: numDays },
+        (_, idx) => idx * dayWidth
+      );
       const regularOpacity = scrollX.interpolate({
         inputRange,
-        outputRange: [0, 1, 2, 3, 4].map((num) => (num === i ? 0 : 1)),
+        outputRange: Array.from({ length: numDays }, (_, idx) =>
+          idx === i ? 0 : 1
+        ),
       });
       const selectedOpacity = scrollX.interpolate({
         inputRange,
-        outputRange: [0, 1, 2, 3, 4].map((num) => (num === i ? 1 : 0)),
+        outputRange: Array.from({ length: numDays }, (_, idx) =>
+          idx === i ? 1 : 0
+        ),
       });
 
       return (
@@ -103,21 +113,35 @@ export default function Calendar({
     }
   );
 
-  const Indicator = ({ scrollX }: { scrollX: Animated.Value }) => {
-    const inputRange = [0, 1, 2, 3, 4].map((i) => i * dayWidth);
+  const Indicator = ({
+    numDays,
+    scrollX,
+  }: {
+    numDays: number;
+    scrollX: Animated.Value;
+  }) => {
+    const inputRange = Array.from(
+      { length: numDays },
+      (_, idx) => idx * dayWidth
+    );
     const indicatorLeft = scrollX.interpolate({
       inputRange,
-      outputRange: [0, 1, 2, 3, 4].map(
-        (i) => (i * dayWidth) / 5 + dayWidth / 5 / 2 - 15
+      outputRange: Array.from(
+        { length: numDays },
+        (_, idx) => (idx * dayWidth) / numDays + dayWidth / numDays / 2 - 15
       ),
     });
     const regularOpacity = scrollX.interpolate({
       inputRange,
-      outputRange: [0, 1, 2, 3, 4].map((i) => (today === i ? 0 : 1)),
+      outputRange: Array.from({ length: numDays }, (_, idx) =>
+        today === idx ? 0 : 1
+      ),
     });
     const selectedOpacity = scrollX.interpolate({
       inputRange,
-      outputRange: [0, 1, 2, 3, 4].map((i) => (today === i ? 1 : 0)),
+      outputRange: Array.from({ length: numDays }, (_, idx) =>
+        today === idx ? 1 : 0
+      ),
     });
 
     return (
@@ -158,7 +182,7 @@ export default function Calendar({
   }) => {
     return (
       <View>
-        <Indicator scrollX={scrollX} />
+        <Indicator numDays={data.length} scrollX={scrollX} />
         <View
           style={[
             AppStyles.row,
@@ -172,6 +196,7 @@ export default function Calendar({
             <DayTab
               key={i}
               day={item.day[0]}
+              numDays={data.length}
               i={i}
               ref={item.ref}
               onItemPress={() => onItemPress(i)}
@@ -183,6 +208,8 @@ export default function Calendar({
   };
 
   const Day = ({ events, index }: { events: Event[]; index: number }) => {
+    const styledEvents = getStyledEvents(events, startCalendarHour, 30);
+
     return (
       <View style={{ width: dayWidth }}>
         <CalendarGrid
@@ -191,12 +218,15 @@ export default function Calendar({
           today={today}
           timesWidth={CALENDAR_TIMES_WIDTH}
         />
+        {/* {styledEvents.map(({ event: Event, style: Object }, i: number) => { */}
         {events.map((event: Event, i: number) => {
           /* Handle overlapping events by indenting. */
           let left = CALENDAR_TIMES_WIDTH;
           let prevIndex = i - 1;
           let currIndex = i;
           while (prevIndex >= 0) {
+            if (!events[prevIndex].endInfo) continue;
+            if (!events[currIndex].startInfo) continue;
             const prevEndTime = events[prevIndex].endInfo.toDate();
             const currStartTime = events[currIndex].startInfo.toDate();
             if (
@@ -218,16 +248,18 @@ export default function Calendar({
           // if (i % 4 === 2) left += 2 * width;
           // if (i % 4 === 3) left += 3 * width;
 
-          return (
-            <CalendarEvent
-              event={event}
-              marginTop={getMarginTop(event.startInfo, times[0])}
-              height={getHeight(event.startInfo, event.endInfo)}
-              width={width}
-              left={left}
-              key={i}
-            />
-          );
+          let style = {
+            top: calculateTop(event.startInfo, times[0]),
+            height: calculateHeight(event.startInfo, event.endInfo),
+            width,
+            left,
+          };
+
+          if (style.top === 0) {
+            console.log("Found top 0:", event.title);
+          }
+
+          return <CalendarEvent event={event} style={style} key={i} />;
         })}
         {today === index && (
           <CalendarCurrTime
@@ -244,6 +276,8 @@ export default function Calendar({
       offset: itemIndex * dayWidth,
     });
   });
+
+  if (week.length === 0) return <ActivityIndicator />;
 
   return (
     <>

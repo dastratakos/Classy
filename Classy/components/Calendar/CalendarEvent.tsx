@@ -13,16 +13,10 @@ import { getTimeString } from "../../utils";
 
 export default function CalendarEvent({
   event,
-  marginTop,
-  height,
-  width,
-  left = 0,
+  style,
 }: {
   event: Event;
-  marginTop: number;
-  height: number;
-  width: number;
-  left?: number;
+  style: Object;
 }) {
   const context = useContext(AppContext);
 
@@ -57,9 +51,11 @@ export default function CalendarEvent({
       />
       <Pressable
         style={[
-          styles.event,
-          { marginTop, height, width, left },
-          { backgroundColor: event.enrollment.color || Colors.pink },
+          {
+            ...styles.event,
+            ...style,
+            backgroundColor: event.enrollment.color || Colors.pink,
+          },
         ]}
         onPress={() => setModalVisible(true)}
       >
@@ -84,11 +80,12 @@ const styles = StyleSheet.create({
     paddingVertical: Layout.spacing.xxsmall,
     paddingHorizontal: Layout.spacing.small,
     // flex: 1,
-    width: "33%",
+    // width: "33%",
     // left: 100,
     borderRadius: Layout.radius.xsmall,
     overflow: "hidden",
-    opacity: 0.9,
+    // opacity: 0.9,
+    opacity: 0.7,
   },
   titleText: {
     fontWeight: "500",

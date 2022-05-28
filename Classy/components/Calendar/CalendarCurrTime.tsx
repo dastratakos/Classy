@@ -7,7 +7,7 @@ import Layout from "../../constants/Layout";
 import { Text } from "./../Themed";
 import { Timestamp } from "firebase/firestore";
 import gridStyles from "./gridStyles";
-import { getMarginTop } from "./utils";
+import { calculateTop } from "./utils";
 
 export default function CalendarCurrTime({
   startCalendarHour,
@@ -36,7 +36,7 @@ export default function CalendarCurrTime({
         {
           position: "absolute",
           // subtract 6 for height of text
-          marginTop: getMarginTop(currTime, startCalendarHour) - 6,
+          marginTop: calculateTop(currTime, startCalendarHour) - 6,
         },
       ]}
     >

@@ -1,7 +1,9 @@
 import { Timestamp } from "firebase/firestore";
 import Layout from "../../constants/Layout";
 
-export const getMarginTop = (time: Timestamp, startCalendarHour: number) => {
+export const calculateTop = (time: Timestamp, startCalendarHour: number) => {
+  if (!time) return 0;
+
   const offset = Layout.spacing.medium + Layout.spacing.xxxlarge / 2;
   const t = time.toDate();
   const hourDiff = t.getHours() - startCalendarHour;
@@ -13,7 +15,7 @@ export const getMarginTop = (time: Timestamp, startCalendarHour: number) => {
   );
 };
 
-export const getHeight = (startTime: Timestamp, endTime: Timestamp) => {
+export const calculateHeight = (startTime: Timestamp, endTime: Timestamp) => {
   const startHours = startTime.toDate().getHours();
   const endHours = endTime.toDate().getHours();
   const hourDiff = endHours - startHours;

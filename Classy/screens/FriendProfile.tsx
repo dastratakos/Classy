@@ -139,6 +139,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     }
 
     for (let event of weekRes.week[today].events) {
+      if (!event.startInfo) continue;
+      if (!event.endInfo) continue;
       const startTime = event.startInfo.toDate();
       const endTime = event.endInfo.toDate();
       if (startTime <= now && endTime >= now) {
