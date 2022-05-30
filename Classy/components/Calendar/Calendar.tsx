@@ -21,6 +21,7 @@ import { getStyledEvents } from "./layout";
 import { ActivityIndicator } from "../Themed";
 
 const CALENDAR_TIMES_WIDTH = 45;
+const CALENDAR_HOUR_HEIGHT = Layout.spacing.xxxlarge;
 
 export default function Calendar({
   week,
@@ -38,7 +39,7 @@ export default function Calendar({
   /* Create new data structure with ref property. */
   const newEvents = week.map((item) => ({ ...item, ref: createRef() }));
 
-  const dayWidth = Layout.window.width - 2 * Layout.spacing.medium;
+  const DAY_WIDTH = Layout.window.width - 2 * Layout.spacing.medium;
   const scrollX = useRef(new Animated.Value(0)).current;
 
   const d = new Date();
@@ -61,7 +62,7 @@ export default function Calendar({
     ) => {
       const inputRange = Array.from(
         { length: numDays },
-        (_, idx) => idx * dayWidth
+        (_, idx) => idx * DAY_WIDTH
       );
       const regularOpacity = scrollX.interpolate({
         inputRange,
@@ -122,13 +123,13 @@ export default function Calendar({
   }) => {
     const inputRange = Array.from(
       { length: numDays },
-      (_, idx) => idx * dayWidth
+      (_, idx) => idx * DAY_WIDTH
     );
     const indicatorLeft = scrollX.interpolate({
       inputRange,
       outputRange: Array.from(
         { length: numDays },
-        (_, idx) => (idx * dayWidth) / numDays + dayWidth / numDays / 2 - 15
+        (_, idx) => (idx * DAY_WIDTH) / numDays + DAY_WIDTH / numDays / 2 - 15
       ),
     });
     const regularOpacity = scrollX.interpolate({
@@ -208,63 +209,40 @@ export default function Calendar({
   };
 
   const Day = ({ events, index }: { events: Event[]; index: number }) => {
-    const styledEvents = getStyledEvents(events, startCalendarHour, 30);
+    console.log(`hello there ${index}`);
+
+    const styledEvents = getStyledEvents(
+      events,
+      startCalendarHour,
+      CALENDAR_HOUR_HEIGHT,
+      DAY_WIDTH,
+      CALENDAR_TIMES_WIDTH
+    );
+
+    console.log(`styledEvents.length = ${styledEvents.length}`);
 
     return (
-      <View style={{ width: dayWidth }}>
+      <View style={{ width: DAY_WIDTH }}>
         <CalendarGrid
           times={times}
           index={index}
           today={today}
           timesWidth={CALENDAR_TIMES_WIDTH}
+          hourHeight={CALENDAR_HOUR_HEIGHT}
         />
-        {/* {styledEvents.map(({ event: Event, style: Object }, i: number) => { */}
-        {events.map((event: Event, i: number) => {
-          /* Handle overlapping events by indenting. */
-          let left = CALENDAR_TIMES_WIDTH;
-          let prevIndex = i - 1;
-          let currIndex = i;
-          while (prevIndex >= 0) {
-            if (!events[prevIndex].endInfo) continue;
-            if (!events[currIndex].startInfo) continue;
-            const prevEndTime = events[prevIndex].endInfo.toDate();
-            const currStartTime = events[currIndex].startInfo.toDate();
-            if (
-              prevEndTime.getHours() > currStartTime.getHours() ||
-              (prevEndTime.getHours() === currStartTime.getHours() &&
-                prevEndTime.getMinutes() > currStartTime.getMinutes())
-            ) {
-              left += Layout.spacing.xsmall;
-              currIndex = prevIndex;
-            }
-            prevIndex--;
-          }
-
-          /* Handle side by side events with indents and width. */
-          let width = dayWidth - left;
-          // width /= 4;
-
-          // if (i % 4 === 1) left += width;
-          // if (i % 4 === 2) left += 2 * width;
-          // if (i % 4 === 3) left += 3 * width;
-
-          let style = {
-            top: calculateTop(event.startInfo, times[0]),
-            height: calculateHeight(event.startInfo, event.endInfo),
-            width,
-            left,
-          };
-
-          if (style.top === 0) {
-            console.log("Found top 0:", event.title);
-          }
-
-          return <CalendarEvent event={event} style={style} key={i} />;
-        })}
+        {/* {styledEvents.map(({ event: Event, style: Object }, i: number) => ( */}
+        {styledEvents.map((styledEvent, i: number) => (
+          <CalendarEvent
+            event={styledEvent.event}
+            style={styledEvent.style}
+            key={i}
+          />
+        ))}
         {today === index && (
           <CalendarCurrTime
             startCalendarHour={startCalendarHour}
             timesWidth={CALENDAR_TIMES_WIDTH}
+            hourHeight={CALENDAR_HOUR_HEIGHT}
           />
         )}
       </View>
@@ -273,7 +251,7 @@ export default function Calendar({
 
   const onItemPress = useCallback((itemIndex) => {
     ref?.current?.scrollToOffset({
-      offset: itemIndex * dayWidth,
+      offset: itemIndex * DAY_WIDTH,
     });
   });
 
@@ -301,7 +279,7 @@ export default function Calendar({
           /* Default to Monday if it's a weekend. */
           const initialSelected = today >= 0 && today <= 4 ? today : 0;
           ref?.current?.scrollToOffset({
-            offset: initialSelected * dayWidth,
+            offset: initialSelected * DAY_WIDTH,
             animated: false,
           });
         }}

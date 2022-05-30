@@ -12,9 +12,11 @@ import { calculateTop } from "./utils";
 export default function CalendarCurrTime({
   startCalendarHour,
   timesWidth,
+  hourHeight,
 }: {
   startCalendarHour: number;
   timesWidth: number;
+  hourHeight: number;
 }) {
   const [currTime, setCurrTime] = useState<Timestamp>(Timestamp.now());
 
@@ -36,7 +38,7 @@ export default function CalendarCurrTime({
         {
           position: "absolute",
           // subtract 6 for height of text
-          marginTop: calculateTop(currTime, startCalendarHour) - 6,
+          marginTop: calculateTop(currTime, startCalendarHour, hourHeight) - 6,
         },
       ]}
     >

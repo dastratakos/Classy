@@ -44,7 +44,7 @@ export default function Login({ route }: LoginProps) {
       streamChatUser,
       context.streamClient.devToken(streamChatUser.id)
     );
-    console.log("User connected:", user);
+    console.log("StreamChat user connected:", user);
 
     context.setTotalUnreadCount(user.me.total_unread_count);
 
