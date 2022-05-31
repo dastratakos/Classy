@@ -81,15 +81,12 @@ export default function Profile() {
           setNumRequests(res.length)
         );
 
-        console.log("getting enrollments");
-        // const res = await getEnrollmentsForTerm(
-        //   context.user.id,
-        //   context.user.id,
-        //   getCurrentTermId()
-        // );
-        const res = await getEnrollments(context.user.id);
+        const res = await getEnrollmentsForTerm(
+          context.user.id,
+          context.user.id,
+          getCurrentTermId()
+        );
         setEnrollments(res);
-        console.log("got them");
         setWeekRes(getWeekFromEnrollments(res));
       }
     };
@@ -123,15 +120,12 @@ export default function Profile() {
 
     getRequestIds(context.user.id).then((res) => setNumRequests(res.length));
 
-    console.log("getting enrollments 2");
-    // const res = await getEnrollmentsForTerm(
-    //   context.user.id,
-    //   context.user.id,
-    //   getCurrentTermId()
-    // );
-    const res = await getEnrollments(context.user.id);
+    const res = await getEnrollmentsForTerm(
+      context.user.id,
+      context.user.id,
+      getCurrentTermId()
+    );
     setEnrollments(res);
-    console.log("got them 2");
     setWeekRes(getWeekFromEnrollments(res));
 
     if (auth.currentUser)
