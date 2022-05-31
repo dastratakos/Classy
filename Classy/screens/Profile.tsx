@@ -15,6 +15,7 @@ import {
   getWeekFromEnrollments,
   termIdToFullName,
   termIdToQuarterName,
+  timeIsEarlier,
 } from "../utils";
 import { getFriendIds, getRequestIds } from "../services/friends";
 import { getUser, updateUser } from "../services/users";
@@ -138,8 +139,8 @@ export default function Profile() {
   };
 
   const checkInClass = () => {
-    const now = Timestamp.now().toDate();
-    const today = now.getDay() - 1;
+    const now = Timestamp.now();
+    const today = now.toDate().getDay() - 1;
 
     if (!weekRes.week[today]) {
       setInClass(false);
@@ -149,9 +150,10 @@ export default function Profile() {
     for (let event of weekRes.week[today].events) {
       if (!event.startInfo) continue;
       if (!event.endInfo) continue;
-      const startTime = event.startInfo.toDate();
-      const endTime = event.endInfo.toDate();
-      if (startTime <= now && endTime >= now) {
+      if (
+        timeIsEarlier(event.startInfo, now) &&
+        timeIsEarlier(now, event.endInfo)
+      ) {
         setInClass(true);
         return;
       }

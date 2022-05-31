@@ -1,5 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import { Event } from "../../types";
+import { timeIsEarlier } from "../../utils";
 import { calculateHeight, calculateTop } from "./utils";
 
 class CalendarEvent {
@@ -35,26 +36,6 @@ class Node {
     this.children = [];
   }
 }
-
-/**
- * Compares two Timestamps by checking only the hour and minute values. Returns
- * true if a is strictly earlier than b.
- *
- * @param a The first Timestamp object to compare
- * @param b The second Timestamp object to compare
- * @returns boolean true if a's time is earlier, false otherwise
- */
-const timeIsEarlier = (a: Timestamp, b: Timestamp) => {
-  const aHours = a.toDate().getHours();
-  const bHours = b.toDate().getHours();
-
-  if (aHours !== bHours) return aHours < bHours;
-
-  const aMinutes = a.toDate().getMinutes();
-  const bMinutes = b.toDate().getMinutes();
-
-  return aMinutes < bMinutes;
-};
 
 /**
  * The number of pixels below the start of an event that cannot overlap.

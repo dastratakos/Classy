@@ -251,7 +251,27 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
     });
   }
 
-  console.log("week:", week);
+  // console.log("week:", week);
 
   return { week, startCalendarHour, endCalendarHour };
+};
+
+/**
+ * Compares two Timestamps by checking only the hour and minute values. Returns
+ * true if a is strictly earlier than b.
+ *
+ * @param a The first Timestamp object to compare
+ * @param b The second Timestamp object to compare
+ * @returns boolean true if a's time is earlier, false otherwise
+ */
+export const timeIsEarlier = (a: Timestamp, b: Timestamp) => {
+  const aHours = a.toDate().getHours();
+  const bHours = b.toDate().getHours();
+
+  if (aHours !== bHours) return aHours < bHours;
+
+  const aMinutes = a.toDate().getMinutes();
+  const bMinutes = b.toDate().getMinutes();
+
+  return aMinutes < bMinutes;
 };
