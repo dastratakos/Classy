@@ -15,6 +15,8 @@ import { ProfileStackScreenProps } from "../types";
 import Settings from "../screens/Settings";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import EditCourse from "../screens/EditCourse";
+// import AddDegree from "../screens/AddDegree";
+import EditDegree from "../screens/EditDegree";
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +50,18 @@ export default function ProfileStackNavigator() {
         name="Settings"
         component={Settings}
         getId={() => new Date().getTime().toString()}
+      />
+      {/* <Stack.Screen
+        name="AddDegree"
+        component={AddDegree}
+        getId={() => new Date().getTime().toString()}
+        options={{ title: "Add Degree" }}
+      /> */}
+      <Stack.Screen
+        name="EditDegree"
+        component={EditDegree}
+        getId={() => new Date().getTime().toString()}
+        options={{ title: "Edit Degree" }}
       />
       <Stack.Screen
         name="Enrollments"

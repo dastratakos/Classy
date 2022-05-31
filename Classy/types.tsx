@@ -145,6 +145,8 @@ export type RootStackParamList = {
   ProfileStack: NavigatorScreenParams<ProfileStackParamList> | undefined;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Settings: undefined;
+  AddDegree: undefined;
+  EditDegree: undefined;
   ManageAccount: undefined;
   NotFound: undefined;
 
@@ -193,6 +195,8 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
 
 export type ProfileStackParamList = {
   Settings: undefined;
+  AddDegree: undefined;
+  EditDegree: undefined;
   ManageAccount: undefined;
 
   Profile: undefined;
@@ -325,6 +329,7 @@ export type User = {
   email: string;
   name: string;
   major: string;
+  degrees: { degree: string; major: string }[];
   startYear: string;
   gradYear: string;
   interests: string;
@@ -364,6 +369,8 @@ export type Context = {
   setSelectedTerm: (arg0: string) => void;
   selectedColor: string;
   setSelectedColor: (arg0: string) => void;
+  editDegreeIndex: number;
+  setEditDegreeIndex: (arg0: number) => void;
 };
 
 // Stream Chat

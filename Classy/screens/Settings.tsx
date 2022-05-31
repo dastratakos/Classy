@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { Text, View } from "../components/Themed";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -25,25 +26,12 @@ import Separator from "../components/Separator";
 import { Degree, User } from "../types";
 import { auth } from "../firebase";
 import { generateSubstrings } from "../utils";
-import { majorList } from "../utils/majorList";
 import { generateTerms, updateUser } from "../services/users";
 import { uploadImage } from "../services/storage";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { yearList } from "../utils/yearList";
-import DegreePicker from "../components/DegreePicker";
 import { degreeList } from "../utils/degreeList";
-
-const DUMMY_DEGREES = [
-  {
-    degree: "B.S.",
-    major: "Computer Science",
-  },
-  {
-    degree: "Coterm",
-    major: "Computer Science",
-  },
-];
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -53,35 +41,12 @@ export default function Settings() {
   const [photoUrl, setPhotoUrl] = useState(context.user.photoUrl || "");
   const [name, setName] = useState(context.user.name || "");
 
-  const majorObject = {
-    label: context.user.major,
-    value: context.user.major,
-  };
-
-  // const [major, setMajor] = useState(context.user.major || ""); // TODO: use array for multiple select
-  // const [majorOpen, setMajorOpen] = useState(false);
-  // const [majorItems, setMajorItems] = useState(
-  //   majorList.includes(majorObject) ? [...majorList, majorObject] : majorList
-  // );
-  // const onMajorOpen = useCallback(() => {
-  //   setStartYearOpen(false);
-  //   setGradYearOpen(false);
-  // }, []);
-  // DropDownPicker.setMode("BADGE"); // TODO: for multiple select
-
-  const [degrees, setDegrees] = useState<Degree[]>(DUMMY_DEGREES);
-  const [degreesOpen, setDegreesOpen] = useState(
-    Object.keys(DUMMY_DEGREES).map(() => false)
-  );
-  const [majorsOpen, setMajorsOpen] = useState(
-    Object.keys(DUMMY_DEGREES).map(() => false)
-  );
+  const [degrees, setDegrees] = useState<Degree[]>(context.user.degrees || []);
 
   const [startYear, setStartYear] = useState(context.user.startYear || "");
   const [startYearOpen, setStartYearOpen] = useState(false);
   const [startYearItems, setStartYearItems] = useState(yearList);
   const onStartYearOpen = useCallback(() => {
-    // setMajorOpen(false);
     setGradYearOpen(false);
   }, []);
 
@@ -89,7 +54,6 @@ export default function Settings() {
   const [gradYearOpen, setGradYearOpen] = useState(false);
   const [gradYearItems, setGradYearItems] = useState(yearList);
   const onGradYearOpen = useCallback(() => {
-    // setMajorOpen(false);
     setStartYearOpen(false);
   }, []);
 
@@ -117,7 +81,7 @@ export default function Settings() {
     const newUser: User = {
       ...context.user,
       name,
-      major,
+      degrees,
       startYear,
       gradYear,
       interests,
@@ -283,65 +247,36 @@ export default function Settings() {
             <View style={styles.item}>
               <View style={styles.field}>
                 <Text>Degrees</Text>
-                <Text style={{ color: Colors[colorScheme].secondaryText }}>
-                  Choose an official major, or enter your own!
-                </Text>
               </View>
               {degrees.map((degree: Degree, i: number) => (
-                <View key={i.toString()}>
-                  <DegreePicker
-                    degree={degree.degree}
-                    setDegree={(newDegree: string) => {
-                      let newDegreesArr = [...degrees];
-                      newDegreesArr[i] = {
-                        degree: newDegree,
-                        major: degree.major,
-                      };
-                      setDegrees(newDegreesArr);
-                    }}
-                    degreeOpen={degreesOpen[i]}
-                    setDegreeOpen={useCallback((open: boolean) => {
-                      let newDegreesOpenArr = [...degreesOpen];
-                      degreesOpen[i] = open;
-                      setDegreesOpen(newDegreesOpenArr);
-                    }, [])}
-                    degreeItems={degreeList}
-                    onDegreeOpen={() => {
-                      // TODO
-                    }}
-                    major={degree.major}
-                    setMajor={(newMajor: string) => {
-                      let newDegreesArr = [...degrees];
-                      newDegreesArr[i] = {
-                        degree: degree.degree,
-                        major: newMajor,
-                      };
-                      setDegrees(newDegreesArr);
-                    }}
-                    majorOpen={majorsOpen[i]}
-                    setMajorOpen={useCallback((open: boolean) => {
-                      let newMajorsOpenArr = [...majorsOpen];
-                      majorsOpen[i] = open;
-                      setMajorsOpen(newMajorsOpenArr);
-                    }, [])}
-                    majorItems={majorList}
-                    onMajorOpen={() => {
-                      // TODO
-                    }}
-                    onDeleteDegree={() => {
-                      let newDegreesArr = [...degrees];
-                      newDegreesArr.splice(i, 1);
-                      setDegrees(newDegreesArr);
-                    }}
-                  />
-                </View>
+                <TouchableOpacity
+                  style={[
+                    AppStyles.row,
+                    styles.input,
+                    { marginVertical: Layout.spacing.small },
+                  ]}
+                  key={i.toString()}
+                  onPress={() => {
+                    context.setEditDegreeIndex(i);
+                    navigation.navigate("EditDegree");
+                  }}
+                >
+                  <Text>{degree.degree}</Text>
+                  <Text>{degree.major}</Text>
+                </TouchableOpacity>
               ))}
               <View style={{ height: Layout.spacing.medium }} />
               <Button
                 text="Add Degree"
-                onPress={() =>
-                  setDegrees([...degrees, { degree: "", major: "" }])
+                emphasized={
+                  context.user.degrees
+                    ? context.user.degrees.length === 0
+                    : true
                 }
+                onPress={() => {
+                  setDegrees([...degrees, { degree: "", major: "" }]);
+                  navigation.navigate("AddDegree");
+                }}
               />
             </View>
             <View style={AppStyles.row}>
