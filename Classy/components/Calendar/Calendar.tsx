@@ -216,7 +216,8 @@ export default function Calendar({
       startCalendarHour,
       CALENDAR_HOUR_HEIGHT,
       DAY_WIDTH,
-      CALENDAR_TIMES_WIDTH
+      CALENDAR_TIMES_WIDTH,
+      index
     );
 
     console.log(`styledEvents.length = ${styledEvents.length}`);
@@ -234,7 +235,10 @@ export default function Calendar({
         {styledEvents.map((styledEvent, i: number) => (
           <CalendarEvent
             event={styledEvent.event}
-            style={styledEvent.style}
+            height={styledEvent.style.height}
+            width={styledEvent.style.width}
+            top={styledEvent.style.top}
+            left={styledEvent.style.left}
             key={i}
           />
         ))}

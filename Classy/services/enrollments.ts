@@ -51,7 +51,6 @@ export const getEnrollments = async (userId: string) => {
   const q = query(
     collection(db, "enrollments"),
     where("userId", "==", userId),
-    where("termId", "==", "1226"),
     orderBy("code")
   );
 

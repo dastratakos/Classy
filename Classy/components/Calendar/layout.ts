@@ -202,13 +202,37 @@ const buildTree = (
         }
         validList.push(currValid);
       }
+      console.log(`\trow`);
+      for (let elem of row) {
+        console.log(
+          `\t\t${elem.event.title}, ${elem.event.startInfo
+            .toDate()
+            .toTimeString()}-${elem.event.endInfo.toDate().toTimeString()}`
+        );
+      }
+      console.log("validList:", validList);
 
       let count = 1;
+      let lastUsedParent = 0;
       for (let i = 0; i < validList.length; i++) {
         if (i === validList.length - 1 || validList[i] !== validList[i + 1]) {
           let parentWidth = dayWidth - calendarTimesWidth;
-          if (parent.events.length > 0)
+          if (parent.events.length > 0 && validList[0] !== 0)
             parentWidth = parent.events[validList[i]].width;
+          //   if (parent.events.length > 0) {
+          //     console.log("lastUsedParent:", lastUsedParent);
+          //     console.log("validList[i]:", validList[i]);
+          //     parentWidth = 0;
+          //     for (let j = lastUsedParent; j < validList[i] + 1; j++) {
+          //       if (j === parent.children.length) {
+          //         parentWidth += dayWidth - parent.events[j].left;
+          //       } else {
+          //         parentWidth += parent.events[j].width;
+          //       }
+          //     }
+          //     lastUsedParent = validList[i];
+          //     console.log("parentWidth:", parentWidth);
+          //   }
           const width = parentWidth / count;
           for (let j = i - count + 1; j < i + 1; j++) {
             row[j].width = width;
@@ -235,6 +259,23 @@ const buildTree = (
   return { end: i, children: currChildren };
 };
 
+const preOrderTraversal = (node: Node, depth: number) => {
+  if (node.events.length === 0 && depth > 0) return;
+
+  let tabs = "";
+  for (let i = 0; i < depth; i++) tabs += "\t";
+  console.log(tabs + "Node");
+  for (let event of node.events) {
+    console.log(
+      `${tabs}\t${event.event.title}, ${event.event.startInfo
+        .toDate()
+        .toTimeString()}-${event.event.endInfo.toDate().toTimeString()}`
+    );
+  }
+
+  for (let child of node.children) preOrderTraversal(child, depth + 1);
+};
+
 export const getStyledEvents = (
   /**
    * Assume that events are already sorted by ascending start time then by
@@ -244,7 +285,8 @@ export const getStyledEvents = (
   startCalendarHour: number,
   hourHeight: number,
   dayWidth: number,
-  calendarTimesWidth: number
+  calendarTimesWidth: number,
+  day: number
 ) => {
   const proxies = events.map(
     (event) =>
@@ -279,19 +321,21 @@ export const getStyledEvents = (
   const { children } = buildTree(root, rows, 0, dayWidth, calendarTimesWidth);
   root.children = children;
 
-//   console.log(`children:`);
-//   for (let child of children) {
-//     console.log(`\tevents:`);
-//     for (let event of child.events) {
-//       console.log(
-//         `\t\t${event.event.title}, ${event.event.startInfo
-//           .toDate()
-//           .toTimeString()}-${event.event.endInfo.toDate().toTimeString()}`
-//       );
-//     }
-//   }
+  //   console.log(`children:`);
+  //   for (let child of children) {
+  //     console.log(`\tevents:`);
+  //     for (let event of child.events) {
+  //       console.log(
+  //         `\t\t${event.event.title}, ${event.event.startInfo
+  //           .toDate()
+  //           .toTimeString()}-${event.event.endInfo.toDate().toTimeString()}`
+  //       );
+  //     }
+  //   }
 
   /* Step 4: Calculate numIndents for each event. */
+  console.log("===== " + day + " =====");
+  preOrderTraversal(root, 0);
 
   /* Step 5: Calculate final width and left for each event. */
 
