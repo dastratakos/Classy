@@ -24,24 +24,36 @@ export default function AddDegree() {
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
 
-  const [degree, setDegree] = useState(
-    context.user.degrees
-      ? context.user.degrees[context.editDegreeIndex].degree
-      : ""
+  const initialDegree = context.user.degrees
+    ? context.user.degrees[context.editDegreeIndex].degree
+    : "";
+  const initialDegreeObj = {
+    label: initialDegree,
+    value: initialDegree,
+  };
+  const [degreeItems, setDegreeItems] = useState(
+    degreeList.includes(initialDegreeObj) || initialDegree === ""
+      ? degreeList
+      : [...degreeList, initialDegreeObj]
   );
+  const [degree, setDegree] = useState(initialDegree);
   const [degreeOpen, setDegreeOpen] = useState(false);
-  // TODO: add logic for custom degree
-  const [degreeItems, setDegreeItems] = useState(degreeList);
   const onDegreeOpen = useCallback(() => setMajorOpen(false), []);
 
-  const [major, setMajor] = useState(
-    context.user.degrees
-      ? context.user.degrees[context.editDegreeIndex].major
-      : ""
+  const initialMajor = context.user.degrees
+    ? context.user.degrees[context.editDegreeIndex].major
+    : "";
+  const initialMajorObj = {
+    label: initialMajor,
+    value: initialMajor,
+  };
+  const [majorItems, setMajorItems] = useState(
+    majorList.includes(initialMajorObj) || initialMajor === ""
+      ? majorList
+      : [...majorList, initialMajorObj]
   );
+  const [major, setMajor] = useState(initialMajor);
   const [majorOpen, setMajorOpen] = useState(false);
-  // TODO: add logic for custom major
-  const [majorItems, setMajorItems] = useState(majorList);
   const onMajorOpen = useCallback(() => setDegreeOpen(false), []);
 
   const [doneLoading, setDoneLoading] = useState<boolean>(false);
@@ -103,19 +115,17 @@ export default function AddDegree() {
         onOpen={onDegreeOpen}
         value={degree}
         items={degreeItems}
+        setItems={setDegreeItems}
         setOpen={setDegreeOpen}
         setValue={setDegree}
         placeholder="Degree"
-        placeholderStyle={{
-          color: Colors[colorScheme].secondaryText,
-        }}
+        placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
         searchable
+        addCustomItem
         searchPlaceholder="Search..."
         showBadgeDot={false}
         dropDownDirection="TOP"
-        modalProps={{
-          animationType: "slide",
-        }}
+        modalProps={{ animationType: "slide" }}
         theme={colorScheme === "light" ? "LIGHT" : "DARK"}
         style={{ backgroundColor: Colors[colorScheme].background }}
         dropDownContainerStyle={{
@@ -128,19 +138,17 @@ export default function AddDegree() {
         onOpen={onMajorOpen}
         value={major}
         items={majorItems}
+        setItems={setMajorItems}
         setOpen={setMajorOpen}
         setValue={setMajor}
         placeholder="Major"
-        placeholderStyle={{
-          color: Colors[colorScheme].secondaryText,
-        }}
+        placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
         searchable
+        addCustomItem
         searchPlaceholder="Search..."
         showBadgeDot={false}
         dropDownDirection="TOP"
-        modalProps={{
-          animationType: "slide",
-        }}
+        modalProps={{ animationType: "slide" }}
         theme={colorScheme === "light" ? "LIGHT" : "DARK"}
         style={{ backgroundColor: Colors[colorScheme].background }}
         dropDownContainerStyle={{

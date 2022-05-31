@@ -31,7 +31,6 @@ import { uploadImage } from "../services/storage";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { yearList } from "../utils/yearList";
-import { degreeList } from "../utils/degreeList";
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -40,8 +39,6 @@ export default function Settings() {
 
   const [photoUrl, setPhotoUrl] = useState(context.user.photoUrl || "");
   const [name, setName] = useState(context.user.name || "");
-
-  const [degrees, setDegrees] = useState<Degree[]>(context.user.degrees || []);
 
   const [startYear, setStartYear] = useState(context.user.startYear || "");
   const [startYearOpen, setStartYearOpen] = useState(false);
@@ -81,7 +78,7 @@ export default function Settings() {
     const newUser: User = {
       ...context.user,
       name,
-      degrees,
+      degrees: context.user.degrees,
       startYear,
       gradYear,
       interests,
@@ -248,23 +245,24 @@ export default function Settings() {
               <View style={styles.field}>
                 <Text>Degrees</Text>
               </View>
-              {degrees.map((degree: Degree, i: number) => (
-                <TouchableOpacity
-                  style={[
-                    AppStyles.row,
-                    styles.input,
-                    { marginVertical: Layout.spacing.small },
-                  ]}
-                  key={i.toString()}
-                  onPress={() => {
-                    context.setEditDegreeIndex(i);
-                    navigation.navigate("EditDegree");
-                  }}
-                >
-                  <Text>{degree.degree}</Text>
-                  <Text>{degree.major}</Text>
-                </TouchableOpacity>
-              ))}
+              {context.user.degrees &&
+                context.user.degrees.map((degree: Degree, i: number) => (
+                  <TouchableOpacity
+                    style={[
+                      AppStyles.row,
+                      styles.input,
+                      { marginVertical: Layout.spacing.small },
+                    ]}
+                    key={i.toString()}
+                    onPress={() => {
+                      context.setEditDegreeIndex(i);
+                      navigation.navigate("EditDegree");
+                    }}
+                  >
+                    <Text>{degree.degree}</Text>
+                    <Text>{degree.major}</Text>
+                  </TouchableOpacity>
+                ))}
               <View style={{ height: Layout.spacing.medium }} />
               <Button
                 text="Add Degree"
@@ -308,9 +306,7 @@ export default function Settings() {
                   searchPlaceholder="Search..."
                   showBadgeDot={false}
                   dropDownDirection="TOP"
-                  modalProps={{
-                    animationType: "slide",
-                  }}
+                  modalProps={{ animationType: "slide" }}
                   theme={colorScheme === "light" ? "LIGHT" : "DARK"}
                   style={{ backgroundColor: Colors[colorScheme].background }}
                   dropDownContainerStyle={{
@@ -341,9 +337,7 @@ export default function Settings() {
                   searchPlaceholder="Search..."
                   showBadgeDot={false}
                   dropDownDirection="TOP"
-                  modalProps={{
-                    animationType: "slide",
-                  }}
+                  modalProps={{ animationType: "slide" }}
                   theme={colorScheme === "light" ? "LIGHT" : "DARK"}
                   style={{ backgroundColor: Colors[colorScheme].background }}
                   dropDownContainerStyle={{
