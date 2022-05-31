@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     paddingRight: Layout.spacing.small,
     paddingLeft: Layout.spacing.small - Layout.spacing.xsmall,
     borderRadius: Layout.radius.xsmall,
-    borderLeftWidth: Layout.spacing.xsmall,
+    borderLeftWidth: Layout.spacing.xxsmall,
     opacity: 0.9,
     minHeight: 20 - 1,
   },

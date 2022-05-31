@@ -209,18 +209,14 @@ export default function Calendar({
   };
 
   const Day = ({ events, index }: { events: Event[]; index: number }) => {
-    console.log(`hello there ${index}`);
-
     const styledEvents = getStyledEvents(
       events,
       startCalendarHour,
       CALENDAR_HOUR_HEIGHT,
       DAY_WIDTH,
       CALENDAR_TIMES_WIDTH,
-      index
+      Layout.spacing.xsmall
     );
-
-    console.log(`styledEvents.length = ${styledEvents.length}`);
 
     return (
       <View style={{ width: DAY_WIDTH }}>

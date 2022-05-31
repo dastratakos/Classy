@@ -8,6 +8,7 @@ class CalendarEvent {
   height: number;
   width: number;
   left: number;
+  numIndents: number;
 
   constructor(
     event: Event,
@@ -21,6 +22,7 @@ class CalendarEvent {
     this.height = calculateHeight(event.startInfo, event.endInfo, hourHeight);
     this.width = dayWidth - calendarTimesWidth;
     this.left = calendarTimesWidth;
+    this.numIndents = 0;
   }
 }
 class Node {
@@ -30,8 +32,6 @@ class Node {
 
   constructor() {
     this.events = [];
-    // this.parent = null;
-    // this.prevSibling = null; // TODO
     this.children = [];
   }
 }
@@ -53,59 +53,6 @@ const timeIsEarlier = (a: Timestamp, b: Timestamp) => {
   const bMinutes = b.toDate().getMinutes();
 
   return aMinutes <= bMinutes;
-};
-
-/**
- * Return true if event a and b is considered to be on the same row.
- */
-function onSameRow(a, b, minOverlapDiff) {
-  return (
-    // Occupies the same start slot.
-    Math.abs(b.start - a.start) < minOverlapDiff ||
-    // A's start slot overlaps with b's end slot.
-    (b.start > a.start && b.start < a.end)
-  );
-}
-
-/**
- * Sorts the events in the order they will be rendered in. This is important
- * because elements rendered later will be placed on top of those rendered
- * earlier.
- *
- * @param events The events to sort. We assume they are already sorted by
- *               earliest start time, then by latest end time.
- * @returns CalendarEvent[] The sorted events array
- */
-const sortByRenderOrder = (events: CalendarEvent[]) => {
-  return events;
-
-  //   const eventsList = JSON.parse(JSON.stringify(events));
-
-  //   const sorted = [];
-  //   while (eventsList.length > 0) {
-  //     const currParent = eventsList.shift();
-  //     sorted.push(currParent);
-
-  //     for (let i = 0; i < eventsList.length; i++) {
-  //       const test = eventsList[i];
-
-  //       // Still inside this event, look for next.
-  //       if (currParent.endMs > test.startMs) continue;
-
-  //       // We've found the first event of the next event group.
-  //       // If that event is not right next to our current event, we have to
-  //       // move it here.
-  //       if (i > 0) {
-  //         const event = eventsList.splice(i, 1)[0];
-  //         sorted.push(event);
-  //       }
-
-  //       // We've already found the next event group, so stop looking.
-  //       break;
-  //     }
-  //   }
-
-  //   return sorted;
 };
 
 /**
@@ -202,46 +149,34 @@ const buildTree = (
         }
         validList.push(currValid);
       }
-      console.log(`\trow`);
-      for (let elem of row) {
-        console.log(
-          `\t\t${elem.event.title}, ${elem.event.startInfo
-            .toDate()
-            .toTimeString()}-${elem.event.endInfo.toDate().toTimeString()}`
-        );
-      }
-      console.log("validList:", validList);
 
       let count = 1;
-      let lastUsedParent = 0;
+      let lastUsedParent = -1;
       for (let i = 0; i < validList.length; i++) {
-        if (i === validList.length - 1 || validList[i] !== validList[i + 1]) {
-          let parentWidth = dayWidth - calendarTimesWidth;
-          if (parent.events.length > 0 && validList[0] !== 0)
-            parentWidth = parent.events[validList[i]].width;
-          //   if (parent.events.length > 0) {
-          //     console.log("lastUsedParent:", lastUsedParent);
-          //     console.log("validList[i]:", validList[i]);
-          //     parentWidth = 0;
-          //     for (let j = lastUsedParent; j < validList[i] + 1; j++) {
-          //       if (j === parent.children.length) {
-          //         parentWidth += dayWidth - parent.events[j].left;
-          //       } else {
-          //         parentWidth += parent.events[j].width;
-          //       }
-          //     }
-          //     lastUsedParent = validList[i];
-          //     console.log("parentWidth:", parentWidth);
-          //   }
-          const width = parentWidth / count;
-          for (let j = i - count + 1; j < i + 1; j++) {
-            row[j].width = width;
-            if (j !== 0) row[j].left = row[j - 1].left + row[j - 1].width;
-          }
-          count = 1;
-        } else {
+        if (i !== validList.length - 1 && validList[i] === validList[i + 1]) {
           count++;
+          continue;
         }
+
+        let parentWidth = dayWidth - calendarTimesWidth;
+
+        if (parent.events.length > 0) {
+          parentWidth = 0;
+          for (let j = lastUsedParent + 1; j < validList[i] + 1; j++) {
+            if (j === parent.events.length - 1) {
+              parentWidth += dayWidth - parent.events[j].left;
+            } else {
+              parentWidth += parent.events[j].width;
+            }
+          }
+          lastUsedParent = validList[i];
+        }
+        const width = parentWidth / count;
+        for (let j = i - count + 1; j < i + 1; j++) {
+          row[j].width = width;
+          if (j !== 0) row[j].left = row[j - 1].left + row[j - 1].width;
+        }
+        count = 1;
       }
 
       currChildren.push(child);
@@ -259,21 +194,44 @@ const buildTree = (
   return { end: i, children: currChildren };
 };
 
-const preOrderTraversal = (node: Node, depth: number) => {
+const calculateNumIndents = (
+  node: Node,
+  depth: number,
+  lefts: Object,
+  indentWidth: number
+) => {
   if (node.events.length === 0 && depth > 0) return;
 
-  let tabs = "";
-  for (let i = 0; i < depth; i++) tabs += "\t";
-  console.log(tabs + "Node");
+  // let tabs = "";
+  // for (let i = 0; i < depth; i++) tabs += "\t";
+  // console.log(tabs + "Node");
+
   for (let event of node.events) {
-    console.log(
-      `${tabs}\t${event.event.title}, ${event.event.startInfo
-        .toDate()
-        .toTimeString()}-${event.event.endInfo.toDate().toTimeString()}`
-    );
+    if (!(event.left in lefts)) {
+      lefts[event.left] = [event];
+      continue;
+    }
+
+    let rawLeft = event.left;
+
+    let numIndents = 0;
+    for (let j = lefts[rawLeft].length - 1; j >= 0; j--) {
+      const e = lefts[rawLeft][j];
+      if (timeIsEarlier(event.event.startInfo, e.event.endInfo)) {
+        numIndents = e.numIndents + 1;
+        break;
+      }
+    }
+
+    event.width -= indentWidth * numIndents;
+    event.left += indentWidth * numIndents;
+    event.numIndents = numIndents;
+
+    lefts[rawLeft].push(event);
   }
 
-  for (let child of node.children) preOrderTraversal(child, depth + 1);
+  for (let child of node.children)
+    calculateNumIndents(child, depth + 1, lefts, indentWidth);
 };
 
 export const getStyledEvents = (
@@ -286,9 +244,10 @@ export const getStyledEvents = (
   hourHeight: number,
   dayWidth: number,
   calendarTimesWidth: number,
-  day: number
+  indentWidth: number
 ) => {
-  const proxies = events.map(
+  /* Convert the Events into CalendarEvents. */
+  const calendarEvents = events.map(
     (event) =>
       new CalendarEvent(
         event,
@@ -298,49 +257,20 @@ export const getStyledEvents = (
         calendarTimesWidth
       )
   );
-  const eventsInRenderOrder = sortByRenderOrder(proxies);
 
   /* Step 1: Build the event rows. */
-  const rows = buildRows(eventsInRenderOrder);
-
-  console.log("rows:");
-  for (let row of rows) {
-    console.log(`\trow`);
-    for (let elem of row) {
-      console.log(
-        `\t\t${elem.event.title}, ${elem.event.startInfo
-          .toDate()
-          .toTimeString()}-${elem.event.endInfo.toDate().toTimeString()}`
-      );
-    }
-  }
+  const rows = buildRows(calendarEvents);
 
   /* Step 2: Build the tree of event rows. */
-
   const root = new Node();
   const { children } = buildTree(root, rows, 0, dayWidth, calendarTimesWidth);
   root.children = children;
 
-  //   console.log(`children:`);
-  //   for (let child of children) {
-  //     console.log(`\tevents:`);
-  //     for (let event of child.events) {
-  //       console.log(
-  //         `\t\t${event.event.title}, ${event.event.startInfo
-  //           .toDate()
-  //           .toTimeString()}-${event.event.endInfo.toDate().toTimeString()}`
-  //       );
-  //     }
-  //   }
-
-  /* Step 4: Calculate numIndents for each event. */
-  console.log("===== " + day + " =====");
-  preOrderTraversal(root, 0);
-
-  /* Step 5: Calculate final width and left for each event. */
+  /* Step 3: Calculate numIndents and final width and left for each event. */
+  calculateNumIndents(root, 0, {}, indentWidth);
 
   /* Return the events in their render order and add the computed styles. */
-  return eventsInRenderOrder.map((event) => ({
+  return calendarEvents.map((event) => ({
     event: event.event,
     style: {
       top: event.top,

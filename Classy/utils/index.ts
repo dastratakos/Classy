@@ -181,14 +181,6 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
       day: "Friday",
       events: [],
     },
-    {
-      day: "Saturday",
-      events: [],
-    },
-    {
-      day: "Sunday",
-      events: [],
-    },
   ];
 
   const dayIndices = {
@@ -218,7 +210,9 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
 
       if (schedule.startInfo) {
         const startHour = schedule.startInfo.toDate().getHours();
-        if (startHour < startCalendarHour) startCalendarHour = startHour;
+        /* startHour !== 0 filters for sections that are 12:00 AM - 12:00 AM. */
+        if (startHour < startCalendarHour && startHour !== 0)
+          startCalendarHour = startHour;
       }
       if (schedule.endInfo) {
         const endHour = schedule.endInfo.toDate().getHours() + 1;
