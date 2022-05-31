@@ -55,26 +55,39 @@ export default function CalendarEvent({
         setVisible={setModalVisible}
         editable={event.enrollment.userId === context.user.id}
       />
-      <View style={[{ height, width, top, left }, styles.container]}>
+      <View style={{ ...styles.container, height, width, top, left }}>
+        <View
+          style={{
+            ...styles.background,
+            height: height - 1,
+            width: width - 1,
+            backgroundColor: event.enrollment.color || Colors.pink,
+          }}
+        />
         <Pressable
-          style={[
-            {
-              ...styles.event,
-              height: height - 1,
-              width: width - 1,
-              backgroundColor: event.enrollment.color || Colors.pink,
-              borderColor: event.enrollment.color || Colors.pink,
-            },
-          ]}
+          style={{
+            ...styles.pressable,
+            height: height - 1,
+            width: width - 1,
+            borderColor: event.enrollment.color || Colors.pink,
+          }}
           onPress={() => setModalVisible(true)}
         >
-          <Text style={styles.titleText} numberOfLines={2}>
-            {event.title}
-          </Text>
-          <Text style={styles.timeText}>
-            {getTimeString(event.startInfo)} - {getTimeString(event.endInfo)}
-          </Text>
-          <Text style={styles.locationText}>{event.location}</Text>
+          {height > 20 && (
+            <View
+              style={{
+                ...styles.textContainer,
+                height: height - 1 - 2 * Layout.spacing.xxsmall,
+              }}
+            >
+              <Text style={styles.titleText} numberOfLines={1}>
+                {event.title}
+              </Text>
+              <Text style={styles.locationText} numberOfLines={2}>
+                {event.location}
+              </Text>
+            </View>
+          )}
         </Pressable>
       </View>
     </>
@@ -87,16 +100,27 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     padding: 0.5,
     backgroundColor: "transparent",
-    minHeight: 20,
+    minHeight: 15,
   },
-  event: {
-    paddingVertical: Layout.spacing.xxsmall,
-    paddingRight: Layout.spacing.small,
-    paddingLeft: Layout.spacing.small - Layout.spacing.xsmall,
+  background: {
     borderRadius: Layout.radius.xsmall,
+    opacity: 0.6,
+    minHeight: 15 - 1,
+  },
+  pressable: {
+    position: "absolute",
+    overflow: "hidden",
+    top: 1,
+    left: 1,
+    padding: Layout.spacing.xxsmall,
+    borderRadius: Layout.radius.xsmall,
+    borderWidth: 0.5,
+    minHeight: 15 - 1,
     borderLeftWidth: Layout.spacing.xxsmall,
-    opacity: 0.9,
-    minHeight: 20 - 1,
+  },
+  textContainer: {
+    backgroundColor: "transparent",
+    overflow: "hidden",
   },
   titleText: {
     fontWeight: "500",

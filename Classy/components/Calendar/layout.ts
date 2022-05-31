@@ -269,7 +269,7 @@ export const getStyledEvents = (
   /* Step 3: Calculate numIndents and final width and left for each event. */
   calculateNumIndents(root, 0, {}, indentWidth);
 
-  /* Return the events in their render order and add the computed styles. */
+  /* Return the events in their original order and add the computed styles. */
   return calendarEvents.map((event) => ({
     event: event.event,
     style: {
