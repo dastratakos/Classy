@@ -37,7 +37,8 @@ class Node {
 }
 
 /**
- * Compares two Timestamps by checking only the hour and minute values.
+ * Compares two Timestamps by checking only the hour and minute values. Returns
+ * true if a is strictly earlier than b.
  *
  * @param a The first Timestamp object to compare
  * @param b The second Timestamp object to compare
@@ -52,7 +53,7 @@ const timeIsEarlier = (a: Timestamp, b: Timestamp) => {
   const aMinutes = a.toDate().getMinutes();
   const bMinutes = b.toDate().getMinutes();
 
-  return aMinutes <= bMinutes;
+  return aMinutes < bMinutes;
 };
 
 /**
@@ -77,7 +78,10 @@ const buildRows = (events: CalendarEvent[]) => {
   for (let i = 1; i < events.length; i++) {
     const event = events[i];
 
-    if (currRow[0].top + TOLERANCE >= event.top) {
+    if (
+      currRow[0].top + TOLERANCE >= event.top &&
+      currRow[0].top + currRow[0].height >= event.top
+    ) {
       currRow.push(event);
     } else {
       rows.push(currRow);
@@ -144,7 +148,13 @@ const buildTree = (
       let currValid: number = 0;
       for (let event of row) {
         while (currValid < parent.events.length - 1) {
-          if (parent.events[currValid + 1].top + TOLERANCE >= event.top) break;
+          if (
+            parent.events[currValid + 1].top + TOLERANCE >= event.top &&
+            parent.events[currValid + 1].top +
+              parent.events[currValid + 1].height >=
+              event.top
+          )
+            break;
           currValid++;
         }
         validList.push(currValid);
@@ -202,17 +212,23 @@ const calculateNumIndents = (
 ) => {
   if (node.events.length === 0 && depth > 0) return;
 
-  // let tabs = "";
-  // for (let i = 0; i < depth; i++) tabs += "\t";
-  // console.log(tabs + "Node");
+  let tabs = "";
+  for (let i = 0; i < depth; i++) tabs += "\t";
+  console.log(tabs + "Node");
 
   for (let event of node.events) {
-    if (!(event.left in lefts)) {
-      lefts[event.left] = [event];
+    let rawLeft = Math.round(event.left);
+
+    console.log(
+      `${tabs}\t[${rawLeft}]: ${event.event.title}, ${event.event.startInfo
+        .toDate()
+        .toTimeString()}-${event.event.endInfo.toDate().toTimeString()}`
+    );
+
+    if (!(rawLeft in lefts)) {
+      lefts[rawLeft] = [event];
       continue;
     }
-
-    let rawLeft = event.left;
 
     let numIndents = 0;
     for (let j = lefts[rawLeft].length - 1; j >= 0; j--) {
@@ -223,9 +239,16 @@ const calculateNumIndents = (
       }
     }
 
-    event.width -= indentWidth * numIndents;
-    event.left += indentWidth * numIndents;
+    if (numIndents < 6) {
+      event.width -= indentWidth * numIndents;
+      event.left += indentWidth * numIndents;
+    } else {
+      event.width -= indentWidth * (numIndents - 5);
+      event.left += indentWidth * (numIndents - 5);
+    }
     event.numIndents = numIndents;
+
+    console.log(`${tabs}\t\tnumIndents = ${numIndents}`);
 
     lefts[rawLeft].push(event);
   }
