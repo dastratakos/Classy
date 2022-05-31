@@ -39,6 +39,20 @@ export default function EnrollmentModal({
     navigation.navigate("Course", { course });
   };
 
+  let schedules = enrollment.schedules;
+  for (let j = 0; j < schedules.length; j++) {
+    const sched = schedules[j];
+    if (
+      sched["days"].length === 0 ||
+      getTimeString(sched["startInfo"]) === "12:00 AM" ||
+      getTimeString(sched["startInfo"]) === "" ||
+      getTimeString(sched["endInfo"]) === "12:00 AM" ||
+      getTimeString(sched["endInfo"]) === ""
+    ) {
+      schedules.splice(j, 1);
+      j--;
+    }
+  }
   return (
     <Modal isVisible={visible} onBackdropPress={() => setVisible(false)}>
       <View
@@ -74,9 +88,9 @@ export default function EnrollmentModal({
           <Text style={styles.descrip}>Class Times: </Text>
         </View>
 
-        {enrollment.schedules.length > 5 ? (
+        {schedules.length > 5 ? (
           <FlatList
-            data={enrollment.schedules}
+            data={schedules}
             style={{ width: "100%", maxHeight: 200 }}
             keyExtractor={(_, index) => index.toString()}
             renderItem={({ item }) => (
@@ -88,7 +102,7 @@ export default function EnrollmentModal({
           />
         ) : (
           <View style={styles.classTimesWrap}>
-            {enrollment.schedules.map((schedule, i) => (
+            {schedules.map((schedule, i) => (
               <Text style={styles.schedText} key={i}>
                 {schedule.days.join(", ")} {getTimeString(schedule.startInfo)} -{" "}
                 {getTimeString(schedule.endInfo)}

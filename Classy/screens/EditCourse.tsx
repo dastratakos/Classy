@@ -13,7 +13,7 @@ import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import ScheduleCard from "../components/Cards/ScheduleCard";
 import SquareButton from "../components/Buttons/SquareButton";
-import { termIdToName } from "../utils";
+import { getTimeString, termIdToName } from "../utils";
 import { updateEnrollment } from "../services/enrollments";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
@@ -92,7 +92,7 @@ export default function EditCourse({ route }: EditCourseProps) {
     setSaveLoading(false);
     navigation.goBack();
   };
-
+  let schedules = terms[`${context.selectedTerm}`];
   const Schedules = () => {
     if (context.selectedTerm === "") return null;
 
@@ -104,6 +104,19 @@ export default function EditCourse({ route }: EditCourseProps) {
       setSelectedScheduleIndices(newSet);
     };
 
+    for (let j = 0; j < schedules.length; j++) {
+      const sched = schedules[j];
+      if (
+        sched["days"].length === 0 ||
+        getTimeString(sched["startInfo"]) === "12:00 AM" ||
+        getTimeString(sched["startInfo"]) === "" ||
+        getTimeString(sched["endInfo"]) === "12:00 AM" ||
+        getTimeString(sched["endInfo"]) === ""
+      ) {
+        schedules.splice(j, 1);
+        j--;
+      }
+    }
     return (
       <View
         style={{
