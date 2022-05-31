@@ -1,6 +1,7 @@
-import { Icon2, Text, View } from "../Themed";
+import { Text, View } from "../Themed";
 import { StyleSheet, Pressable } from "react-native";
 
+import { Enrollment } from "../../types";
 import AppStyles from "../../styles/AppStyles";
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
@@ -9,26 +10,23 @@ import { useNavigation } from "@react-navigation/core";
 import AppContext from "../../context/Context";
 import { useContext } from "react";
 import ProfilePhoto from "../ProfilePhoto";
+import { termIdToFullName } from "../../utils";
 
-export default function NotificationCard({
-  // friend,
-  text,
+export default function MutualEnrollment({
+  friend,
   time,
-  photoUrl,
-  rightElement,
+  enrollment,
   onPress = () => {},
 }: {
-  // friend: {
-  //   id: string;
-  //   name: string;
-  //   major?: string;
-  //   gradYear?: string;
-  //   photoUrl: string;
-  // };
-  text: string;
+  friend: {
+    id: string;
+    name: string;
+    major?: string;
+    gradYear?: string;
+    photoUrl: string;
+  };
   time: string;
-  photoUrl: string;
-  rightElement?: JSX.Element;
+  enrollment: Enrollment;
   onPress?: () => void;
 }) {
   const navigation = useNavigation();
@@ -46,17 +44,25 @@ export default function NotificationCard({
         }}
         style={styles.innerContainer}
       >
+
         <ProfilePhoto
-          url={photoUrl}
+          url={friend.photoUrl}
           size={Layout.photo.xsmall}
           style={{ marginRight: Layout.spacing.small }}
         />
+
         <View style={styles.textContainer}>
+        {enrollment.code.length > 0 &&
           <Text style={styles.notificationText} numberOfLines={3}>
-            {text}
+            <Text style={{ fontWeight: "bold" }}>{friend.name} </Text>
+            <Text>just enrolled in </Text>
+            <Text style={{ fontWeight: "bold" }}>{enrollment.code[0]}</Text>
+            <Text>: {enrollment.title} for </Text>
+            <Text style={{ fontWeight: "bold" }}>{termIdToFullName(enrollment.termId)}.</Text>
           </Text>
+        }
         </View>
-        {rightElement}
+
         <Text style={styles.time}>{time}</Text>
       </Pressable>
     </View>

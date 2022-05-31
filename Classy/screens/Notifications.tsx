@@ -1,8 +1,8 @@
 import * as Haptics from "expo-haptics";
 
-import { ScrollView, StyleSheet, TouchableOpacity, SectionList, Pressable } from "react-native";
+import { ScrollView, StyleSheet, RefreshControl, TouchableOpacity, SectionList, Pressable } from "react-native";
 import { Text, View } from "../components/Themed";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
 import Colors, { enrollmentColors } from "../constants/Colors";
@@ -10,33 +10,61 @@ import Layout from "../constants/Layout";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import AppStyles from "../styles/AppStyles";
-import NotificationCard from "../components/Cards/NotificationCard";
-import { Icon2 } from "../components/Themed";
+import FriendRequestReceived from "../components/Notifications/FriendRequestReceived";
+import FriendRequestAccepted from "../components/Notifications/FriendRequestAccepted";
+import MutualEnrollment from "../components/Notifications/MutualEnrollment";
+import AddCoursesReminder from "../components/Notifications/AddCoursesReminder";
+import AddTimesReminder from "../components/Notifications/AddTimesReminder";
 
 export default function Notifications() {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
 
-  // Dummy data
+  const [refreshing, setRefreshing] = useState<boolean>(true);
+  
+  // TODO delete and replace dummy data
   const DATA = [
     {
       title: "New",
       data: [
         {
-          text: "Grace Alwan sent you a friend request.",
+          type: "FRIEND_REQUEST_RECEIVED",
+          friend: {
+            id: "vkk5ngcfnYgjCMDqXb65YZtpquM2",
+            name: "Grace Alwan",
+            photoUrl: "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/6K90G2P5LbT54j29CShLJC0IqdO2%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
+          },
           time: "2h",
-          photoUrl: "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/6K90G2P5LbT54j29CShLJC0IqdO2%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
+          enrollment: null,
+          termId: "0",
         },
         {
-          text: "Tara Jones accepted your friend request.", 
+          type: "FRIEND_REQUEST_ACCEPTED",
+          friend: {
+            id: "vkk5ngcfnYgjCMDqXb65YZtpquM2",
+            name: "Tara Jones",
+            photoUrl: "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/6K90G2P5LbT54j29CShLJC0IqdO2%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
+          },
           time: "3h",
-          photoUrl: "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/6K90G2P5LbT54j29CShLJC0IqdO2%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
+          enrollment: null,
+          termId: "0",
         },
         {
-          text: "Jess Yeung just enrolled in CS 221 for 2019-2020 Autumn.",
+          type: "MUTUAL_ENROLLMENT",
+          friend: {
+            id: "vkk5ngcfnYgjCMDqXb65YZtpquM2",
+            name: "Jess Yeung",
+            photoUrl: "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/6K90G2P5LbT54j29CShLJC0IqdO2%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
+          },
           time: "4h",
-          photoUrl: "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/6K90G2P5LbT54j29CShLJC0IqdO2%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
+          enrollment: {
+            code: ["CS 221"],
+            courseId: "fakeCourseId",
+            termId: 1226,
+            title: "Artificial Intelligence: Principles and Techniques"
+          },
+          termId: "0",
         }
       ]
     },
@@ -44,58 +72,103 @@ export default function Notifications() {
       title: "Earlier",
       data: [
         {
-          text: "Add courses to your current quarter by searching by course code or name.",
+          type: "ADD_COURSES_REMINDER",
+          friend: null,
           time: "1d",
-          photoUrl: "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/6K90G2P5LbT54j29CShLJC0IqdO2%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
+          enrollment: null,
+          termId: "0",
         },
         {
-          text: "Reminder to input your class times for 2022-2023 Autumn!",
+          type: "ADD_TIMES_REMINDER",
+          friend: null,
           time: "3d",
-          photoUrl: "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/6K90G2P5LbT54j29CShLJC0IqdO2%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
+          enrollment: null,
+          termId: "1226",
         },
         {
-          text: "Dean Stratakos accepted your friend request.",
+          type: "FRIEND_REQUEST_ACCEPTED",
+          friend: {
+            id: "vkk5ngcfnYgjCMDqXb65YZtpquM2",
+            name: "Dean Stratakos",
+            photoUrl: "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/6K90G2P5LbT54j29CShLJC0IqdO2%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
+          },
           time: "1w",
-          photoUrl: "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/6K90G2P5LbT54j29CShLJC0IqdO2%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-        }
+          enrollment: null,
+          termId: "0",
+        },
       ]
     },
   ];
 
+  useEffect(() => {
+    onRefresh();
+  }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    // TODO retrieve notifications
+    setRefreshing(false);
+  };
+
   return (
-    <View style={styles.section}>
-      <SectionList
-        sections={DATA}
-        keyExtractor={(item, index) => item.text + index}
-        renderItem={({ item }) => (
-          <NotificationCard 
-            text={item.text}
-            time={item.time}
-            photoUrl={item.photoUrl} 
-            rightElement={
-              <View style={styles.acceptRejectContainer}>
-                <Pressable onPress={() => console.log("Accept")}>
-                  <Icon2
-                    name="check"
-                    size={Layout.icon.large}
-                    lightColor={Colors[colorScheme].tint}
-                    darkColor={Colors[colorScheme].tint}
-                  />
-                </Pressable>
-                <Pressable onPress={() => console.log("Decline")}>
-                  <Icon2 name="close" size={Layout.icon.large} />
-                </Pressable>
-              </View>
+    <ScrollView
+      style={{ backgroundColor: Colors[colorScheme].background }}
+      contentContainerStyle={{ alignItems: "center" }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
+      <View style={styles.section}>
+        <SectionList
+          sections={DATA} // TODO update to real data from not dummy data
+          keyExtractor={(item, index) => item.type + item.time + index}
+          renderItem={({ item }) => {
+            if (item.type === "FRIEND_REQUEST_RECEIVED") {
+              return (
+                <FriendRequestReceived 
+                  friend={item.friend}
+                  time={item.time}
+                />
+              );
+            } else if (item.type === "FRIEND_REQUEST_ACCEPTED") {
+              return (
+                <FriendRequestAccepted
+                  friend={item.friend}
+                  time={item.time}
+                />
+              );
+            } else if (item.type === "MUTUAL_ENROLLMENT") {
+              return (
+                <MutualEnrollment
+                  friend={item.friend}
+                  time={item.time}
+                  enrollment={item.enrollment}
+                />
+              );
+            } else if (item.type === "ADD_COURSES_REMINDER") {
+              return (
+                <AddCoursesReminder
+                  time={item.time}
+                />
+              );
+            } else if (item.type === "ADD_TIMES_REMINDER") {
+              return (
+                <AddTimesReminder
+                  time={item.time}
+                  termId={item.termId}
+                />
+              );
             }
-          />
-        )}
-        renderSectionHeader={({ section: { title } }) => (
-          <View style={styles.sectionHeaderContainer}>
-            <Text style={styles.sectionHeader}>{title}</Text>
-          </View>
-        )}
-      />
-    </View>
+            return null;
+          }}
+          renderSectionHeader={({ section: { title } }) => (
+            <View style={styles.sectionHeaderContainer}>
+              <Text style={styles.sectionHeader}>{title}</Text>
+            </View>
+          )}
+        />
+      </View>
+    </ScrollView>
   );
 }
 
@@ -114,15 +187,5 @@ const styles = StyleSheet.create({
   sectionHeaderContainer: {
     borderBottomColor: "#c4c4c4",
     borderBottomWidth: 1,
-  },
-  acceptRejectContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: Layout.photo.small,
-    width: Layout.photo.medium,
-    borderRadius: Layout.radius.xsmall,
-    marginLeft: Layout.spacing.small,
-    backgroundColor: "transparent",
   },
 });
