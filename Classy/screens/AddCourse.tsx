@@ -5,6 +5,7 @@ import { AddCourseProps, Schedule } from "../types";
 import { ScrollView, StyleSheet } from "react-native";
 import {
   getCurrentTermId,
+  getTimeString,
   sendPushNotification,
   termIdToFullName,
   termIdToName,
@@ -64,7 +65,7 @@ export default function AddCourse({ route }: AddCourseProps) {
 
     loadScreen();
   }, []);
-
+  let schedules = terms[`${context.selectedTerm}`];
   const Schedules = () => {
     if (context.selectedTerm === "") return null;
 
@@ -75,27 +76,39 @@ export default function AddCourse({ route }: AddCourseProps) {
 
       setSelectedScheduleIndices(newSet);
     };
-
+    //console.log(terms[`${context.selectedTerm}`]);
+    //let schedules = terms[`${context.selectedTerm}`];
+    for (let j = 0; j < schedules.length; j++) {
+      const sched = schedules[j];
+      if (
+        sched["days"].length === 0 ||
+        getTimeString(sched["startInfo"]) === "12:00 AM" ||
+        getTimeString(sched["startInfo"]) === "" ||
+        getTimeString(sched["endInfo"]) === "12:00 AM" ||
+        getTimeString(sched["endInfo"]) === ""
+      ) {
+        schedules.splice(j, 1);
+        j--;
+      }
+    }
     return (
       <View
         style={{
           marginBottom: Layout.buttonHeight.medium + Layout.spacing.medium,
         }}
       >
-        {terms[`${context.selectedTerm}`].map(
-          (schedule: Schedule, i: number) => (
-            <View key={i.toString()}>
-              <ScheduleCard
-                schedule={schedule}
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  handleScheduleSelected(i);
-                }}
-                selected={selectedScheduleIndices.has(i)}
-              />
-            </View>
-          )
-        )}
+        {schedules.map((schedule: Schedule, i: number) => (
+          <View key={i.toString()}>
+            <ScheduleCard
+              schedule={schedule}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                handleScheduleSelected(i);
+              }}
+              selected={selectedScheduleIndices.has(i)}
+            />
+          </View>
+        ))}
       </View>
     );
   };
@@ -270,7 +283,7 @@ export default function AddCourse({ route }: AddCourseProps) {
               !context.selectedTerm ||
               !selectedUnits ||
               !grading ||
-              !selectedScheduleIndices.size
+              (!selectedScheduleIndices.size && schedules.size)
             }
             loading={doneLoading}
             emphasized
