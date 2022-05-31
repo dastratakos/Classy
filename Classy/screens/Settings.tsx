@@ -22,7 +22,7 @@ import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import { SaveFormat } from "expo-image-manipulator";
 import Separator from "../components/Separator";
-import { User } from "../types";
+import { Degree, User } from "../types";
 import { auth } from "../firebase";
 import { generateSubstrings } from "../utils";
 import { majorList } from "../utils/majorList";
@@ -31,6 +31,19 @@ import { uploadImage } from "../services/storage";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { yearList } from "../utils/yearList";
+import DegreePicker from "../components/DegreePicker";
+import { degreeList } from "../utils/degreeList";
+
+const DUMMY_DEGREES = [
+  {
+    degree: "B.S.",
+    major: "Computer Science",
+  },
+  {
+    degree: "Coterm",
+    major: "Computer Science",
+  },
+];
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -40,20 +53,35 @@ export default function Settings() {
   const [photoUrl, setPhotoUrl] = useState(context.user.photoUrl || "");
   const [name, setName] = useState(context.user.name || "");
 
-  const [major, setMajor] = useState(context.user.major || ""); // TODO: use array for multiple select
-  const [majorOpen, setMajorOpen] = useState(false);
-  const [majorItems, setMajorItems] = useState(majorList);
-  const onMajorOpen = useCallback(() => {
-    setStartYearOpen(false);
-    setGradYearOpen(false);
-  }, []);
+  const majorObject = {
+    label: context.user.major,
+    value: context.user.major,
+  };
+
+  // const [major, setMajor] = useState(context.user.major || ""); // TODO: use array for multiple select
+  // const [majorOpen, setMajorOpen] = useState(false);
+  // const [majorItems, setMajorItems] = useState(
+  //   majorList.includes(majorObject) ? [...majorList, majorObject] : majorList
+  // );
+  // const onMajorOpen = useCallback(() => {
+  //   setStartYearOpen(false);
+  //   setGradYearOpen(false);
+  // }, []);
   // DropDownPicker.setMode("BADGE"); // TODO: for multiple select
+
+  const [degrees, setDegrees] = useState<Degree[]>(DUMMY_DEGREES);
+  const [degreesOpen, setDegreesOpen] = useState(
+    Object.keys(DUMMY_DEGREES).map(() => false)
+  );
+  const [majorsOpen, setMajorsOpen] = useState(
+    Object.keys(DUMMY_DEGREES).map(() => false)
+  );
 
   const [startYear, setStartYear] = useState(context.user.startYear || "");
   const [startYearOpen, setStartYearOpen] = useState(false);
   const [startYearItems, setStartYearItems] = useState(yearList);
   const onStartYearOpen = useCallback(() => {
-    setMajorOpen(false);
+    // setMajorOpen(false);
     setGradYearOpen(false);
   }, []);
 
@@ -61,7 +89,7 @@ export default function Settings() {
   const [gradYearOpen, setGradYearOpen] = useState(false);
   const [gradYearItems, setGradYearItems] = useState(yearList);
   const onGradYearOpen = useCallback(() => {
-    setMajorOpen(false);
+    // setMajorOpen(false);
     setStartYearOpen(false);
   }, []);
 
@@ -77,17 +105,6 @@ export default function Settings() {
     "Take photo",
     "Cancel",
   ];
-
-  useEffect(() => {
-    const majorObject = {
-      label: major,
-      value: major,
-    };
-    if (!majorItems.includes(majorObject)) {
-      // majorItems.push(majorObject);
-      setMajorItems([...majorItems, majorObject]);
-    }
-  }, []);
 
   const handleSavePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -265,40 +282,66 @@ export default function Settings() {
             </View>
             <View style={styles.item}>
               <View style={styles.field}>
-                <Text>Major</Text>
+                <Text>Degrees</Text>
                 <Text style={{ color: Colors[colorScheme].secondaryText }}>
                   Choose an official major, or enter your own!
                 </Text>
               </View>
-              <DropDownPicker
-                open={majorOpen}
-                onOpen={onMajorOpen}
-                value={major}
-                items={majorItems}
-                setOpen={setMajorOpen}
-                setValue={(text) => {
-                  setMajor(text);
-                  setSaveDisabled(false);
-                }}
-                setItems={setMajorItems}
-                // multiple
-                // min={0}
-                // max={2}
-                placeholder="Major"
-                placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
-                searchable
-                searchPlaceholder="Search..."
-                showBadgeDot={false}
-                dropDownDirection="TOP"
-                modalProps={{
-                  animationType: "slide",
-                }}
-                theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-                addCustomItem
-                style={{ backgroundColor: Colors[colorScheme].background }}
-                dropDownContainerStyle={{
-                  backgroundColor: Colors[colorScheme].background,
-                }}
+              {degrees.map((degree: Degree, i: number) => (
+                <View key={i.toString()}>
+                  <DegreePicker
+                    degree={degree.degree}
+                    setDegree={(newDegree: string) => {
+                      let newDegreesArr = [...degrees];
+                      newDegreesArr[i] = {
+                        degree: newDegree,
+                        major: degree.major,
+                      };
+                      setDegrees(newDegreesArr);
+                    }}
+                    degreeOpen={degreesOpen[i]}
+                    setDegreeOpen={useCallback((open: boolean) => {
+                      let newDegreesOpenArr = [...degreesOpen];
+                      degreesOpen[i] = open;
+                      setDegreesOpen(newDegreesOpenArr);
+                    }, [])}
+                    degreeItems={degreeList}
+                    onDegreeOpen={() => {
+                      // TODO
+                    }}
+                    major={degree.major}
+                    setMajor={(newMajor: string) => {
+                      let newDegreesArr = [...degrees];
+                      newDegreesArr[i] = {
+                        degree: degree.degree,
+                        major: newMajor,
+                      };
+                      setDegrees(newDegreesArr);
+                    }}
+                    majorOpen={majorsOpen[i]}
+                    setMajorOpen={useCallback((open: boolean) => {
+                      let newMajorsOpenArr = [...majorsOpen];
+                      majorsOpen[i] = open;
+                      setMajorsOpen(newMajorsOpenArr);
+                    }, [])}
+                    majorItems={majorList}
+                    onMajorOpen={() => {
+                      // TODO
+                    }}
+                    onDeleteDegree={() => {
+                      let newDegreesArr = [...degrees];
+                      newDegreesArr.splice(i, 1);
+                      setDegrees(newDegreesArr);
+                    }}
+                  />
+                </View>
+              ))}
+              <View style={{ height: Layout.spacing.medium }} />
+              <Button
+                text="Add Degree"
+                onPress={() =>
+                  setDegrees([...degrees, { degree: "", major: "" }])
+                }
               />
             </View>
             <View style={AppStyles.row}>
@@ -317,9 +360,6 @@ export default function Settings() {
                     setSaveDisabled(false);
                   }}
                   setItems={setStartYearItems}
-                  // multiple
-                  // min={0}
-                  // max={2}
                   placeholder="Start Year"
                   placeholderStyle={{
                     color: Colors[colorScheme].secondaryText,
@@ -353,9 +393,6 @@ export default function Settings() {
                     setSaveDisabled(false);
                   }}
                   setItems={setGradYearItems}
-                  // multiple
-                  // min={0}
-                  // max={2}
                   placeholder="Graduation Year"
                   placeholderStyle={{
                     color: Colors[colorScheme].secondaryText,

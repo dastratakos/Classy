@@ -20,6 +20,11 @@ declare global {
   }
 }
 
+export type Degree = {
+  degree: string;
+  major: string;
+};
+
 export type Course = {
   academicCareer: string;
   academicGroup: string[];
@@ -57,12 +62,12 @@ export type FavoritedCourse = {
 export type HistoryIds = {
   courses: number[];
   people: string[];
-}
+};
 
 export type History = {
   courses: Course[];
   people: User[];
-}
+};
 
 export type Enrollment = {
   docId: string;
@@ -339,7 +344,7 @@ export type Context = {
   setFriendIds: (arg0: string[]) => void;
   requestIds: string[];
   setRequestIds: (arg0: string[]) => void;
-  currentEnrollments: Enrollment[],
+  currentEnrollments: Enrollment[];
   setCurrentEnrollments: (arg0: Enrollment[]) => void;
 
   // StreamChat
