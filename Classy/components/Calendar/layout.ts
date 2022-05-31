@@ -212,18 +212,18 @@ const calculateNumIndents = (
 ) => {
   if (node.events.length === 0 && depth > 0) return;
 
-  let tabs = "";
-  for (let i = 0; i < depth; i++) tabs += "\t";
-  console.log(tabs + "Node");
+  // let tabs = "";
+  // for (let i = 0; i < depth; i++) tabs += "\t";
+  // console.log(tabs + "Node");
 
   for (let event of node.events) {
     let rawLeft = Math.round(event.left);
 
-    console.log(
-      `${tabs}\t[${rawLeft}]: ${event.event.title}, ${event.event.startInfo
-        .toDate()
-        .toTimeString()}-${event.event.endInfo.toDate().toTimeString()}`
-    );
+    // console.log(
+    //   `${tabs}\t[${rawLeft}]: ${event.event.title}, ${event.event.startInfo
+    //     .toDate()
+    //     .toTimeString()}-${event.event.endInfo.toDate().toTimeString()}`
+    // );
 
     if (!(rawLeft in lefts)) {
       lefts[rawLeft] = [event];
@@ -248,7 +248,7 @@ const calculateNumIndents = (
     }
     event.numIndents = numIndents;
 
-    console.log(`${tabs}\t\tnumIndents = ${numIndents}`);
+    // console.log(`${tabs}\t\tnumIndents = ${numIndents}`);
 
     lefts[rawLeft].push(event);
   }
