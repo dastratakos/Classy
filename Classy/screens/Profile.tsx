@@ -40,7 +40,7 @@ import SquareButton from "../components/Buttons/SquareButton";
 import TabView from "../components/TabView";
 import { Timestamp } from "firebase/firestore";
 import { auth } from "../firebase";
-import { getEnrollmentsForTerm } from "../services/enrollments";
+import { getEnrollments, getEnrollmentsForTerm } from "../services/enrollments";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
@@ -81,12 +81,15 @@ export default function Profile() {
           setNumRequests(res.length)
         );
 
-        const res = await getEnrollmentsForTerm(
-          context.user.id,
-          context.user.id,
-          getCurrentTermId()
-        );
+        console.log("getting enrollments");
+        // const res = await getEnrollmentsForTerm(
+        //   context.user.id,
+        //   context.user.id,
+        //   getCurrentTermId()
+        // );
+        const res = await getEnrollments(context.user.id);
         setEnrollments(res);
+        console.log("got them");
         setWeekRes(getWeekFromEnrollments(res));
       }
     };
@@ -120,12 +123,15 @@ export default function Profile() {
 
     getRequestIds(context.user.id).then((res) => setNumRequests(res.length));
 
-    const res = await getEnrollmentsForTerm(
-      context.user.id,
-      context.user.id,
-      getCurrentTermId()
-    );
+    console.log("getting enrollments 2");
+    // const res = await getEnrollmentsForTerm(
+    //   context.user.id,
+    //   context.user.id,
+    //   getCurrentTermId()
+    // );
+    const res = await getEnrollments(context.user.id);
     setEnrollments(res);
+    console.log("got them 2");
     setWeekRes(getWeekFromEnrollments(res));
 
     if (auth.currentUser)
@@ -147,6 +153,8 @@ export default function Profile() {
     }
 
     for (let event of weekRes.week[today].events) {
+      if (!event.startInfo) continue;
+      if (!event.endInfo) continue;
       const startTime = event.startInfo.toDate();
       const endTime = event.endInfo.toDate();
       if (startTime <= now && endTime >= now) {
