@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TextInput,
 } from "react-native";
-import { Icon, View } from "./Themed";
+import { Icon, Icon3, View } from "./Themed";
 
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
@@ -67,7 +67,7 @@ export default function SearchBar({
             style={{ paddingVertical: 8 }}
             onPress={() => onChangeText("")}
           >
-            <Icon name="close" size={Layout.icon.small} />
+            <Icon3 name="close" size={Layout.icon.small} />
           </Pressable>
         )}
       </Animated.View>
