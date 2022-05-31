@@ -149,14 +149,11 @@ const buildTree = (
   dayWidth: number,
   calendarTimesWidth: number
 ) => {
-  console.log("hello");
   let currChildren: Node[] = [];
 
   let i = start;
   while (i < rows.length) {
     const row = rows[i];
-
-    console.log(`i = ${i}`);
 
     /**
      * If there was a previous iteration and this row's first event starts
@@ -167,18 +164,20 @@ const buildTree = (
       if (
         timeIsEarlier(row[0].event.startInfo, lastChild.events[0].event.endInfo)
       ) {
-        // const { end, children } = buildTree(
-        //   lastChild,
-        //   rows,
-        //   i,
-        //   dayWidth,
-        //   calendarTimesWidth
-        // );
-        // lastChild.children = children;
-        // i = end;
+        const { end, children } = buildTree(
+          lastChild,
+          rows,
+          i,
+          dayWidth,
+          calendarTimesWidth
+        );
+        lastChild.children = children;
+        i = end;
         continue;
       }
-    } else if (
+    }
+
+    if (
       /**
        * Make this row a child of the parent Node it's first event starts before
        * the first event in the parent ends.
@@ -197,7 +196,6 @@ const buildTree = (
       let validList: number[] = [];
       let currValid: number = 0;
       for (let event of row) {
-        // TODO: how will this work for the root where parent.events.length === 0
         while (currValid < parent.events.length - 1) {
           if (parent.events[currValid + 1].top + TOLERANCE >= event.top) break;
           currValid++;
@@ -205,7 +203,7 @@ const buildTree = (
         validList.push(currValid);
       }
 
-      let count = 0;
+      let count = 1;
       for (let i = 0; i < validList.length; i++) {
         if (i === validList.length - 1 || validList[i] !== validList[i + 1]) {
           let parentWidth = dayWidth - calendarTimesWidth;
@@ -216,10 +214,10 @@ const buildTree = (
             row[j].width = width;
             if (j !== 0) row[j].left = row[j - 1].left + row[j - 1].width;
           }
-          count = 0;
-          continue;
+          count = 1;
+        } else {
+          count++;
         }
-        count++;
       }
 
       currChildren.push(child);
@@ -233,8 +231,6 @@ const buildTree = (
      */
     break;
   }
-
-  console.log(`hi, i = ${i}`);
 
   return { end: i, children: currChildren };
 };
@@ -278,15 +274,22 @@ export const getStyledEvents = (
   }
 
   /* Step 2: Build the tree of event rows. */
-  console.log("up here");
 
   const root = new Node();
-  console.log("middle here");
   const { children } = buildTree(root, rows, 0, dayWidth, calendarTimesWidth);
-  console.log(`children: ${children}`);
   root.children = children;
 
-  console.log("down here");
+//   console.log(`children:`);
+//   for (let child of children) {
+//     console.log(`\tevents:`);
+//     for (let event of child.events) {
+//       console.log(
+//         `\t\t${event.event.title}, ${event.event.startInfo
+//           .toDate()
+//           .toTimeString()}-${event.event.endInfo.toDate().toTimeString()}`
+//       );
+//     }
+//   }
 
   /* Step 4: Calculate numIndents for each event. */
 

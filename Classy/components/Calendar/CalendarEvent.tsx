@@ -59,7 +59,7 @@ export default function CalendarEvent({
         ]}
         onPress={() => setModalVisible(true)}
       >
-        <Text style={styles.titleText}>{event.title}</Text>
+        <Text style={styles.titleText} numberOfLines={2}>{event.title}</Text>
         <Text style={styles.timeText}>
           {getTimeString(event.startInfo)} - {getTimeString(event.endInfo)}
         </Text>
@@ -84,8 +84,7 @@ const styles = StyleSheet.create({
     // left: 100,
     borderRadius: Layout.radius.xsmall,
     overflow: "hidden",
-    // opacity: 0.9,
-    opacity: 0.7,
+    opacity: 0.9,
   },
   titleText: {
     fontWeight: "500",
