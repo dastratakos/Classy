@@ -46,6 +46,8 @@ export default function Search() {
 
   const [historyLoading, setHistoryLoading] = useState<boolean>(true);
 
+  console.log("rendering search page");
+
   useEffect(() => {
     const loadScreen = async () => {
       collectHistory(context.user.id);
@@ -140,7 +142,7 @@ export default function Search() {
   const handleSearchMoreUsers = async () => {
     if (stopUserSearch) return;
 
-    setUsersRefreshing(true);
+    // setUsersRefreshing(true);
 
     if (!lastUser) {
       console.log("Searching users:", searchPhrase);
@@ -152,7 +154,7 @@ export default function Search() {
       setUserSearchResults([...users]);
       setLastUser(lastVisible);
 
-      if (users.length === 0) setStopUserSearch(true);
+      if (users.length < 10) setStopUserSearch(true);
     } else {
       console.log("Searching more users:", searchPhrase);
       let { users, lastVisible } = await searchMoreUsers(
@@ -163,10 +165,10 @@ export default function Search() {
       setUserSearchResults([...userSearchResults, ...users]);
       setLastUser(lastVisible);
 
-      if (users.length === 0) setStopUserSearch(true);
+      if (users.length < 10) setStopUserSearch(true);
     }
 
-    setUsersRefreshing(false);
+    // setUsersRefreshing(false);
   };
 
   const handleSearchCourses = async (search: string) => {
@@ -189,28 +191,31 @@ export default function Search() {
   const handleSearchMoreCourses = async () => {
     if (stopCourseSearch) return;
 
-    setCoursesRefreshing(true);
+    // setCoursesRefreshing(true);
 
     if (!lastCourse) {
       console.log("Searching courses:", searchPhrase);
       let { courses, lastVisible } = await searchCourses(searchPhrase, 10);
-      setCourseSearchResults([...courses]);
       setLastCourse(lastVisible);
+      setCourseSearchResults([...courses]);
 
-      if (courses.length === 0) setStopCourseSearch(true);
+      if (courses.length < 10) setStopCourseSearch(true);
     } else {
       console.log("Searching more courses:", searchPhrase);
       let { courses, lastVisible } = await searchMoreCourses(
         searchPhrase,
         lastCourse
       );
-      setCourseSearchResults([...courseSearchResults, ...courses]);
+      console.log("1");
       setLastCourse(lastVisible);
+      console.log("2");
+      setCourseSearchResults([...courseSearchResults, ...courses]);
+      console.log("3");
 
-      if (courses.length === 0) setStopCourseSearch(true);
+      if (courses.length < 10) setStopCourseSearch(true);
     }
 
-    setCoursesRefreshing(false);
+    // setCoursesRefreshing(false);
   };
 
   const PeopleHistory = () => (
