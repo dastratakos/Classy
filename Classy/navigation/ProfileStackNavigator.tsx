@@ -1,6 +1,9 @@
 import AddCourse from "../screens/AddCourse";
+import AddDegree from "../screens/AddDegree";
 import Course from "../screens/Course";
 import CourseSimilarity from "../screens/CourseSimilarity";
+import EditCourse from "../screens/EditCourse";
+import EditDegree from "../screens/EditDegree";
 import Enrollments from "../screens/Enrollments";
 import Favorites from "../screens/Favorites";
 import FriendProfile from "../screens/FriendProfile";
@@ -8,15 +11,12 @@ import Friends from "../screens/Friends";
 import { Icon } from "../components/Themed";
 import Layout from "../constants/Layout";
 import MyFriends from "../screens/MyFriends";
-import Quarters from "../screens/Quarters";
 import { Pressable } from "react-native";
 import Profile from "../screens/Profile";
 import { ProfileStackScreenProps } from "../types";
+import Quarters from "../screens/Quarters";
 import Settings from "../screens/Settings";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import EditCourse from "../screens/EditCourse";
-// import AddDegree from "../screens/AddDegree";
-import EditDegree from "../screens/EditDegree";
 
 const Stack = createNativeStackNavigator();
 
@@ -51,12 +51,12 @@ export default function ProfileStackNavigator() {
         component={Settings}
         getId={() => new Date().getTime().toString()}
       />
-      {/* <Stack.Screen
+      <Stack.Screen
         name="AddDegree"
         component={AddDegree}
         getId={() => new Date().getTime().toString()}
         options={{ title: "Add Degree" }}
-      /> */}
+      />
       <Stack.Screen
         name="EditDegree"
         component={EditDegree}

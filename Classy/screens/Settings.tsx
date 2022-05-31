@@ -274,7 +274,12 @@ export default function Settings() {
                     : true
                 }
                 onPress={() => {
-                  setDegrees([...degrees, { degree: "", major: "" }]);
+                  const newDegrees = [
+                    ...context.user.degrees,
+                    { degree: "", major: "" },
+                  ];
+                  context.setUser({ ...context.user, degrees: newDegrees });
+                  context.setEditDegreeIndex(newDegrees.length - 1);
                   navigation.navigate("AddDegree");
                 }}
               />
