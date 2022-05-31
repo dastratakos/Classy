@@ -152,7 +152,7 @@ export default function EditDegree() {
         containerStyle={{ backgroundColor: Colors.pink }}
         textStyle={{ color: Colors.white }}
       />
-      <View style={styles.ctaContainer}>
+      <View style={[AppStyles.row, { marginTop: Layout.spacing.medium }]}>
         <View style={{ width: "48%", backgroundColor: "transparent" }}>
           <Button
             text="Cancel"
@@ -175,13 +175,4 @@ export default function EditDegree() {
   );
 }
 
-const styles = StyleSheet.create({
-  ctaContainer: {
-    ...AppStyles.row,
-    position: "absolute",
-    bottom: Layout.spacing.medium,
-    left: Layout.spacing.medium,
-    right: Layout.spacing.medium,
-    backgroundColor: "transparent",
-  },
-});
+const styles = StyleSheet.create({});

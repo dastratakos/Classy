@@ -1,9 +1,7 @@
 import AddCourse from "../screens/AddCourse";
-import AddDegree from "../screens/AddDegree";
 import Course from "../screens/Course";
 import CourseSimilarity from "../screens/CourseSimilarity";
 import EditCourse from "../screens/EditCourse";
-import EditDegree from "../screens/EditDegree";
 import Enrollments from "../screens/Enrollments";
 import Favorites from "../screens/Favorites";
 import FriendProfile from "../screens/FriendProfile";
@@ -50,18 +48,6 @@ export default function ProfileStackNavigator() {
         name="Settings"
         component={Settings}
         getId={() => new Date().getTime().toString()}
-      />
-      <Stack.Screen
-        name="AddDegree"
-        component={AddDegree}
-        getId={() => new Date().getTime().toString()}
-        options={{ title: "Add Degree" }}
-      />
-      <Stack.Screen
-        name="EditDegree"
-        component={EditDegree}
-        getId={() => new Date().getTime().toString()}
-        options={{ title: "Edit Degree" }}
       />
       <Stack.Screen
         name="Enrollments"

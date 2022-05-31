@@ -148,7 +148,7 @@ export default function AddDegree() {
         }}
         containerStyle={{ marginBottom: Layout.spacing.large }}
       />
-      <View style={styles.ctaContainer}>
+      <View style={AppStyles.row}>
         <View style={{ width: "48%", backgroundColor: "transparent" }}>
           <Button text="Cancel" onPress={handleCancelPressed} />
         </View>
@@ -165,13 +165,4 @@ export default function AddDegree() {
   );
 }
 
-const styles = StyleSheet.create({
-  ctaContainer: {
-    ...AppStyles.row,
-    position: "absolute",
-    bottom: Layout.spacing.medium,
-    left: Layout.spacing.medium,
-    right: Layout.spacing.medium,
-    backgroundColor: "transparent",
-  },
-});
+const styles = StyleSheet.create({});

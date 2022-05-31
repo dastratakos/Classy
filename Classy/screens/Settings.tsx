@@ -389,7 +389,9 @@ export default function Settings() {
           text="Manage Account"
           onPress={() => navigation.navigate("ManageAccount")}
           wide
-          containerStyle={{ marginBottom: 2 * Layout.spacing.xxlarge }}
+          containerStyle={{
+            marginBottom: Layout.spacing.xxxlarge + Layout.buttonHeight.medium,
+          }}
         />
         <ActionSheet
           ref={actionSheetRef}
