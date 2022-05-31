@@ -49,7 +49,11 @@ export default function ProfileStackNavigator() {
         component={Settings}
         getId={() => new Date().getTime().toString()}
       />
-      <Stack.Screen name="Enrollments" component={Enrollments} />
+      <Stack.Screen
+        name="Enrollments"
+        component={Enrollments}
+        options={{ title: "Courses" }}
+      />
       <Stack.Screen
         name="Course"
         component={Course}
@@ -63,7 +67,7 @@ export default function ProfileStackNavigator() {
       <Stack.Screen
         name="EditCourse"
         component={EditCourse}
-        options={{ title: " Edit Course" }}
+        options={{ title: "Edit Course" }}
       />
       <Stack.Screen
         name="MyFriends"

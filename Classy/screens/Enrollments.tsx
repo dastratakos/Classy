@@ -50,7 +50,10 @@ export default function Enrollments({ route }: EnrollmentsProps) {
     <>
       <ScrollView
         style={{ backgroundColor: Colors[colorScheme].background }}
-        contentContainerStyle={{ alignItems: "center" }}
+        contentContainerStyle={{
+          alignItems: "center",
+          paddingBottom: Layout.buttonHeight.medium + Layout.spacing.medium,
+        }}
       >
         <Text style={styles.title}>
           {termIdToFullName(route.params.termId)}

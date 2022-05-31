@@ -164,6 +164,7 @@ export default function HomeStackNavigator() {
         name="Enrollments"
         component={Enrollments}
         getId={() => new Date().getTime().toString()}
+        options={{ title: "Course" }}
       />
       <Stack.Screen
         name="Course"
@@ -178,7 +179,7 @@ export default function HomeStackNavigator() {
       <Stack.Screen
         name="EditCourse"
         component={EditCourse}
-        options={{ title: " Edit Course" }}
+        options={{ title: "Edit Course" }}
       />
       <Stack.Screen
         name="MyFriends"
