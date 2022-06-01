@@ -16,7 +16,12 @@ export default function AddCoursesReminder({ time }: { time: string }) {
   const context = useContext(AppContext);
 
   return (
-    <View style={styles.notificationContainer}>
+    <View
+      style={[
+        styles.notificationContainer,
+        { borderBottomColor: Colors[colorScheme].tertiaryBackground },
+      ]}
+    >
       <Pressable
         onPress={() => {
           navigation.navigate("SearchStack", {
@@ -30,7 +35,6 @@ export default function AddCoursesReminder({ time }: { time: string }) {
           source={require("../../assets/images/notifications/AddCoursesReminder.png")}
           style={styles.image}
         />
-
         <View style={styles.textContainer}>
           <Text style={styles.notificationText} numberOfLines={3}>
             <Text style={{ fontWeight: "bold" }}>Add courses </Text>
@@ -39,8 +43,11 @@ export default function AddCoursesReminder({ time }: { time: string }) {
             </Text>
           </Text>
         </View>
-
-        <Text style={styles.time}>{time}</Text>
+        <Text
+          style={[styles.time, { color: Colors[colorScheme].secondaryText }]}
+        >
+          {time}
+        </Text>
       </Pressable>
     </View>
   );
@@ -48,17 +55,15 @@ export default function AddCoursesReminder({ time }: { time: string }) {
 
 const styles = StyleSheet.create({
   time: {
-    color: "#808080",
-    fontSize: 14,
+    fontSize: Layout.text.medium,
     paddingLeft: Layout.spacing.medium,
   },
   notificationText: {
-    fontSize: 14,
+    fontSize: Layout.text.medium,
     paddingLeft: Layout.spacing.xsmall,
   },
   notificationContainer: {
-    padding: 20,
-    borderBottomColor: "#c4c4c4",
+    padding: Layout.spacing.large,
     borderBottomWidth: 1,
   },
   innerContainer: {

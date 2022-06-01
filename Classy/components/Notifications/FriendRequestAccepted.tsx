@@ -29,7 +29,10 @@ export default function FriendRequestAccepted({
 
   return (
     <View
-      style={styles.notificationContainer}
+      style={[
+        styles.notificationContainer,
+        { borderBottomColor: Colors[colorScheme].tertiaryBackground },
+      ]}
     >
       <Pressable
         onPress={() => {
@@ -48,7 +51,11 @@ export default function FriendRequestAccepted({
             <Text>accepted your friend request.</Text>
           </Text>
         </View>
-        <Text style={styles.time}>{time}</Text>
+        <Text
+          style={[styles.time, { color: Colors[colorScheme].secondaryText }]}
+        >
+          {time}
+        </Text>
       </Pressable>
     </View>
   );
@@ -56,18 +63,16 @@ export default function FriendRequestAccepted({
 
 const styles = StyleSheet.create({
   time: {
-    color: "#808080",
-    fontSize: 14,
-    paddingLeft: Layout.spacing.medium
+    fontSize: Layout.text.medium,
+    paddingLeft: Layout.spacing.medium,
   },
   notificationText: {
-    fontSize: 14,
+    fontSize: Layout.text.medium,
     paddingLeft: Layout.spacing.xsmall,
   },
   notificationContainer: {
-    padding: 20,
-    borderBottomColor: "#c4c4c4",
-    borderBottomWidth: 1
+    padding: Layout.spacing.large,
+    borderBottomWidth: 1,
   },
   innerContainer: {
     flexDirection: "row",

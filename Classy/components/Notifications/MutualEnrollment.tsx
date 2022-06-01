@@ -35,42 +35,45 @@ export default function MutualEnrollment({
   const handleOnPress = async () => {
     const course = await getCourse(enrollment.courseId);
     navigation.navigate("Course", { course });
-  }
+  };
 
   return (
     <View
-      style={styles.notificationContainer}
+      style={[
+        styles.notificationContainer,
+        { borderBottomColor: Colors[colorScheme].tertiaryBackground },
+      ]}
     >
-      <Pressable
-        onPress={handleOnPress}
-        style={styles.innerContainer}
-      >
-
+      <Pressable onPress={handleOnPress} style={styles.innerContainer}>
         <ProfilePhoto
           url={friend.photoUrl}
           size={Layout.photo.xsmall}
           style={{ marginRight: Layout.spacing.small }}
         />
-
         <View style={styles.textContainer}>
-        {enrollment.code.length > 0 &&
-          <Text style={styles.notificationText} numberOfLines={3}>
-            <Text
-              style={{ fontWeight: "bold" }}
-              onPress={() => {
-                navigation.navigate("FriendProfile", { id: friend.id });
-              }}
-            >{friend.name} </Text>
-            <Text>just enrolled in </Text>
-            <Text
-              style={{ fontWeight: "bold" }}
-            >{enrollment.code[0]}: {enrollment.title} </Text>
-            <Text>for {termIdToFullName(enrollment.termId)}.</Text>
-          </Text>
-        }
+          {enrollment.code.length > 0 && (
+            <Text style={styles.notificationText} numberOfLines={3}>
+              <Text
+                style={{ fontWeight: "bold" }}
+                onPress={() => {
+                  navigation.navigate("FriendProfile", { id: friend.id });
+                }}
+              >
+                {friend.name}{" "}
+              </Text>
+              <Text>just enrolled in </Text>
+              <Text style={{ fontWeight: "bold" }}>
+                {enrollment.code[0]}: {enrollment.title}{" "}
+              </Text>
+              <Text>for {termIdToFullName(enrollment.termId)}.</Text>
+            </Text>
+          )}
         </View>
-
-        <Text style={styles.time}>{time}</Text>
+        <Text
+          style={[styles.time, { color: Colors[colorScheme].secondaryText }]}
+        >
+          {time}
+        </Text>
       </Pressable>
     </View>
   );
@@ -78,18 +81,16 @@ export default function MutualEnrollment({
 
 const styles = StyleSheet.create({
   time: {
-    color: "#808080",
-    fontSize: 14,
-    paddingLeft: Layout.spacing.medium
+    fontSize: Layout.text.medium,
+    paddingLeft: Layout.spacing.medium,
   },
   notificationText: {
-    fontSize: 14,
+    fontSize: Layout.text.medium,
     paddingLeft: Layout.spacing.xsmall,
   },
   notificationContainer: {
-    padding: 20,
-    borderBottomColor: "#c4c4c4",
-    borderBottomWidth: 1
+    padding: Layout.spacing.large,
+    borderBottomWidth: 1,
   },
   innerContainer: {
     flexDirection: "row",

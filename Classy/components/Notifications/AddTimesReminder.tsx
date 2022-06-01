@@ -24,14 +24,17 @@ export default function AddCoursesReminder({
 
   return (
     <View
-      style={styles.notificationContainer}
+      style={[
+        styles.notificationContainer,
+        { borderBottomColor: Colors[colorScheme].tertiaryBackground },
+      ]}
     >
       <Pressable
         onPress={() => {
           navigation.navigate("Enrollments", {
             userId: context.user.id,
             termId,
-          })
+          });
         }}
         style={styles.innerContainer}
       >
@@ -39,18 +42,22 @@ export default function AddCoursesReminder({
           source={require("../../assets/images/notifications/AddTimesReminder.png")}
           style={styles.image}
         />
-
         <View style={styles.textContainer}>
           <Text style={styles.notificationText} numberOfLines={3}>
-            <Text>Reminder to input your </Text> 
+            <Text>Reminder to input your </Text>
             <Text style={{ fontWeight: "bold" }}>class times </Text>
             <Text>for </Text>
-            <Text style={{ fontWeight: "bold" }}>{termIdToFullName(termId)}</Text>
-            <Text>!</Text> 
+            <Text style={{ fontWeight: "bold" }}>
+              {termIdToFullName(termId)}
+            </Text>
+            <Text>!</Text>
           </Text>
         </View>
-        
-        <Text style={styles.time}>{time}</Text>
+        <Text
+          style={[styles.time, { color: Colors[colorScheme].secondaryText }]}
+        >
+          {time}
+        </Text>
       </Pressable>
     </View>
   );
@@ -58,18 +65,16 @@ export default function AddCoursesReminder({
 
 const styles = StyleSheet.create({
   time: {
-    color: "#808080",
-    fontSize: 14,
-    paddingLeft: Layout.spacing.medium
+    fontSize: Layout.text.medium,
+    paddingLeft: Layout.spacing.medium,
   },
   notificationText: {
-    fontSize: 14,
+    fontSize: Layout.text.medium,
     paddingLeft: Layout.spacing.xsmall,
   },
   notificationContainer: {
-    padding: 20,
-    borderBottomColor: "#c4c4c4",
-    borderBottomWidth: 1
+    padding: Layout.spacing.large,
+    borderBottomWidth: 1,
   },
   innerContainer: {
     flexDirection: "row",
