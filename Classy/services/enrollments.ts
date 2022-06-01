@@ -99,6 +99,7 @@ export const addEnrollment = async (
   schedules: Schedule[],
   termId: string,
   units: number,
+  color: string,
   user: User
 ) => {
   /* 1. Create doc in enrollments collection. */
@@ -110,6 +111,7 @@ export const addEnrollment = async (
     termId,
     title: course.title,
     units,
+    color,
     userId: user.id,
   };
 

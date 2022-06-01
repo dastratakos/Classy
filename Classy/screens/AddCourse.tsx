@@ -15,7 +15,7 @@ import { useContext, useEffect, useState } from "react";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
-import Colors from "../constants/Colors";
+import Colors, { enrollmentColors } from "../constants/Colors";
 import Layout from "../constants/Layout";
 import ScheduleCard from "../components/Cards/ScheduleCard";
 import SquareButton from "../components/Buttons/SquareButton";
@@ -126,12 +126,16 @@ export default function AddCourse({ route }: AddCourseProps) {
       schedulesList.push(terms[`${context.selectedTerm}`][i])
     );
 
+    let randomColor =
+      enrollmentColors[Math.floor(Math.random() * enrollmentColors.length)];
+
     await addEnrollment(
       course,
       grading,
       schedulesList,
       context.selectedTerm,
       selectedUnits,
+      randomColor,
       context.user
     );
 
