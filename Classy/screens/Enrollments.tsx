@@ -26,20 +26,27 @@ export default function Enrollments({ route }: EnrollmentsProps) {
   const context = useContext(AppContext);
 
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-  const [quarterName, setQuarterName] = useState<string>("");
+  const quarterName = termIdToQuarterName(route.params.termId);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const loadScreen = async () => {
-      setEnrollments(
-        await getEnrollmentsForTerm(
-          context.user.id,
-          route.params.userId,
-          route.params.termId
-        )
-      );
-
-      setQuarterName(termIdToQuarterName(route.params.termId));
+      if (route.params.userId === context.user.id) {
+        setEnrollments(
+          context.enrollments.filter(
+            (enrollment: Enrollment) =>
+              enrollment.termId === route.params.termId
+          )
+        );
+      } else {
+        setEnrollments(
+          await getEnrollmentsForTerm(
+            context.user.id,
+            route.params.userId,
+            route.params.termId
+          )
+        );
+      }
 
       setLoading(false);
     };
