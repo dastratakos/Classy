@@ -12,7 +12,6 @@ import { ColorSchemeName } from "react-native";
 import Colors from "../constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import HomeStackNavigator from "./HomeStackNavigator";
-import Layout from "../constants/Layout";
 import LinkingConfiguration from "./LinkingConfiguration";
 import ManageAccount from "../screens/ManageAccount";
 import NotificationStackNavigator from "./NotificationStackNavigator";
