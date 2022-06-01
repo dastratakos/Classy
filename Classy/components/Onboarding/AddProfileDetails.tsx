@@ -8,23 +8,31 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Text, View } from "../Themed";
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import ActionSheet from "react-native-actionsheet";
 import AppContext from "../../context/Context";
 import AppStyles from "../../styles/AppStyles";
 import Button from "../Buttons/Button";
 import Colors from "../../constants/Colors";
+import { Degree } from "../../types";
+import DropDownPicker from "react-native-dropdown-picker";
 import Layout from "../../constants/Layout";
 import ProfilePhoto from "../ProfilePhoto";
 import { SaveFormat } from "expo-image-manipulator";
-import useColorScheme from "../../hooks/useColorScheme";
-import { uploadImage } from "../../services/storage";
 import Separator from "../Separator";
-import DropDownPicker from "react-native-dropdown-picker";
-import { majorList } from "../../utils/majorList";
+import { uploadImage } from "../../services/storage";
+import useColorScheme from "../../hooks/useColorScheme";
+import { useNavigation } from "@react-navigation/core";
 import { yearList } from "../../utils/yearList";
 
 export default function AddProfileDetails({
@@ -32,8 +40,6 @@ export default function AddProfileDetails({
   setPhotoUrl,
   name,
   setName,
-  major,
-  setMajor,
   startYear,
   setStartYear,
   gradYear,
@@ -45,8 +51,6 @@ export default function AddProfileDetails({
   setPhotoUrl: (arg0: string) => void;
   name: string;
   setName: (arg0: string) => void;
-  major: string;
-  setMajor: (arg0: string) => void;
   startYear: string;
   setStartYear: (arg0: string) => void;
   gradYear: string;
@@ -56,26 +60,19 @@ export default function AddProfileDetails({
 }) {
   const context = useContext(AppContext);
   const colorScheme = useColorScheme();
+  const navigation = useNavigation();
 
-  const [majorOpen, setMajorOpen] = useState(false);
-  const [majorItems, setMajorItems] = useState(majorList);
-  const onMajorOpen = useCallback(() => {
-    setStartYearOpen(false);
-    setGradYearOpen(false);
-  }, []);
-  // DropDownPicker.setMode("BADGE"); // TODO: for multiple select
+  console.log("context.user:", context.user);
 
   const [startYearOpen, setStartYearOpen] = useState(false);
   const [startYearItems, setStartYearItems] = useState(yearList);
   const onStartYearOpen = useCallback(() => {
-    setMajorOpen(false);
     setGradYearOpen(false);
   }, []);
 
   const [gradYearOpen, setGradYearOpen] = useState(false);
   const [gradYearItems, setGradYearItems] = useState(yearList);
   const onGradYearOpen = useCallback(() => {
-    setMajorOpen(false);
     setStartYearOpen(false);
   }, []);
 
@@ -83,17 +80,6 @@ export default function AddProfileDetails({
 
   const actionSheetRef = useRef();
 
-  useEffect(() => {
-    const majorObject = {
-      label: major,
-      value: major,
-    };
-    if (!majorItems.includes(majorObject)) {
-      // majorItems.push(majorObject);
-      setMajorItems([...majorItems, majorObject]);
-    }
-  }, []);
-  
   const actionSheetOptions = [
     "Remove current photo",
     "Choose from library",
@@ -225,34 +211,42 @@ export default function AddProfileDetails({
             </View>
             <View style={styles.item}>
               <View style={styles.field}>
-                <Text>Major</Text>
-                <Text style={{color: Colors[colorScheme].secondaryText}}>Choose an official major, or enter your own!</Text>
+                <Text>Degrees</Text>
               </View>
-              <DropDownPicker
-                open={majorOpen}
-                onOpen={onMajorOpen}
-                value={major}
-                items={majorItems}
-                setOpen={setMajorOpen}
-                setValue={setMajor}
-                setItems={setMajorItems}
-                // multiple
-                // min={0}
-                // max={2}
-                placeholder="Major"
-                placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
-                searchable
-                searchPlaceholder="Search..."
-                showBadgeDot={false}
-                dropDownDirection="TOP"
-                modalProps={{
-                  animationType: "slide",
-                }}
-                theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-                addCustomItem
-                style={{ backgroundColor: Colors[colorScheme].background }}
-                dropDownContainerStyle={{
-                  backgroundColor: Colors[colorScheme].background,
+              {context.user.degrees &&
+                context.user.degrees.map((degree: Degree, i: number) => (
+                  <TouchableOpacity
+                    style={[
+                      AppStyles.row,
+                      styles.input,
+                      { marginVertical: Layout.spacing.small },
+                    ]}
+                    key={i.toString()}
+                    onPress={() => {
+                      context.setEditDegreeIndex(i);
+                      navigation.navigate("EditDegree");
+                    }}
+                  >
+                    <Text>{degree.degree}</Text>
+                    <Text>{degree.major}</Text>
+                  </TouchableOpacity>
+                ))}
+              <View style={{ height: Layout.spacing.medium }} />
+              <Button
+                text="Add Degree"
+                emphasized={
+                  context.user.degrees
+                    ? context.user.degrees.length === 0
+                    : true
+                }
+                onPress={() => {
+                  let newDegrees: Degree[] = [];
+                  if (context.user.degrees)
+                    newDegrees = [...context.user.degrees];
+                  newDegrees.push({ degree: "", major: "" });
+                  context.setUser({ ...context.user, degrees: newDegrees });
+                  context.setEditDegreeIndex(newDegrees.length - 1);
+                  navigation.navigate("AddDegree");
                 }}
               />
             </View>
@@ -269,9 +263,6 @@ export default function AddProfileDetails({
                   setOpen={setStartYearOpen}
                   setValue={setStartYear}
                   setItems={setStartYearItems}
-                  // multiple
-                  // min={0}
-                  // max={2}
                   placeholder="Start Year"
                   placeholderStyle={{
                     color: Colors[colorScheme].secondaryText,
@@ -280,9 +271,7 @@ export default function AddProfileDetails({
                   searchPlaceholder="Search..."
                   showBadgeDot={false}
                   dropDownDirection="TOP"
-                  modalProps={{
-                    animationType: "slide",
-                  }}
+                  modalProps={{ animationType: "slide" }}
                   theme={colorScheme === "light" ? "LIGHT" : "DARK"}
                   style={{ backgroundColor: Colors[colorScheme].background }}
                   dropDownContainerStyle={{
@@ -302,9 +291,6 @@ export default function AddProfileDetails({
                   setOpen={setGradYearOpen}
                   setValue={setGradYear}
                   setItems={setGradYearItems}
-                  // multiple
-                  // min={0}
-                  // max={2}
                   placeholder="Graduation Year"
                   placeholderStyle={{
                     color: Colors[colorScheme].secondaryText,
@@ -313,9 +299,7 @@ export default function AddProfileDetails({
                   searchPlaceholder="Search..."
                   showBadgeDot={false}
                   dropDownDirection="TOP"
-                  modalProps={{
-                    animationType: "slide",
-                  }}
+                  modalProps={{ animationType: "slide" }}
                   theme={colorScheme === "light" ? "LIGHT" : "DARK"}
                   style={{ backgroundColor: Colors[colorScheme].background }}
                   dropDownContainerStyle={{

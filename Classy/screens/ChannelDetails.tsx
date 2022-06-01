@@ -8,7 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
-  Pressable
+  Pressable,
 } from "react-native";
 import { Text, View } from "../components/Themed";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -112,7 +112,6 @@ export default function ChannelDetails() {
           withModal
         />
       );
-
     else if (photoUrls.length !== 2)
       return (
         <ProfilePhoto
@@ -252,14 +251,18 @@ export default function ChannelDetails() {
       <View style={[AppStyles.section, { alignItems: "center" }]}>
         {members.length > 1 ? (
           <>
-            <Pressable onPress={() => {
-              (role === "owner" && actionSheetRef.current?.show())
-            }}>
+            <Pressable
+              onPress={() => {
+                role === "owner" && actionSheetRef.current?.show();
+              }}
+            >
               <RenderPhoto />
             </Pressable>
-            {role === "owner" ?
+            {role === "owner" ? (
               <>
-                <KeyboardAvoidingView style={{ alignItems: "center", width: "100%" }}>
+                <KeyboardAvoidingView
+                  style={{ alignItems: "center", width: "100%" }}
+                >
                   <TextInput
                     placeholder="Name"
                     value={groupName}
@@ -267,16 +270,26 @@ export default function ChannelDetails() {
                       setGroupName(text);
                       setSaveDisabled(false);
                     }}
-                    style={[styles.input, styles.groupName, { fontWeight: "bold" }]}
+                    style={[
+                      styles.input,
+                      styles.groupName,
+                      { fontWeight: "bold" },
+                    ]}
                     autoCapitalize="words"
                     textContentType="name"
                   />
                 </KeyboardAvoidingView>
-                <View style={[AppStyles.row, { marginTop: Layout.spacing.medium }]}>
-                  <View style={{ width: "48%", backgroundColor: "transparent" }}>
+                <View
+                  style={[AppStyles.row, { marginTop: Layout.spacing.medium }]}
+                >
+                  <View
+                    style={{ width: "48%", backgroundColor: "transparent" }}
+                  >
                     <Button text="Cancel" onPress={() => navigation.goBack()} />
                   </View>
-                  <View style={{ width: "48%", backgroundColor: "transparent" }}>
+                  <View
+                    style={{ width: "48%", backgroundColor: "transparent" }}
+                  >
                     <Button
                       text="Save Name"
                       onPress={handleSavePress}
@@ -287,20 +300,25 @@ export default function ChannelDetails() {
                   </View>
                 </View>
               </>
-              : <Text style={[styles.groupName, { fontWeight: "bold" }]}>{groupName}</Text>
-            }
+            ) : (
+              <Text style={[styles.groupName, { fontWeight: "bold" }]}>
+                {groupName}
+              </Text>
+            )}
 
-            <Separator overrideStyles={{ width: "100%", marginTop: Layout.spacing.large }} />
+            <Separator
+              overrideStyles={{
+                width: "100%",
+                marginTop: Layout.spacing.large,
+              }}
+            />
           </>
         ) : null}
         <View style={styles.innerContainer}>
           <Text style={[styles.title, { flex: 1 }]}>Members</Text>
           {role === "owner" ? (
             <Pressable onPress={() => console.log("Add member")}>
-              <Icon3
-                name="person-add"
-                size={Layout.icon.medium}
-              />
+              <Icon3 name="person-add" size={Layout.icon.medium} />
             </Pressable>
           ) : null}
         </View>
@@ -310,18 +328,20 @@ export default function ChannelDetails() {
             <FriendCard
               friend={{
                 ...member.user,
-                major: members.length > 1 ? member.role : null,
+                degrees:
+                  members.length > 1
+                    ? [{ degree: "", major: member.role }]
+                    : null,
                 photoUrl: member.user.image,
               }}
               rightElement={
-                (role === "owner" ? (
+                role === "owner" ? (
                   <Pressable onPress={() => console.log("Remove member")}>
-                    <Icon3
-                      name="close"
-                      size={Layout.icon.medium}
-                    />
+                    <Icon3 name="close" size={Layout.icon.medium} />
                   </Pressable>
-                ) : <></>)
+                ) : (
+                  <></>
+                )
               }
               key={member.user.id}
             />
@@ -372,6 +392,6 @@ const styles = StyleSheet.create({
     width: "50%",
     paddingHorizontal: Layout.spacing.small,
     borderBottomWidth: 0.5,
-    textAlign: "center"
+    textAlign: "center",
   },
 });

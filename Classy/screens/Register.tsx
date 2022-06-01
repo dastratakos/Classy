@@ -50,6 +50,7 @@ export default function Register({ route }: RegisterProps) {
         const data = {
           id: uid,
           email,
+          degrees: [],
           interests: "",
           createdAt: Timestamp.now(),
           isPrivate: false,

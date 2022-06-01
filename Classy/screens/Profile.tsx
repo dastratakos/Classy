@@ -1,6 +1,6 @@
 import * as Notifications from "expo-notifications";
 
-import { Enrollment, WeekSchedule } from "../types";
+import { Degree, Enrollment, WeekSchedule } from "../types";
 import { Icon, Icon2, Text, View } from "../components/Themed";
 import {
   Platform,
@@ -320,13 +320,20 @@ export default function Profile() {
         </View>
         <View style={[AppStyles.row, { marginVertical: 15 }]}>
           <View style={{ flex: 1, marginRight: Layout.spacing.small }}>
-            {/* Major */}
-            {context.user.major ? (
+            {/* Degrees */}
+            {context.user.degrees ? (
               <View style={[AppStyles.row, { justifyContent: "center" }]}>
                 <View style={styles.iconWrapper}>
                   <Icon2 name="pencil" size={Layout.icon.small} />
                 </View>
-                <Text style={styles.aboutText}>{context.user.major}</Text>
+                <View style={styles.aboutText}>
+                  {context.user.degrees.map((d: Degree, i: number) => (
+                    <Text style={styles.aboutText} key={i}>
+                      {d.major}
+                      {d.degree ? ` (${d.degree})` : ""}
+                    </Text>
+                  ))}
+                </View>
               </View>
             ) : null}
             {/* Graduation Year */}

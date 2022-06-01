@@ -20,6 +20,11 @@ declare global {
   }
 }
 
+export type Degree = {
+  degree: string;
+  major: string;
+};
+
 export type Course = {
   academicCareer: string;
   academicGroup: string[];
@@ -57,12 +62,12 @@ export type FavoritedCourse = {
 export type HistoryIds = {
   courses: number[];
   people: string[];
-}
+};
 
 export type History = {
   courses: Course[];
   people: User[];
-}
+};
 
 export type Enrollment = {
   docId: string;
@@ -140,6 +145,8 @@ export type RootStackParamList = {
   ProfileStack: NavigatorScreenParams<ProfileStackParamList> | undefined;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Settings: undefined;
+  AddDegree: undefined;
+  EditDegree: undefined;
   ManageAccount: undefined;
   NotFound: undefined;
 
@@ -188,6 +195,8 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
 
 export type ProfileStackParamList = {
   Settings: undefined;
+  AddDegree: undefined;
+  EditDegree: undefined;
   ManageAccount: undefined;
 
   Profile: undefined;
@@ -319,7 +328,7 @@ export type User = {
   id: string;
   email: string;
   name: string;
-  major: string;
+  degrees: { degree: string; major: string }[];
   startYear: string;
   gradYear: string;
   interests: string;
@@ -339,7 +348,7 @@ export type Context = {
   setFriendIds: (arg0: string[]) => void;
   requestIds: string[];
   setRequestIds: (arg0: string[]) => void;
-  currentEnrollments: Enrollment[],
+  currentEnrollments: Enrollment[];
   setCurrentEnrollments: (arg0: Enrollment[]) => void;
 
   // StreamChat
@@ -359,6 +368,8 @@ export type Context = {
   setSelectedTerm: (arg0: string) => void;
   selectedColor: string;
   setSelectedColor: (arg0: string) => void;
+  editDegreeIndex: number;
+  setEditDegreeIndex: (arg0: number) => void;
 };
 
 // Stream Chat
