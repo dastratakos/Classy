@@ -14,7 +14,13 @@ import {
   User,
   WeekSchedule,
 } from "../types";
-import { Icon, Icon2, Text, View } from "../components/Themed";
+import {
+  ActivityIndicator,
+  Icon,
+  Icon2,
+  Text,
+  View,
+} from "../components/Themed";
 import {
   acceptRequest,
   addFriend,
@@ -81,9 +87,12 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   }>({ week: [], startCalendarHour: 8, endCalendarHour: 6 });
   const [inClass, setInClass] = useState<boolean>(false);
 
-  const [refreshing, setRefreshing] = useState(false);
-  const [messageButtonLoading, setMessageButtonLoading] = useState(false);
-  const [addFriendDisabled, setAddFriendDisabled] = useState(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [messageButtonLoading, setMessageButtonLoading] =
+    useState<boolean>(false);
+  const [addFriendDisabled, setAddFriendDisabled] = useState<boolean>(false);
+
+  const [enrollmentsLoading, setEnrollmentsLoading] = useState<boolean>(true);
 
   const actionSheetRef = useRef();
 
@@ -121,6 +130,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       setNumFriends(`${res.length}`);
     });
 
+    setEnrollmentsLoading(true);
+
     const res2 = await getEnrollmentsForTerm(
       context.user.id,
       route.params.id,
@@ -128,6 +139,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     );
     setEnrollments(res2);
     setWeekRes(getWeekFromEnrollments(res2));
+
+    setEnrollmentsLoading(false);
 
     const res3 = await getOverlap(context.user.id, route.params.id);
     setCourseSimilarity(res3.courseSimilarity);
@@ -346,20 +359,24 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         <EnrollmentList
           enrollments={enrollments}
           emptyElement={
-            <EmptyList
-              SVGElement={
-                quarterName === "Aut"
-                  ? SVGAutumn
-                  : quarterName === "Win"
-                  ? SVGWinter
-                  : quarterName === "Spr"
-                  ? SVGSpring
-                  : quarterName === "Sum"
-                  ? SVGSummer
-                  : SVGNoCourses
-              }
-              primaryText="No courses this quarter"
-            />
+            enrollmentsLoading ? (
+              <ActivityIndicator />
+            ) : (
+              <EmptyList
+                SVGElement={
+                  quarterName === "Aut"
+                    ? SVGAutumn
+                    : quarterName === "Win"
+                    ? SVGWinter
+                    : quarterName === "Spr"
+                    ? SVGSpring
+                    : quarterName === "Sum"
+                    ? SVGSummer
+                    : SVGNoCourses
+                }
+                primaryText="No courses this quarter"
+              />
+            )
           }
         />
       ),
@@ -563,6 +580,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
           <TabView
             tabs={tabs}
             selectedStyle={{ backgroundColor: Colors.pink }}
+            initialSelectedId={1}
           />
         </View>
       )}

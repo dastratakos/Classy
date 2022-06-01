@@ -369,7 +369,11 @@ export default function Profile() {
       </View>
       <Separator />
       <View style={AppStyles.section}>
-        <TabView tabs={tabs} selectedStyle={{ backgroundColor: Colors.pink }} />
+        <TabView
+          tabs={tabs}
+          selectedStyle={{ backgroundColor: Colors.pink }}
+          initialSelectedId={0}
+        />
       </View>
     </ScrollView>
   );

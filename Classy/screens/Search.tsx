@@ -1,6 +1,6 @@
-import { ActivityIndicator, Icon, Icon3, Text, View } from "../components/Themed";
+import { ActivityIndicator, Icon3, Text, View } from "../components/Themed";
 import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
-import { Course, History, User } from "../types";
+import { Course, History, SearchProps, User } from "../types";
 import React, { useContext, useEffect, useState } from "react";
 import { getHistory, setHistory } from "../services/history";
 import { searchCourses, searchMoreCourses } from "../services/courses";
@@ -19,7 +19,7 @@ import SearchBar from "../components/SearchBar";
 import TabView from "../components/TabView";
 import useColorScheme from "../hooks/useColorScheme";
 
-export default function Search() {
+export default function Search({ route }: SearchProps) {
   const context = useContext(AppContext);
 
   const [searchPhrase, setSearchPhrase] = useState<string>("");
@@ -553,6 +553,7 @@ export default function Search() {
         tabs={tabs}
         addTabMargin
         selectedStyle={{ backgroundColor: Colors.pink }}
+        initialSelectedId={route.params?.initialSelectedTab || 0}
       />
     </View>
   );

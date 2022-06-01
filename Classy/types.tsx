@@ -183,6 +183,8 @@ export type RootStackParamList = {
   ChannelDetails: undefined;
   NewMessage: undefined;
 
+  Search: { initialSelectedTab?: number };
+
   Profile: undefined;
   Favorites: undefined;
   Enrollments: { userId: string; termId: string };
@@ -242,7 +244,7 @@ export type ProfileStackScreenProps<
 > = NativeStackScreenProps<ProfileStackParamList>;
 
 export type SearchStackParamList = {
-  Search: undefined;
+  Search: { initialSelectedTab?: number };
   Profile: undefined;
   Favorites: undefined;
   Enrollments: { userId: string; termId: string };
@@ -314,6 +316,8 @@ export type AuthStackParamList = {
 
 export type AuthStackScreenProps<Screen extends keyof AuthStackParamList> =
   NativeStackScreenProps<AuthStackParamList>;
+
+export type SearchProps = NativeStackScreenProps<RootStackParamList, "Search">;
 
 export type LoginProps = NativeStackScreenProps<RootStackParamList, "Login">;
 export type RegisterProps = NativeStackScreenProps<

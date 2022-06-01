@@ -14,16 +14,20 @@ export default function TabView({
   tabs,
   selectedStyle,
   addTabMargin = false,
+  initialSelectedId = 0,
 }: {
   tabs: Tab[];
   selectedStyle?: Object;
   addTabMargin?: boolean;
+  initialSelectedId?: number;
 }) {
   const colorScheme = useColorScheme();
 
-  const [selectedId, setSelectedId] = useState(0);
+  const [selectedId, setSelectedId] = useState(initialSelectedId);
   const [tabWidth, setTabWidth] = useState(0);
-  const [translateValue] = useState(new Animated.Value(Layout.spacing.xsmall));
+  const [translateValue] = useState(
+    new Animated.Value(initialSelectedId * tabWidth + Layout.spacing.xsmall)
+  );
 
   const Indicator = () => {
     return (
@@ -64,12 +68,17 @@ export default function TabView({
             marginHorizontal: addTabMargin ? Layout.spacing.medium : 0,
           },
         ]}
-        onLayout={(event) =>
-          setTabWidth(
+        onLayout={(event) => {
+          const width =
             (event.nativeEvent.layout.width - 2 * Layout.spacing.xsmall) /
-              tabs.length
-          )
-        }
+            tabs.length;
+
+          setTabWidth(width);
+
+          translateValue.setValue(
+            initialSelectedId * width + Layout.spacing.xsmall
+          );
+        }}
       >
         <Indicator />
         {tabs.map((tab, i) => (

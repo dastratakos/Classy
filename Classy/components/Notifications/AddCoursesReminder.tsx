@@ -10,24 +10,19 @@ import AppContext from "../../context/Context";
 import { useContext } from "react";
 import ProfilePhoto from "../ProfilePhoto";
 
-export default function AddCoursesReminder({
-  time,
-}: {
-  time: string;
-}) {
+export default function AddCoursesReminder({ time }: { time: string }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
 
   return (
-    <View
-      style={styles.notificationContainer}
-    >
+    <View style={styles.notificationContainer}>
       <Pressable
         onPress={() => {
           navigation.navigate("SearchStack", {
             screen: "Search",
-          })
+            params: { initialSelectedTab: 1 },
+          });
         }}
         style={styles.innerContainer}
       >
@@ -39,10 +34,12 @@ export default function AddCoursesReminder({
         <View style={styles.textContainer}>
           <Text style={styles.notificationText} numberOfLines={3}>
             <Text style={{ fontWeight: "bold" }}>Add courses </Text>
-            <Text>to your current quarter by searching by course code or name.</Text>
+            <Text>
+              to your current quarter by searching by course code or name.
+            </Text>
           </Text>
         </View>
-        
+
         <Text style={styles.time}>{time}</Text>
       </Pressable>
     </View>
@@ -53,7 +50,7 @@ const styles = StyleSheet.create({
   time: {
     color: "#808080",
     fontSize: 14,
-    paddingLeft: Layout.spacing.medium
+    paddingLeft: Layout.spacing.medium,
   },
   notificationText: {
     fontSize: 14,
@@ -62,7 +59,7 @@ const styles = StyleSheet.create({
   notificationContainer: {
     padding: 20,
     borderBottomColor: "#c4c4c4",
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
   },
   innerContainer: {
     flexDirection: "row",
