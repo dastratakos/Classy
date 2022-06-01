@@ -17,8 +17,7 @@ import {
   termIdToQuarterName,
   timeIsEarlier,
 } from "../utils";
-import { getFriendIds, getRequestIds } from "../services/friends";
-import { getUser, updateUser } from "../services/users";
+import { updateUser } from "../services/users";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -41,7 +40,6 @@ import SquareButton from "../components/Buttons/SquareButton";
 import TabView from "../components/TabView";
 import { Timestamp } from "firebase/firestore";
 import { auth } from "../firebase";
-import { getEnrollments, getEnrollmentsForTerm } from "../services/enrollments";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
@@ -50,16 +48,18 @@ export default function Profile() {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
-  const [numFriends, setNumFriends] = useState<string>("");
-  const [numRequests, setNumRequests] = useState<number>(0);
-  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-  const [quarterName, setQuarterName] = useState<string>("");
+  const currentEnrollments = context.enrollments.filter(
+    (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
+  );
+  const quarterName = termIdToQuarterName(getCurrentTermId());
+
   const [weekRes, setWeekRes] = useState<{
     week: WeekSchedule;
     startCalendarHour: number;
     endCalendarHour: number;
   }>({ week: [], startCalendarHour: 8, endCalendarHour: 6 });
   const [refreshing, setRefreshing] = useState<boolean>(true);
+
   const [showEmailVerification, setShowEmailVerification] = useState<boolean>(
     !auth.currentUser?.emailVerified
   );
@@ -67,23 +67,7 @@ export default function Profile() {
 
   useEffect(() => {
     const loadScreen = async () => {
-      // if (!context.user && auth.currentUser) getUser(auth.currentUser.uid);
-      // if (auth.currentUser) {
-      // const user = await getUser(auth.currentUser.uid);
-      // context.setUser({ ...context.user, ...user });
-
-      setQuarterName(termIdToQuarterName(getCurrentTermId()));
-      setNumFriends(`${context.friendIds.length}`);
-      setNumRequests(context.requestIds.length);
-
-      setWeekRes(
-        getWeekFromEnrollments(
-          context.enrollments.filter(
-            (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
-          )
-        )
-      );
-      // }
+      setWeekRes(getWeekFromEnrollments(currentEnrollments));
     };
     loadScreen();
 
@@ -104,28 +88,9 @@ export default function Profile() {
   const onRefresh = async () => {
     setRefreshing(true);
 
-    // const user = await getUser(context.user.id);
-    // context.setUser({ ...context.user, ...user });
-
-    // setQuarterName(termIdToQuarterName(getCurrentTermId()));
-    // getFriendIds(context.user.id).then((res) => {
-    //   setNumFriends(`${res.length}`);
-    // });
-    // getRequestIds(context.user.id).then((res) => setNumRequests(res.length));
-
-    setWeekRes(
-      getWeekFromEnrollments(
-        context.enrollments.filter(
-          (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
-        )
-      )
-    );
-
     if (auth.currentUser)
       setShowEmailVerification(!auth.currentUser.emailVerified);
     console.log("emailVerified:", auth.currentUser?.emailVerified);
-
-    checkInClass();
 
     setRefreshing(false);
   };
@@ -242,7 +207,7 @@ export default function Profile() {
       label: "Courses",
       component: (
         <EnrollmentList
-          enrollments={enrollments}
+          enrollments={currentEnrollments}
           emptyElement={
             <EmptyList
               SVGElement={
@@ -348,11 +313,11 @@ export default function Profile() {
             ) : null}
           </View>
           <SquareButton
-            num={`${numFriends}`}
-            text={"friend" + (numFriends === "1" ? "" : "s")}
+            num={`${context.friendIds.length}`}
+            text={"friend" + (context.friendIds.length === 1 ? "" : "s")}
             size={Layout.buttonHeight.large}
             onPress={() => navigation.navigate("MyFriends")}
-            indicator={numRequests > 0}
+            indicator={context.requestIds.length > 0}
           />
         </View>
         <View style={[AppStyles.row]}>

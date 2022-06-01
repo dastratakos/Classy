@@ -37,13 +37,8 @@ export default function Login({ route }: LoginProps) {
   useEffect(() => {
     /* Check if user is signed in. */
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        console.log("yes user");
-        setUp(user.uid);
-      } else {
-        console.log("no user");
-        setLoading(false);
-      }
+      if (user) setUp(user.uid);
+      else setLoading(false);
     });
 
     return unsubscribe;

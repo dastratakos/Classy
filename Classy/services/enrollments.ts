@@ -59,6 +59,17 @@ export const getEnrollments = async (userId: string) => {
   querySnapshot.forEach((doc) => {
     res.push({ ...doc.data(), docId: doc.id } as Enrollment);
   });
+
+  /* Collect number of friends per enrollment. */
+  const friendIds = await getFriendIds(userId);
+  for (let i = 0; i < res.length; i++) {
+    res[i].numFriends = await getNumFriendsInCourse(
+      res[i].courseId,
+      friendIds,
+      res[i].termId
+    );
+  }
+
   return res;
 };
 
