@@ -12,10 +12,8 @@ import ProfilePhoto from "../ProfilePhoto";
 
 export default function AddCoursesReminder({
   time,
-  onPress = () => {},
 }: {
   time: string;
-  onPress?: () => void;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -27,8 +25,9 @@ export default function AddCoursesReminder({
     >
       <Pressable
         onPress={() => {
-          onPress();
-          console.log("Notification pressed");
+          navigation.navigate("SearchStack", {
+            screen: "Search",
+          })
         }}
         style={styles.innerContainer}
       >

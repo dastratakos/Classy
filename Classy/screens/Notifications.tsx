@@ -60,7 +60,7 @@ export default function Notifications() {
           time: "4h",
           enrollment: {
             code: ["CS 221"],
-            courseId: "fakeCourseId",
+            courseId: 105730,
             termId: 1226,
             title: "Artificial Intelligence: Principles and Techniques"
           },

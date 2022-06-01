@@ -14,11 +14,9 @@ import { termIdToFullName } from "../../utils";
 export default function AddCoursesReminder({
   time,
   termId,
-  onPress = () => {},
 }: {
   time: string;
   termId: string;
-  onPress?: () => void;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -30,8 +28,10 @@ export default function AddCoursesReminder({
     >
       <Pressable
         onPress={() => {
-          onPress();
-          console.log("Notification pressed");
+          navigation.navigate("Enrollments", {
+            userId: context.user.id,
+            termId,
+          })
         }}
         style={styles.innerContainer}
       >

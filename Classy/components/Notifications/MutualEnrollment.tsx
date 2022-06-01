@@ -5,6 +5,7 @@ import { Enrollment } from "../../types";
 import AppStyles from "../../styles/AppStyles";
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
+import { getCourse } from "../../services/courses";
 import useColorScheme from "../../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import AppContext from "../../context/Context";
@@ -16,7 +17,6 @@ export default function MutualEnrollment({
   friend,
   time,
   enrollment,
-  onPress = () => {},
 }: {
   friend: {
     id: string;
@@ -27,21 +27,22 @@ export default function MutualEnrollment({
   };
   time: string;
   enrollment: Enrollment;
-  onPress?: () => void;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
+
+  const handleOnPress = async () => {
+    const course = await getCourse(enrollment.courseId);
+    navigation.navigate("Course", { course });
+  }
 
   return (
     <View
       style={styles.notificationContainer}
     >
       <Pressable
-        onPress={() => {
-          onPress();
-          console.log("Notification pressed");
-        }}
+        onPress={handleOnPress}
         style={styles.innerContainer}
       >
 
@@ -54,11 +55,17 @@ export default function MutualEnrollment({
         <View style={styles.textContainer}>
         {enrollment.code.length > 0 &&
           <Text style={styles.notificationText} numberOfLines={3}>
-            <Text style={{ fontWeight: "bold" }}>{friend.name} </Text>
+            <Text
+              style={{ fontWeight: "bold" }}
+              onPress={() => {
+                navigation.navigate("FriendProfile", { id: friend.id });
+              }}
+            >{friend.name} </Text>
             <Text>just enrolled in </Text>
-            <Text style={{ fontWeight: "bold" }}>{enrollment.code[0]}</Text>
-            <Text>: {enrollment.title} for </Text>
-            <Text style={{ fontWeight: "bold" }}>{termIdToFullName(enrollment.termId)}.</Text>
+            <Text
+              style={{ fontWeight: "bold" }}
+            >{enrollment.code[0]}: {enrollment.title} </Text>
+            <Text>for {termIdToFullName(enrollment.termId)}.</Text>
           </Text>
         }
         </View>

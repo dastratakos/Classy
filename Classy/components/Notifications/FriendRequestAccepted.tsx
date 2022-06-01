@@ -13,7 +13,6 @@ import ProfilePhoto from "../ProfilePhoto";
 export default function FriendRequestAccepted({
   friend,
   time,
-  onPress = () => {},
 }: {
   friend: {
     id: string;
@@ -23,7 +22,6 @@ export default function FriendRequestAccepted({
     photoUrl: string;
   };
   time: string;
-  onPress?: () => void;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -35,8 +33,7 @@ export default function FriendRequestAccepted({
     >
       <Pressable
         onPress={() => {
-          onPress();
-          console.log("Notification pressed");
+          navigation.navigate("FriendProfile", { id: friend.id });
         }}
         style={styles.innerContainer}
       >
