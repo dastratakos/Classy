@@ -7,7 +7,13 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { Enrollment, FriendProfileProps, User, WeekSchedule } from "../types";
+import {
+  Degree,
+  Enrollment,
+  FriendProfileProps,
+  User,
+  WeekSchedule,
+} from "../types";
 import { Icon, Icon2, Text, View } from "../components/Themed";
 import {
   acceptRequest,
@@ -475,13 +481,20 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         </View>
         <View style={[AppStyles.row, { marginTop: 15 }]}>
           <View style={{ flex: 1, marginRight: Layout.spacing.small }}>
-            {/* Major */}
-            {user.major ? (
+            {/* Degrees */}
+            {user.degrees ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
                   <Icon2 name="pencil" size={Layout.icon.small} />
                 </View>
-                <Text style={styles.aboutText}>{user.major}</Text>
+                <View style={styles.aboutText}>
+                  {user.degrees.map((d: Degree, i: number) => (
+                    <Text style={styles.aboutText} key={i}>
+                      {d.major}
+                      {d.degree ? ` (${d.degree})` : ""}
+                    </Text>
+                  ))}
+                </View>
               </View>
             ) : null}
             {/* Graduation Year */}
