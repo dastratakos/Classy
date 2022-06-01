@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import { ColorSchemeName } from "react-native";
 import {
   DarkTheme,
   DefaultTheme,
@@ -8,19 +7,21 @@ import {
 } from "@react-navigation/native";
 import { RootStackParamList, RootTabParamList } from "../types";
 
+import AuthStackNavigator from "./AuthStackNavigator";
+import { ColorSchemeName } from "react-native";
 import Colors from "../constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
-import LinkingConfiguration from "./LinkingConfiguration";
 import HomeStackNavigator from "./HomeStackNavigator";
-import ProfileStackNavigator from "./ProfileStackNavigator";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import useColorScheme from "../hooks/useColorScheme";
-import AuthStackNavigator from "./AuthStackNavigator";
+import LinkingConfiguration from "./LinkingConfiguration";
 import ManageAccount from "../screens/ManageAccount";
+import NotificationStackNavigator from "./NotificationStackNavigator";
+import ProfileStackNavigator from "./ProfileStackNavigator";
 import SearchStackNavigator from "./SearchStackNavigator";
 import SelectColor from "../screens/SelectColor";
 import SelectQuarter from "../screens/SelectQuarter";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import useColorScheme from "../hooks/useColorScheme";
 import Layout from "../constants/Layout";
 import AddDegree from "../screens/AddDegree";
 import EditDegree from "../screens/EditDegree";
@@ -130,6 +131,15 @@ function BottomTabNavigator() {
           title: "Search",
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="NotificationStack"
+        component={NotificationStackNavigator}
+        options={{
+          title: "Notifications",
+          headerShown: false,
+          tabBarIcon: ({ color }) => <TabBarIcon name="bell" color={color} />,
         }}
       />
       <BottomTab.Screen

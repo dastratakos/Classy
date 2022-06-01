@@ -159,6 +159,10 @@ export type RootStackParamList = {
   AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;
   HomeStack: NavigatorScreenParams<HomeStackParamList> | undefined;
   ProfileStack: NavigatorScreenParams<ProfileStackParamList> | undefined;
+  SearchStack: NavigatorScreenParams<SearchStackParamList> | undefined;
+  NotificationStack:
+    | NavigatorScreenParams<NotificationStackParamList>
+    | undefined;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Settings: undefined;
   AddDegree: undefined;
@@ -201,6 +205,9 @@ export type RootTabParamList = {
   HomeStack: NavigatorScreenParams<HomeStackParamList> | undefined;
   SearchStack: NavigatorScreenParams<SearchStackParamList> | undefined;
   ProfileStack: NavigatorScreenParams<ProfileStackParamList> | undefined;
+  NotificationStack:
+    | NavigatorScreenParams<NotificationStackParamList>
+    | undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
@@ -275,6 +282,29 @@ export type HomeStackParamList = {
 
 export type HomeStackScreenProps<Screen extends keyof HomeStackParamList> =
   NativeStackScreenProps<HomeStackParamList>;
+
+export type NotificationStackParamList = {
+  Home: undefined;
+
+  Messages: undefined;
+  ChannelScreen: undefined;
+  ThreadScreen: { id: string };
+  ChannelDetails: undefined;
+  NewMessage: undefined;
+
+  Enrollments: { userId: string; termId: string };
+  Course: { course: Course };
+  AddCourse: { course: Course };
+  EditCourse: { enrollment: Enrollment };
+  MyFriends: undefined;
+  Friends: { id: string };
+  FriendProfile: { id: string };
+  CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
+};
+
+export type NotificationStackScreenProps<
+  Screen extends keyof NotificationStackParamList
+> = NativeStackScreenProps<NotificationStackParamList>;
 
 export type AuthStackParamList = {
   Login: undefined;
