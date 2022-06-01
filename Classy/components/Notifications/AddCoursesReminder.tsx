@@ -1,5 +1,5 @@
 import { Text, View } from "../Themed";
-import { StyleSheet, Pressable } from "react-native";
+import { StyleSheet, Image, Pressable } from "react-native";
 
 import AppStyles from "../../styles/AppStyles";
 import Colors from "../../constants/Colors";
@@ -31,11 +31,9 @@ export default function AddCoursesReminder({
         }}
         style={styles.innerContainer}
       >
-        {/* TODO change photo */}
-        <ProfilePhoto
-          url={"https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/6K90G2P5LbT54j29CShLJC0IqdO2%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8"}
-          size={Layout.photo.xsmall}
-          style={{ marginRight: Layout.spacing.small }}
+        <Image
+          source={require("../../assets/images/notifications/AddCoursesReminder.png")}
+          style={styles.image}
         />
 
         <View style={styles.textContainer}>
@@ -72,5 +70,10 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
+  },
+  image: {
+    height: Layout.photo.xsmall,
+    width: Layout.photo.xsmall,
+    marginRight: Layout.spacing.small,
   },
 });
