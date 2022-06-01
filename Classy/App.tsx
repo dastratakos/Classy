@@ -10,32 +10,47 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { StreamChat } from "stream-chat";
 import Toast from "react-native-toast-message";
-import { User } from "./types";
+import { Enrollment, User } from "./types";
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 
 const STREAM_API_KEY = "y9tk9hsvsxqa";
 
 export default function App() {
-  /* Global variables. */
-  const [user, setUser] = useState({} as User);
-  const [friendIds, setFriendIds] = useState([] as string[]);
+  /* Global state. */
+
+  // Firestore
+  const [user, setUser] = useState<User>({} as User);
+  const [friendIds, setFriendIds] = useState<string[]>([]);
+  const [requestIds, setRequestIds] = useState<string[]>([]);
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+
+  // StreamChat
   const [streamClient, setStreamClient] = useState(
     StreamChat.getInstance(STREAM_API_KEY)
   );
   const [channel, setChannel] = useState();
-  const [channelName, setChannelName] = useState();
+  const [channelName, setChannelName] = useState<string>("");
   const [thread, setThread] = useState();
   const [totalUnreadCount, setTotalUnreadCount] = useState<number>();
-  const [selectedTerm, setSelectedTerm] = useState("");
-  const [selectedColor, setSelectedColor] = useState("");
-  const [editDegreeIndex, setEditDegreeIndex] = useState(0);
+
+  // Modal selections
+  const [selectedTerm, setSelectedTerm] = useState<string>("");
+  const [selectedColor, setSelectedColor] = useState<string>("");
+  const [editDegreeIndex, setEditDegreeIndex] = useState<number>(0);
 
   const globalVariables = {
+    // Firestore
     user,
     setUser,
     friendIds,
     setFriendIds,
+    requestIds,
+    setRequestIds,
+    enrollments,
+    setEnrollments,
+
+    // StreamChat
     streamClient,
     setStreamClient,
     channel,
@@ -46,6 +61,8 @@ export default function App() {
     setThread,
     totalUnreadCount,
     setTotalUnreadCount,
+
+    // Modal selections
     selectedTerm,
     setSelectedTerm,
     selectedColor,

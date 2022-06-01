@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Text, View } from "../components/Themed";
 import { auth, signInWithEmailAndPassword } from "../firebase";
+import { getFriendIds, getRequestIds } from "../services/friends";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -17,7 +18,7 @@ import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import { LoginProps } from "../types";
-import { getFriendIds } from "../services/friends";
+import { getEnrollments } from "../services/enrollments";
 import { getUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
@@ -79,7 +80,11 @@ export default function Login({ route }: LoginProps) {
     const user = await getUser(id);
     context.setUser(user);
 
+    // TODO: do these asynchronously
     context.setFriendIds(await getFriendIds(id));
+    context.setRequestIds(await getRequestIds(id));
+    context.setEnrollments(await getEnrollments(id));
+
     connectStreamChatUser(id, user.name, user.photoUrl);
 
     if (user.onboarded)

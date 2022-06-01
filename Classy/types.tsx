@@ -25,6 +25,22 @@ export type Degree = {
   major: string;
 };
 
+export type User = {
+  id: string;
+  email: string;
+  name: string;
+  degrees: { degree: string; major: string }[];
+  startYear: string;
+  gradYear: string;
+  interests: string;
+  isPrivate: boolean;
+  photoUrl: string;
+  expoPushToken: string;
+  terms: Object;
+  keywords: string[];
+  onboarded: boolean;
+};
+
 export type Course = {
   academicCareer: string;
   academicGroup: string[];
@@ -324,22 +340,6 @@ export type QuartersProps = NativeStackScreenProps<
 
 // Context
 
-export type User = {
-  id: string;
-  email: string;
-  name: string;
-  degrees: { degree: string; major: string }[];
-  startYear: string;
-  gradYear: string;
-  interests: string;
-  isPrivate: boolean;
-  photoUrl: string;
-  expoPushToken: string;
-  terms: Object;
-  keywords: string[];
-  onboarded: boolean;
-};
-
 export type Context = {
   // Firestore
   user: User;
@@ -348,8 +348,8 @@ export type Context = {
   setFriendIds: (arg0: string[]) => void;
   requestIds: string[];
   setRequestIds: (arg0: string[]) => void;
-  currentEnrollments: Enrollment[];
-  setCurrentEnrollments: (arg0: Enrollment[]) => void;
+  enrollments: Enrollment[];
+  setEnrollments: (arg0: Enrollment[]) => void;
 
   // StreamChat
   streamClient: StreamChatGenerics;

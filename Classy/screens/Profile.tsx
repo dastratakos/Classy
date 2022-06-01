@@ -68,28 +68,22 @@ export default function Profile() {
   useEffect(() => {
     const loadScreen = async () => {
       // if (!context.user && auth.currentUser) getUser(auth.currentUser.uid);
-      if (auth.currentUser) {
-        const user = await getUser(auth.currentUser.uid);
-        context.setUser({ ...context.user, ...user });
+      // if (auth.currentUser) {
+      // const user = await getUser(auth.currentUser.uid);
+      // context.setUser({ ...context.user, ...user });
 
-        setQuarterName(termIdToQuarterName(getCurrentTermId()));
+      setQuarterName(termIdToQuarterName(getCurrentTermId()));
+      setNumFriends(`${context.friendIds.length}`);
+      setNumRequests(context.requestIds.length);
 
-        getFriendIds(context.user.id).then((res) =>
-          setNumFriends(`${res.length}`)
-        );
-
-        getRequestIds(context.user.id).then((res) =>
-          setNumRequests(res.length)
-        );
-
-        const res = await getEnrollmentsForTerm(
-          context.user.id,
-          context.user.id,
-          getCurrentTermId()
-        );
-        setEnrollments(res);
-        setWeekRes(getWeekFromEnrollments(res));
-      }
+      setWeekRes(
+        getWeekFromEnrollments(
+          context.enrollments.filter(
+            (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
+          )
+        )
+      );
+      // }
     };
     loadScreen();
 
@@ -110,24 +104,22 @@ export default function Profile() {
   const onRefresh = async () => {
     setRefreshing(true);
 
-    const user = await getUser(context.user.id);
-    context.setUser({ ...context.user, ...user });
+    // const user = await getUser(context.user.id);
+    // context.setUser({ ...context.user, ...user });
 
-    setQuarterName(termIdToQuarterName(getCurrentTermId()));
+    // setQuarterName(termIdToQuarterName(getCurrentTermId()));
+    // getFriendIds(context.user.id).then((res) => {
+    //   setNumFriends(`${res.length}`);
+    // });
+    // getRequestIds(context.user.id).then((res) => setNumRequests(res.length));
 
-    getFriendIds(context.user.id).then((res) => {
-      setNumFriends(`${res.length}`);
-    });
-
-    getRequestIds(context.user.id).then((res) => setNumRequests(res.length));
-
-    const res = await getEnrollmentsForTerm(
-      context.user.id,
-      context.user.id,
-      getCurrentTermId()
+    setWeekRes(
+      getWeekFromEnrollments(
+        context.enrollments.filter(
+          (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
+        )
+      )
     );
-    setEnrollments(res);
-    setWeekRes(getWeekFromEnrollments(res));
 
     if (auth.currentUser)
       setShowEmailVerification(!auth.currentUser.emailVerified);

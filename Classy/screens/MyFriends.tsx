@@ -26,10 +26,10 @@ export default function MyFriends() {
 
   useEffect(() => {
     const loadScreen = async () => {
-      const friendIds = await getFriendIds(context.user.id);
-      setFriends(await getFriendsFromIds(friendIds));
+      setFriends(await getFriendsFromIds(context.friendIds));
 
       const requestIds = await getRequestIds(context.user.id);
+      context.setRequestIds(requestIds);
       setRequests(await getFriendsFromIds(requestIds));
 
       setIsLoading(false);
