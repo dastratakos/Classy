@@ -125,6 +125,7 @@ export default function EnrollmentModal({
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
+                  flexWrap: "wrap",
                 }}
                 key={i}
               >
@@ -212,6 +213,7 @@ const styles = StyleSheet.create({
   schedText: {
     fontSize: Layout.text.large,
     fontWeight: "500",
+    alignSelf: "flex-end",
   },
   buttonwrap: {
     flexDirection: "row",
