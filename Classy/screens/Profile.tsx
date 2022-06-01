@@ -1,6 +1,6 @@
 import * as Notifications from "expo-notifications";
 
-import { Enrollment, WeekSchedule } from "../types";
+import { Degree, Enrollment, WeekSchedule } from "../types";
 import { Icon, Icon2, Text, View } from "../components/Themed";
 import {
   Platform,
@@ -15,6 +15,7 @@ import {
   getWeekFromEnrollments,
   termIdToFullName,
   termIdToQuarterName,
+  timeIsEarlier,
 } from "../utils";
 import { getFriendIds, getRequestIds } from "../services/friends";
 import { getUser, updateUser } from "../services/users";
@@ -40,7 +41,7 @@ import SquareButton from "../components/Buttons/SquareButton";
 import TabView from "../components/TabView";
 import { Timestamp } from "firebase/firestore";
 import { auth } from "../firebase";
-import { getEnrollmentsForTerm } from "../services/enrollments";
+import { getEnrollments, getEnrollmentsForTerm } from "../services/enrollments";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
@@ -138,8 +139,8 @@ export default function Profile() {
   };
 
   const checkInClass = () => {
-    const now = Timestamp.now().toDate();
-    const today = now.getDay() - 1;
+    const now = Timestamp.now();
+    const today = now.toDate().getDay() - 1;
 
     if (!weekRes.week[today]) {
       setInClass(false);
@@ -147,9 +148,12 @@ export default function Profile() {
     }
 
     for (let event of weekRes.week[today].events) {
-      const startTime = event.startInfo.toDate();
-      const endTime = event.endInfo.toDate();
-      if (startTime <= now && endTime >= now) {
+      if (!event.startInfo) continue;
+      if (!event.endInfo) continue;
+      if (
+        timeIsEarlier(event.startInfo, now) &&
+        timeIsEarlier(now, event.endInfo)
+      ) {
         setInClass(true);
         return;
       }
@@ -316,13 +320,20 @@ export default function Profile() {
         </View>
         <View style={[AppStyles.row, { marginVertical: 15 }]}>
           <View style={{ flex: 1, marginRight: Layout.spacing.small }}>
-            {/* Major */}
-            {context.user.major ? (
+            {/* Degrees */}
+            {context.user.degrees ? (
               <View style={[AppStyles.row, { justifyContent: "center" }]}>
                 <View style={styles.iconWrapper}>
                   <Icon2 name="pencil" size={Layout.icon.small} />
                 </View>
-                <Text style={styles.aboutText}>{context.user.major}</Text>
+                <View style={styles.aboutText}>
+                  {context.user.degrees.map((d: Degree, i: number) => (
+                    <Text style={styles.aboutText} key={i}>
+                      {d.major}
+                      {d.degree ? ` (${d.degree})` : ""}
+                    </Text>
+                  ))}
+                </View>
               </View>
             ) : null}
             {/* Graduation Year */}

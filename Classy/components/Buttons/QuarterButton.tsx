@@ -14,6 +14,7 @@ export default function QuarterButton({
   loading = false,
   emphasized = false,
   color,
+  textColor,
 }: {
   num: string;
   text: string;
@@ -22,6 +23,7 @@ export default function QuarterButton({
   loading?: boolean;
   emphasized?: boolean;
   color?: Object;
+  textColor?: Object;
 }) {
   const colorScheme = useColorScheme();
 
@@ -34,9 +36,7 @@ export default function QuarterButton({
         ]}
       >
         <Text style={styles.text}>{text}</Text>
-        <View
-          style={styles.unitContainer}
-        >
+        <View style={styles.unitContainer}>
           <Text style={styles.number}>{num}</Text>
           <Text style={styles.unitsText}>Units</Text>
         </View>
@@ -69,9 +69,7 @@ export default function QuarterButton({
           >
             {text}
           </Text>
-          <View
-            style={styles.unitContainer}
-          >
+          <View style={styles.unitContainer}>
             <Text
               style={[styles.number, { color: Colors[colorScheme].background }]}
             >
@@ -86,12 +84,10 @@ export default function QuarterButton({
   return (
     <View style={[styles.container, color]}>
       <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
-        <Text style={styles.text}>{text}</Text>
-        <View
-          style={styles.unitContainer}
-        >
-          <Text style={styles.number}>{num}</Text>
-          <Text style={styles.unitsText}>Units</Text>
+        <Text style={[styles.text, textColor]}>{text}</Text>
+        <View style={styles.unitContainer}>
+          <Text style={[styles.number, textColor]}>{num}</Text>
+          <Text style={[styles.unitsText, textColor]}>Units</Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -117,7 +113,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
   },
   number: {
     fontSize: Layout.text.xlarge,

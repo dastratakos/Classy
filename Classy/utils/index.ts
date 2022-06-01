@@ -189,6 +189,8 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
     Wednesday: 2,
     Thursday: 3,
     Friday: 4,
+    Saturday: 5,
+    Sunday: 6,
   };
 
   let startCalendarHour = 8;
@@ -208,7 +210,9 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
 
       if (schedule.startInfo) {
         const startHour = schedule.startInfo.toDate().getHours();
-        if (startHour < startCalendarHour) startCalendarHour = startHour;
+        /* startHour !== 0 filters for sections that are 12:00 AM - 12:00 AM. */
+        if (startHour < startCalendarHour && startHour !== 0)
+          startCalendarHour = startHour;
       }
       if (schedule.endInfo) {
         const endHour = schedule.endInfo.toDate().getHours() + 1;
@@ -232,6 +236,8 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
       const bDate = b.startInfo.toDate();
       if (aDate.getHours() === bDate.getHours()) {
         if (aDate.getMinutes() === bDate.getMinutes()) {
+          if (!a.endInfo) return 1;
+          if (!b.endInfo) return -1;
           /* If start times are the same, sort by descending end times. */
           const aEndDate = a.endInfo.toDate();
           const bEndDate = b.endInfo.toDate();
@@ -245,7 +251,27 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
     });
   }
 
-  console.log("week:", week);
+  // console.log("week:", week);
 
   return { week, startCalendarHour, endCalendarHour };
+};
+
+/**
+ * Compares two Timestamps by checking only the hour and minute values. Returns
+ * true if a is strictly earlier than b.
+ *
+ * @param a The first Timestamp object to compare
+ * @param b The second Timestamp object to compare
+ * @returns boolean true if a's time is earlier, false otherwise
+ */
+export const timeIsEarlier = (a: Timestamp, b: Timestamp) => {
+  const aHours = a.toDate().getHours();
+  const bHours = b.toDate().getHours();
+
+  if (aHours !== bHours) return aHours < bHours;
+
+  const aMinutes = a.toDate().getMinutes();
+  const bMinutes = b.toDate().getMinutes();
+
+  return aMinutes < bMinutes;
 };

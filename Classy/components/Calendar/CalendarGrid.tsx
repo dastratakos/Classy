@@ -14,11 +14,13 @@ export default function CalendarGrid({
   index,
   today,
   timesWidth,
+  hourHeight,
 }: {
   times: number[];
   index: number;
   today: number;
   timesWidth: number;
+  hourHeight: number;
 }) {
   const colorScheme = useColorScheme();
 
@@ -47,20 +49,14 @@ export default function CalendarGrid({
   return (
     <View
       style={[
-        {
-          marginTop: Layout.spacing.medium,
-          backgroundColor: "transparent",
-        },
+        { marginTop: Layout.spacing.medium, backgroundColor: "transparent" },
       ]}
     >
       {times.map((time, i) => (
         <View
           style={[
             AppStyles.row,
-            {
-              height: Layout.spacing.xxxlarge,
-              backgroundColor: "transparent",
-            },
+            { height: hourHeight, backgroundColor: "transparent" },
           ]}
           key={i}
         >
@@ -78,9 +74,7 @@ export default function CalendarGrid({
           <View
             style={[
               gridStyles.gridLine,
-              {
-                backgroundColor: Colors[colorScheme].secondaryText,
-              },
+              { backgroundColor: Colors[colorScheme].secondaryText },
             ]}
           />
         </View>

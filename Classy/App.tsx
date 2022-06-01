@@ -29,6 +29,7 @@ export default function App() {
   const [totalUnreadCount, setTotalUnreadCount] = useState<number>();
   const [selectedTerm, setSelectedTerm] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
+  const [editDegreeIndex, setEditDegreeIndex] = useState(0);
 
   const globalVariables = {
     user,
@@ -49,6 +50,8 @@ export default function App() {
     setSelectedTerm,
     selectedColor,
     setSelectedColor,
+    editDegreeIndex,
+    setEditDegreeIndex,
   };
 
   const isLoadingComplete = useCachedResources();

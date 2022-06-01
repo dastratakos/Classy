@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { Text, View } from "../components/Themed";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -22,10 +23,9 @@ import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import { SaveFormat } from "expo-image-manipulator";
 import Separator from "../components/Separator";
-import { User } from "../types";
+import { Degree, User } from "../types";
 import { auth } from "../firebase";
 import { generateSubstrings } from "../utils";
-import { majorList } from "../utils/majorList";
 import { generateTerms, updateUser } from "../services/users";
 import { uploadImage } from "../services/storage";
 import useColorScheme from "../hooks/useColorScheme";
@@ -40,20 +40,10 @@ export default function Settings() {
   const [photoUrl, setPhotoUrl] = useState(context.user.photoUrl || "");
   const [name, setName] = useState(context.user.name || "");
 
-  const [major, setMajor] = useState(context.user.major || ""); // TODO: use array for multiple select
-  const [majorOpen, setMajorOpen] = useState(false);
-  const [majorItems, setMajorItems] = useState(majorList);
-  const onMajorOpen = useCallback(() => {
-    setStartYearOpen(false);
-    setGradYearOpen(false);
-  }, []);
-  // DropDownPicker.setMode("BADGE"); // TODO: for multiple select
-
   const [startYear, setStartYear] = useState(context.user.startYear || "");
   const [startYearOpen, setStartYearOpen] = useState(false);
   const [startYearItems, setStartYearItems] = useState(yearList);
   const onStartYearOpen = useCallback(() => {
-    setMajorOpen(false);
     setGradYearOpen(false);
   }, []);
 
@@ -61,7 +51,6 @@ export default function Settings() {
   const [gradYearOpen, setGradYearOpen] = useState(false);
   const [gradYearItems, setGradYearItems] = useState(yearList);
   const onGradYearOpen = useCallback(() => {
-    setMajorOpen(false);
     setStartYearOpen(false);
   }, []);
 
@@ -78,17 +67,6 @@ export default function Settings() {
     "Cancel",
   ];
 
-  useEffect(() => {
-    const majorObject = {
-      label: major,
-      value: major,
-    };
-    if (!majorItems.includes(majorObject)) {
-      // majorItems.push(majorObject);
-      setMajorItems([...majorItems, majorObject]);
-    }
-  }, []);
-
   const handleSavePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
@@ -100,7 +78,7 @@ export default function Settings() {
     const newUser: User = {
       ...context.user,
       name,
-      major,
+      degrees: context.user.degrees,
       startYear,
       gradYear,
       interests,
@@ -265,39 +243,42 @@ export default function Settings() {
             </View>
             <View style={styles.item}>
               <View style={styles.field}>
-                <Text>Major</Text>
-                <Text style={{ color: Colors[colorScheme].secondaryText }}>
-                  Choose an official major, or enter your own!
-                </Text>
+                <Text>Degrees</Text>
               </View>
-              <DropDownPicker
-                open={majorOpen}
-                onOpen={onMajorOpen}
-                value={major}
-                items={majorItems}
-                setOpen={setMajorOpen}
-                setValue={(text) => {
-                  setMajor(text);
-                  setSaveDisabled(false);
-                }}
-                setItems={setMajorItems}
-                // multiple
-                // min={0}
-                // max={2}
-                placeholder="Major"
-                placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
-                searchable
-                searchPlaceholder="Search..."
-                showBadgeDot={false}
-                dropDownDirection="TOP"
-                modalProps={{
-                  animationType: "slide",
-                }}
-                theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-                addCustomItem
-                style={{ backgroundColor: Colors[colorScheme].background }}
-                dropDownContainerStyle={{
-                  backgroundColor: Colors[colorScheme].background,
+              {context.user.degrees &&
+                context.user.degrees.map((degree: Degree, i: number) => (
+                  <TouchableOpacity
+                    style={[
+                      AppStyles.row,
+                      styles.input,
+                      { marginVertical: Layout.spacing.small },
+                    ]}
+                    key={i.toString()}
+                    onPress={() => {
+                      context.setEditDegreeIndex(i);
+                      navigation.navigate("EditDegree");
+                    }}
+                  >
+                    <Text>{degree.degree}</Text>
+                    <Text>{degree.major}</Text>
+                  </TouchableOpacity>
+                ))}
+              <View style={{ height: Layout.spacing.medium }} />
+              <Button
+                text="Add Degree"
+                emphasized={
+                  context.user.degrees
+                    ? context.user.degrees.length === 0
+                    : true
+                }
+                onPress={() => {
+                  const newDegrees = [
+                    ...context.user.degrees,
+                    { degree: "", major: "" },
+                  ];
+                  context.setUser({ ...context.user, degrees: newDegrees });
+                  context.setEditDegreeIndex(newDegrees.length - 1);
+                  navigation.navigate("AddDegree");
                 }}
               />
             </View>
@@ -317,9 +298,6 @@ export default function Settings() {
                     setSaveDisabled(false);
                   }}
                   setItems={setStartYearItems}
-                  // multiple
-                  // min={0}
-                  // max={2}
                   placeholder="Start Year"
                   placeholderStyle={{
                     color: Colors[colorScheme].secondaryText,
@@ -328,9 +306,7 @@ export default function Settings() {
                   searchPlaceholder="Search..."
                   showBadgeDot={false}
                   dropDownDirection="TOP"
-                  modalProps={{
-                    animationType: "slide",
-                  }}
+                  modalProps={{ animationType: "slide" }}
                   theme={colorScheme === "light" ? "LIGHT" : "DARK"}
                   style={{ backgroundColor: Colors[colorScheme].background }}
                   dropDownContainerStyle={{
@@ -353,9 +329,6 @@ export default function Settings() {
                     setSaveDisabled(false);
                   }}
                   setItems={setGradYearItems}
-                  // multiple
-                  // min={0}
-                  // max={2}
                   placeholder="Graduation Year"
                   placeholderStyle={{
                     color: Colors[colorScheme].secondaryText,
@@ -364,9 +337,7 @@ export default function Settings() {
                   searchPlaceholder="Search..."
                   showBadgeDot={false}
                   dropDownDirection="TOP"
-                  modalProps={{
-                    animationType: "slide",
-                  }}
+                  modalProps={{ animationType: "slide" }}
                   theme={colorScheme === "light" ? "LIGHT" : "DARK"}
                   style={{ backgroundColor: Colors[colorScheme].background }}
                   dropDownContainerStyle={{
@@ -412,7 +383,9 @@ export default function Settings() {
           text="Manage Account"
           onPress={() => navigation.navigate("ManageAccount")}
           wide
-          containerStyle={{ marginBottom: 2 * Layout.spacing.xxlarge }}
+          containerStyle={{
+            marginBottom: Layout.spacing.xxxlarge + Layout.buttonHeight.medium,
+          }}
         />
         <ActionSheet
           ref={actionSheetRef}

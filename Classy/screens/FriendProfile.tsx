@@ -7,7 +7,13 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { Enrollment, FriendProfileProps, User, WeekSchedule } from "../types";
+import {
+  Degree,
+  Enrollment,
+  FriendProfileProps,
+  User,
+  WeekSchedule,
+} from "../types";
 import { Icon, Icon2, Text, View } from "../components/Themed";
 import {
   acceptRequest,
@@ -24,6 +30,7 @@ import {
   sendPushNotification,
   termIdToFullName,
   termIdToQuarterName,
+  timeIsEarlier,
 } from "../utils";
 import { getEnrollmentsForTerm, getOverlap } from "../services/enrollments";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -130,8 +137,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   };
 
   const checkInClass = () => {
-    const now = Timestamp.now().toDate();
-    const today = now.getDay() - 1;
+    const now = Timestamp.now();
+    const today = now.toDate().getDay() - 1;
 
     if (!weekRes.week[today]) {
       setInClass(false);
@@ -139,9 +146,13 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     }
 
     for (let event of weekRes.week[today].events) {
-      const startTime = event.startInfo.toDate();
-      const endTime = event.endInfo.toDate();
-      if (startTime <= now && endTime >= now) {
+      if (!event.startInfo) continue;
+      if (!event.endInfo) continue;
+      if (
+        timeIsEarlier(event.startInfo, now) &&
+        timeIsEarlier(now, event.endInfo)
+      ) {
+        console.log("event:", event);
         setInClass(true);
         return;
       }
@@ -470,13 +481,20 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         </View>
         <View style={[AppStyles.row, { marginTop: 15 }]}>
           <View style={{ flex: 1, marginRight: Layout.spacing.small }}>
-            {/* Major */}
-            {user.major ? (
+            {/* Degrees */}
+            {user.degrees ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
                   <Icon2 name="pencil" size={Layout.icon.small} />
                 </View>
-                <Text style={styles.aboutText}>{user.major}</Text>
+                <View style={styles.aboutText}>
+                  {user.degrees.map((d: Degree, i: number) => (
+                    <Text style={styles.aboutText} key={i}>
+                      {d.major}
+                      {d.degree ? ` (${d.degree})` : ""}
+                    </Text>
+                  ))}
+                </View>
               </View>
             ) : null}
             {/* Graduation Year */}

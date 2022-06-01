@@ -53,6 +53,8 @@ export default function Quarters({ route }: QuartersProps) {
                         numUnits > 0
                           ? quarterColors.get(termIdToQuarterName(termId))
                           : {};
+                      const textColor =
+                        numUnits > 0 ? { color: Colors.black } : {};
                       return (
                         <View style={styles.termButton} key={termId}>
                           <QuarterButton
@@ -65,6 +67,7 @@ export default function Quarters({ route }: QuartersProps) {
                               })
                             }
                             color={color}
+                            textColor={textColor}
                           />
                         </View>
                       );

@@ -57,6 +57,7 @@ export default function SearchStackNavigator() {
         name="Enrollments"
         component={Enrollments}
         getId={() => new Date().getTime().toString()}
+        options={{ title: "Courses" }}
       />
       <Stack.Screen
         name="Course"
@@ -71,7 +72,7 @@ export default function SearchStackNavigator() {
       <Stack.Screen
         name="EditCourse"
         component={EditCourse}
-        options={{ title: " Edit Course" }}
+        options={{ title: "Edit Course" }}
       />
       <Stack.Screen
         name="MyFriends"

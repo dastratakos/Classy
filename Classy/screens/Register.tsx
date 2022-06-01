@@ -50,6 +50,7 @@ export default function Register({ route }: RegisterProps) {
         const data = {
           id: uid,
           email,
+          degrees: [],
           interests: "",
           createdAt: Timestamp.now(),
           isPrivate: false,
@@ -78,7 +79,7 @@ export default function Register({ route }: RegisterProps) {
       streamChatUser,
       context.streamClient.devToken(streamChatUser.id)
     );
-    console.log("User connected:", user);
+    console.log("StreamChat user connected:", user);
 
     context.setTotalUnreadCount(user.me.total_unread_count);
 

@@ -14,6 +14,8 @@ import {
 
 import { FavoritedCourse } from "../types";
 import { db } from "../firebase";
+import { getFriendIds, getNumFriendsInCourse } from "./friends";
+import { getCurrentTermId } from "../utils";
 
 export const getCourse = async (courseId: number) => {
   const q = query(collection(db, "courses"), where("courseId", "==", courseId));
@@ -131,6 +133,21 @@ export const getFavorites = async (userId: string) => {
   querySnapshot.forEach((doc) => {
     res.push(doc.data() as FavoritedCourse);
   });
+
+  /**
+   * Collect number of friends per favorite.
+   * NOTE: since the user has not specified a term, it will get the number
+   * of friends for the current term.
+   */
+  const friendIds = await getFriendIds(userId);
+  for (let i = 0; i < res.length; i++) {
+    res[i].numFriends = await getNumFriendsInCourse(
+      res[i].courseId,
+      friendIds,
+      getCurrentTermId()
+    );
+  }
+
   return res;
 };
 

@@ -13,16 +13,16 @@ import { getTimeString } from "../../utils";
 
 export default function CalendarEvent({
   event,
-  marginTop,
   height,
   width,
-  left = 0,
+  top,
+  left,
 }: {
   event: Event;
-  marginTop: number;
   height: number;
   width: number;
-  left?: number;
+  top: number;
+  left: number;
 }) {
   const context = useContext(AppContext);
 
@@ -55,40 +55,72 @@ export default function CalendarEvent({
         setVisible={setModalVisible}
         editable={event.enrollment.userId === context.user.id}
       />
-      <Pressable
-        style={[
-          styles.event,
-          { marginTop, height, width, left },
-          { backgroundColor: event.enrollment.color || Colors.pink },
-        ]}
-        onPress={() => setModalVisible(true)}
-      >
-        <Text style={styles.titleText}>{event.title}</Text>
-        <Text style={styles.timeText}>
-          {getTimeString(event.startInfo)} - {getTimeString(event.endInfo)}
-        </Text>
-        <Text style={styles.locationText}>{event.location}</Text>
-      </Pressable>
+      <View style={{ ...styles.container, height, width, top, left }}>
+        <View
+          style={{
+            ...styles.background,
+            height: height - 1,
+            width: width - 1,
+            backgroundColor: event.enrollment.color || Colors.pink,
+          }}
+        />
+        <Pressable
+          style={{
+            ...styles.pressable,
+            height: height - 1,
+            width: width - 1,
+            borderColor: event.enrollment.color || Colors.pink,
+          }}
+          onPress={() => setModalVisible(true)}
+        >
+          {height > 20 && (
+            <View
+              style={{
+                ...styles.textContainer,
+                height: height - 1 - 2 * Layout.spacing.xxsmall,
+              }}
+            >
+              <Text style={styles.titleText} numberOfLines={1}>
+                {event.title}
+              </Text>
+              <Text style={styles.locationText} numberOfLines={2}>
+                {event.location}
+              </Text>
+            </View>
+          )}
+        </Pressable>
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    ...AppStyles.row,
     position: "absolute",
-    backgroundColor: "transparent",
-  },
-  event: {
-    position: "absolute",
-    paddingVertical: Layout.spacing.xxsmall,
-    paddingHorizontal: Layout.spacing.small,
-    // flex: 1,
-    width: "33%",
-    // left: 100,
-    borderRadius: Layout.radius.xsmall,
     overflow: "hidden",
-    opacity: 0.9,
+    padding: 0.5,
+    backgroundColor: "transparent",
+    minHeight: 15,
+  },
+  background: {
+    borderRadius: Layout.radius.xsmall,
+    opacity: 0.6,
+    minHeight: 15 - 1,
+  },
+  pressable: {
+    position: "absolute",
+    overflow: "hidden",
+    top: 1,
+    left: 1,
+    padding: Layout.spacing.xxsmall,
+    borderRadius: Layout.radius.xsmall,
+    borderWidth: 0.5,
+    minHeight: 15 - 1,
+    borderLeftWidth: Layout.spacing.xxsmall,
+  },
+  textContainer: {
+    backgroundColor: "transparent",
+    overflow: "hidden",
   },
   titleText: {
     fontWeight: "500",

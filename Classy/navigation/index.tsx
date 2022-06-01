@@ -23,6 +23,9 @@ import SelectQuarter from "../screens/SelectQuarter";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import useColorScheme from "../hooks/useColorScheme";
+import Layout from "../constants/Layout";
+import AddDegree from "../screens/AddDegree";
+import EditDegree from "../screens/EditDegree";
 
 /**
  * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
@@ -63,7 +66,9 @@ function RootNavigator() {
         component={BottomTabNavigator}
         options={{ headerShown: false }}
       />
-      <Stack.Group screenOptions={{ presentation: "modal" }}>
+      <Stack.Group
+        screenOptions={{ presentation: "modal", gestureEnabled: false }}
+      >
         <Stack.Screen
           name="ManageAccount"
           component={ManageAccount}
@@ -78,6 +83,17 @@ function RootNavigator() {
           name="SelectColor"
           component={SelectColor}
           options={{ title: "Select Color" }}
+        />
+        <Stack.Screen
+          name="AddDegree"
+          component={AddDegree}
+          options={{ title: "Add Degree" }}
+        />
+        <Stack.Screen
+          name="EditDegree"
+          component={EditDegree}
+          getId={() => new Date().getTime().toString()}
+          options={{ title: "Edit Degree" }}
         />
       </Stack.Group>
     </Stack.Navigator>
