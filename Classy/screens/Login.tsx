@@ -1,13 +1,13 @@
 import * as Haptics from "expo-haptics";
 
 import {
-  Image,
+  ImageBackground,
   KeyboardAvoidingView,
   Pressable,
   StyleSheet,
   TextInput,
 } from "react-native";
-import { ActivityIndicator, Text, View } from "../components/Themed";
+import { Text, View } from "../components/Themed";
 import { auth, signInWithEmailAndPassword } from "../firebase";
 import { useContext, useEffect, useState } from "react";
 
@@ -32,6 +32,21 @@ export default function Login({ route }: LoginProps) {
   const [errorMessage, setErrorMessage] = useState("");
 
   const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    /* Check if user is signed in. */
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        console.log("yes user");
+        setUp(user.uid);
+      } else {
+        console.log("no user");
+        setLoading(false);
+      }
+    });
+
+    return unsubscribe;
+  }, []);
 
   const connectStreamChatUser = async (
     id: string,
@@ -59,30 +74,6 @@ export default function Login({ route }: LoginProps) {
       }
     });
   };
-
-  /* Check if user is signed in. */
-  useEffect(() => {
-    const loadScreen = async () => {
-      if (auth.currentUser) {
-        console.log("hello 1");
-        await setUp(auth.currentUser.uid);
-        setLoading(false);
-        console.log("hello 2");
-      }
-    };
-
-    loadScreen();
-
-    if (!auth.currentUser) {
-      console.log("hello 3");
-      setLoading(false);
-      const unsubscribe = auth.onAuthStateChanged((user) => {
-        if (user) setUp(user.uid);
-      });
-
-      return unsubscribe;
-    }
-  }, []);
 
   const setUp = async (id: string) => {
     const user = await getUser(id);
@@ -121,7 +112,7 @@ export default function Login({ route }: LoginProps) {
 
   if (loading)
     return (
-      <Image
+      <ImageBackground
         source={require("../assets/images/splash.png")}
         style={{ height: Layout.window.height, width: Layout.window.width }}
         resizeMode="cover"
