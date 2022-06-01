@@ -328,7 +328,6 @@ export type User = {
   id: string;
   email: string;
   name: string;
-  major: string;
   degrees: { degree: string; major: string }[];
   startYear: string;
   gradYear: string;

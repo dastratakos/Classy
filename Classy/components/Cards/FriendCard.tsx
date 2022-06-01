@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/core";
 import AppContext from "../../context/Context";
 import { useContext } from "react";
 import ProfilePhoto from "../ProfilePhoto";
+import { Degree } from "../../types";
 
 export default function FriendCard({
   friend,
@@ -18,7 +19,7 @@ export default function FriendCard({
   friend: {
     id: string;
     name: string;
-    major?: string;
+    degrees?: Degree[];
     gradYear?: string;
     photoUrl: string;
   };
@@ -28,6 +29,12 @@ export default function FriendCard({
   const context = useContext(AppContext);
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+
+  const degreeText = friend.degrees
+    ? friend.degrees
+        .map((d: Degree) => d.major + (d.degree ? ` (${d.degree})` : ""))
+        .join(", ")
+    : "";
 
   return (
     <View
@@ -54,10 +61,10 @@ export default function FriendCard({
           <Text style={styles.cardTitle} numberOfLines={1}>
             {friend.name}
           </Text>
-          {friend.major || friend.gradYear ? (
+          {degreeText || friend.gradYear ? (
             <Text style={styles.cardSubtitle} numberOfLines={1}>
-              {friend.major}
-              {friend.major && friend.gradYear ? " | " : null}
+              {degreeText}
+              {degreeText && friend.gradYear ? " | " : null}
               {friend.gradYear}
             </Text>
           ) : null}
