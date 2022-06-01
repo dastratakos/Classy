@@ -79,6 +79,12 @@ export default function Login({ route }: LoginProps) {
     context.setFriendIds(await getFriendIds(id));
     context.setRequestIds(await getRequestIds(id));
     context.setEnrollments(await getEnrollments(id));
+    // getFriendIds(id).then((res) => context.setFriendIds(res));
+    // getRequestIds(id).then((res) => context.setRequestIds(res));
+    // getEnrollments(id).then((res) => {
+    //   console.log("got enrollments:", res.length);
+    //   context.setEnrollments(res);
+    // });
 
     connectStreamChatUser(id, user.name, user.photoUrl);
 

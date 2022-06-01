@@ -15,6 +15,7 @@ import { ProfileStackScreenProps } from "../types";
 import Quarters from "../screens/Quarters";
 import Settings from "../screens/Settings";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import FullCalendar from "../screens/FullCalendar";
 
 const Stack = createNativeStackNavigator();
 
@@ -97,6 +98,12 @@ export default function ProfileStackNavigator() {
         component={Quarters}
         getId={() => new Date().getTime().toString()}
         options={{ title: "Quarters" }}
+      />
+      <Stack.Screen
+        name="FullCalendar"
+        component={FullCalendar}
+        getId={() => new Date().getTime().toString()}
+        options={{ title: "Full Calendar" }}
       />
     </Stack.Navigator>
   );

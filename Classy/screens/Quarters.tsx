@@ -9,10 +9,14 @@ import AppStyles from "../styles/AppStyles";
 import { termIdToQuarterName } from "../utils";
 import { QuartersProps } from "../types";
 import QuarterButton from "../components/Buttons/QuarterButton";
+import Button from "../components/Buttons/Button";
+import { useContext } from "react";
+import AppContext from "../context/Context";
 
 export default function Quarters({ route }: QuartersProps) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+  const context = useContext(AppContext);
 
   if (!route.params.user.terms) return null;
 
@@ -27,10 +31,7 @@ export default function Quarters({ route }: QuartersProps) {
     <>
       <ScrollView
         style={{ backgroundColor: Colors[colorScheme].background }}
-        contentContainerStyle={{
-          alignItems: "center",
-          paddingBottom: Layout.buttonHeight.medium + Layout.spacing.medium,
-        }}
+        contentContainerStyle={{ alignItems: "center" }}
       >
         <View style={AppStyles.section}>
           {Object.entries(route.params.user.terms)
@@ -75,6 +76,12 @@ export default function Quarters({ route }: QuartersProps) {
                 </View>
               </View>
             ))}
+          {route.params.user.id === context.user.id && (
+            <Button
+              text="View Full Calendar"
+              onPress={() => navigation.navigate("FullCalendar")}
+            />
+          )}
         </View>
       </ScrollView>
     </>

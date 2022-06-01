@@ -192,6 +192,7 @@ export type RootStackParamList = {
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
   Quarters: { user: User };
+  FullCalendar: undefined;
   SelectColor: undefined;
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
@@ -231,6 +232,7 @@ export type ProfileStackParamList = {
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
   Quarters: { user: User };
+  FullCalendar: undefined;
   SelectColor: undefined;
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
@@ -252,6 +254,7 @@ export type SearchStackParamList = {
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
   Quarters: { user: User };
+  FullCalendar: undefined;
   SelectColor: undefined;
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
