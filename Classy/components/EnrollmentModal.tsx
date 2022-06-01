@@ -5,12 +5,13 @@ import { getTimeString, termIdToFullName } from "../utils";
 import AppStyles from "../styles/AppStyles";
 import Button from "./Buttons/Button";
 import Colors from "../constants/Colors";
-import { Enrollment } from "../types";
+import { Enrollment, Schedule } from "../types";
 import Layout from "../constants/Layout";
 import Modal from "react-native-modal";
 import { getCourse } from "../services/courses";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { useEffect, useState } from "react";
 
 export default function EnrollmentModal({
   enrollment,
@@ -28,6 +29,27 @@ export default function EnrollmentModal({
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+
+  useEffect(() => {
+    /* Filter for bad schedules. */
+    let schedules = enrollment.schedules;
+    for (let j = 0; j < schedules.length; j++) {
+      const sched = schedules[j];
+      if (
+        sched["days"].length === 0 ||
+        getTimeString(sched["startInfo"]) === "12:00 AM" ||
+        getTimeString(sched["startInfo"]) === "" ||
+        getTimeString(sched["endInfo"]) === "12:00 AM" ||
+        getTimeString(sched["endInfo"]) === ""
+      ) {
+        schedules.splice(j, 1);
+        j--;
+      }
+    }
+    setSchedules(schedules);
+  }, []);
+
   const onEdit = () => {
     setVisible(false);
     navigation.navigate("EditCourse", { enrollment });
@@ -38,25 +60,6 @@ export default function EnrollmentModal({
     const course = await getCourse(enrollment.courseId);
     navigation.navigate("Course", { course });
   };
-
-  let schedules = enrollment.schedules;
-  for (let j = 0; j < schedules.length; j++) {
-    const sched = schedules[j];
-    if (
-      sched["days"].length === 0 ||
-      getTimeString(sched["startInfo"]) === "12:00 AM" ||
-      getTimeString(sched["startInfo"]) === "" ||
-      getTimeString(sched["endInfo"]) === "12:00 AM" ||
-      getTimeString(sched["endInfo"]) === ""
-    ) {
-      schedules.splice(j, 1);
-      j--;
-    } else {
-      for (let k = 0; k < sched.days.length; k++) {
-        sched.days[k] = sched.days[k].substring(0, 3);
-      }
-    }
-  }
 
   return (
     <Modal isVisible={visible} onBackdropPress={() => setVisible(false)}>
@@ -104,9 +107,10 @@ export default function EnrollmentModal({
                   flexDirection: "row",
                   justifyContent: "space-between",
                 }}
-                
               >
-                <Text style={styles.schedText}>{item.days.join(", ")}</Text>
+                <Text style={styles.schedText}>
+                  {item.days.map((day) => day.substring(0, 3)).join(", ")}
+                </Text>
                 <Text style={styles.schedText}>
                   {getTimeString(item.startInfo)} -{" "}
                   {getTimeString(item.endInfo)}
@@ -124,7 +128,9 @@ export default function EnrollmentModal({
                 }}
                 key={i}
               >
-                <Text style={styles.schedText}>{schedule.days.join(", ")}</Text>
+                <Text style={styles.schedText}>
+                  {schedule.days.map((day) => day.substring(0, 3)).join(", ")}
+                </Text>
                 <Text style={styles.schedText}>
                   {getTimeString(schedule.startInfo)} -{" "}
                   {getTimeString(schedule.endInfo)}

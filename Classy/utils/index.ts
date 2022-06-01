@@ -220,6 +220,12 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
       }
 
       for (let day of schedule.days) {
+        if (!(day in dayIndices)) {
+          console.error(
+            `Invalid day ${day} for enrollment with docId ${enrollment.docId}`
+          );
+          continue;
+        }
         const index = dayIndices[`${day}`];
         week[index].events.push(event);
       }
