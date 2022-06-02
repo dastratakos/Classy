@@ -12,8 +12,10 @@ import { useNavigation } from "@react-navigation/core";
 
 export default function AddTimesReminder({
   notification,
+  readNotification,
 }: {
   notification: Notification;
+  readNotification: (arg0: string) => void;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -22,6 +24,7 @@ export default function AddTimesReminder({
   return (
     <Pressable
       onPress={() => {
+        readNotification(notification.docId);
         navigation.navigate("Enrollments", {
           userId: context.user.id,
           enrollments: context.enrollments.filter(

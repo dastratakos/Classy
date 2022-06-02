@@ -21,7 +21,10 @@ import { Notification, User } from "../types";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { Timestamp } from "firebase/firestore";
-import { getNotifications } from "../services/notifications";
+import {
+  getNotifications,
+  updateNotification,
+} from "../services/notifications";
 
 export default function Notifications() {
   const colorScheme = useColorScheme();
@@ -74,6 +77,21 @@ export default function Notifications() {
     setRefreshing(false);
   };
 
+  const readNotification = async (docId: string) => {
+    let newNotifications = [];
+    for (let section of notifications) {
+      const newData = section.data.map((notification) => {
+        if (notification.docId === docId) notification.unread = false;
+        return notification;
+      });
+
+      newNotifications.push({ title: section.title, data: newData });
+    }
+    setNotifications(newNotifications);
+
+    updateNotification(docId, { unread: false });
+  };
+
   return (
     <View
       style={[
@@ -87,15 +105,40 @@ export default function Notifications() {
         renderItem={({ item }: { item: Notification }) => {
           switch (item.type) {
             case "FRIEND_REQUEST_RECEIVED":
-              return <FriendRequestReceived notification={item} />;
+              return (
+                <FriendRequestReceived
+                  notification={item}
+                  readNotification={readNotification}
+                />
+              );
             case "FRIEND_REQUEST_ACCEPTED":
-              return <FriendRequestAccepted notification={item} />;
+              return (
+                <FriendRequestAccepted
+                  notification={item}
+                  readNotification={readNotification}
+                />
+              );
             case "MUTUAL_ENROLLMENT":
-              return <MutualEnrollment notification={item} />;
+              return (
+                <MutualEnrollment
+                  notification={item}
+                  readNotification={readNotification}
+                />
+              );
             case "ADD_COURSES_REMINDER":
-              return <AddCoursesReminder notification={item} />;
+              return (
+                <AddCoursesReminder
+                  notification={item}
+                  readNotification={readNotification}
+                />
+              );
             case "ADD_TIMES_REMINDER":
-              return <AddTimesReminder notification={item} />;
+              return (
+                <AddTimesReminder
+                  notification={item}
+                  readNotification={readNotification}
+                />
+              );
             default:
               return null;
           }

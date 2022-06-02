@@ -15,8 +15,10 @@ import { useNavigation } from "@react-navigation/core";
 
 export default function FriendRequestReceived({
   notification,
+  readNotification,
 }: {
   notification: Notification;
+  readNotification: (arg0: string) => void;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -39,6 +41,7 @@ export default function FriendRequestReceived({
   return (
     <Pressable
       onPress={() => {
+        readNotification(notification.docId);
         navigation.navigate("FriendProfile", { id: notification.friendId });
       }}
       style={[

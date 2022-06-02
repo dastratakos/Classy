@@ -16,8 +16,10 @@ import { useNavigation } from "@react-navigation/core";
 
 export default function MutualEnrollment({
   notification,
+  readNotification,
 }: {
   notification: Notification;
+  readNotification: (arg0: string) => void;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -38,13 +40,12 @@ export default function MutualEnrollment({
 
   if (loading) return <View style={notificationStyles.container} />;
 
-  const handleOnPress = async () => {
-    navigation.navigate("Course", { course });
-  };
-
   return (
     <Pressable
-      onPress={handleOnPress}
+      onPress={() => {
+        readNotification(notification.docId);
+        navigation.navigate("Course", { course });
+      }}
       style={[
         notificationStyles.container,
         { borderColor: Colors[colorScheme].tertiaryBackground },

@@ -12,8 +12,10 @@ import { useNavigation } from "@react-navigation/core";
 
 export default function AddCoursesReminder({
   notification,
+  readNotification,
 }: {
   notification: Notification;
+  readNotification: (arg0: string) => void;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -22,6 +24,7 @@ export default function AddCoursesReminder({
   return (
     <Pressable
       onPress={() => {
+        readNotification(notification.docId);
         navigation.navigate("SearchStack", {
           screen: "Search",
           params: { initialSelectedTab: 1 },
