@@ -111,7 +111,7 @@ export default function Home() {
               </Text>
               <Text style={styles.subtitle}>
                 <Text>Your </Text>
-                <Text style={{ fontWeight: "bold" }}>{daysOfWeek[today]}</Text>
+                <Text style={{ fontWeight: "500" }}>{daysOfWeek[today]}</Text>
               </Text>
             </View>
             <Pressable
@@ -153,7 +153,7 @@ export default function Home() {
       <View style={AppStyles.section}>
         <Text style={styles.subtitle}>
           <Text>Up next on </Text>
-          <Text style={{ fontWeight: "bold" }}>
+          <Text style={{ fontWeight: "500" }}>
             {daysOfWeek[today < 5 ? today + 1 : 1]}
           </Text>
         </Text>

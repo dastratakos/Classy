@@ -1,7 +1,8 @@
+import * as Haptics from "expo-haptics";
 import * as Notifications from "expo-notifications";
 
 import { Degree, Enrollment, WeekSchedule } from "../types";
-import { Icon, Icon2, Text, View } from "../components/Themed";
+import { FontAwesome, SimpleLineIcons, Text, View } from "../components/Themed";
 import {
   Platform,
   Pressable,
@@ -143,7 +144,7 @@ export default function Profile() {
               },
             ]}
           >
-            <Icon name="close" size={Layout.icon.small} />
+            <FontAwesome name="close" size={Layout.icon.small} />
           </Pressable>
         </View>
         <Separator />
@@ -281,7 +282,7 @@ export default function Profile() {
             {context.user.degrees ? (
               <View style={[AppStyles.row, { justifyContent: "center" }]}>
                 <View style={styles.iconWrapper}>
-                  <Icon2 name="pencil" size={Layout.icon.small} />
+                  <SimpleLineIcons name="pencil" size={Layout.icon.small} />
                 </View>
                 <View style={styles.aboutText}>
                   {context.user.degrees.map((d: Degree, i: number) => (
@@ -297,7 +298,7 @@ export default function Profile() {
             {context.user.gradYear ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon2 name="graduation" size={Layout.icon.small} />
+                  <SimpleLineIcons name="graduation" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{context.user.gradYear}</Text>
               </View>
@@ -306,7 +307,7 @@ export default function Profile() {
             {context.user.interests ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon2 name="puzzle" size={Layout.icon.small} />
+                  <SimpleLineIcons name="puzzle" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{context.user.interests}</Text>
               </View>
@@ -316,8 +317,10 @@ export default function Profile() {
             num={`${context.friendIds.length}`}
             text={"friend" + (context.friendIds.length === 1 ? "" : "s")}
             size={Layout.buttonHeight.large}
-            onPress={() => navigation.navigate("MyFriends")}
-            indicator={context.requestIds.length > 0}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              navigation.navigate("Friends", { id: context.user.id });
+            }}
           />
         </View>
         <View style={[AppStyles.row]}>

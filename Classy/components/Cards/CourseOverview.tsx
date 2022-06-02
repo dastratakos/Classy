@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   classFriendsText: {
-    fontWeight: "bold",
+    fontWeight: "500",
     marginTop: Layout.spacing.small,
     marginBottom: Layout.spacing.xsmall,
     alignSelf: "center",

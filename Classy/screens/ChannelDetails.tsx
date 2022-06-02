@@ -28,6 +28,7 @@ import { useNavigation } from "@react-navigation/core";
 import { uploadImage } from "../services/storage";
 import { getChannelId } from "../services/messages";
 import { Ionicons } from "../components/Themed";
+import DoubleProfilePhoto from "../components/DoubleProfilePhoto";
 
 export default function ChannelDetails() {
   const context = useContext(AppContext);
@@ -122,36 +123,12 @@ export default function ChannelDetails() {
       );
 
     return (
-      <View
-        style={[
-          AppStyles.row,
-          { justifyContent: "center", marginBottom: Layout.spacing.medium },
-        ]}
-      >
-        <View
-          style={{
-            height: Layout.photo.xlarge,
-            width: Layout.photo.xlarge,
-          }}
-        >
-          <ProfilePhoto
-            url={photoUrls[0]}
-            size={Layout.photo.xlarge * 0.7}
-            style={{ position: "absolute", right: 0, top: 0 }}
-          />
-          <ProfilePhoto
-            url={photoUrls[1]}
-            size={Layout.photo.xlarge * 0.7 + 2}
-            style={{
-              position: "absolute",
-              left: -2,
-              bottom: -2,
-              borderWidth: 2,
-              borderColor: Colors[colorScheme].background,
-            }}
-          />
-        </View>
-      </View>
+      <DoubleProfilePhoto
+        frontUrl={photoUrls[0]}
+        backUrl={photoUrls[1]}
+        size={Layout.photo.xlarge}
+        style={{ marginBottom: Layout.spacing.medium }}
+      />
     );
   };
 
@@ -273,7 +250,7 @@ export default function ChannelDetails() {
                     style={[
                       styles.input,
                       styles.groupName,
-                      { fontWeight: "bold" },
+                      { fontWeight: "500" },
                     ]}
                     autoCapitalize="words"
                     textContentType="name"
@@ -301,7 +278,7 @@ export default function ChannelDetails() {
                 </View>
               </>
             ) : (
-              <Text style={[styles.groupName, { fontWeight: "bold" }]}>
+              <Text style={[styles.groupName, { fontWeight: "500" }]}>
                 {groupName}
               </Text>
             )}

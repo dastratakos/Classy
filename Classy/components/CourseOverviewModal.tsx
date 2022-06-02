@@ -41,7 +41,7 @@ export default function CourseOverviewModal({
         </Text>
         <Text
           style={{
-            fontWeight: "bold",
+            fontWeight: "500",
             marginTop: Layout.spacing.small,
             alignSelf: "center",
           }}

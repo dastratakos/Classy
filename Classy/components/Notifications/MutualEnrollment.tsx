@@ -12,6 +12,7 @@ import AppContext from "../../context/Context";
 import { useContext } from "react";
 import ProfilePhoto from "../ProfilePhoto";
 import { termIdToFullName } from "../../utils";
+import notificationStyles from "./notificationStyles";
 
 export default function MutualEnrollment({
   friend,
@@ -38,65 +39,43 @@ export default function MutualEnrollment({
   };
 
   return (
-    <View
+    <Pressable
+      onPress={handleOnPress}
       style={[
-        styles.notificationContainer,
-        { borderBottomColor: Colors[colorScheme].tertiaryBackground },
+        notificationStyles.container,
+        { borderColor: Colors[colorScheme].tertiaryBackground },
       ]}
     >
-      <Pressable onPress={handleOnPress} style={styles.innerContainer}>
-        <ProfilePhoto
-          url={friend.photoUrl}
-          size={Layout.photo.xsmall}
-          style={{ marginRight: Layout.spacing.small }}
-        />
-        <View style={styles.textContainer}>
-          {enrollment.code.length > 0 && (
-            <Text style={styles.notificationText} numberOfLines={3}>
-              <Text
-                style={{ fontWeight: "bold" }}
-                onPress={() => {
-                  navigation.navigate("FriendProfile", { id: friend.id });
-                }}
-              >
-                {friend.name}{" "}
-              </Text>
-              <Text>just enrolled in </Text>
-              <Text style={{ fontWeight: "bold" }}>
-                {enrollment.code[0]}: {enrollment.title}{" "}
-              </Text>
-              <Text>for {termIdToFullName(enrollment.termId)}.</Text>
+      <ProfilePhoto url={friend.photoUrl} size={Layout.photo.xsmall} />
+      <View style={notificationStyles.textContainer}>
+        {enrollment.code.length > 0 && (
+          <Text style={notificationStyles.notificationText} numberOfLines={3}>
+            <Text
+              style={notificationStyles.pressableText}
+              onPress={() => {
+                navigation.navigate("FriendProfile", { id: friend.id });
+              }}
+            >
+              {friend.name}{" "}
             </Text>
-          )}
-        </View>
-        <Text
-          style={[styles.time, { color: Colors[colorScheme].secondaryText }]}
-        >
-          {time}
-        </Text>
-      </Pressable>
-    </View>
+            <Text>just enrolled in </Text>
+            <Text style={notificationStyles.pressableText}>
+              {enrollment.code[0]}: {enrollment.title}{" "}
+            </Text>
+            <Text>for {termIdToFullName(enrollment.termId)}.</Text>
+          </Text>
+        )}
+      </View>
+      <Text
+        style={[
+          notificationStyles.time,
+          { color: Colors[colorScheme].secondaryText },
+        ]}
+      >
+        {time}
+      </Text>
+    </Pressable>
   );
 }
 
-const styles = StyleSheet.create({
-  time: {
-    fontSize: Layout.text.medium,
-    paddingLeft: Layout.spacing.medium,
-  },
-  notificationText: {
-    fontSize: Layout.text.medium,
-    paddingLeft: Layout.spacing.xsmall,
-  },
-  notificationContainer: {
-    padding: Layout.spacing.large,
-    borderBottomWidth: 1,
-  },
-  innerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  textContainer: {
-    flex: 1,
-  },
-});
+const styles = StyleSheet.create({});

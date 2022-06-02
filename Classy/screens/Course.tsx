@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     marginBottom: Layout.spacing.small,
   },
   unitsWays: {
-    fontWeight: "bold",
+    fontWeight: "500",
     color: Colors.green,
     marginBottom: Layout.spacing.small,
   },

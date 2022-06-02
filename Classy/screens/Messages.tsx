@@ -4,18 +4,16 @@ import AppContext from "../context/Context";
 import { ChannelList } from "stream-chat-expo";
 import { Channel as ChannelType } from "stream-chat";
 import { StyleSheet } from "react-native";
-import { Text, View } from "../components/Themed";
+import { Text } from "../components/Themed";
 import { useNavigation } from "@react-navigation/core";
 import ProfilePhoto from "../components/ProfilePhoto";
 import Layout from "../constants/Layout";
-import AppStyles from "../styles/AppStyles";
-import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
+import DoubleProfilePhoto from "../components/DoubleProfilePhoto";
 
 export default function Messages() {
   const context = useContext(AppContext);
   const navigation = useNavigation();
-  const colorScheme = useColorScheme();
 
   const filters = { members: { $in: [context.user.id] } };
   const sort = { last_message_at: -1 };
@@ -45,35 +43,15 @@ export default function Messages() {
         // console.log("last message:", channel.state.messages.slice(-1));
 
         /* Get two users and display both images. */
-        const photo0 = filteredMembers[0].user.image;
-        const photo1 = filteredMembers[1].user.image;
+        const photo0: string = filteredMembers[0].user.image;
+        const photo1: string = filteredMembers[1].user.image;
 
         return (
-          <View style={AppStyles.row}>
-            <View
-              style={{
-                height: Layout.photo.xsmall,
-                width: Layout.photo.xsmall,
-              }}
-            >
-              <ProfilePhoto
-                url={photo0}
-                size={Layout.photo.xsmall * 0.7}
-                style={{ position: "absolute", right: 0, top: 0 }}
-              />
-              <ProfilePhoto
-                url={photo1}
-                size={Layout.photo.xsmall * 0.7 + 2}
-                style={{
-                  position: "absolute",
-                  left: -2,
-                  bottom: -2,
-                  borderWidth: 2,
-                  borderColor: Colors[colorScheme].background,
-                }}
-              />
-            </View>
-          </View>
+          <DoubleProfilePhoto
+            frontUrl={photo0}
+            backUrl={photo1}
+            size={Layout.photo.xsmall}
+          />
         );
       }
     }
