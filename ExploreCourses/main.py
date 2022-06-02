@@ -104,7 +104,7 @@ if __name__ == "__main__":
     """
     Step 2: Load all courses into dictionary of Course objects.
     """
-    all_courses = load_courses(from_pkl=True)
+    # all_courses = load_courses(from_pkl=True)
     # analyze_time_adjustment(all_courses)
     # analyze_start_and_end_times(all_courses)
 
@@ -120,6 +120,7 @@ if __name__ == "__main__":
     # firestore_connection.adjust_enrollment_times(all_courses)
     # firestore_connection.add_keywords_to_users()
     # firestore_connection.adjust_course_times()
+    firestore_connection.add_enrollment_colors()
 
     # while True:
     #     search = input("Enter a search word: ")

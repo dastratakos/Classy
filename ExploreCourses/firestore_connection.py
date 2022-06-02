@@ -1,4 +1,5 @@
 from pprint import pprint
+import random
 from unicodedata import name
 
 import firebase_admin
@@ -146,7 +147,7 @@ class FirestoreConnection:
 
         for doc in docs:
             print(f"doc.id: {doc.id}")
-            
+
             enrollment = doc.to_dict()
             courseId = int(enrollment["courseId"])
 
@@ -221,3 +222,33 @@ class FirestoreConnection:
 
             user_ref = self.db.collection(u"users").document(f"{id}")
             user_ref.update(data)
+
+    def add_enrollment_colors(self):
+        colors = [
+            "#C3291C" + "AA",
+            "#E25D33" + "AA",
+            "#FF7F0A" + "AA",
+            "#EDC14B" + "AA",
+            "#FFA098" + "AA",
+            "#D88177" + "AA",
+            "#397E49" + "AA",
+            "#5DB37E" + "AA",
+            "#4599DF" + "AA",
+            "#4350AF" + "AA",
+            "#832DA4" + "AA",
+            "#616161" + "AA",
+        ]
+
+        enrollments_ref = self.db.collection(u"enrollments")
+        docs = enrollments_ref.stream()
+
+        for doc in docs:
+            id = doc.id
+
+            data = {
+                u"color": random.choice(colors),
+            }
+
+            enrollment_ref = self.db.collection(
+                u"enrollments").document(f"{id}")
+            enrollment_ref.update(data)
