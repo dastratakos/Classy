@@ -49,6 +49,7 @@ export default function Button({
       <View
         style={[
           styles.container,
+          { paddingHorizontal: Layout.spacing.small },
           { backgroundColor: Colors[colorScheme].secondaryBackground },
           wide ? { width: "100%" } : null,
           containerStyle,
