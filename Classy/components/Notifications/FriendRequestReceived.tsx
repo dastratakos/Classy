@@ -56,7 +56,7 @@ export default function FriendRequestReceived({
           <Text>sent you a friend request.</Text>
         </Text>
       </View>
-      <View style={styles.acceptRejectContainer}>
+      {/* <View style={styles.acceptRejectContainer}>
         <Pressable onPress={() => console.log("Accept")}>
           <SimpleLineIcons
             name="check"
@@ -68,7 +68,7 @@ export default function FriendRequestReceived({
         <Pressable onPress={() => console.log("Decline")}>
           <SimpleLineIcons name="close" size={Layout.icon.large} />
         </Pressable>
-      </View>
+      </View> */}
       {notification.unread && <View style={notificationStyles.indicator} />}
       <Text
         style={[

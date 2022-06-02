@@ -17,6 +17,7 @@ import AddCoursesReminder from "../components/Notifications/AddCoursesReminder";
 import AddTimesReminder from "../components/Notifications/AddTimesReminder";
 import AppContext from "../context/Context";
 import Colors from "../constants/Colors";
+import { DAY_MILLISECONDS } from "../utils";
 import EmptyList from "../components/EmptyList";
 import FriendRequestAccepted from "../components/Notifications/FriendRequestAccepted";
 import FriendRequestReceived from "../components/Notifications/FriendRequestReceived";
@@ -52,14 +53,12 @@ export default function Notifications() {
 
     const notifications = await getNotifications(context.user.id);
 
-    const DAY_NANOSECONDS = 24 * 60 * 60 * 1000000000;
-
     let newArr = [];
     let earlierArr = [];
     for (let notification of notifications) {
       if (
-        Timestamp.now().nanoseconds - notification.timestamp.nanoseconds <
-        DAY_NANOSECONDS
+        Timestamp.now().toMillis() - notification.timestamp.toMillis() <
+        DAY_MILLISECONDS
       ) {
         newArr.push(notification);
       } else {

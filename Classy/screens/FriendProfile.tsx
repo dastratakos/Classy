@@ -188,7 +188,6 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     const today = now.toDate().getDay() - 1;
 
     if (!weekRes.week[today]) {
-      console.log("Not in class");
       setInClass(false);
       return;
     }
@@ -200,12 +199,10 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         timeIsEarlier(event.startInfo, now) &&
         timeIsEarlier(now, event.endInfo)
       ) {
-        console.log("In class");
         setInClass(true);
         return;
       }
     }
-    console.log("Not in class");
     setInClass(false);
   };
 

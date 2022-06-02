@@ -159,34 +159,49 @@ export const getTimeString = (
   });
 };
 
+export const SECOND_MILLISECONDS = 1000;
+export const MINUTE_MILLISECONDS = 60 * SECOND_MILLISECONDS;
+export const HOUR_MILLISECONDS = 60 * MINUTE_MILLISECONDS;
+export const DAY_MILLISECONDS = 24 * HOUR_MILLISECONDS;
+export const WEEK_MILLISECONDS = 7 * DAY_MILLISECONDS;
+
 export const getTimeSinceString = (
   timestamp: Timestamp,
   timeZone: string = "America/Los_Angeles"
 ) => {
   if (!timestamp) return "";
 
-  return "10m";
+  const timeDiff = Timestamp.now().toMillis() - timestamp.toMillis();
 
-  // TODO: find time since Date.now()
+  // console.log(
+  //   "timeDiff:",
+  //   timeDiff,
+  //   Timestamp.now().toDate().toTimeString(),
+  //   timestamp.toDate().toTimeString()
+  // );
 
-  // TODO: if less than 1 hour, return 3m, 48m, etc.
+  if (timeDiff < HOUR_MILLISECONDS) {
+    return `${Math.floor(timeDiff / MINUTE_MILLISECONDS + 1)}m`;
+  }
+  if (timeDiff < DAY_MILLISECONDS) {
+    return `${Math.floor(timeDiff / HOUR_MILLISECONDS + 1)}h`;
+  }
+  if (timeDiff < WEEK_MILLISECONDS) {
+    return `${Math.floor(timeDiff / DAY_MILLISECONDS + 1)}d`;
+  }
+  if (timeDiff < 4 * WEEK_MILLISECONDS) {
+    return `${Math.floor(timeDiff / WEEK_MILLISECONDS + 1)}w`;
+  }
 
-  // TODO: if less than 24 hours, return 2h, 3h, etc.
+  const now = Timestamp.now().toDate();
+  const then = timestamp.toDate();
 
-  // TODO: if less than 7 days, return 1d, 3d, etc.
+  const monthDiff =
+    now.getMonth() -
+    then.getMonth() +
+    12 * (now.getFullYear() - then.getFullYear());
 
-  // TODO: if less than 1 month, return 1w, 3w, etc.
-
-  // TODO: else return 1mo, 3mo, etc.
-
-  const date = new Date(timestamp.seconds * 1000);
-  return date.toLocaleString("en-US", {
-    // return timestamp.toDate().toLocaleString("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-    timeZone: timeZone,
-  });
+  return `${monthDiff}mo`;
 };
 
 export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {

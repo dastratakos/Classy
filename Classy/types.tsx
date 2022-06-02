@@ -155,15 +155,17 @@ export type CourseOverview = {
 
 export type HomeData = { today: CourseOverview[]; nextUp: CourseOverview[] };
 
+export type NotificationType =
+  | "FRIEND_REQUEST_RECEIVED"
+  | "FRIEND_REQUEST_ACCEPTED"
+  | "MUTUAL_ENROLLMENT"
+  | "ADD_COURSES_REMINDER"
+  | "ADD_TIMES_REMINDER";
+
 export type Notification = {
   docId: string;
   userId: string;
-  type:
-    | "FRIEND_REQUEST_RECEIVED"
-    | "FRIEND_REQUEST_ACCEPTED"
-    | "MUTUAL_ENROLLMENT"
-    | "ADD_COURSES_REMINDER"
-    | "ADD_TIMES_REMINDER";
+  type: NotificationType;
   timestamp: Timestamp;
   friendId: string;
   courseId: number;

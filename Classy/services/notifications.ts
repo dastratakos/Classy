@@ -1,4 +1,4 @@
-import { Notification } from "../types";
+import { Notification, NotificationType } from "../types";
 import {
   addDoc,
   collection,
@@ -32,20 +32,20 @@ export const getNotifications = async (userId: string) => {
 
 export const addNotification = async (
   userId: string,
-  type: string,
+  type: NotificationType,
   friendId?: string,
   courseId?: number,
   termId?: string
 ) => {
-  const data = {
+  const data: Partial<Notification> = {
     userId,
     type,
     timestamp: Timestamp.now(),
-    friendId,
-    courseId,
-    termId,
     unread: true,
   };
+  if (friendId) data.friendId = friendId;
+  if (courseId) data.courseId = courseId;
+  if (termId) data.termId = termId;
 
   await addDoc(collection(db, "notifications"), data);
 
