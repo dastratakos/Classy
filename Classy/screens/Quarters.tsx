@@ -76,12 +76,10 @@ export default function Quarters({ route }: QuartersProps) {
                 </View>
               </View>
             ))}
-          {route.params.user.id === context.user.id && (
-            <Button
-              text="View Full Calendar"
-              onPress={() => navigation.navigate("FullCalendar")}
-            />
-          )}
+          <Button
+            text="View Full Calendar"
+            onPress={() => navigation.navigate("FullCalendar")}
+          />
         </View>
       </ScrollView>
     </>
