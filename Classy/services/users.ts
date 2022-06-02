@@ -17,7 +17,7 @@ import {
 
 import { User } from "../types";
 import { db } from "../firebase";
-import { getEnrollments } from "./enrollments";
+import { getEnrollmentsRaw } from "./enrollments";
 
 export const getUser = async (id: string) => {
   const docRef = doc(db, "users", id);
@@ -63,7 +63,7 @@ export const updateUser = async (userId: string, data: Partial<User>) => {
 
 export const deleteUserCompletely = async (userId: string) => {
   /* 1. Get all Enrollments and delete. */
-  const enrollments = await getEnrollments(userId);
+  const enrollments = await getEnrollmentsRaw(userId);
   for (let enrollment of enrollments) {
     /* 1a. Delete enrollment doc. */
     await deleteDoc(doc(db, "enrollments", enrollment.docId));

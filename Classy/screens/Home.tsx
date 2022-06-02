@@ -52,7 +52,7 @@ export default function Home() {
     setRefreshing(true);
 
     const res = await getEnrollmentsForTerm(
-      context.user.id,
+      context.friendIds,
       context.user.id,
       getCurrentTermId()
     );

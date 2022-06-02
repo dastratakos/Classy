@@ -76,14 +76,13 @@ export default function Login({ route }: LoginProps) {
     const user = await getUser(id);
     context.setUser(user);
 
-    const [friendIds, requestIds, enrollments] = await Promise.all([
+    const [friendIds, requestIds] = await Promise.all([
       getFriendIds(id),
       getRequestIds(id),
-      getEnrollments(id),
     ]);
     context.setFriendIds(friendIds);
     context.setRequestIds(requestIds);
-    context.setEnrollments(enrollments);
+    context.setEnrollments(await getEnrollments(id, friendIds));
 
     connectStreamChatUser(id, user.name, user.photoUrl);
 

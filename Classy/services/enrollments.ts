@@ -14,10 +14,10 @@ import {
 
 import { db } from "../firebase";
 import { termIdToYear } from "../utils";
-import { getFriendIds, getNumFriendsInCourse } from "./friends";
+import { getNumFriendsInCourse } from "./friends";
 
 export const getEnrollmentsForTerm = async (
-  myId: string,
+  myFriendIds: string[],
   userId: string,
   termId: string
 ) => {
@@ -35,11 +35,10 @@ export const getEnrollmentsForTerm = async (
   });
 
   /* Collect number of friends per enrollment. */
-  const friendIds = await getFriendIds(myId);
   for (let i = 0; i < res.length; i++) {
     res[i].numFriends = await getNumFriendsInCourse(
       res[i].courseId,
-      friendIds,
+      myFriendIds,
       termId
     );
   }
@@ -47,7 +46,7 @@ export const getEnrollmentsForTerm = async (
   return res;
 };
 
-export const getEnrollments = async (userId: string) => {
+export const getEnrollments = async (userId: string, myFriendIds: string[]) => {
   const q = query(
     collection(db, "enrollments"),
     where("userId", "==", userId),
@@ -60,12 +59,11 @@ export const getEnrollments = async (userId: string) => {
     res.push({ ...doc.data(), docId: doc.id } as Enrollment);
   });
 
-  /* Collect number of friends per enrollment. */
-  const friendIds = await getFriendIds(userId);
+  /* Collect number of my friends per enrollment. */
   for (let i = 0; i < res.length; i++) {
     res[i].numFriends = await getNumFriendsInCourse(
       res[i].courseId,
-      friendIds,
+      myFriendIds,
       res[i].termId
     );
   }
@@ -73,24 +71,20 @@ export const getEnrollments = async (userId: string) => {
   return res;
 };
 
-export const getOverlap = async (userId: string, friendId: string) => {
-  const userEnrollments = await getEnrollments(userId);
-  const friendEnrollments = await getEnrollments(friendId);
-
-  const friendEnrollmentIds = new Set<number>();
-  friendEnrollments.forEach((enrollment) =>
-    friendEnrollmentIds.add(enrollment.courseId)
+export const getEnrollmentsRaw = async (userId: string) => {
+  const q = query(
+    collection(db, "enrollments"),
+    where("userId", "==", userId),
+    orderBy("code")
   );
 
-  const overlap = userEnrollments.filter((enrollment) =>
-    friendEnrollmentIds.has(enrollment.courseId)
-  );
+  const res: Enrollment[] = [];
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    res.push({ ...doc.data(), docId: doc.id } as Enrollment);
+  });
 
-  let courseSimilarity = 0;
-  if (userEnrollments.length)
-    courseSimilarity = (100 * overlap.length) / userEnrollments.length;
-
-  return { courseSimilarity, overlap };
+  return res;
 };
 
 export const addEnrollment = async (

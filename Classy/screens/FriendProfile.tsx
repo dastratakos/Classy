@@ -38,7 +38,7 @@ import {
   termIdToQuarterName,
   timeIsEarlier,
 } from "../utils";
-import { getEnrollmentsForTerm, getOverlap } from "../services/enrollments";
+import { getEnrollments } from "../services/enrollments";
 import { useContext, useEffect, useRef, useState } from "react";
 
 import ActionSheet from "react-native-actionsheet";
@@ -79,6 +79,9 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const [overlap, setOverlap] = useState<Enrollment[]>([]);
   const [numFriends, setNumFriends] = useState<string>("");
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [currentEnrollments, setCurrentEnrollments] = useState<Enrollment[]>(
+    []
+  );
   const [quarterName, setQuarterName] = useState<string>("");
   const [weekRes, setWeekRes] = useState<{
     week: WeekSchedule;
@@ -122,6 +125,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 
     setQuarterName(termIdToQuarterName(getCurrentTermId()));
 
+    /* Get friend status. */
     const res = await getFriendStatus(context.user.id, route.params.id);
     setFriendStatus(res.friendStatus);
     setFriendDocId(res.friendDocId);
@@ -130,21 +134,39 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       setNumFriends(`${res.length}`);
     });
 
+    /* Get enrollments. */
     setEnrollmentsLoading(true);
 
-    const res2 = await getEnrollmentsForTerm(
-      context.user.id,
+    const friendEnrollments = await getEnrollments(
       route.params.id,
-      getCurrentTermId()
+      context.friendIds
     );
-    setEnrollments(res2);
-    setWeekRes(getWeekFromEnrollments(res2));
+    setEnrollments(friendEnrollments);
+    const currentEnrollments = friendEnrollments.filter(
+      (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
+    );
+    setCurrentEnrollments(currentEnrollments);
+    setWeekRes(getWeekFromEnrollments(currentEnrollments));
 
     setEnrollmentsLoading(false);
 
-    const res3 = await getOverlap(context.user.id, route.params.id);
-    setCourseSimilarity(res3.courseSimilarity);
-    setOverlap(res3.overlap);
+    /* Get overlap and course similarity. */
+    const friendEnrollmentIds = new Set<number>();
+    friendEnrollments.forEach((enrollment) =>
+      friendEnrollmentIds.add(enrollment.courseId)
+    );
+
+    const overlap = context.enrollments.filter((enrollment) =>
+      friendEnrollmentIds.has(enrollment.courseId)
+    );
+
+    setOverlap(overlap);
+
+    let courseSimilarity = 0;
+    if (context.enrollments.length)
+      courseSimilarity = (100 * overlap.length) / context.enrollments.length;
+
+    setCourseSimilarity(courseSimilarity);
 
     setRefreshing(false);
   };
@@ -154,6 +176,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     const today = now.toDate().getDay() - 1;
 
     if (!weekRes.week[today]) {
+      console.log("Not in class");
       setInClass(false);
       return;
     }
@@ -165,11 +188,12 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         timeIsEarlier(event.startInfo, now) &&
         timeIsEarlier(now, event.endInfo)
       ) {
-        console.log("event:", event);
+        console.log("In class");
         setInClass(true);
         return;
       }
     }
+    console.log("Not in class");
     setInClass(false);
   };
 
@@ -357,7 +381,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       label: "Courses",
       component: (
         <EnrollmentList
-          enrollments={enrollments}
+          enrollments={currentEnrollments}
           emptyElement={
             enrollmentsLoading ? (
               <ActivityIndicator />

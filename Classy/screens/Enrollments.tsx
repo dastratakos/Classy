@@ -41,7 +41,7 @@ export default function Enrollments({ route }: EnrollmentsProps) {
       } else {
         setEnrollments(
           await getEnrollmentsForTerm(
-            context.user.id,
+            context.friendIds,
             route.params.userId,
             route.params.termId
           )

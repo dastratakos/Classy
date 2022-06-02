@@ -15,8 +15,8 @@ export default function EnrollmentList({
   // TODO: use FlatList
   return (
     <>
-      {enrollments.map((enrollment) => (
-        <View key={enrollment.courseId.toString()}>
+      {enrollments.map((enrollment, i) => (
+        <View key={enrollment.courseId.toString() + i.toString()}>
           <EnrollmentCard enrollment={enrollment} />
         </View>
       ))}
