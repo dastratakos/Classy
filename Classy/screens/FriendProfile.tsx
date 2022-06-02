@@ -66,6 +66,7 @@ import { Timestamp } from "firebase/firestore";
 import { getUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { addNotification } from "../services/notifications";
 
 export default function FriendProfile({ route }: FriendProfileProps) {
   const navigation = useNavigation();
@@ -219,6 +220,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       user.expoPushToken,
       `${context.user.name} sent you a friend request`
     );
+
+    addNotification(user.id, "FRIEND_REQUEST_RECEIVED", context.user.id);
   };
 
   const handleAcceptRequest = async () => {
@@ -231,6 +234,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       user.expoPushToken,
       `${context.user.name} accepted your friend request`
     );
+
+    addNotification(user.id, "FRIEND_REQUEST_ACCEPTED", context.user.id);
   };
 
   const handleDeleteFriendship = async () => {

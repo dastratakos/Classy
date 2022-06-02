@@ -48,6 +48,25 @@ export const addNotification = async (
   };
 
   await addDoc(collection(db, "notifications"), data);
+
+  /**
+   * If the user just accepted a friend request, we need to delete the original
+   * FRIEND_REQUEST_RECEIVED notification.
+   */
+  if (type === "FRIEND_REQUEST_ACCEPTED") {
+    const q = query(
+      collection(db, "notifications"),
+      where("userId", "==", friendId),
+      where("type", "==", "FRIEND_REQUEST_RECEIVED"),
+      where("friendId", "==", userId)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach((res) => {
+      deleteDoc(doc(db, "notifications", res.id));
+    });
+  }
 };
 
 export const updateNotification = async (

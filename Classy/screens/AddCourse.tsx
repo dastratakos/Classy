@@ -2,6 +2,7 @@ import * as Haptics from "expo-haptics";
 
 import { ActivityIndicator, Text, View } from "../components/Themed";
 import { AddCourseProps, Schedule } from "../types";
+import Colors, { enrollmentColors } from "../constants/Colors";
 import { ScrollView, StyleSheet } from "react-native";
 import {
   getCurrentTermId,
@@ -15,11 +16,11 @@ import { useContext, useEffect, useState } from "react";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
-import Colors, { enrollmentColors } from "../constants/Colors";
 import Layout from "../constants/Layout";
 import ScheduleCard from "../components/Cards/ScheduleCard";
 import SquareButton from "../components/Buttons/SquareButton";
 import { addEnrollment } from "../services/enrollments";
+import { addNotification } from "../services/notifications";
 import { getCourseTerms } from "../services/courses";
 import { getFriendsInCourse } from "../services/friends";
 import useColorScheme from "../hooks/useColorScheme";
@@ -159,6 +160,14 @@ export default function AddCourse({ route }: AddCourseProps) {
         `${context.user.name} just enrolled in ${course.code.join(", ")}: ${
           course.title
         } for ${quarterText}`
+      );
+
+      addNotification(
+        friend.id,
+        "MUTUAL_ENROLLMENT",
+        context.user.id,
+        course.courseId,
+        context.selectedTerm
       );
     }
 
