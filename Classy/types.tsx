@@ -155,47 +155,21 @@ export type CourseOverview = {
 
 export type HomeData = { today: CourseOverview[]; nextUp: CourseOverview[] };
 
-export type AddCoursesReminderNotification = {
+export type Notification = {
+  docId: string;
+  userId: string;
+  type:
+    | "FRIEND_REQUEST_RECEIVED"
+    | "FRIEND_REQUEST_ACCEPTED"
+    | "MUTUAL_ENROLLMENT"
+    | "ADD_COURSES_REMINDER"
+    | "ADD_TIMES_REMINDER";
   timestamp: Timestamp;
-  termId: string;
-};
-
-export type AddTimesReminderNotification = {
-  timestamp: Timestamp;
-  termId: string;
-};
-
-export type FriendRequestAcceptedNotification = {
-  friendId: string;
-  timestamp: Timestamp;
-};
-
-export type FriendRequestReceivedNotification = {
-  friendId: string;
-  timestamp: Timestamp;
-};
-
-export type MutualEnrollmentNotification = {
   friendId: string;
   courseId: number;
   termId: string;
-  timestamp: Timestamp;
+  unread: boolean;
 };
-
-export type Notification = {
-  type: string;
-  notification:
-    | AddCoursesReminderNotification
-    | AddTimesReminderNotification
-    | FriendRequestAcceptedNotification
-    | FriendRequestReceivedNotification
-    | MutualEnrollmentNotification;
-};
-
-export type NotificationData = {
-  title: string;
-  data: Notification[];
-}[];
 
 export type RootStackParamList = {
   AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;

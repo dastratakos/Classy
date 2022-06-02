@@ -1,9 +1,4 @@
-import {
-  Course,
-  Enrollment,
-  MutualEnrollmentNotification,
-  User,
-} from "../../types";
+import { Course, Notification, User } from "../../types";
 import { Pressable, StyleSheet } from "react-native";
 import { Text, View } from "../Themed";
 import { getTimeSinceString, termIdToFullName } from "../../utils";
@@ -21,10 +16,10 @@ import { useNavigation } from "@react-navigation/core";
 
 export default function MutualEnrollment({
   notification,
-  indicator = false,
+  readNotification,
 }: {
-  notification: MutualEnrollmentNotification;
-  indicator?: boolean;
+  notification: Notification;
+  readNotification: (arg0: string) => void;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -45,13 +40,12 @@ export default function MutualEnrollment({
 
   if (loading) return <View style={notificationStyles.container} />;
 
-  const handleOnPress = async () => {
-    navigation.navigate("Course", { course });
-  };
-
   return (
     <Pressable
-      onPress={handleOnPress}
+      onPress={() => {
+        readNotification(notification.docId);
+        navigation.navigate("Course", { course });
+      }}
       style={[
         notificationStyles.container,
         { borderColor: Colors[colorScheme].tertiaryBackground },
@@ -77,7 +71,7 @@ export default function MutualEnrollment({
           </Text>
         )}
       </View>
-      {indicator && <View style={notificationStyles.indicator} />}
+      {notification.unread && <View style={notificationStyles.indicator} />}
       <Text
         style={[
           notificationStyles.time,
