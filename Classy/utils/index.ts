@@ -159,6 +159,36 @@ export const getTimeString = (
   });
 };
 
+export const getTimeSinceString = (
+  timestamp: Timestamp,
+  timeZone: string = "America/Los_Angeles"
+) => {
+  if (!timestamp) return "";
+
+  return "10m";
+
+  // TODO: find time since Date.now()
+
+  // TODO: if less than 1 hour, return 3m, 48m, etc.
+
+  // TODO: if less than 24 hours, return 2h, 3h, etc.
+
+  // TODO: if less than 7 days, return 1d, 3d, etc.
+
+  // TODO: if less than 1 month, return 1w, 3w, etc.
+
+  // TODO: else return 1mo, 3mo, etc.
+
+  const date = new Date(timestamp.seconds * 1000);
+  return date.toLocaleString("en-US", {
+    // return timestamp.toDate().toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+    timeZone: timeZone,
+  });
+};
+
 export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
   let week: WeekSchedule = [
     {

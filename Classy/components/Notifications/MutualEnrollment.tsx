@@ -1,40 +1,51 @@
+import {
+  Course,
+  Enrollment,
+  MutualEnrollmentNotification,
+  User,
+} from "../../types";
+import { Pressable, StyleSheet } from "react-native";
 import { Text, View } from "../Themed";
-import { StyleSheet, Pressable } from "react-native";
+import { getTimeSinceString, termIdToFullName } from "../../utils";
+import { useContext, useEffect, useState } from "react";
 
-import { Enrollment } from "../../types";
-import AppStyles from "../../styles/AppStyles";
+import AppContext from "../../context/Context";
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
+import ProfilePhoto from "../ProfilePhoto";
 import { getCourse } from "../../services/courses";
+import { getUser } from "../../services/users";
+import notificationStyles from "./notificationStyles";
 import useColorScheme from "../../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import AppContext from "../../context/Context";
-import { useContext } from "react";
-import ProfilePhoto from "../ProfilePhoto";
-import { termIdToFullName } from "../../utils";
-import notificationStyles from "./notificationStyles";
 
 export default function MutualEnrollment({
-  friend,
-  time,
-  enrollment,
+  notification,
+  indicator = false,
 }: {
-  friend: {
-    id: string;
-    name: string;
-    major?: string;
-    gradYear?: string;
-    photoUrl: string;
-  };
-  time: string;
-  enrollment: Enrollment;
+  notification: MutualEnrollmentNotification;
+  indicator?: boolean;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
 
+  const [friend, setFriend] = useState<User>({} as User);
+  const [course, setCourse] = useState<Course>({} as Course);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const loadComponent = async () => {
+      setFriend(await getUser(notification.friendId));
+      setCourse(await getCourse(notification.courseId));
+      setLoading(false);
+    };
+    loadComponent();
+  }, []);
+
+  if (loading) return <View style={notificationStyles.container} />;
+
   const handleOnPress = async () => {
-    const course = await getCourse(enrollment.courseId);
     navigation.navigate("Course", { course });
   };
 
@@ -48,7 +59,7 @@ export default function MutualEnrollment({
     >
       <ProfilePhoto url={friend.photoUrl} size={Layout.photo.xsmall} />
       <View style={notificationStyles.textContainer}>
-        {enrollment.code.length > 0 && (
+        {course.code.length > 0 && (
           <Text style={notificationStyles.notificationText} numberOfLines={3}>
             <Text
               style={notificationStyles.pressableText}
@@ -60,19 +71,20 @@ export default function MutualEnrollment({
             </Text>
             <Text>just enrolled in </Text>
             <Text style={notificationStyles.pressableText}>
-              {enrollment.code[0]}: {enrollment.title}{" "}
+              {course.code[0]}: {course.title}{" "}
             </Text>
-            <Text>for {termIdToFullName(enrollment.termId)}.</Text>
+            <Text>for {termIdToFullName(notification.termId)}.</Text>
           </Text>
         )}
       </View>
+      {indicator && <View style={notificationStyles.indicator} />}
       <Text
         style={[
           notificationStyles.time,
           { color: Colors[colorScheme].secondaryText },
         ]}
       >
-        {time}
+        {getTimeSinceString(notification.timestamp)}
       </Text>
     </Pressable>
   );

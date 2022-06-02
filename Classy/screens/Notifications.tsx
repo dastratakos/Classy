@@ -15,16 +15,15 @@ import { useContext, useEffect, useState } from "react";
 import AddCoursesReminder from "../components/Notifications/AddCoursesReminder";
 import AddTimesReminder from "../components/Notifications/AddTimesReminder";
 import AppContext from "../context/Context";
-import AppStyles from "../styles/AppStyles";
 import FriendRequestAccepted from "../components/Notifications/FriendRequestAccepted";
 import FriendRequestReceived from "../components/Notifications/FriendRequestReceived";
 import FriendRequestsNotification from "../components/Notifications/FriendRequestsNotification";
 import Layout from "../constants/Layout";
 import MutualEnrollment from "../components/Notifications/MutualEnrollment";
-import ProfilePhoto from "../components/ProfilePhoto";
-import { User } from "../types";
+import { NotificationData, User } from "../types";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { Timestamp } from "firebase/firestore";
 
 const DATA = [
   {
@@ -32,44 +31,26 @@ const DATA = [
     data: [
       {
         type: "FRIEND_REQUEST_RECEIVED",
-        friend: {
-          id: "vkk5ngcfnYgjCMDqXb65YZtpquM2",
-          name: "Grace Alwan",
-          photoUrl:
-            "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/6K90G2P5LbT54j29CShLJC0IqdO2%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
+        notification: {
+          friendId: "vkk5ngcfnYgjCMDqXb65YZtpquM2",
+          timestamp: Timestamp.now(),
         },
-        time: "2h",
-        enrollment: null,
-        termId: "0",
       },
       {
         type: "FRIEND_REQUEST_ACCEPTED",
-        friend: {
-          id: "vkk5ngcfnYgjCMDqXb65YZtpquM2",
-          name: "Tara Jones",
-          photoUrl:
-            "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/6K90G2P5LbT54j29CShLJC0IqdO2%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
+        notification: {
+          friendId: "vkk5ngcfnYgjCMDqXb65YZtpquM2",
+          timestamp: Timestamp.now(),
         },
-        time: "3h",
-        enrollment: null,
-        termId: "0",
       },
       {
         type: "MUTUAL_ENROLLMENT",
-        friend: {
-          id: "vkk5ngcfnYgjCMDqXb65YZtpquM2",
-          name: "Jess Yeung",
-          photoUrl:
-            "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/6K90G2P5LbT54j29CShLJC0IqdO2%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
-        },
-        time: "4h",
-        enrollment: {
-          code: ["CS 221"],
+        notification: {
+          friendId: "vkk5ngcfnYgjCMDqXb65YZtpquM2",
+          timestamp: Timestamp.now(),
           courseId: 105730,
-          termId: 1226,
-          title: "Artificial Intelligence: Principles and Techniques",
+          termId: "1226",
         },
-        termId: "0",
       },
     ],
   },
@@ -78,29 +59,24 @@ const DATA = [
     data: [
       {
         type: "ADD_COURSES_REMINDER",
-        friend: null,
-        time: "1d",
-        enrollment: null,
-        termId: "0",
+        notification: {
+          timestamp: Timestamp.now(),
+          termId: "1226"
+        },
       },
       {
         type: "ADD_TIMES_REMINDER",
-        friend: null,
-        time: "3d",
-        enrollment: null,
-        termId: "1226",
+        notification: {
+          timestamp: Timestamp.now(),
+          termId: "1226",
+        },
       },
       {
         type: "FRIEND_REQUEST_ACCEPTED",
-        friend: {
-          id: "vkk5ngcfnYgjCMDqXb65YZtpquM2",
-          name: "Dean Stratakos",
-          photoUrl:
-            "https://firebasestorage.googleapis.com/v0/b/cs194w-team4.appspot.com/o/6K90G2P5LbT54j29CShLJC0IqdO2%2FprofilePhoto.jpg?alt=media&token=b6c8dda2-80a2-48ec-b9ad-0feadb38e1c8",
+        notification: {
+          friendId: "vkk5ngcfnYgjCMDqXb65YZtpquM2",
+          timestamp: Timestamp.now(),
         },
-        time: "1w",
-        enrollment: null,
-        termId: "0",
       },
     ],
   },
@@ -111,7 +87,7 @@ export default function Notifications() {
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
 
-  const [notifications, setNotifications] = useState(DATA);
+  const [notifications, setNotifications] = useState<NotificationData>(DATA);
   const [requests, setRequests] = useState<User[]>([]);
 
   const [refreshing, setRefreshing] = useState<boolean>(true);
@@ -148,30 +124,20 @@ export default function Notifications() {
       ]}
     >
       <SectionList
-        sections={DATA} // TODO update to real data from not dummy data
-        keyExtractor={(item, index) => item.type + item.time + index}
+        sections={notifications} // TODO update to real data from not dummy data
+        keyExtractor={(item, index) => item.type + index}
         renderItem={({ item }) => {
           switch (item.type) {
             case "FRIEND_REQUEST_RECEIVED":
-              return (
-                <FriendRequestReceived friend={item.friend} time={item.time} />
-              );
+              return <FriendRequestReceived notification={item.notification} />;
             case "FRIEND_REQUEST_ACCEPTED":
-              return (
-                <FriendRequestAccepted friend={item.friend} time={item.time} />
-              );
+              return <FriendRequestAccepted notification={item.notification} />;
             case "MUTUAL_ENROLLMENT":
-              return (
-                <MutualEnrollment
-                  friend={item.friend}
-                  time={item.time}
-                  enrollment={item.enrollment}
-                />
-              );
+              return <MutualEnrollment notification={item.notification} />;
             case "ADD_COURSES_REMINDER":
-              return <AddCoursesReminder time={item.time} />;
+              return <AddCoursesReminder notification={item.notification} />;
             case "ADD_TIMES_REMINDER":
-              return <AddTimesReminder time={item.time} termId={item.termId} />;
+              return <AddTimesReminder notification={item.notification} />;
             default:
               return null;
           }

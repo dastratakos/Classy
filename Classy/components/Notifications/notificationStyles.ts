@@ -16,13 +16,13 @@ export default StyleSheet.create({
   notificationText: {
     fontSize: Layout.text.medium,
     paddingLeft: Layout.spacing.xsmall,
+    paddingRight: Layout.spacing.medium,
   },
   pressableText: {
     fontWeight: "600",
   },
   time: {
     fontSize: Layout.text.medium,
-    paddingLeft: Layout.spacing.medium,
   },
   squareImage: {
     height: Layout.photo.xsmall,

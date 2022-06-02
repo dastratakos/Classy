@@ -1,20 +1,21 @@
 import { Image, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "../Themed";
+import { getTimeSinceString, termIdToFullName } from "../../utils";
 
+import { AddTimesReminderNotification } from "../../types";
 import AppContext from "../../context/Context";
 import Colors from "../../constants/Colors";
 import notificationStyles from "./notificationStyles";
-import { termIdToFullName } from "../../utils";
 import useColorScheme from "../../hooks/useColorScheme";
 import { useContext } from "react";
 import { useNavigation } from "@react-navigation/core";
 
-export default function AddCoursesReminder({
-  time,
-  termId,
+export default function AddTimesReminder({
+  notification,
+  indicator = false,
 }: {
-  time: string;
-  termId: string;
+  notification: AddTimesReminderNotification;
+  indicator?: boolean;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -25,7 +26,7 @@ export default function AddCoursesReminder({
       onPress={() => {
         navigation.navigate("Enrollments", {
           userId: context.user.id,
-          termId,
+          termId: notification.termId,
         });
       }}
       style={[
@@ -42,17 +43,20 @@ export default function AddCoursesReminder({
           <Text>Reminder to input your </Text>
           <Text style={notificationStyles.pressableText}>class times </Text>
           <Text>for </Text>
-          <Text style={notificationStyles.pressableText}>{termIdToFullName(termId)}</Text>
+          <Text style={notificationStyles.pressableText}>
+            {termIdToFullName(notification.termId)}
+          </Text>
           <Text>!</Text>
         </Text>
       </View>
+      {indicator && <View style={notificationStyles.indicator} />}
       <Text
         style={[
           notificationStyles.time,
           { color: Colors[colorScheme].secondaryText },
         ]}
       >
-        {time}
+        {getTimeSinceString(notification.timestamp)}
       </Text>
     </Pressable>
   );
