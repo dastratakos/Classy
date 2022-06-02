@@ -1,17 +1,24 @@
 import * as React from "react";
 
+import { ColorSchemeName, Button as RNButton } from "react-native";
 import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
 } from "@react-navigation/native";
-import { RootStackParamList, RootTabParamList } from "../types";
+import {
+  ProfileStackScreenProps,
+  RootStackParamList,
+  RootTabParamList,
+} from "../types";
 
+import AddDegree from "../screens/AddDegree";
 import AuthStackNavigator from "./AuthStackNavigator";
-import { ColorSchemeName } from "react-native";
 import Colors from "../constants/Colors";
+import EditDegree from "../screens/EditDegree";
 import { FontAwesome } from "@expo/vector-icons";
 import HomeStackNavigator from "./HomeStackNavigator";
+import Layout from "../constants/Layout";
 import LinkingConfiguration from "./LinkingConfiguration";
 import ManageAccount from "../screens/ManageAccount";
 import NotificationStackNavigator from "./NotificationStackNavigator";
@@ -22,9 +29,6 @@ import SelectQuarter from "../screens/SelectQuarter";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import useColorScheme from "../hooks/useColorScheme";
-import Layout from "../constants/Layout";
-import AddDegree from "../screens/AddDegree";
-import EditDegree from "../screens/EditDegree";
 
 /**
  * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
@@ -71,28 +75,79 @@ function RootNavigator() {
         <Stack.Screen
           name="ManageAccount"
           component={ManageAccount}
-          options={{ title: "Manage Account" }}
+          options={({
+            navigation,
+          }: ProfileStackScreenProps<"ManageAccount">) => ({
+            title: "Profile",
+            headerRight: () => (
+              <RNButton
+                title="Done"
+                color={Colors.lightBlue}
+                onPress={() => navigation.goBack()}
+              />
+            ),
+          })}
         />
         <Stack.Screen
           name="SelectQuarter"
           component={SelectQuarter}
-          options={{ title: "Select Quarter" }}
+          options={({
+            navigation,
+          }: ProfileStackScreenProps<"SelectQuarter">) => ({
+            title: "Select Quarter",
+            headerRight: () => (
+              <RNButton
+                title="Cancel"
+                color={Colors.lightBlue}
+                onPress={() => navigation.goBack()}
+              />
+            ),
+          })}
         />
         <Stack.Screen
           name="SelectColor"
           component={SelectColor}
-          options={{ title: "Select Color" }}
+          options={({
+            navigation,
+          }: ProfileStackScreenProps<"SelectColor">) => ({
+            title: "Select Color",
+            headerRight: () => (
+              <RNButton
+                title="Cancel"
+                color={Colors.lightBlue}
+                onPress={() => navigation.goBack()}
+              />
+            ),
+          })}
         />
         <Stack.Screen
           name="AddDegree"
           component={AddDegree}
-          options={{ title: "Add Degree" }}
+          options={({ navigation }: ProfileStackScreenProps<"AddDegree">) => ({
+            title: "Add Degree",
+            headerRight: () => (
+              <RNButton
+                title="Cancel"
+                color={Colors.lightBlue}
+                onPress={() => navigation.goBack()}
+              />
+            ),
+          })}
         />
         <Stack.Screen
           name="EditDegree"
           component={EditDegree}
           getId={() => new Date().getTime().toString()}
-          options={{ title: "Edit Degree" }}
+          options={({ navigation }: ProfileStackScreenProps<"EditDegree">) => ({
+            title: "Edit Degree",
+            headerRight: () => (
+              <RNButton
+                title="Cancel"
+                color={Colors.lightBlue}
+                onPress={() => navigation.goBack()}
+              />
+            ),
+          })}
         />
       </Stack.Group>
     </Stack.Navigator>
