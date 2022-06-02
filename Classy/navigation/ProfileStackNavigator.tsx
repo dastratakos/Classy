@@ -4,9 +4,10 @@ import CourseSimilarity from "../screens/CourseSimilarity";
 import EditCourse from "../screens/EditCourse";
 import Enrollments from "../screens/Enrollments";
 import Favorites from "../screens/Favorites";
+import { FontAwesome } from "../components/Themed";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
-import { FontAwesome } from "../components/Themed";
+import FullCalendar from "../screens/FullCalendar";
 import Layout from "../constants/Layout";
 import MyFriends from "../screens/MyFriends";
 import { Pressable } from "react-native";
@@ -15,7 +16,6 @@ import { ProfileStackScreenProps } from "../types";
 import Quarters from "../screens/Quarters";
 import Settings from "../screens/Settings";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import FullCalendar from "../screens/FullCalendar";
 
 const Stack = createNativeStackNavigator();
 

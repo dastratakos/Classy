@@ -7,11 +7,12 @@ import AppStyles from "../styles/AppStyles";
 import Calendar from "../components/Calendar/Calendar";
 import Colors from "../constants/Colors";
 import { View } from "../components/Themed";
-import { WeekSchedule } from "../types";
+import { FullCalendarProps, WeekSchedule } from "../types";
 import { getWeekFromEnrollments } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
+import { getEnrollments } from "../services/enrollments";
 
-export default function FullCalendar() {
+export default function FullCalendar({ route }: FullCalendarProps) {
   const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
@@ -24,7 +25,13 @@ export default function FullCalendar() {
 
   useEffect(() => {
     const loadScreen = async () => {
-      setWeekRes(getWeekFromEnrollments(context.enrollments));
+      if (route.params.id === context.user.id) {
+        setWeekRes(getWeekFromEnrollments(context.enrollments));
+      } else {
+        setWeekRes(
+          getWeekFromEnrollments(await getEnrollments(route.params.id))
+        );
+      }
       setRefreshing(false);
     };
     loadScreen();

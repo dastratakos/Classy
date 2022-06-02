@@ -3,21 +3,22 @@ import * as React from "react";
 import AddCourse from "../screens/AddCourse";
 import Course from "../screens/Course";
 import CourseSimilarity from "../screens/CourseSimilarity";
+import EditCourse from "../screens/EditCourse";
 import Enrollments from "../screens/Enrollments";
 import Favorites from "../screens/Favorites";
+import { FontAwesome } from "../components/Themed";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
-import { FontAwesome } from "../components/Themed";
+import FullCalendar from "../screens/FullCalendar";
 import Layout from "../constants/Layout";
 import MyFriends from "../screens/MyFriends";
-import Quarters from "../screens/Quarters";
 import { Pressable } from "react-native";
 import Profile from "../screens/Profile";
 import { ProfileStackScreenProps } from "../types";
+import Quarters from "../screens/Quarters";
 import Search from "../screens/Search";
 import Settings from "../screens/Settings";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import EditCourse from "../screens/EditCourse";
 
 const Stack = createNativeStackNavigator();
 
@@ -102,6 +103,12 @@ export default function SearchStackNavigator() {
         component={Quarters}
         getId={() => new Date().getTime().toString()}
         options={{ title: "Quarters" }}
+      />
+      <Stack.Screen
+        name="FullCalendar"
+        component={FullCalendar}
+        getId={() => new Date().getTime().toString()}
+        options={{ title: "Full Calendar" }}
       />
     </Stack.Navigator>
   );

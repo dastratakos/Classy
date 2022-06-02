@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import { HomeStackScreenProps, ProfileStackScreenProps } from "../types";
 import { FontAwesome, Text, View } from "../components/Themed";
+import { HomeStackScreenProps, ProfileStackScreenProps } from "../types";
 
 import AddCourse from "../screens/AddCourse";
 import AppContext from "../context/Context";
@@ -15,6 +15,7 @@ import Enrollments from "../screens/Enrollments";
 import Favorites from "../screens/Favorites";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
+import FullCalendar from "../screens/FullCalendar";
 import Home from "../screens/Home";
 import Layout from "../constants/Layout";
 import Messages from "../screens/Messages";
@@ -209,6 +210,12 @@ export default function HomeStackNavigator() {
         component={Quarters}
         getId={() => new Date().getTime().toString()}
         options={{ title: "Quarters" }}
+      />
+      <Stack.Screen
+        name="FullCalendar"
+        component={FullCalendar}
+        getId={() => new Date().getTime().toString()}
+        options={{ title: "Full Calendar" }}
       />
     </Stack.Navigator>
   );

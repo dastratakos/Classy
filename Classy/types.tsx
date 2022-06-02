@@ -157,7 +157,7 @@ export type HomeData = { today: CourseOverview[]; nextUp: CourseOverview[] };
 
 export type AddCoursesReminderNotification = {
   timestamp: Timestamp;
-  termId: string
+  termId: string;
 };
 
 export type AddTimesReminderNotification = {
@@ -234,7 +234,7 @@ export type RootStackParamList = {
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
   Quarters: { user: User };
-  FullCalendar: undefined;
+  FullCalendar: { id: string };
   SelectColor: undefined;
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
@@ -275,7 +275,7 @@ export type ProfileStackParamList = {
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
   Quarters: { user: User };
-  FullCalendar: undefined;
+  FullCalendar: { id: string };
   SelectColor: undefined;
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
@@ -298,7 +298,7 @@ export type SearchStackParamList = {
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
   Quarters: { user: User };
-  FullCalendar: undefined;
+  FullCalendar: { id: string };
   SelectColor: undefined;
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
@@ -390,6 +390,11 @@ export type EditCourseProps = NativeStackScreenProps<
 export type ThreadScreenProps = NativeStackScreenProps<
   RootStackParamList,
   "ThreadScreen"
+>;
+
+export type FullCalendarProps = NativeStackScreenProps<
+  RootStackParamList,
+  "FullCalendar"
 >;
 
 export type FriendsProps = NativeStackScreenProps<

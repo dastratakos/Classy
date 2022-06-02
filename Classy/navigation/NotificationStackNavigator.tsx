@@ -4,9 +4,11 @@ import CourseSimilarity from "../screens/CourseSimilarity";
 import EditCourse from "../screens/EditCourse";
 import Enrollments from "../screens/Enrollments";
 import Favorites from "../screens/Favorites";
-import FriendProfile from "../screens/FriendProfile";
-import Friends from "../screens/Friends";
 import { FontAwesome } from "../components/Themed";
+import FriendProfile from "../screens/FriendProfile";
+import FriendRequests from "../screens/FriendRequests";
+import Friends from "../screens/Friends";
+import FullCalendar from "../screens/FullCalendar";
 import Layout from "../constants/Layout";
 import MyFriends from "../screens/MyFriends";
 import Notifications from "../screens/Notifications";
@@ -16,7 +18,6 @@ import { ProfileStackScreenProps } from "../types";
 import Quarters from "../screens/Quarters";
 import Settings from "../screens/Settings";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import FriendRequests from "../screens/FriendRequests";
 
 const Stack = createNativeStackNavigator();
 
@@ -106,6 +107,12 @@ export default function NotificationStackNavigator() {
         component={Quarters}
         getId={() => new Date().getTime().toString()}
         options={{ title: "Quarters" }}
+      />
+      <Stack.Screen
+        name="FullCalendar"
+        component={FullCalendar}
+        getId={() => new Date().getTime().toString()}
+        options={{ title: "Full Calendar" }}
       />
     </Stack.Navigator>
   );
