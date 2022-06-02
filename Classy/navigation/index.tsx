@@ -123,16 +123,7 @@ function RootNavigator() {
         <Stack.Screen
           name="AddDegree"
           component={AddDegree}
-          options={({ navigation }: ProfileStackScreenProps<"AddDegree">) => ({
-            title: "Add Degree",
-            headerRight: () => (
-              <RNButton
-                title="Cancel"
-                color={Colors.lightBlue}
-                onPress={() => navigation.goBack()}
-              />
-            ),
-          })}
+          options={{ title: "Add Degree" }}
         />
         <Stack.Screen
           name="EditDegree"
