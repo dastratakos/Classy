@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet } from "react-native";
+import { Animated, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "./Themed";
 
 import AppStyles from "../styles/AppStyles";
@@ -6,6 +6,7 @@ import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import MaskedView from "@react-native-masked-view/masked-view";
 import useColorScheme from "../hooks/useColorScheme";
+import { useEffect, useRef, useState } from "react";
 
 export default function ProgressBar({
   progress,
@@ -20,6 +21,8 @@ export default function ProgressBar({
 }) {
   const colorScheme = useColorScheme();
 
+  const width = useRef(new Animated.Value(0)).current;
+
   if (!onPress)
     return (
       <View
@@ -28,17 +31,26 @@ export default function ProgressBar({
           { backgroundColor: Colors[colorScheme].cardBackground },
           containerStyle,
         ]}
+        onLayout={(event) => {
+          const totalWidth = event.nativeEvent.layout.width;
+          console.log("transition to width:", (totalWidth * progress) / 100);
+          Animated.timing(width, {
+            toValue: (totalWidth * progress) / 100,
+            duration: 500,
+            useNativeDriver: false,
+          }).start();
+        }}
       >
         <MaskedView
           style={styles.maskedView}
           maskElement={<View style={styles.maskElement} />}
         >
-          <View
+          <Animated.View
             style={[
               StyleSheet.absoluteFill,
               {
                 backgroundColor: Colors.yellow,
-                width: `${progress}%`,
+                width,
               },
             ]}
           />
@@ -54,6 +66,15 @@ export default function ProgressBar({
         { backgroundColor: Colors[colorScheme].cardBackground },
         containerStyle,
       ]}
+      onLayout={(event) => {
+        const totalWidth = event.nativeEvent.layout.width;
+        console.log("transition to width:", (totalWidth * progress) / 100);
+        Animated.timing(width, {
+          toValue: (totalWidth * progress) / 100,
+          duration: 500,
+          useNativeDriver: false,
+        }).start();
+      }}
     >
       <MaskedView
         style={styles.maskedView}
@@ -66,12 +87,12 @@ export default function ProgressBar({
           ]}
           onPress={onPress}
         >
-          <View
+          <Animated.View
             style={[
               StyleSheet.absoluteFill,
               {
                 backgroundColor: Colors.yellow,
-                width: `${progress}%`,
+                width,
               },
             ]}
           />

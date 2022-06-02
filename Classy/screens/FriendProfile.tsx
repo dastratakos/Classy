@@ -580,18 +580,20 @@ export default function FriendProfile({ route }: FriendProfileProps) {
         </View>
         {!user.isPrivate || friendStatus === "friends" ? (
           <>
-            <ProgressBar
-              progress={courseSimilarity}
-              text={`${Math.round(courseSimilarity)}% course similarity`}
-              onPress={() =>
-                navigation.navigate("CourseSimilarity", {
-                  friendId: user.id,
-                  courseSimilarity,
-                  overlap,
-                })
-              }
-              containerStyle={{ marginTop: Layout.spacing.medium }}
-            />
+            {!refreshing && (
+              <ProgressBar
+                progress={courseSimilarity}
+                text={`${Math.round(courseSimilarity)}% course similarity`}
+                onPress={() =>
+                  navigation.navigate("CourseSimilarity", {
+                    friendId: user.id,
+                    courseSimilarity,
+                    overlap,
+                  })
+                }
+                containerStyle={{ marginTop: Layout.spacing.medium }}
+              />
+            )}
             <View style={[AppStyles.row, { marginTop: Layout.spacing.medium }]}>
               <Text style={styles.term}>
                 {termIdToFullName(getCurrentTermId())}
