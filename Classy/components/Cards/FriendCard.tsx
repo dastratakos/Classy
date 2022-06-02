@@ -1,6 +1,6 @@
 import { SimpleLineIcons, Text, View } from "../Themed";
 import { StyleSheet, Pressable, TouchableOpacity } from "react-native";
-
+import Button from "../Buttons/Button";
 import AppStyles from "../../styles/AppStyles";
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
@@ -15,6 +15,7 @@ export default function FriendCard({
   friend,
   rightElement,
   onPress = () => {},
+  friendStatus,
 }: {
   friend: {
     id: string;
@@ -25,6 +26,7 @@ export default function FriendCard({
   };
   rightElement?: JSX.Element;
   onPress?: () => void;
+  friendStatus?: string;
 }) {
   const context = useContext(AppContext);
   const navigation = useNavigation();
@@ -36,6 +38,43 @@ export default function FriendCard({
         .join(", ")
     : "";
 
+  const addFriendPressed = () => {
+    console.log("add friend");
+    friendStatus = "request sent";
+  };
+  const requestedPressed = () => {
+    console.log("requested");
+    // maybe do an action sheet to cancel request?
+  };
+  const respondPressed = () => {
+    console.log("respond");
+  };
+  // keeping "rightelement" because it's used for the "x" on channel details and search history
+  // keep the x if its there, otherwise, reassign right element according to friend status
+  if (friendStatus === "not friends") {
+    rightElement = (
+      <Button text={"Add Friend"} emphasized onPress={addFriendPressed} />
+    );
+  } else if (friendStatus === "request sent") {
+    rightElement = <Button text={"Requested"} onPress={requestedPressed} />;
+  } else if (friendStatus === "request received") {
+    rightElement = (
+      <View
+        style={[
+          styles.respondContainer,
+          { backgroundColor: Colors[colorScheme].photoBackground },
+        ]}
+      >
+        <TouchableOpacity
+          onPress={respondPressed}
+          style={styles.respondInnerContainer}
+        >
+          <Text style={{ paddingRight: Layout.spacing.xsmall }}>Respond</Text>
+          <SimpleLineIcons name="arrow-down" />
+        </TouchableOpacity>
+      </View>
+    );
+  }
   return (
     <View
       style={[
@@ -107,5 +146,20 @@ const styles = StyleSheet.create({
     borderRadius: Layout.radius.xsmall,
     marginLeft: Layout.spacing.small,
     backgroundColor: "transparent",
+  },
+  respondContainer: {
+    ...AppStyles.boxShadow,
+    height: Layout.buttonHeight.medium,
+    borderRadius: Layout.radius.medium,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  respondInnerContainer: {
+    height: Layout.buttonHeight.medium,
+    borderRadius: Layout.radius.medium,
+    padding: Layout.spacing.small,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
