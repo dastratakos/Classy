@@ -197,6 +197,7 @@ export type RootStackParamList = {
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
   Friends: { id: string };
+  FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
   CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
@@ -237,6 +238,7 @@ export type ProfileStackParamList = {
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
   Friends: { id: string };
+  FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
   CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
@@ -259,6 +261,7 @@ export type SearchStackParamList = {
   SelectQuarter: { terms: string[] };
   MyFriends: undefined;
   Friends: { id: string };
+  FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
   CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
@@ -281,6 +284,7 @@ export type HomeStackParamList = {
   EditCourse: { enrollment: Enrollment };
   MyFriends: undefined;
   Friends: { id: string };
+  FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
   CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
@@ -303,6 +307,7 @@ export type NotificationStackParamList = {
   EditCourse: { enrollment: Enrollment };
   MyFriends: undefined;
   Friends: { id: string };
+  FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
   CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
@@ -348,6 +353,11 @@ export type ThreadScreenProps = NativeStackScreenProps<
 export type FriendsProps = NativeStackScreenProps<
   RootStackParamList,
   "Friends"
+>;
+
+export type FriendRequestsProps = NativeStackScreenProps<
+  RootStackParamList,
+  "FriendRequests"
 >;
 
 export type FriendProfileProps = NativeStackScreenProps<

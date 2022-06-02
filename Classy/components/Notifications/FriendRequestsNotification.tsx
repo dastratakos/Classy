@@ -40,7 +40,7 @@ export default function FriendRequestsNotification({
           borderColor: Colors[colorScheme].tertiaryBackground,
         },
       ]}
-      // onPress={() => navigation.navigate("FriendRequests")}
+      onPress={() => navigation.navigate("FriendRequests", { requests })}
     >
       <View style={[AppStyles.row, { flex: 1 }]}>
         {requests.length === 1 ? (

@@ -16,6 +16,7 @@ import { ProfileStackScreenProps } from "../types";
 import Quarters from "../screens/Quarters";
 import Settings from "../screens/Settings";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import FriendRequests from "../screens/FriendRequests";
 
 const Stack = createNativeStackNavigator();
 
@@ -81,6 +82,12 @@ export default function NotificationStackNavigator() {
         name="Friends"
         component={Friends}
         getId={() => new Date().getTime().toString()}
+      />
+      <Stack.Screen
+        name="FriendRequests"
+        component={FriendRequests}
+        getId={() => new Date().getTime().toString()}
+        options={{ title: "Friend Requests" }}
       />
       <Stack.Screen
         name="FriendProfile"
