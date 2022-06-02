@@ -2,9 +2,9 @@ import { Image, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "../Themed";
 import { getTimeSinceString, termIdToFullName } from "../../utils";
 
-import { AddCoursesReminderNotification } from "../../types";
 import AppContext from "../../context/Context";
 import Colors from "../../constants/Colors";
+import { Notification } from "../../types";
 import notificationStyles from "./notificationStyles";
 import useColorScheme from "../../hooks/useColorScheme";
 import { useContext } from "react";
@@ -12,10 +12,8 @@ import { useNavigation } from "@react-navigation/core";
 
 export default function AddCoursesReminder({
   notification,
-  indicator = false,
 }: {
-  notification: AddCoursesReminderNotification;
-  indicator?: boolean;
+  notification: Notification;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -48,7 +46,7 @@ export default function AddCoursesReminder({
           <Text> by searching by course code or name.</Text>
         </Text>
       </View>
-      {indicator && <View style={notificationStyles.indicator} />}
+      {notification.unread && <View style={notificationStyles.indicator} />}
       <Text
         style={[
           notificationStyles.time,

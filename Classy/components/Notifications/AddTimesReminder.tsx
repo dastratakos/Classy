@@ -1,8 +1,8 @@
+import { Enrollment, Notification } from "../../types";
 import { Image, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "../Themed";
 import { getTimeSinceString, termIdToFullName } from "../../utils";
 
-import { AddTimesReminderNotification, Enrollment } from "../../types";
 import AppContext from "../../context/Context";
 import Colors from "../../constants/Colors";
 import notificationStyles from "./notificationStyles";
@@ -12,10 +12,8 @@ import { useNavigation } from "@react-navigation/core";
 
 export default function AddTimesReminder({
   notification,
-  indicator = false,
 }: {
-  notification: AddTimesReminderNotification;
-  indicator?: boolean;
+  notification: Notification;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -53,7 +51,7 @@ export default function AddTimesReminder({
           <Text>!</Text>
         </Text>
       </View>
-      {indicator && <View style={notificationStyles.indicator} />}
+      {notification.unread && <View style={notificationStyles.indicator} />}
       <Text
         style={[
           notificationStyles.time,

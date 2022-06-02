@@ -1,4 +1,4 @@
-import { FriendRequestReceivedNotification, User } from "../../types";
+import { Notification, User } from "../../types";
 import { Pressable, StyleSheet } from "react-native";
 import { SimpleLineIcons, Text, View } from "../Themed";
 import { useContext, useEffect, useState } from "react";
@@ -15,10 +15,8 @@ import { useNavigation } from "@react-navigation/core";
 
 export default function FriendRequestReceived({
   notification,
-  indicator = false,
 }: {
-  notification: FriendRequestReceivedNotification;
-  indicator?: boolean;
+  notification: Notification;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -68,7 +66,7 @@ export default function FriendRequestReceived({
           <SimpleLineIcons name="close" size={Layout.icon.large} />
         </Pressable>
       </View>
-      {indicator && <View style={notificationStyles.indicator} />}
+      {notification.unread && <View style={notificationStyles.indicator} />}
       <Text
         style={[
           notificationStyles.time,

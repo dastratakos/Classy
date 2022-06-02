@@ -1,4 +1,4 @@
-import { FriendRequestAcceptedNotification, User } from "../../types";
+import { Notification, User } from "../../types";
 import { Pressable, StyleSheet } from "react-native";
 import { Text, View } from "../Themed";
 import { useContext, useEffect, useState } from "react";
@@ -15,10 +15,8 @@ import { useNavigation } from "@react-navigation/core";
 
 export default function FriendRequestAccepted({
   notification,
-  indicator = false,
 }: {
-  notification: FriendRequestAcceptedNotification;
-  indicator?: boolean;
+  notification: Notification;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -54,7 +52,7 @@ export default function FriendRequestAccepted({
           <Text>accepted your friend request.</Text>
         </Text>
       </View>
-      {indicator && <View style={notificationStyles.indicator} />}
+      {notification.unread && <View style={notificationStyles.indicator} />}
       <Text
         style={[
           notificationStyles.time,
