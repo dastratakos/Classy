@@ -237,11 +237,14 @@ export type RootStackParamList = {
   FullCalendar: { id: string };
   SelectColor: undefined;
   SelectQuarter: { terms: string[] };
-  MyFriends: undefined;
   Friends: { id: string };
   FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
-  CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
+  CourseSimilarity: {
+    friendId: string;
+    courseSimilarity: number;
+    overlap: Enrollment[];
+  };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
@@ -278,7 +281,6 @@ export type ProfileStackParamList = {
   FullCalendar: { id: string };
   SelectColor: undefined;
   SelectQuarter: { terms: string[] };
-  MyFriends: undefined;
   Friends: { id: string };
   FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
@@ -301,7 +303,6 @@ export type SearchStackParamList = {
   FullCalendar: { id: string };
   SelectColor: undefined;
   SelectQuarter: { terms: string[] };
-  MyFriends: undefined;
   Friends: { id: string };
   FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
@@ -324,7 +325,6 @@ export type HomeStackParamList = {
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
-  MyFriends: undefined;
   Friends: { id: string };
   FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
@@ -347,7 +347,6 @@ export type NotificationStackParamList = {
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
-  MyFriends: undefined;
   Friends: { id: string };
   FriendRequests: { requests: User[] };
   FriendProfile: { id: string };

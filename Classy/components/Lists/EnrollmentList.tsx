@@ -5,9 +5,11 @@ import { View } from "../Themed";
 
 export default function EnrollmentList({
   enrollments,
+  editable = true,
   emptyElement,
 }: {
   enrollments: Enrollment[];
+  editable?: boolean;
   emptyElement?: JSX.Element;
 }) {
   if (enrollments.length === 0) return <>{emptyElement || <EmptyList />}</>;
@@ -17,7 +19,7 @@ export default function EnrollmentList({
     <>
       {enrollments.map((enrollment, i) => (
         <View key={enrollment.courseId.toString() + i.toString()}>
-          <EnrollmentCard enrollment={enrollment} />
+          <EnrollmentCard enrollment={enrollment} editable={editable} />
         </View>
       ))}
     </>

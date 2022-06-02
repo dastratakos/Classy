@@ -585,6 +585,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
               text={`${Math.round(courseSimilarity)}% course similarity`}
               onPress={() =>
                 navigation.navigate("CourseSimilarity", {
+                  friendId: user.id,
                   courseSimilarity,
                   overlap,
                 })

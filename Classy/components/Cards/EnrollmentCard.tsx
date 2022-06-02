@@ -13,9 +13,11 @@ import AppContext from "../../context/Context";
 
 export default function EnrollmentCard({
   enrollment,
+  editable = true,
   emphasize = false,
 }: {
   enrollment: Enrollment;
+  editable?: boolean;
   emphasize?: boolean;
 }) {
   const context = useContext(AppContext);
@@ -48,7 +50,7 @@ export default function EnrollmentCard({
         deleteFunc={deleteEnrollmentAlert}
         visible={modalVisible}
         setVisible={setModalVisible}
-        editable={enrollment.userId === context.user.id}
+        editable={editable && enrollment.userId === context.user.id}
       />
       <View
         style={[

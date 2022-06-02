@@ -19,7 +19,6 @@ import FullCalendar from "../screens/FullCalendar";
 import Home from "../screens/Home";
 import Layout from "../constants/Layout";
 import Messages from "../screens/Messages";
-import MyFriends from "../screens/MyFriends";
 import NewMessage from "../screens/NewMessage";
 import { Pressable } from "react-native";
 import Profile from "../screens/Profile";
@@ -181,12 +180,6 @@ export default function HomeStackNavigator() {
         name="EditCourse"
         component={EditCourse}
         options={{ title: "Edit Course" }}
-      />
-      <Stack.Screen
-        name="MyFriends"
-        component={MyFriends}
-        getId={() => new Date().getTime().toString()}
-        options={{ title: "Friends" }}
       />
       <Stack.Screen
         name="Friends"

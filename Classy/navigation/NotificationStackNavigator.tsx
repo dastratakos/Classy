@@ -10,7 +10,6 @@ import FriendRequests from "../screens/FriendRequests";
 import Friends from "../screens/Friends";
 import FullCalendar from "../screens/FullCalendar";
 import Layout from "../constants/Layout";
-import MyFriends from "../screens/MyFriends";
 import Notifications from "../screens/Notifications";
 import { Pressable } from "react-native";
 import Profile from "../screens/Profile";
@@ -72,12 +71,6 @@ export default function NotificationStackNavigator() {
         name="EditCourse"
         component={EditCourse}
         options={{ title: " Edit Course" }}
-      />
-      <Stack.Screen
-        name="MyFriends"
-        component={MyFriends}
-        getId={() => new Date().getTime().toString()}
-        options={{ title: "Friends" }}
       />
       <Stack.Screen
         name="Friends"

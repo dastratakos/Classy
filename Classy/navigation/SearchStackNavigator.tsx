@@ -11,7 +11,6 @@ import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
 import FullCalendar from "../screens/FullCalendar";
 import Layout from "../constants/Layout";
-import MyFriends from "../screens/MyFriends";
 import { Pressable } from "react-native";
 import Profile from "../screens/Profile";
 import { ProfileStackScreenProps } from "../types";
@@ -74,12 +73,6 @@ export default function SearchStackNavigator() {
         name="EditCourse"
         component={EditCourse}
         options={{ title: "Edit Course" }}
-      />
-      <Stack.Screen
-        name="MyFriends"
-        component={MyFriends}
-        getId={() => new Date().getTime().toString()}
-        options={{ title: "Friends" }}
       />
       <Stack.Screen
         name="Friends"
