@@ -51,56 +51,62 @@ export default function SearchStackNavigator() {
       <Stack.Screen
         name="Settings"
         component={Settings}
-        getId={() => new Date().getTime().toString()}
+        // only 1 in the stack at a time
       />
       <Stack.Screen
         name="Enrollments"
         component={Enrollments}
-        getId={() => new Date().getTime().toString()}
+        getId={({ params }) => params.userId + new Date().getTime().toString()}
         options={{ title: "Courses" }}
       />
       <Stack.Screen
         name="Course"
         component={Course}
-        getId={() => new Date().getTime().toString()}
+        getId={({ params }) =>
+          params.course.courseId.toString() + new Date().getTime().toString()
+        }
       />
       <Stack.Screen
         name="AddCourse"
         component={AddCourse}
         options={{ title: "Add Course" }}
+        // only 1 in the stack at a time
       />
       <Stack.Screen
         name="EditCourse"
         component={EditCourse}
         options={{ title: "Edit Course" }}
+        // only 1 in the stack at a time
       />
       <Stack.Screen
         name="Friends"
         component={Friends}
-        getId={() => new Date().getTime().toString()}
+        getId={({ params }) => params.id + new Date().getTime().toString()}
       />
       <Stack.Screen
         name="FriendProfile"
         component={FriendProfile}
+        getId={({ params }) => params.id + new Date().getTime().toString()}
         options={{ title: "Friend Profile" }}
-        getId={() => new Date().getTime().toString()}
       />
       <Stack.Screen
         name="CourseSimilarity"
         component={CourseSimilarity}
-        getId={() => new Date().getTime().toString()}
+        getId={({ params }) =>
+          params.friendId + new Date().getTime().toString()
+        }
         options={{ title: "Course Similarity" }}
       />
       <Stack.Screen
         name="Quarters"
         component={Quarters}
-        getId={() => new Date().getTime().toString()}
+        getId={({ params }) => params.user.id + new Date().getTime().toString()}
         options={{ title: "Quarters" }}
       />
       <Stack.Screen
         name="FullCalendar"
         component={FullCalendar}
-        getId={() => new Date().getTime().toString()}
+        getId={({ params }) => params.id + new Date().getTime().toString()}
         options={{ title: "Full Calendar" }}
       />
     </Stack.Navigator>
