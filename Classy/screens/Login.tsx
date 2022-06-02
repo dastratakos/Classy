@@ -33,7 +33,7 @@ export default function Login({ route }: LoginProps) {
   const [errorMessage, setErrorMessage] = useState("");
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [settingUp, setSettingUp] = useState<boolean>(false);
+  const [loginButtonLoading, setLoginButtonLoading] = useState<boolean>(false);
 
   useEffect(() => {
     /* Check if user is signed in. */
@@ -73,25 +73,19 @@ export default function Login({ route }: LoginProps) {
   };
 
   const setUp = async (id: string) => {
-    setSettingUp(true);
-
     const user = await getUser(id);
     context.setUser(user);
 
-    // TODO: do these asynchronously
-    context.setFriendIds(await getFriendIds(id));
-    context.setRequestIds(await getRequestIds(id));
-    context.setEnrollments(await getEnrollments(id));
-    // getFriendIds(id).then((res) => context.setFriendIds(res));
-    // getRequestIds(id).then((res) => context.setRequestIds(res));
-    // getEnrollments(id).then((res) => {
-    //   console.log("got enrollments:", res.length);
-    //   context.setEnrollments(res);
-    // });
+    const [friendIds, requestIds, enrollments] = await Promise.all([
+      getFriendIds(id),
+      getRequestIds(id),
+      getEnrollments(id),
+    ]);
+    context.setFriendIds(friendIds);
+    context.setRequestIds(requestIds);
+    context.setEnrollments(enrollments);
 
     connectStreamChatUser(id, user.name, user.photoUrl);
-
-    setSettingUp(false);
 
     if (user.onboarded)
       navigation.reset({
@@ -99,6 +93,11 @@ export default function Login({ route }: LoginProps) {
         routes: [{ name: "Root" }],
       });
     else navigation.navigate("Onboarding");
+
+    setEmail("");
+    setPassword("");
+    setErrorMessage("");
+    setLoginButtonLoading(false);
   };
 
   const signIn = () => {
@@ -108,17 +107,17 @@ export default function Login({ route }: LoginProps) {
     }
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setLoginButtonLoading(true);
 
     signInWithEmailAndPassword(auth, email, password)
       .then((response) => {
         const user = response.user;
         console.log(`Logged in with: ${JSON.stringify(user, null, 2)}`);
-
-        setEmail("");
-        setPassword("");
-        setErrorMessage("");
       })
-      .catch((error) => setErrorMessage(error.message));
+      .catch((error) => {
+        setErrorMessage(error.message);
+        setLoginButtonLoading(false);
+      });
   };
 
   if (loading)
@@ -186,7 +185,7 @@ export default function Login({ route }: LoginProps) {
         <Button
           text="Log In"
           onPress={signIn}
-          loading={settingUp}
+          loading={loginButtonLoading}
           emphasized
           wide
         />
