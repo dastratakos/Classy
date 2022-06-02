@@ -108,6 +108,7 @@ const styles = StyleSheet.create({
     ...AppStyles.boxShadow,
     borderRadius: Layout.radius.medium,
     height: Layout.buttonHeight.medium,
+    justifyContent: "center",
   },
   maskedView: {
     flex: 1,
