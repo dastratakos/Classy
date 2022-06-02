@@ -175,8 +175,12 @@ export const updateEnrollment = async (
   const termKey = `terms.${year}.${termId}`;
 
   let userData = {};
-  userData[oldTermKey] = increment(-oldEnrollment.units);
-  userData[termKey] = increment(units);
+  if (oldTermKey === termKey) {
+    userData[termKey] = increment(units - oldEnrollment.units);
+  } else {
+    userData[oldTermKey] = increment(-oldEnrollment.units);
+    userData[termKey] = increment(units);
+  }
 
   await updateDoc(doc(db, "users", userId), userData);
 

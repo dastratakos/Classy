@@ -92,7 +92,6 @@ export default function EditCourse({ route }: EditCourseProps) {
     setSaveLoading(false);
     navigation.goBack();
   };
-  let schedules = terms[`${context.selectedTerm}`];
   const Schedules = () => {
     if (context.selectedTerm === "") return null;
 
@@ -104,6 +103,7 @@ export default function EditCourse({ route }: EditCourseProps) {
       setSelectedScheduleIndices(newSet);
     };
 
+    let schedules = terms[`${context.selectedTerm}`];
     for (let j = 0; j < schedules.length; j++) {
       const sched = schedules[j];
       if (
@@ -117,6 +117,7 @@ export default function EditCourse({ route }: EditCourseProps) {
         j--;
       }
     }
+
     return (
       <View
         style={{
@@ -232,18 +233,20 @@ export default function EditCourse({ route }: EditCourseProps) {
               {context.selectedTerm && terms[`${context.selectedTerm}`] ? (
                 <>
                   {terms[`${context.selectedTerm}`][0].grading.map(
-                    (grad, i) => (
-                      <Button
-                        text={grad}
-                        onPress={() => {
-                          Haptics.impactAsync(
-                            Haptics.ImpactFeedbackStyle.Medium
-                          );
-                          setSaveDisabled(false);
-                          setGrading(grad);
-                        }}
-                        emphasized={grading === grad}
-                      />
+                    (grad: string, i: number) => (
+                      <View key={i.toString()}>
+                        <Button
+                          text={grad}
+                          onPress={() => {
+                            Haptics.impactAsync(
+                              Haptics.ImpactFeedbackStyle.Medium
+                            );
+                            setSaveDisabled(false);
+                            setGrading(grad);
+                          }}
+                          emphasized={grading === grad}
+                        />
+                      </View>
                     )
                   )}
                 </>
