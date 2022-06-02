@@ -1,30 +1,31 @@
-import Colors from "../constants/Colors";
-import { Text, View } from "../components/Themed";
+import { Notification, User } from "../types";
 import {
   Pressable,
   RefreshControl,
   SectionList,
   StyleSheet,
 } from "react-native";
+import { Text, View } from "../components/Themed";
 import { getFriendsFromIds, getRequestIds } from "../services/friends";
+import {
+  getNotifications,
+  updateNotification,
+} from "../services/notifications";
 import { useContext, useEffect, useState } from "react";
 
 import AddCoursesReminder from "../components/Notifications/AddCoursesReminder";
 import AddTimesReminder from "../components/Notifications/AddTimesReminder";
 import AppContext from "../context/Context";
+import Colors from "../constants/Colors";
+import EmptyList from "../components/EmptyList";
 import FriendRequestAccepted from "../components/Notifications/FriendRequestAccepted";
 import FriendRequestReceived from "../components/Notifications/FriendRequestReceived";
 import FriendRequestsNotification from "../components/Notifications/FriendRequestsNotification";
 import Layout from "../constants/Layout";
 import MutualEnrollment from "../components/Notifications/MutualEnrollment";
-import { Notification, User } from "../types";
-import useColorScheme from "../hooks/useColorScheme";
-import { useNavigation } from "@react-navigation/core";
+import SVGDone from "../assets/images/undraw/done.svg";
 import { Timestamp } from "firebase/firestore";
-import {
-  getNotifications,
-  updateNotification,
-} from "../services/notifications";
+import useColorScheme from "../hooks/useColorScheme";
 
 export default function Notifications() {
   const colorScheme = useColorScheme();
@@ -36,9 +37,14 @@ export default function Notifications() {
   const [requests, setRequests] = useState<User[]>([]);
 
   const [refreshing, setRefreshing] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    onRefresh();
+    const loadScreen = async () => {
+      await onRefresh();
+      setLoading(false);
+    };
+    loadScreen();
   }, []);
 
   const onRefresh = async () => {
@@ -156,6 +162,13 @@ export default function Notifications() {
         onRefresh={onRefresh}
         refreshing={refreshing}
         ListHeaderComponent={<FriendRequestsNotification requests={requests} />}
+        ListEmptyComponent={
+          <>
+            {!loading && (
+              <EmptyList SVGElement={SVGDone} primaryText="All caught up!" />
+            )}
+          </>
+        }
       />
     </View>
   );
