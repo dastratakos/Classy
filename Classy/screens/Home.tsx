@@ -1,5 +1,5 @@
 import { ActivityIndicator, Text, View } from "../components/Themed";
-import { CourseOverview as CourseOverviewType, HomeData } from "../types";
+import { CourseOverview as CourseOverviewType, Enrollment, HomeData } from "../types";
 import {
   Pressable,
   RefreshControl,
@@ -19,7 +19,6 @@ import SVGRelax from "../assets/images/undraw/relax.svg";
 import Separator from "../components/Separator";
 import { Timestamp } from "firebase/firestore";
 import { getCurrentTermId } from "../utils";
-import { getEnrollmentsForTerm } from "../services/enrollments";
 import { getFriendsInCourse } from "../services/friends";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
@@ -51,17 +50,15 @@ export default function Home() {
   const onRefresh = async () => {
     setRefreshing(true);
 
-    const res = await getEnrollmentsForTerm(
-      context.friendIds,
-      context.user.id,
-      getCurrentTermId()
+    const currentEnrollments = context.enrollments.filter(
+      (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
     );
 
     let todayArr: CourseOverviewType[] = [];
     let nextUpArr: CourseOverviewType[] = [];
-    for (let enrollment of res) {
+    for (let enrollment of currentEnrollments) {
       const friends = await getFriendsInCourse(
-        context.user.id,
+        context.friendIds,
         enrollment.courseId,
         getCurrentTermId()
       );

@@ -70,12 +70,14 @@ export default function EnrollmentCard({
               {enrollment.title}
             </Text>
           </View>
-          <View style={styles.numFriendsContainer}>
-            <Text style={styles.numberText}>{enrollment.numFriends}</Text>
-            <Text style={styles.friendsText}>
-              {"friend" + (enrollment.numFriends !== 1 ? "s" : "")}
-            </Text>
-          </View>
+          {enrollment.numFriends !== -1 && (
+            <View style={styles.numFriendsContainer}>
+              <Text style={styles.numberText}>{enrollment.numFriends}</Text>
+              <Text style={styles.friendsText}>
+                {"friend" + (enrollment.numFriends !== 1 ? "s" : "")}
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
     </View>

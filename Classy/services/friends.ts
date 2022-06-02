@@ -208,11 +208,10 @@ export const getAllPeopleIdsInCourse = async (
 };
 
 export const getFriendsInCourse = async (
-  userId: string,
+  friendIds: string[],
   courseId: number,
   termId: string
 ) => {
-  const friendIds = await getFriendIds(userId);
 
   const docRef = doc(doc(db, "courses", `${courseId}`), "terms", termId);
   const docSnap = await getDoc(docRef);
@@ -234,7 +233,7 @@ export const getFriendsInCourse = async (
     }
     return friends;
   } else {
-    console.log(`No termId ${currentTermId} for course ${courseId}`);
+    console.error(`No termId ${termId} for course ${courseId}`);
     return [] as User[];
   }
 };
@@ -249,7 +248,7 @@ export const getNumFriendsInCourse = async (
 
   if (docSnap.exists()) {
     if (!docSnap.data().students) {
-      console.log(
+      console.error(
         `No students doc for termId ${termId} for course ${courseId}`
       );
       return 0;
@@ -261,7 +260,7 @@ export const getNumFriendsInCourse = async (
     );
     return filtered.length;
   } else {
-    console.log(`No termId ${termId} for course ${courseId}`);
+    console.error(`No termId ${termId} for course ${courseId}`);
     return 0;
   }
 };

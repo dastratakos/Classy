@@ -2,7 +2,7 @@ import { Image, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "../Themed";
 import { getTimeSinceString, termIdToFullName } from "../../utils";
 
-import { AddTimesReminderNotification } from "../../types";
+import { AddTimesReminderNotification, Enrollment } from "../../types";
 import AppContext from "../../context/Context";
 import Colors from "../../constants/Colors";
 import notificationStyles from "./notificationStyles";
@@ -26,6 +26,10 @@ export default function AddTimesReminder({
       onPress={() => {
         navigation.navigate("Enrollments", {
           userId: context.user.id,
+          enrollments: context.enrollments.filter(
+            (enrollment: Enrollment) =>
+              enrollment.termId === notification.termId
+          ),
           termId: notification.termId,
         });
       }}

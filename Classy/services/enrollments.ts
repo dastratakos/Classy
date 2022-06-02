@@ -14,39 +14,8 @@ import {
 
 import { db } from "../firebase";
 import { termIdToYear } from "../utils";
-import { getNumFriendsInCourse } from "./friends";
 
-export const getEnrollmentsForTerm = async (
-  myFriendIds: string[],
-  userId: string,
-  termId: string
-) => {
-  const q = query(
-    collection(db, "enrollments"),
-    where("userId", "==", userId),
-    where("termId", "==", termId),
-    orderBy("code")
-  );
-
-  const res: Enrollment[] = [];
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((doc) => {
-    res.push({ ...doc.data(), docId: doc.id } as Enrollment);
-  });
-
-  /* Collect number of friends per enrollment. */
-  for (let i = 0; i < res.length; i++) {
-    res[i].numFriends = await getNumFriendsInCourse(
-      res[i].courseId,
-      myFriendIds,
-      termId
-    );
-  }
-
-  return res;
-};
-
-export const getEnrollments = async (userId: string, myFriendIds: string[]) => {
+export const getEnrollments = async (userId: string) => {
   const q = query(
     collection(db, "enrollments"),
     where("userId", "==", userId),
@@ -56,32 +25,7 @@ export const getEnrollments = async (userId: string, myFriendIds: string[]) => {
   const res: Enrollment[] = [];
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    res.push({ ...doc.data(), docId: doc.id } as Enrollment);
-  });
-
-  /* Collect number of my friends per enrollment. */
-  for (let i = 0; i < res.length; i++) {
-    res[i].numFriends = await getNumFriendsInCourse(
-      res[i].courseId,
-      myFriendIds,
-      res[i].termId
-    );
-  }
-
-  return res;
-};
-
-export const getEnrollmentsRaw = async (userId: string) => {
-  const q = query(
-    collection(db, "enrollments"),
-    where("userId", "==", userId),
-    orderBy("code")
-  );
-
-  const res: Enrollment[] = [];
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((doc) => {
-    res.push({ ...doc.data(), docId: doc.id } as Enrollment);
+    res.push({ ...doc.data(), docId: doc.id, numFriends: -1 } as Enrollment);
   });
 
   return res;

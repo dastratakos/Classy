@@ -330,7 +330,10 @@ export default function Profile() {
           <Button
             text="View All Quarters"
             onPress={() =>
-              navigation.navigate("Quarters", { user: context.user })
+              navigation.navigate("Quarters", {
+                user: context.user,
+                enrollments: context.enrollments,
+              })
             }
           />
         </View>

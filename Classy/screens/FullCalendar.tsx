@@ -29,9 +29,7 @@ export default function FullCalendar({ route }: FullCalendarProps) {
         setWeekRes(getWeekFromEnrollments(context.enrollments));
       } else {
         setWeekRes(
-          getWeekFromEnrollments(
-            await getEnrollments(route.params.id, context.friendIds)
-          )
+          getWeekFromEnrollments(await getEnrollments(route.params.id))
         );
       }
       setRefreshing(false);

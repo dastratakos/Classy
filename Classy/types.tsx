@@ -229,11 +229,11 @@ export type RootStackParamList = {
 
   Profile: undefined;
   Favorites: undefined;
-  Enrollments: { userId: string; termId: string };
+  Enrollments: { userId: string; enrollments: Enrollment[]; termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
-  Quarters: { user: User };
+  Quarters: { user: User; enrollments: Enrollment[] };
   FullCalendar: { id: string };
   SelectColor: undefined;
   SelectQuarter: { terms: string[] };
@@ -270,11 +270,11 @@ export type ProfileStackParamList = {
 
   Profile: undefined;
   Favorites: undefined;
-  Enrollments: { userId: string; termId: string };
+  Enrollments: { userId: string; enrollments: Enrollment[]; termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
-  Quarters: { user: User };
+  Quarters: { user: User; enrollments: Enrollment[] };
   FullCalendar: { id: string };
   SelectColor: undefined;
   SelectQuarter: { terms: string[] };
@@ -293,11 +293,11 @@ export type SearchStackParamList = {
   Search: { initialSelectedTab?: number };
   Profile: undefined;
   Favorites: undefined;
-  Enrollments: { userId: string; termId: string };
+  Enrollments: { userId: string; enrollments: Enrollment[]; termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
-  Quarters: { user: User };
+  Quarters: { user: User; enrollments: Enrollment[] };
   FullCalendar: { id: string };
   SelectColor: undefined;
   SelectQuarter: { terms: string[] };
@@ -320,7 +320,7 @@ export type HomeStackParamList = {
   ChannelDetails: undefined;
   NewMessage: undefined;
 
-  Enrollments: { userId: string; termId: string };
+  Enrollments: { userId: string; enrollments: Enrollment[]; termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
@@ -343,7 +343,7 @@ export type NotificationStackParamList = {
   ChannelDetails: undefined;
   NewMessage: undefined;
 
-  Enrollments: { userId: string; termId: string };
+  Enrollments: { userId: string; enrollments: Enrollment[]; termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };

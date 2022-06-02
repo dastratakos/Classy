@@ -1,5 +1,5 @@
 import { ActivityIndicator, Text, View } from "../components/Themed";
-import { Enrollment, EnrollmentsProps, User } from "../types";
+import { Enrollment, EnrollmentsProps } from "../types";
 import { ScrollView, StyleSheet } from "react-native";
 import { termIdToFullName, termIdToQuarterName } from "../utils";
 import { useContext, useEffect, useState } from "react";
@@ -16,7 +16,7 @@ import SVGNoCourses from "../assets/images/undraw/noCourses.svg";
 import SVGSpring from "../assets/images/undraw/spring.svg";
 import SVGSummer from "../assets/images/undraw/summer.svg";
 import SVGWinter from "../assets/images/undraw/winter.svg";
-import { getEnrollmentsForTerm } from "../services/enrollments";
+import { getNumFriendsInCourse } from "../services/friends";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
@@ -31,22 +31,18 @@ export default function Enrollments({ route }: EnrollmentsProps) {
 
   useEffect(() => {
     const loadScreen = async () => {
-      if (route.params.userId === context.user.id) {
-        setEnrollments(
-          context.enrollments.filter(
-            (enrollment: Enrollment) =>
-              enrollment.termId === route.params.termId
-          )
-        );
-      } else {
-        setEnrollments(
-          await getEnrollmentsForTerm(
-            context.friendIds,
-            route.params.userId,
-            route.params.termId
-          )
+      let enrollments = route.params.enrollments;
+      for (let i = 0; i < enrollments.length; i++) {
+        const enrollment = enrollments[i];
+        if (enrollment.numFriends !== -1) continue;
+
+        enrollments[i].numFriends = await getNumFriendsInCourse(
+          enrollment.courseId,
+          context.friendIds,
+          route.params.termId
         );
       }
+      setEnrollments(enrollments);
 
       setLoading(false);
     };

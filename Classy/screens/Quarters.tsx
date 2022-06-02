@@ -1,24 +1,19 @@
 import { ScrollView, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 
+import AppStyles from "../styles/AppStyles";
+import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
+import QuarterButton from "../components/Buttons/QuarterButton";
+import { Enrollment, QuartersProps } from "../types";
+import { termIdToQuarterName } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import AppStyles from "../styles/AppStyles";
-import { termIdToQuarterName } from "../utils";
-import { QuartersProps } from "../types";
-import QuarterButton from "../components/Buttons/QuarterButton";
-import Button from "../components/Buttons/Button";
-import { useContext } from "react";
-import AppContext from "../context/Context";
 
 export default function Quarters({ route }: QuartersProps) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
-  const context = useContext(AppContext);
-
-  if (!route.params.user.terms) return null;
 
   const quarterColors = new Map([
     ["Aut", { backgroundColor: Colors.quarters.autumn }],
@@ -64,6 +59,10 @@ export default function Quarters({ route }: QuartersProps) {
                             onPress={() =>
                               navigation.navigate("Enrollments", {
                                 userId: route.params.user.id,
+                                enrollments: route.params.enrollments.filter(
+                                  (enrollment: Enrollment) =>
+                                    enrollment.termId === termId
+                                ),
                                 termId,
                               })
                             }

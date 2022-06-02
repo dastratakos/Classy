@@ -29,6 +29,7 @@ import {
   deleteFriendship,
   getFriendIds,
   getFriendStatus,
+  getNumFriendsInCourse,
 } from "../services/friends";
 import {
   getCurrentTermId,
@@ -137,10 +138,20 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     /* Get enrollments. */
     setEnrollmentsLoading(true);
 
-    const friendEnrollments = await getEnrollments(
-      route.params.id,
-      context.friendIds
-    );
+    const friendEnrollments = await getEnrollments(route.params.id);
+
+    /* Get numFriends only for current enrollments. */
+    for (let i = 0; i < friendEnrollments.length; i++) {
+      const enrollment = friendEnrollments[i];
+      if (enrollment.termId !== getCurrentTermId()) continue;
+
+      friendEnrollments[i].numFriends = await getNumFriendsInCourse(
+        enrollment.courseId,
+        context.friendIds,
+        enrollment.termId
+      );
+    }
+
     setEnrollments(friendEnrollments);
     const currentEnrollments = friendEnrollments.filter(
       (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
@@ -586,7 +597,12 @@ export default function FriendProfile({ route }: FriendProfileProps) {
               </Text>
               <Button
                 text="View All Quarters"
-                onPress={() => navigation.navigate("Quarters", { user })}
+                onPress={() =>
+                  navigation.navigate("Quarters", {
+                    user,
+                    enrollments: enrollments,
+                  })
+                }
               />
             </View>
           </>

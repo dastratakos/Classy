@@ -141,7 +141,7 @@ export default function AddCourse({ route }: AddCourseProps) {
 
     /* Get friends in this course. */
     const friends = await getFriendsInCourse(
-      context.user.id,
+      context.friendIds,
       course.courseId,
       context.selectedTerm
     );
