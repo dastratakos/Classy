@@ -220,7 +220,7 @@ const calculateNumIndents = (
       }
     }
 
-    if (numIndents < 6) {
+    if (numIndents < 5) {
       event.width -= indentWidth * numIndents;
       event.left += indentWidth * numIndents;
     } else {
