@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TextInput,
 } from "react-native";
-import { Icon, Icon3, View } from "./Themed";
+import { FontAwesome, Ionicons, View } from "./Themed";
 
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
@@ -45,7 +45,7 @@ export default function SearchBar({
           },
         ]}
       >
-        <Icon name="search" size={Layout.icon.small} />
+        <FontAwesome name="search" size={Layout.icon.small} />
         <TextInput
           style={styles.input}
           placeholder={placeholder}
@@ -67,7 +67,7 @@ export default function SearchBar({
             style={{ paddingVertical: 8 }}
             onPress={() => onChangeText("")}
           >
-            <Icon3 name="close" size={Layout.icon.small} />
+            <Ionicons name="close" size={Layout.icon.small} />
           </Pressable>
         )}
       </Animated.View>

@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { HomeStackScreenProps, ProfileStackScreenProps } from "../types";
-import { Icon, Text, View } from "../components/Themed";
+import { FontAwesome, Text, View } from "../components/Themed";
 
 import AddCourse from "../screens/AddCourse";
 import AppContext from "../context/Context";
@@ -46,7 +46,7 @@ export default function HomeStackNavigator() {
                 opacity: pressed ? 0.5 : 1,
               })}
             >
-              <Icon name="comments" size={Layout.icon.medium} />
+              <FontAwesome name="comments" size={Layout.icon.medium} />
               {context.totalUnreadCount > 0 && (
                 <View
                   style={{
@@ -92,7 +92,7 @@ export default function HomeStackNavigator() {
                 opacity: pressed ? 0.5 : 1,
               })}
             >
-              <Icon name="edit" size={Layout.icon.medium} />
+              <FontAwesome name="edit" size={Layout.icon.medium} />
             </Pressable>
           ),
         })}
@@ -110,7 +110,7 @@ export default function HomeStackNavigator() {
                 opacity: pressed ? 0.5 : 1,
               })}
             >
-              <Icon name="info-circle" size={Layout.icon.medium} />
+              <FontAwesome name="info-circle" size={Layout.icon.medium} />
             </Pressable>
           ),
         })}
@@ -145,7 +145,7 @@ export default function HomeStackNavigator() {
                 opacity: pressed ? 0.5 : 1,
               })}
             >
-              <Icon name="star" size={Layout.icon.medium} />
+              <FontAwesome name="star" size={Layout.icon.medium} />
             </Pressable>
           ),
         })}

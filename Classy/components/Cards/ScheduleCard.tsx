@@ -1,5 +1,5 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { Icon, Text, View } from "../Themed";
+import { FontAwesome, Text, View } from "../Themed";
 import { componentToName, getTimeString } from "../../utils";
 
 import AppStyles from "../../styles/AppStyles";
@@ -38,7 +38,7 @@ export default function ScheduleCard({
               {getTimeString(schedule.endInfo)}
             </Text>
           </View>
-          <Icon
+          <FontAwesome
             name={selected ? "check-circle" : "circle-o"}
             size={Layout.icon.medium}
             lightColor={

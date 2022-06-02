@@ -1,4 +1,4 @@
-import { Icon2, Text, View } from "../Themed";
+import { SimpleLineIcons, Text, View } from "../Themed";
 import { StyleSheet, Pressable } from "react-native";
 
 import AppStyles from "../../styles/AppStyles";
@@ -54,7 +54,7 @@ export default function FriendRequestReceived({
         </View>
         <View style={styles.acceptRejectContainer}>
           <Pressable onPress={() => console.log("Accept")}>
-            <Icon2
+            <SimpleLineIcons
               name="check"
               size={Layout.icon.large}
               lightColor={Colors[colorScheme].tint}
@@ -62,7 +62,7 @@ export default function FriendRequestReceived({
             />
           </Pressable>
           <Pressable onPress={() => console.log("Decline")}>
-            <Icon2 name="close" size={Layout.icon.large} />
+            <SimpleLineIcons name="close" size={Layout.icon.large} />
           </Pressable>
         </View>
         <Text

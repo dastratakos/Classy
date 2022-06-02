@@ -1,4 +1,4 @@
-import { Icon2, Text, View } from "../Themed";
+import { SimpleLineIcons, Text, View } from "../Themed";
 import { StyleSheet, Pressable, TouchableOpacity } from "react-native";
 
 import AppStyles from "../../styles/AppStyles";

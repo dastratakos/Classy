@@ -3,8 +3,8 @@ import * as WebBrowser from "expo-web-browser";
 
 import {
   ActivityIndicator,
-  Icon,
-  Icon3,
+  FontAwesome,
+  Ionicons,
   Text,
   View,
 } from "../components/Themed";
@@ -251,7 +251,7 @@ export default function Course({ route }: CourseProps) {
                   onRequestClose={() => setPopoverVisible(false)}
                   from={
                     <TouchableOpacity onPress={() => setPopoverVisible(true)}>
-                      <Icon3 name="filter" size={Layout.icon.medium} />
+                      <Ionicons name="filter" size={Layout.icon.medium} />
                     </TouchableOpacity>
                   }
                 >
@@ -271,7 +271,7 @@ export default function Course({ route }: CourseProps) {
                           {mode}
                         </Text>
                         {filter === mode ? (
-                          <Icon3 name="checkmark" size={Layout.icon.small} />
+                          <Ionicons name="checkmark" size={Layout.icon.small} />
                         ) : (
                           <View
                             style={{
@@ -362,7 +362,7 @@ export default function Course({ route }: CourseProps) {
               { opacity: pressed ? 0.5 : 1 },
             ]}
           >
-            <Icon
+            <FontAwesome
               name={favorited ? "star" : "star-o"}
               size={Layout.icon.medium}
               lightColor={Colors[colorScheme].tint}

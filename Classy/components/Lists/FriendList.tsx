@@ -5,7 +5,7 @@ import SVGNoRequests from "../../assets/images/undraw/noRequests.svg";
 import { User } from "../../types";
 import { View } from "../Themed";
 import { Pressable, StyleSheet } from "react-native";
-import { Icon2 } from "../Themed";
+import { SimpleLineIcons } from "../Themed";
 import Layout from "../../constants/Layout";
 import Colors from "../../constants/Colors";
 import useColorScheme from "../../hooks/useColorScheme";
@@ -44,7 +44,7 @@ export default function FriendList({
               requests ? (
                 <View style={styles.acceptRejectContainer}>
                   <Pressable onPress={() => console.log("Accept")}>
-                    <Icon2
+                    <SimpleLineIcons
                       name="check"
                       size={Layout.icon.large}
                       lightColor={Colors[colorScheme].tint}
@@ -52,7 +52,7 @@ export default function FriendList({
                     />
                   </Pressable>
                   <Pressable onPress={() => console.log("Decline")}>
-                    <Icon2 name="close" size={Layout.icon.large} />
+                    <SimpleLineIcons name="close" size={Layout.icon.large} />
                   </Pressable>
                 </View>
               ) : (

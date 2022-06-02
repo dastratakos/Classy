@@ -1,5 +1,5 @@
 import { FlatList, Pressable, StyleSheet } from "react-native";
-import { Icon, Text, View } from "./Themed";
+import { FontAwesome, Text, View } from "./Themed";
 import { getTimeString, termIdToFullName } from "../utils";
 
 import AppStyles from "../styles/AppStyles";

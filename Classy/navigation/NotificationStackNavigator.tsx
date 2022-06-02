@@ -6,7 +6,7 @@ import Enrollments from "../screens/Enrollments";
 import Favorites from "../screens/Favorites";
 import FriendProfile from "../screens/FriendProfile";
 import Friends from "../screens/Friends";
-import { Icon } from "../components/Themed";
+import { FontAwesome } from "../components/Themed";
 import Layout from "../constants/Layout";
 import MyFriends from "../screens/MyFriends";
 import Notifications from "../screens/Notifications";
@@ -40,7 +40,7 @@ export default function NotificationStackNavigator() {
                 opacity: pressed ? 0.5 : 1,
               })}
             >
-              <Icon name="star" size={Layout.icon.medium} />
+              <FontAwesome name="star" size={Layout.icon.medium} />
             </Pressable>
           ),
         })}

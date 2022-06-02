@@ -1,4 +1,4 @@
-import { ActivityIndicator, Icon3, Text, View } from "../components/Themed";
+import { ActivityIndicator, Ionicons, Text, View } from "../components/Themed";
 import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { Course, History, SearchProps, User } from "../types";
 import React, { useContext, useEffect, useState } from "react";
@@ -244,7 +244,7 @@ export default function Search({ route }: SearchProps) {
                   onPress={() => handleRemovePersonFromHistory(item.id)}
                   style={{ marginLeft: Layout.spacing.xsmall }}
                 >
-                  <Icon3 name="close" size={Layout.icon.small} />
+                  <Ionicons name="close" size={Layout.icon.small} />
                 </TouchableOpacity>
               }
               onPress={() => handleAddPersonToHistory(item)}
@@ -387,7 +387,7 @@ export default function Search({ route }: SearchProps) {
                   onPress={() => handleRemoveCourseFromHistory(item.courseId)}
                   style={{ marginLeft: Layout.spacing.xsmall }}
                 >
-                  <Icon3 name="close" size={Layout.icon.small} />
+                  <Ionicons name="close" size={Layout.icon.small} />
                 </TouchableOpacity>
               }
               onPress={() => handleAddCourseToHistory(item)}

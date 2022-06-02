@@ -1,4 +1,4 @@
-import { Icon, Text, View } from "../Themed";
+import { FontAwesome, Text, View } from "../Themed";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
 import AppStyles from "../../styles/AppStyles";
@@ -57,7 +57,7 @@ export default function SelectableFriendCard({
             </Text>
           ) : null}
         </View>
-        <Icon
+        <FontAwesome
           name={selected ? "check-circle" : "circle-o"}
           size={Layout.icon.medium}
           lightColor={

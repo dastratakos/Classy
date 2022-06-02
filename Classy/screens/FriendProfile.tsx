@@ -16,8 +16,8 @@ import {
 } from "../types";
 import {
   ActivityIndicator,
-  Icon,
-  Icon2,
+  FontAwesome,
+  SimpleLineIcons,
   Text,
   View,
 } from "../components/Themed";
@@ -491,7 +491,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
                   { backgroundColor: Colors[colorScheme].cardBackground },
                 ]}
               >
-                <Icon name="ellipsis-h" size={Layout.icon.medium} />
+                <FontAwesome name="ellipsis-h" size={Layout.icon.medium} />
               </Pressable>
             </View>
           </View>
@@ -502,7 +502,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             {user.degrees ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon2 name="pencil" size={Layout.icon.small} />
+                  <SimpleLineIcons name="pencil" size={Layout.icon.small} />
                 </View>
                 <View style={styles.aboutText}>
                   {user.degrees.map((d: Degree, i: number) => (
@@ -518,7 +518,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             {user.gradYear ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon2 name="graduation" size={Layout.icon.small} />
+                  <SimpleLineIcons name="graduation" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{user.gradYear}</Text>
               </View>
@@ -527,7 +527,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             {user.interests ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon2 name="puzzle" size={Layout.icon.small} />
+                  <SimpleLineIcons name="puzzle" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{user.interests}</Text>
               </View>

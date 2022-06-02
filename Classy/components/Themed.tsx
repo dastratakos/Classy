@@ -7,7 +7,11 @@ import {
   Text as DefaultText,
   View as DefaultView,
 } from "react-native";
-import { FontAwesome, Ionicons, SimpleLineIcons } from "@expo/vector-icons";
+import {
+  FontAwesome as DefaultFontAwesome,
+  Ionicons as DefaultIonicons,
+  SimpleLineIcons as DefaultSimpleLineIcons,
+} from "@expo/vector-icons";
 
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
@@ -61,25 +65,25 @@ export function View(props: ViewProps) {
   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
 }
 
-export function Icon(props: IconProps) {
+export function FontAwesome(props: IconProps) {
   const { lightColor, darkColor, style, ...otherProps } = props;
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
 
-  return <FontAwesome style={[{ color }, style]} {...otherProps} />;
+  return <DefaultFontAwesome style={[{ color }, style]} {...otherProps} />;
 }
 
-export function Icon2(props: IconProps) {
+export function SimpleLineIcons(props: IconProps) {
   const { lightColor, darkColor, style, ...otherProps } = props;
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
 
-  return <SimpleLineIcons style={[{ color }, style]} {...otherProps} />;
+  return <DefaultSimpleLineIcons style={[{ color }, style]} {...otherProps} />;
 }
 
-export function Icon3(props: IconProps) {
+export function Ionicons(props: IconProps) {
   const { lightColor, darkColor, style, ...otherProps } = props;
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
 
-  return <Ionicons style={[{ color }, style]} {...otherProps} />;
+  return <DefaultIonicons style={[{ color }, style]} {...otherProps} />;
 }
 
 export function ActivityIndicator(props: ActivityIndicatorProps) {

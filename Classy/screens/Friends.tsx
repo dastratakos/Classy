@@ -1,15 +1,17 @@
 import { ActivityIndicator, View } from "../components/Themed";
 import { FriendsProps, User } from "../types";
 import { ScrollView, StyleSheet } from "react-native";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 import FriendList from "../components/Lists/FriendList";
 import { getFriendIds, getFriendsFromIds } from "../services/friends";
+import AppContext from "../context/Context";
 
 export default function Friends({ route }: FriendsProps) {
+  const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
   const [friends, setFriends] = useState<User[]>([]);
@@ -18,7 +20,10 @@ export default function Friends({ route }: FriendsProps) {
 
   useEffect(() => {
     const loadScreen = async () => {
-      const friendIds = await getFriendIds(route.params.id);
+      let friendIds: string[] = [];
+      if (route.params.id === context.user.id) friendIds = context.friendIds;
+      else friendIds = await getFriendIds(route.params.id);
+      
       setFriends(await getFriendsFromIds(friendIds));
 
       setIsLoading(false);

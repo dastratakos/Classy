@@ -27,7 +27,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { uploadImage } from "../services/storage";
 import { getChannelId } from "../services/messages";
-import { Icon3 } from "../components/Themed";
+import { Ionicons } from "../components/Themed";
 
 export default function ChannelDetails() {
   const context = useContext(AppContext);
@@ -318,7 +318,7 @@ export default function ChannelDetails() {
           <Text style={[styles.title, { flex: 1 }]}>Members</Text>
           {role === "owner" ? (
             <Pressable onPress={() => console.log("Add member")}>
-              <Icon3 name="person-add" size={Layout.icon.medium} />
+              <Ionicons name="person-add" size={Layout.icon.medium} />
             </Pressable>
           ) : null}
         </View>
@@ -337,7 +337,7 @@ export default function ChannelDetails() {
               rightElement={
                 role === "owner" ? (
                   <Pressable onPress={() => console.log("Remove member")}>
-                    <Icon3 name="close" size={Layout.icon.medium} />
+                    <Ionicons name="close" size={Layout.icon.medium} />
                   </Pressable>
                 ) : (
                   <></>

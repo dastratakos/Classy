@@ -4,7 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { Icon, View } from "./Themed";
+import { FontAwesome, View } from "./Themed";
 
 import Colors from "../constants/Colors";
 import ProfilePhotoModal from "./ProfilePhotoModal";
@@ -41,7 +41,7 @@ export default function ProfilePhoto({
         {loading ? (
           <ActivityIndicator size="large" />
         ) : (
-          <Icon
+          <FontAwesome
             name="user"
             size={size / 2}
             style={{ color: Colors[colorScheme].tertiaryBackground }}
