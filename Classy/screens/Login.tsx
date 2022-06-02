@@ -33,6 +33,7 @@ export default function Login({ route }: LoginProps) {
   const [errorMessage, setErrorMessage] = useState("");
 
   const [loading, setLoading] = useState<boolean>(true);
+  const [settingUp, setSettingUp] = useState<boolean>(false);
 
   useEffect(() => {
     /* Check if user is signed in. */
@@ -72,6 +73,8 @@ export default function Login({ route }: LoginProps) {
   };
 
   const setUp = async (id: string) => {
+    setSettingUp(true);
+
     const user = await getUser(id);
     context.setUser(user);
 
@@ -87,6 +90,8 @@ export default function Login({ route }: LoginProps) {
     // });
 
     connectStreamChatUser(id, user.name, user.photoUrl);
+
+    setSettingUp(false);
 
     if (user.onboarded)
       navigation.reset({
@@ -178,7 +183,13 @@ export default function Login({ route }: LoginProps) {
         </View>
         <View style={{ height: Layout.spacing.large }} />
 
-        <Button text="Log In" onPress={signIn} emphasized wide />
+        <Button
+          text="Log In"
+          onPress={signIn}
+          loading={settingUp}
+          emphasized
+          wide
+        />
       </KeyboardAvoidingView>
       <View
         style={[
