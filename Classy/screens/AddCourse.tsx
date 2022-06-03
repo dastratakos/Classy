@@ -201,6 +201,7 @@ export default function AddCourse({ route }: AddCourseProps) {
                 })
               }
               emphasized={context.selectedTerm !== ""}
+              containerStyle={context.selectedTerm === "" && {backgroundColor: Colors.pink}}
             />
           </View>
           <View style={styles.row}>
