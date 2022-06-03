@@ -153,12 +153,13 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((expoPushToken) => {
-      if (expoPushToken) {
-        context.setUser({ ...context.user, expoPushToken });
-        updateUser(context.user.id, { expoPushToken });
-      }
-    });
+    if (!context.user.expoPushToken)
+      registerForPushNotificationsAsync().then((expoPushToken) => {
+        if (expoPushToken) {
+          context.setUser({ ...context.user, expoPushToken });
+          updateUser(context.user.id, { expoPushToken });
+        }
+      });
   }, []);
 
   const registerForPushNotificationsAsync = async () => {

@@ -1,6 +1,6 @@
 import * as Haptics from "expo-haptics";
 
-import { Alert, Pressable, StyleSheet, TouchableOpacity } from "react-native";
+import { Alert, StyleSheet, TouchableOpacity } from "react-native";
 import { SimpleLineIcons, Text, View } from "../Themed";
 import { useContext, useEffect, useRef, useState } from "react";
 
@@ -14,6 +14,7 @@ import Layout from "../../constants/Layout";
 import ProfilePhoto from "../ProfilePhoto";
 import {
   acceptRequest,
+  addFriend,
   blockUser,
   blockUserWithDoc,
   deleteFriendship,
@@ -43,8 +44,7 @@ export default function FriendCard({
   const [friendDocId, setFriendDocId] = useState<string>("");
 
   const actionSheetRef = useRef();
-  const requestSentActionSheetOptions = ["Delete Request", "Cancel"];
-  const requestReceivedActionSheetOptions = [
+  const actionSheetOptions = [
     "Block",
     "Accept Request",
     "Delete Request",
@@ -65,6 +65,20 @@ export default function FriendCard({
     };
     if (showFriendStatus) loadComponent();
   }, []);
+
+  const handleAddFriend = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    setFriendStatus("request sent");
+    setFriendDocId(await addFriend(context.user.id, friend.id));
+
+    sendPushNotification(
+      friend.expoPushToken,
+      `${context.user.name} sent you a friend request`
+    );
+
+    addNotification(friend.id, "FRIEND_REQUEST_RECEIVED", context.user.id);
+  };
 
   const handleAcceptRequest = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -93,21 +107,17 @@ export default function FriendCard({
     else blockUser(context.user.id, friend.id);
   };
 
-  const deleteRequestAlert = () =>
-    Alert.alert(
-      "Delete friend request",
-      `You will have to request ${friend.name} again to be friends.`,
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "OK",
-          onPress: handleDeleteFriendship,
-        },
-      ]
-    );
+  const cancelFriendRequestAlert = () =>
+    Alert.alert("Cancel friend request", "Are you sure?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: handleDeleteFriendship,
+      },
+    ]);
 
   const blockAlert = () =>
     Alert.alert(
@@ -126,14 +136,11 @@ export default function FriendCard({
     );
 
   const handleActionSheetOptionPressed = (index: number) => {
-    if (friendStatus === "request sent") {
-      const action = requestSentActionSheetOptions[index];
-      if (action === "Delete Request") deleteRequestAlert();
-    } else if (friendStatus === "request received") {
-      const action = requestReceivedActionSheetOptions[index];
+    if (friendStatus === "request received") {
+      const action = actionSheetOptions[index];
       if (action === "Block") blockAlert();
       else if (action === "Accept Request") handleAcceptRequest();
-      else if (action === "Delete Request") deleteRequestAlert();
+      else if (action === "Cancel Request") cancelFriendRequestAlert();
     }
   };
 
@@ -176,39 +183,26 @@ export default function FriendCard({
               <Button
                 text={"Add Friend"}
                 emphasized
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  actionSheetRef.current?.show();
-                }}
+                onPress={handleAddFriend}
               />
             ) : friendStatus === "request sent" ? (
-              <Button
-                text={"Requested"}
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  actionSheetRef.current?.show();
-                }}
-              />
+              <Button text={"Requested"} onPress={cancelFriendRequestAlert} />
             ) : friendStatus === "request received" ? (
-              <View
+              <TouchableOpacity
                 style={[
                   styles.respondContainer,
                   { backgroundColor: Colors[colorScheme].photoBackground },
                 ]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  actionSheetRef.current?.show();
+                }}
               >
-                <TouchableOpacity
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    actionSheetRef.current?.show();
-                  }}
-                  style={styles.respondInnerContainer}
-                >
-                  <Text style={{ paddingRight: Layout.spacing.xsmall }}>
-                    Respond
-                  </Text>
-                  <SimpleLineIcons name="arrow-down" />
-                </TouchableOpacity>
-              </View>
+                <Text style={{ paddingRight: Layout.spacing.xsmall }}>
+                  Respond
+                </Text>
+                <SimpleLineIcons name="arrow-down" />
+              </TouchableOpacity>
             ) : null}
           </>
         )}
@@ -216,16 +210,8 @@ export default function FriendCard({
       </TouchableOpacity>
       <ActionSheet
         ref={actionSheetRef}
-        options={
-          friendStatus === "request receieved"
-            ? requestReceivedActionSheetOptions
-            : requestSentActionSheetOptions
-        }
-        cancelButtonIndex={
-          friendStatus === "request receieved"
-            ? requestReceivedActionSheetOptions.length - 1
-            : requestSentActionSheetOptions.length - 1
-        }
+        options={actionSheetOptions}
+        cancelButtonIndex={actionSheetOptions.length - 1}
         destructiveButtonIndex={0}
         onPress={handleActionSheetOptionPressed}
         title={friend.name}
@@ -257,24 +243,8 @@ const styles = StyleSheet.create({
   cardSubtitle: {
     fontSize: Layout.text.medium,
   },
-  acceptRejectContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: Layout.photo.small,
-    width: Layout.photo.medium,
-    borderRadius: Layout.radius.xsmall,
-    marginLeft: Layout.spacing.small,
-    backgroundColor: "transparent",
-  },
   respondContainer: {
     ...AppStyles.boxShadow,
-    height: Layout.buttonHeight.medium,
-    borderRadius: Layout.radius.medium,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  respondInnerContainer: {
     height: Layout.buttonHeight.medium,
     borderRadius: Layout.radius.medium,
     padding: Layout.spacing.small,
