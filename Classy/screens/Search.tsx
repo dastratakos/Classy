@@ -236,20 +236,18 @@ export default function Search({ route }: SearchProps) {
       <FlatList
         data={fullHistory.people}
         renderItem={({ item }) => (
-          <View style={{ ...AppStyles.row }}>
-            <FriendCard
-              friend={item}
-              rightElement={
-                <TouchableOpacity
-                  onPress={() => handleRemovePersonFromHistory(item.id)}
-                  style={{ marginLeft: Layout.spacing.xsmall }}
-                >
-                  <Ionicons name="close" size={Layout.icon.small} />
-                </TouchableOpacity>
-              }
-              onPress={() => handleAddPersonToHistory(item)}
-            />
-          </View>
+          <FriendCard
+            friend={item}
+            rightElement={
+              <TouchableOpacity
+                onPress={() => handleRemovePersonFromHistory(item.id)}
+                style={{ marginLeft: Layout.spacing.xsmall }}
+              >
+                <Ionicons name="close" size={Layout.icon.small} />
+              </TouchableOpacity>
+            }
+            onPress={() => handleAddPersonToHistory(item)}
+          />
         )}
         keyExtractor={(item) => item.id}
         refreshing={historyLoading}
@@ -378,21 +376,18 @@ export default function Search({ route }: SearchProps) {
       <FlatList
         data={fullHistory.courses}
         renderItem={({ item }) => (
-          <View key={item.courseId.toString()}>
-            <CourseCard
-              course={item}
-              emphasize={false}
-              rightElement={
-                <TouchableOpacity
-                  onPress={() => handleRemoveCourseFromHistory(item.courseId)}
-                  style={{ marginLeft: Layout.spacing.xsmall }}
-                >
-                  <Ionicons name="close" size={Layout.icon.small} />
-                </TouchableOpacity>
-              }
-              onPress={() => handleAddCourseToHistory(item)}
-            />
-          </View>
+          <CourseCard
+            course={item}
+            rightElement={
+              <TouchableOpacity
+                onPress={() => handleRemoveCourseFromHistory(item.courseId)}
+                style={{ marginLeft: Layout.spacing.xsmall }}
+              >
+                <Ionicons name="close" size={Layout.icon.small} />
+              </TouchableOpacity>
+            }
+            onPress={() => handleAddCourseToHistory(item)}
+          />
         )}
         keyExtractor={(item) => item.courseId.toString()}
         refreshing={historyLoading}
@@ -423,14 +418,11 @@ export default function Search({ route }: SearchProps) {
         <FlatList
           data={courseSearchResults}
           renderItem={({ item }) => (
-            <View key={item.courseId.toString()}>
-              <CourseCard
-                course={item}
-                emphasize={false}
-                onPress={() => handleAddCourseToHistory(item)}
-                searchTerm={searchPhrase}
-              />
-            </View>
+            <CourseCard
+              course={item}
+              onPress={() => handleAddCourseToHistory(item)}
+              searchTerm={searchPhrase}
+            />
           )}
           keyExtractor={(item) => item.courseId.toString()}
           onEndReached={() => {
@@ -459,14 +451,11 @@ export default function Search({ route }: SearchProps) {
         <FlatList
           data={courseSearchResults}
           renderItem={({ item }) => (
-            <View key={item.courseId.toString()}>
-              <CourseCard
-                course={item}
-                emphasize={false}
-                onPress={() => handleAddCourseToHistory(item)}
-                searchTerm={searchPhrase}
-              />
-            </View>
+            <CourseCard
+              course={item}
+              onPress={() => handleAddCourseToHistory(item)}
+              searchTerm={searchPhrase}
+            />
           )}
           keyExtractor={(item) => item.courseId.toString()}
           refreshing={coursesRefreshing}
