@@ -34,32 +34,12 @@ export default function FriendList({
         secondaryText={emptySecondary}
       />
     );
+
   return (
     <>
       {friends.map((friend) => (
         <View key={friend.id}>
-          <FriendCard
-            friend={friend}
-            rightElement={
-              requests ? (
-                <View style={styles.acceptRejectContainer}>
-                  <Pressable onPress={() => console.log("Accept")}>
-                    <SimpleLineIcons
-                      name="check"
-                      size={Layout.icon.large}
-                      lightColor={Colors[colorScheme].tint}
-                      darkColor={Colors[colorScheme].tint}
-                    />
-                  </Pressable>
-                  <Pressable onPress={() => console.log("Decline")}>
-                    <SimpleLineIcons name="close" size={Layout.icon.large} />
-                  </Pressable>
-                </View>
-              ) : (
-                <></>
-              )
-            }
-          />
+          <FriendCard friend={friend} />
         </View>
       ))}
     </>

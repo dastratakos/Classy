@@ -29,7 +29,7 @@ import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import DropDownPicker from "react-native-dropdown-picker";
 import EmptyList from "../components/EmptyList";
-import FriendList from "../components/Lists/FriendList";
+import FriendCard from "../components/Cards/FriendCard";
 import Layout from "../constants/Layout";
 import Popover from "react-native-popover-view";
 import ReadMoreText from "../components/ReadMoreText";
@@ -313,17 +313,22 @@ export default function Course({ route }: CourseProps) {
                           )
                         </Text>
                         {filter !== "Public" && (
-                          <FriendList
-                            friends={peopleData[termId].friends}
-                            showEmptyElement={false}
-                          />
+                          <>
+                            {peopleData[termId].friends.map((friend) => (
+                              <View key={friend.id}>
+                                <FriendCard friend={friend} />
+                              </View>
+                            ))}
+                          </>
                         )}
                         {filter !== "Friends" && (
-                          <FriendList
-                            friends={peopleData[termId].publicUsers}
-                            showEmptyElement={false}
-                            // requests
-                          />
+                          <>
+                            {peopleData[termId].publicUsers.map((friend) => (
+                              <View key={friend.id}>
+                                <FriendCard friend={friend} showFriendStatus />
+                              </View>
+                            ))}
+                          </>
                         )}
                       </View>
                     )}

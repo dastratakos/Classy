@@ -355,27 +355,20 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const handleActionSheetOptionPressed = (index: number) => {
     if (friendStatus === "friends") {
       const action = friendActionSheetOptions[index];
-      if (action === "Block") {
-        blockAlert();
-      } else if (action === "Remove friend") {
-        removeFriendAlert();
-      } else if (action === "Copy profile URL") {
+      if (action === "Block") blockAlert();
+      else if (action === "Remove friend") removeFriendAlert();
+      else if (action === "Copy profile URL")
         console.log("Copy profile URL pressed");
-      }
     } else if (friendStatus === "block sent") {
       const action = blockedActionSheetOptions[index];
-      if (action === "Unblock") {
-        unblockAlert();
-      } else if (action === "Copy profile URL") {
+      if (action === "Unblock") unblockAlert();
+      else if (action === "Copy profile URL")
         console.log("Copy profile URL pressed");
-      }
     } else {
       const action = baseActionSheetOptions[index];
-      if (action === "Block") {
-        blockAlert();
-      } else if (action === "Copy profile URL") {
+      if (action === "Block") blockAlert();
+      else if (action === "Copy profile URL")
         console.log("Copy profile URL pressed");
-      }
     }
   };
 
