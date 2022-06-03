@@ -209,6 +209,7 @@ export default function Profile() {
       component: (
         <EnrollmentList
           enrollments={currentEnrollments}
+          emphasized
           emptyElement={
             <EmptyList
               SVGElement={

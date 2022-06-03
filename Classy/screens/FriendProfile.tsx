@@ -388,6 +388,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       component: (
         <EnrollmentList
           enrollments={currentEnrollments}
+          checkEmphasized
           emptyElement={
             enrollmentsLoading ? (
               <ActivityIndicator />

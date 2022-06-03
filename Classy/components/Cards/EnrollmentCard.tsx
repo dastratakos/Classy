@@ -14,11 +14,11 @@ import AppContext from "../../context/Context";
 export default function EnrollmentCard({
   enrollment,
   editable = true,
-  emphasize = false,
+  emphasized = false,
 }: {
   enrollment: Enrollment;
   editable?: boolean;
-  emphasize?: boolean;
+  emphasized?: boolean;
 }) {
   const context = useContext(AppContext);
   const colorScheme = useColorScheme();
@@ -65,8 +65,8 @@ export default function EnrollmentCard({
         >
           <View style={styles.textContainer}>
             <Text style={styles.cardTitle} numberOfLines={1}>
+              {emphasized ? "⭐️ " : null}
               {enrollment.code.join(", ")}
-              {emphasize ? " ⭐️" : null}
             </Text>
             <Text style={styles.cardSubtitle} numberOfLines={1}>
               {enrollment.title}
