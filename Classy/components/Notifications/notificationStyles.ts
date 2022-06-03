@@ -33,6 +33,6 @@ export default StyleSheet.create({
     width: 10,
     borderRadius: 10 / 2,
     backgroundColor: Colors.pink,
-    marginRight: Layout.spacing.xsmall,
+    marginHorizontal: Layout.spacing.xsmall,
   },
 });

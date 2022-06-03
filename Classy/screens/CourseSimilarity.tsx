@@ -63,6 +63,7 @@ export default function CourseSimilarity({ route }: CourseSimilarityProps) {
         <EnrollmentList
           enrollments={overlap}
           editable={false}
+          emphasized
           emptyElement={
             <EmptyList
               SVGElement={SVGEmpty}

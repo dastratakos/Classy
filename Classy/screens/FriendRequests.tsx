@@ -6,8 +6,11 @@ import { useContext, useState } from "react";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
-import FriendList from "../components/Lists/FriendList";
 import AppContext from "../context/Context";
+import EmptyList from "../components/EmptyList";
+import FriendCard from "../components/Cards/FriendCard";
+import SVGNoFriends from "../assets/images/undraw/noFriends.svg";
+import SVGNoRequests from "../assets/images/undraw/noRequests.svg";
 
 export default function FriendRequests({ route }: FriendRequestsProps) {
   const context = useContext(AppContext);
@@ -21,7 +24,20 @@ export default function FriendRequests({ route }: FriendRequestsProps) {
       contentContainerStyle={{ alignItems: "center" }}
     >
       <View style={AppStyles.section}>
-        <FriendList friends={requests} emptyPrimary="No friend requests" />
+        {requests.length === 0 ? (
+          <EmptyList
+            SVGElement={requests ? SVGNoRequests : SVGNoFriends}
+            primaryText="No friend requests"
+          />
+        ) : (
+          <>
+            {requests.map((friend: User) => (
+              <View key={friend.id}>
+                <FriendCard friend={friend} showFriendStatus={true} />
+              </View>
+            ))}
+          </>
+        )}
       </View>
     </ScrollView>
   );

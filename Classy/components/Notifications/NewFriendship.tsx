@@ -1,9 +1,8 @@
 import { Notification, User } from "../../types";
-import { Pressable, StyleSheet } from "react-native";
+import { Alert, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "../Themed";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import AppContext from "../../context/Context";
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
 import ProfilePhoto from "../ProfilePhoto";
@@ -13,16 +12,17 @@ import notificationStyles from "./notificationStyles";
 import useColorScheme from "../../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
-export default function FriendRequestAccepted({
+export default function NewFriendship({
   notification,
   readNotification,
+  deleteFunc = () => {},
 }: {
   notification: Notification;
   readNotification: (arg0: string) => void;
+  deleteFunc?: () => void;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
-  const context = useContext(AppContext);
 
   const [friend, setFriend] = useState<User>({} as User);
   const [loading, setLoading] = useState<boolean>(true);
@@ -35,6 +35,18 @@ export default function FriendRequestAccepted({
     loadComponent();
   }, []);
 
+  const deleteNotificationAlert = () =>
+    Alert.alert("Delete notification", "Are you sure?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: deleteFunc,
+      },
+    ]);
+
   if (loading) return <View style={notificationStyles.container} />;
 
   return (
@@ -43,6 +55,7 @@ export default function FriendRequestAccepted({
         readNotification(notification.docId);
         navigation.navigate("FriendProfile", { id: friend.id });
       }}
+      onLongPress={deleteNotificationAlert}
       style={[
         notificationStyles.container,
         { borderColor: Colors[colorScheme].tertiaryBackground },
@@ -51,8 +64,9 @@ export default function FriendRequestAccepted({
       <ProfilePhoto url={friend.photoUrl} size={Layout.photo.xsmall} />
       <View style={notificationStyles.textContainer}>
         <Text style={notificationStyles.notificationText} numberOfLines={3}>
-          <Text style={notificationStyles.pressableText}>{friend.name} </Text>
-          <Text>accepted your friend request.</Text>
+          <Text>You and</Text>
+          <Text style={notificationStyles.pressableText}> {friend.name} </Text>
+          <Text>became friends.</Text>
         </Text>
       </View>
       {notification.unread && <View style={notificationStyles.indicator} />}

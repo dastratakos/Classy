@@ -1,14 +1,16 @@
-import { ActivityIndicator, View } from "../components/Themed";
+import { ActivityIndicator } from "../components/Themed";
+import { FlatList, StyleSheet } from "react-native";
 import { FriendsProps, User } from "../types";
-import { ScrollView, StyleSheet } from "react-native";
+import { getFriendIds, getFriendsFromIds } from "../services/friends";
 import { useContext, useEffect, useState } from "react";
 
+import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
+import EmptyList from "../components/EmptyList";
+import FriendCard from "../components/Cards/FriendCard";
+import SVGNoFriends from "../assets/images/undraw/noFriends.svg";
 import useColorScheme from "../hooks/useColorScheme";
-import FriendList from "../components/Lists/FriendList";
-import { getFriendIds, getFriendsFromIds } from "../services/friends";
-import AppContext from "../context/Context";
 
 export default function Friends({ route }: FriendsProps) {
   const context = useContext(AppContext);
@@ -23,7 +25,7 @@ export default function Friends({ route }: FriendsProps) {
       let friendIds: string[] = [];
       if (route.params.id === context.user.id) friendIds = context.friendIds;
       else friendIds = await getFriendIds(route.params.id);
-      
+
       setFriends(await getFriendsFromIds(friendIds));
 
       setIsLoading(false);
@@ -34,14 +36,19 @@ export default function Friends({ route }: FriendsProps) {
   if (isLoading) return <ActivityIndicator />;
 
   return (
-    <ScrollView
+    <FlatList
+      data={friends}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => <FriendCard friend={item} />}
+      contentContainerStyle={{
+        ...AppStyles.section,
+        backgroundColor: Colors[colorScheme].background,
+      }}
       style={{ backgroundColor: Colors[colorScheme].background }}
-      contentContainerStyle={{ alignItems: "center" }}
-    >
-      <View style={AppStyles.section}>
-        <FriendList friends={friends} emptyPrimary="No friends yet" />
-      </View>
-    </ScrollView>
+      ListEmptyComponent={
+        <EmptyList SVGElement={SVGNoFriends} primaryText="No friends yet" />
+      }
+    />
   );
 }
 

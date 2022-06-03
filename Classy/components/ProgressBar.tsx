@@ -33,7 +33,6 @@ export default function ProgressBar({
         ]}
         onLayout={(event) => {
           const totalWidth = event.nativeEvent.layout.width;
-          console.log("transition to width:", (totalWidth * progress) / 100);
           Animated.timing(width, {
             toValue: (totalWidth * progress) / 100,
             duration: 500,
@@ -68,7 +67,6 @@ export default function ProgressBar({
       ]}
       onLayout={(event) => {
         const totalWidth = event.nativeEvent.layout.width;
-        console.log("transition to width:", (totalWidth * progress) / 100);
         Animated.timing(width, {
           toValue: (totalWidth * progress) / 100,
           duration: 500,

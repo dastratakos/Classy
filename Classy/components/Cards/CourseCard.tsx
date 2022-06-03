@@ -1,22 +1,20 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Text, View } from "../Themed";
 
-import Colors from "../../constants/Colors";
-import Layout from "../../constants/Layout";
-import { useNavigation } from "@react-navigation/core";
-import useColorScheme from "../../hooks/useColorScheme";
-import { Course } from "../../types";
 import AppStyles from "../../styles/AppStyles";
+import Colors from "../../constants/Colors";
+import { Course } from "../../types";
+import Layout from "../../constants/Layout";
+import useColorScheme from "../../hooks/useColorScheme";
+import { useNavigation } from "@react-navigation/core";
 
 export default function CourseCard({
   course,
-  emphasize = false,
   rightElement,
   onPress = () => {},
   searchTerm,
 }: {
   course: Course;
-  emphasize?: boolean;
   rightElement?: JSX.Element;
   onPress?: () => void;
   searchTerm?: string;
@@ -65,7 +63,6 @@ export default function CourseCard({
         <View style={styles.textContainer}>
           <Text style={styles.cardTitle} numberOfLines={1}>
             {codesList.join(", ")}
-            {emphasize ? " ⭐️" : null}
           </Text>
           <Text style={styles.cardSubtitle} numberOfLines={1}>
             {course.title}

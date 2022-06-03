@@ -138,8 +138,10 @@ export const addFriend = async (userId: string, friendId: string) => {
 };
 
 export const acceptRequest = async (friendDocId: string) => {
+  console.log("friendDocId:", friendDocId);
   const docRef = doc(db, "friends", friendDocId);
   await updateDoc(docRef, { status: "friends" });
+  console.log("done");
 };
 
 export const deleteFriendship = async (friendDocId: string) => {
@@ -182,9 +184,15 @@ export const getAllPeopleIdsInCourse = async (
   userId: string,
   courseId: number
 ) => {
-  const allStudents = await getCourseStudents(courseId);
-  const friendIds = await getFriendIds(userId);
-  const publicIds = await getPublicUserIds(userId);
+  // const allStudents = await getCourseStudents(courseId);
+  // const friendIds = await getFriendIds(userId);
+  // const publicIds = await getPublicUserIds(userId);
+
+  const [allStudents, friendIds, publicIds] = await Promise.all([
+    getCourseStudents(courseId),
+    getFriendIds(userId),
+    getPublicUserIds(userId),
+  ]);
 
   const res = {};
   Object.keys(allStudents).forEach((term) => {
@@ -212,7 +220,6 @@ export const getFriendsInCourse = async (
   courseId: number,
   termId: string
 ) => {
-
   const docRef = doc(doc(db, "courses", `${courseId}`), "terms", termId);
   const docSnap = await getDoc(docRef);
 
