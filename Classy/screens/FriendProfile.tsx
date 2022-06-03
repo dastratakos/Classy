@@ -1,6 +1,13 @@
 import * as Haptics from "expo-haptics";
 
 import {
+  ActivityIndicator,
+  FontAwesome,
+  SimpleLineIcons,
+  Text,
+  View,
+} from "../components/Themed";
+import {
   Alert,
   Pressable,
   RefreshControl,
@@ -15,13 +22,6 @@ import {
   WeekSchedule,
 } from "../types";
 import {
-  ActivityIndicator,
-  FontAwesome,
-  SimpleLineIcons,
-  Text,
-  View,
-} from "../components/Themed";
-import {
   acceptRequest,
   addFriend,
   blockUser,
@@ -32,6 +32,10 @@ import {
   getNumFriendsInCourse,
 } from "../services/friends";
 import {
+  addNotification,
+  deleteFriendshipNotifications,
+} from "../services/notifications";
+import {
   getCurrentTermId,
   getWeekFromEnrollments,
   sendPushNotification,
@@ -39,7 +43,6 @@ import {
   termIdToQuarterName,
   timeIsEarlier,
 } from "../utils";
-import { getEnrollments } from "../services/enrollments";
 import { useContext, useEffect, useRef, useState } from "react";
 
 import ActionSheet from "react-native-actionsheet";
@@ -63,10 +66,10 @@ import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
 import TabView from "../components/TabView";
 import { Timestamp } from "firebase/firestore";
+import { getEnrollments } from "../services/enrollments";
 import { getUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { addNotification } from "../services/notifications";
 
 export default function FriendProfile({ route }: FriendProfileProps) {
   const navigation = useNavigation();
@@ -232,7 +235,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       `${context.user.name} accepted your friend request`
     );
 
-    addNotification(user.id, "FRIEND_REQUEST_ACCEPTED", context.user.id);
+    addNotification(user.id, "NEW_FRIENDSHIP", context.user.id);
   };
 
   const handleDeleteFriendship = async () => {
@@ -240,6 +243,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     setAddFriendDisabled(false);
 
     deleteFriendship(friendDocId);
+    deleteFriendshipNotifications(context.user.id, user.id);
 
     setFriendDocId("");
   };
@@ -249,6 +253,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 
     if (friendDocId) blockUserWithDoc(context.user.id, user.id, friendDocId);
     else blockUser(context.user.id, user.id);
+
+    deleteFriendshipNotifications(context.user.id, user.id);
   };
 
   const cancelFriendRequestAlert = () =>

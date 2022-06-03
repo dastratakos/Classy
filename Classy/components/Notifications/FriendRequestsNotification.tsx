@@ -14,7 +14,7 @@ import DoubleProfilePhoto from "../DoubleProfilePhoto";
 
 export default function FriendRequestsNotification({
   requests,
-  indicator = true,
+  indicator = false, // TODO: add backend functionality to determine indicator
 }: {
   requests: User[];
   indicator?: boolean;

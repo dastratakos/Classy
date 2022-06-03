@@ -28,9 +28,13 @@ import { useNavigation } from "@react-navigation/core";
 export default function FriendRequestReceived({
   notification,
   readNotification,
+  deleteFunc = () => {},
+  onRefresh = () => {},
 }: {
   notification: Notification;
   readNotification: (arg0: string) => void;
+  deleteFunc?: () => void;
+  onRefresh?: () => void;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -53,7 +57,7 @@ export default function FriendRequestReceived({
     const loadComponent = async () => {
       setFriend(await getUser(notification.friendId));
 
-      const res = await getFriendStatus(context.user.id, friend.id);
+      const res = await getFriendStatus(context.user.id, notification.friendId);
       setFriendDocId(res.friendDocId);
 
       setLoading(false);
@@ -72,13 +76,18 @@ export default function FriendRequestReceived({
       `${context.user.name} accepted your friend request`
     );
 
-    addNotification(friend.id, "FRIEND_REQUEST_ACCEPTED", context.user.id);
+    addNotification(friend.id, "NEW_FRIENDSHIP", context.user.id);
+    addNotification(context.user.id, "NEW_FRIENDSHIP", friend.id);
+
+    deleteFunc();
+    onRefresh();
   };
 
   const handleDeleteFriendship = async () => {
     // setFriendStatus("not friends");
     deleteFriendship(friendDocId);
     setFriendDocId("");
+    deleteFunc();
   };
 
   const handleBlockUser = async () => {
@@ -86,10 +95,12 @@ export default function FriendRequestReceived({
 
     if (friendDocId) blockUserWithDoc(context.user.id, friend.id, friendDocId);
     else blockUser(context.user.id, friend.id);
+
+    deleteFunc();
   };
 
-  const cancelFriendRequestAlert = () =>
-    Alert.alert("Cancel friend request", "Are you sure?", [
+  const deleteFriendRequestAlert = () =>
+    Alert.alert("Delete friend request", "Are you sure?", [
       {
         text: "Cancel",
         style: "cancel",
@@ -120,7 +131,7 @@ export default function FriendRequestReceived({
     const action = actionSheetOptions[index];
     if (action === "Block") blockAlert();
     else if (action === "Accept Request") handleAcceptRequest();
-    else if (action === "Cancel Request") cancelFriendRequestAlert();
+    else if (action === "Delete Request") deleteFriendRequestAlert();
   };
 
   if (loading) return <View style={notificationStyles.container} />;
@@ -144,6 +155,14 @@ export default function FriendRequestReceived({
         </Text>
       </View>
       {notification.unread && <View style={notificationStyles.indicator} />}
+      <Text
+        style={[
+          notificationStyles.time,
+          { color: Colors[colorScheme].secondaryText },
+        ]}
+      >
+        {getTimeSinceString(notification.timestamp)}
+      </Text>
       <TouchableOpacity
         style={[
           styles.respondContainer,
@@ -157,14 +176,6 @@ export default function FriendRequestReceived({
         <Text style={{ paddingRight: Layout.spacing.xsmall }}>Respond</Text>
         <SimpleLineIcons name="arrow-down" />
       </TouchableOpacity>
-      <Text
-        style={[
-          notificationStyles.time,
-          { color: Colors[colorScheme].secondaryText },
-        ]}
-      >
-        {getTimeSinceString(notification.timestamp)}
-      </Text>
       <ActionSheet
         ref={actionSheetRef}
         options={actionSheetOptions}
@@ -182,8 +193,7 @@ const styles = StyleSheet.create({
     ...AppStyles.boxShadow,
     height: Layout.buttonHeight.medium,
     borderRadius: Layout.radius.medium,
-    marginLeft: Layout.spacing.xsmall,
-    marginRight: Layout.spacing.small,
+    marginLeft: Layout.spacing.small,
     padding: Layout.spacing.small,
     flexDirection: "row",
     alignItems: "center",

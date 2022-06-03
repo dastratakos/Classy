@@ -1,17 +1,8 @@
 import * as Haptics from "expo-haptics";
 
 import { Alert, StyleSheet, TouchableOpacity } from "react-native";
-import { SimpleLineIcons, Text, View } from "../Themed";
-import { useContext, useEffect, useRef, useState } from "react";
-
-import ActionSheet from "react-native-actionsheet";
-import AppContext from "../../context/Context";
-import AppStyles from "../../styles/AppStyles";
-import Button from "../Buttons/Button";
-import Colors from "../../constants/Colors";
 import { Degree, User } from "../../types";
-import Layout from "../../constants/Layout";
-import ProfilePhoto from "../ProfilePhoto";
+import { SimpleLineIcons, Text, View } from "../Themed";
 import {
   acceptRequest,
   addFriend,
@@ -20,10 +11,22 @@ import {
   deleteFriendship,
   getFriendStatus,
 } from "../../services/friends";
+import {
+  addNotification,
+  deleteFriendshipNotifications,
+} from "../../services/notifications";
+import { useContext, useEffect, useRef, useState } from "react";
+
+import ActionSheet from "react-native-actionsheet";
+import AppContext from "../../context/Context";
+import AppStyles from "../../styles/AppStyles";
+import Button from "../Buttons/Button";
+import Colors from "../../constants/Colors";
+import Layout from "../../constants/Layout";
+import ProfilePhoto from "../ProfilePhoto";
+import { sendPushNotification } from "../../utils";
 import useColorScheme from "../../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { sendPushNotification } from "../../utils";
-import { addNotification } from "../../services/notifications";
 
 export default function FriendCard({
   friend,
@@ -40,7 +43,7 @@ export default function FriendCard({
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
-  const [friendStatus, setFriendStatus] = useState<string>("not friends");
+  const [friendStatus, setFriendStatus] = useState<string>("friends");
   const [friendDocId, setFriendDocId] = useState<string>("");
 
   const actionSheetRef = useRef();
@@ -91,12 +94,13 @@ export default function FriendCard({
       `${context.user.name} accepted your friend request`
     );
 
-    addNotification(friend.id, "FRIEND_REQUEST_ACCEPTED", context.user.id);
+    addNotification(friend.id, "NEW_FRIENDSHIP", context.user.id);
   };
 
   const handleDeleteFriendship = async () => {
     setFriendStatus("not friends");
     deleteFriendship(friendDocId);
+    deleteFriendshipNotifications(context.user.id, friend.id);
     setFriendDocId("");
   };
 
@@ -105,10 +109,12 @@ export default function FriendCard({
 
     if (friendDocId) blockUserWithDoc(context.user.id, friend.id, friendDocId);
     else blockUser(context.user.id, friend.id);
+
+    deleteFriendshipNotifications(context.user.id, friend.id);
   };
 
-  const cancelFriendRequestAlert = () =>
-    Alert.alert("Cancel friend request", "Are you sure?", [
+  const deleteFriendRequestAlert = () =>
+    Alert.alert("Delete friend request", "Are you sure?", [
       {
         text: "Cancel",
         style: "cancel",
@@ -140,7 +146,7 @@ export default function FriendCard({
       const action = actionSheetOptions[index];
       if (action === "Block") blockAlert();
       else if (action === "Accept Request") handleAcceptRequest();
-      else if (action === "Cancel Request") cancelFriendRequestAlert();
+      else if (action === "Delete Request") deleteFriendRequestAlert();
     }
   };
 
@@ -186,7 +192,7 @@ export default function FriendCard({
                 onPress={handleAddFriend}
               />
             ) : friendStatus === "request sent" ? (
-              <Button text={"Requested"} onPress={cancelFriendRequestAlert} />
+              <Button text={"Requested"} onPress={deleteFriendRequestAlert} />
             ) : friendStatus === "request received" ? (
               <TouchableOpacity
                 style={[

@@ -1,5 +1,5 @@
 import { Enrollment, Notification } from "../../types";
-import { Image, Pressable, StyleSheet } from "react-native";
+import { Alert, Image, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "../Themed";
 import { getTimeSinceString, termIdToFullName } from "../../utils";
 
@@ -13,13 +13,27 @@ import { useNavigation } from "@react-navigation/core";
 export default function AddTimesReminder({
   notification,
   readNotification,
+  deleteFunc = () => {},
 }: {
   notification: Notification;
   readNotification: (arg0: string) => void;
+  deleteFunc?: () => void;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
+
+  const deleteNotificationAlert = () =>
+    Alert.alert("Delete notification", "Are you sure?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: deleteFunc,
+      },
+    ]);
 
   return (
     <Pressable
@@ -34,6 +48,7 @@ export default function AddTimesReminder({
           termId: notification.termId,
         });
       }}
+      onLongPress={deleteNotificationAlert}
       style={[
         notificationStyles.container,
         { borderColor: Colors[colorScheme].tertiaryBackground },

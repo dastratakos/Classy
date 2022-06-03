@@ -1,16 +1,12 @@
 import { Notification, User } from "../types";
-import {
-  Pressable,
-  RefreshControl,
-  SectionList,
-  StyleSheet,
-} from "react-native";
+import { SectionList, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
-import { getFriendsFromIds, getRequestIds } from "../services/friends";
 import {
+  deleteNotification,
   getNotifications,
   updateNotification,
 } from "../services/notifications";
+import { getFriendsFromIds, getRequestIds } from "../services/friends";
 import { useContext, useEffect, useState } from "react";
 
 import AddCoursesReminder from "../components/Notifications/AddCoursesReminder";
@@ -19,11 +15,11 @@ import AppContext from "../context/Context";
 import Colors from "../constants/Colors";
 import { DAY_MILLISECONDS } from "../utils";
 import EmptyList from "../components/EmptyList";
-import FriendRequestAccepted from "../components/Notifications/FriendRequestAccepted";
 import FriendRequestReceived from "../components/Notifications/FriendRequestReceived";
 import FriendRequestsNotification from "../components/Notifications/FriendRequestsNotification";
 import Layout from "../constants/Layout";
 import MutualEnrollment from "../components/Notifications/MutualEnrollment";
+import NewFriendship from "../components/Notifications/NewFriendship";
 import SVGDone from "../assets/images/undraw/done.svg";
 import { Timestamp } from "firebase/firestore";
 import useColorScheme from "../hooks/useColorScheme";
@@ -97,6 +93,20 @@ export default function Notifications() {
     updateNotification(docId, { unread: false });
   };
 
+  const handleDeleteNotification = async (docId: string) => {
+    let newNotifications = [];
+    for (let section of notifications) {
+      const newData = section.data.filter(
+        (notification) => notification.docId !== docId
+      );
+
+      newNotifications.push({ title: section.title, data: newData });
+    }
+    setNotifications(newNotifications);
+
+    deleteNotification(docId);
+  };
+
   return (
     <View
       style={[
@@ -114,13 +124,16 @@ export default function Notifications() {
                 <FriendRequestReceived
                   notification={item}
                   readNotification={readNotification}
+                  deleteFunc={() => handleDeleteNotification(item.docId)}
+                  onRefresh={onRefresh}
                 />
               );
-            case "FRIEND_REQUEST_ACCEPTED":
+            case "NEW_FRIENDSHIP":
               return (
-                <FriendRequestAccepted
+                <NewFriendship
                   notification={item}
                   readNotification={readNotification}
+                  deleteFunc={() => handleDeleteNotification(item.docId)}
                 />
               );
             case "MUTUAL_ENROLLMENT":
@@ -128,6 +141,7 @@ export default function Notifications() {
                 <MutualEnrollment
                   notification={item}
                   readNotification={readNotification}
+                  deleteFunc={() => handleDeleteNotification(item.docId)}
                 />
               );
             case "ADD_COURSES_REMINDER":
@@ -135,6 +149,7 @@ export default function Notifications() {
                 <AddCoursesReminder
                   notification={item}
                   readNotification={readNotification}
+                  deleteFunc={() => handleDeleteNotification(item.docId)}
                 />
               );
             case "ADD_TIMES_REMINDER":
@@ -142,6 +157,7 @@ export default function Notifications() {
                 <AddTimesReminder
                   notification={item}
                   readNotification={readNotification}
+                  deleteFunc={() => handleDeleteNotification(item.docId)}
                 />
               );
             default:
@@ -162,11 +178,9 @@ export default function Notifications() {
         refreshing={refreshing}
         ListHeaderComponent={<FriendRequestsNotification requests={requests} />}
         ListEmptyComponent={
-          <>
-            {!loading && (
-              <EmptyList SVGElement={SVGDone} primaryText="All caught up!" />
-            )}
-          </>
+          loading ? null : (
+            <EmptyList SVGElement={SVGDone} primaryText="All caught up!" />
+          )
         }
       />
     </View>

@@ -1,5 +1,5 @@
 import { Course, Notification, User } from "../../types";
-import { Pressable, StyleSheet } from "react-native";
+import { Alert, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "../Themed";
 import { getTimeSinceString, termIdToFullName } from "../../utils";
 import { useContext, useEffect, useState } from "react";
@@ -17,9 +17,11 @@ import { useNavigation } from "@react-navigation/core";
 export default function MutualEnrollment({
   notification,
   readNotification,
+  deleteFunc = () => {},
 }: {
   notification: Notification;
   readNotification: (arg0: string) => void;
+  deleteFunc?: () => void;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -38,6 +40,18 @@ export default function MutualEnrollment({
     loadComponent();
   }, []);
 
+  const deleteNotificationAlert = () =>
+    Alert.alert("Delete notification", "Are you sure?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: deleteFunc,
+      },
+    ]);
+
   if (loading) return <View style={notificationStyles.container} />;
 
   return (
@@ -46,6 +60,7 @@ export default function MutualEnrollment({
         readNotification(notification.docId);
         navigation.navigate("Course", { course });
       }}
+      onLongPress={deleteNotificationAlert}
       style={[
         notificationStyles.container,
         { borderColor: Colors[colorScheme].tertiaryBackground },

@@ -138,8 +138,10 @@ export const addFriend = async (userId: string, friendId: string) => {
 };
 
 export const acceptRequest = async (friendDocId: string) => {
+  console.log("friendDocId:", friendDocId);
   const docRef = doc(db, "friends", friendDocId);
   await updateDoc(docRef, { status: "friends" });
+  console.log("done");
 };
 
 export const deleteFriendship = async (friendDocId: string) => {
