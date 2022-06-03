@@ -10,6 +10,8 @@ import { Event } from "../../types";
 import Layout from "../../constants/Layout";
 import { deleteEnrollment } from "../../services/enrollments";
 import { getTimeString } from "../../utils";
+import { mix_hexes } from "../../utils/hexColorMixer";
+import useColorScheme from "../../hooks/useColorScheme";
 
 export default function CalendarEvent({
   event,
@@ -25,7 +27,9 @@ export default function CalendarEvent({
   left: number;
 }) {
   const context = useContext(AppContext);
+  const colorScheme = useColorScheme();
 
+  const color = event.enrollment.color || Colors.pink;
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleDeleteEnrollment = async () => {
@@ -61,7 +65,7 @@ export default function CalendarEvent({
             ...styles.background,
             height: height - 1,
             width: width - 1,
-            backgroundColor: event.enrollment.color || Colors.pink,
+            backgroundColor: color,
           }}
         />
         <Pressable
@@ -69,7 +73,7 @@ export default function CalendarEvent({
             ...styles.pressable,
             height: height - 1,
             width: width - 1,
-            borderColor: event.enrollment.color || Colors.pink,
+            borderColor: color,
           }}
           onPress={() => setModalVisible(true)}
         >
@@ -80,10 +84,32 @@ export default function CalendarEvent({
                 height: height - 1 - 2 * Layout.spacing.xxsmall,
               }}
             >
-              <Text style={styles.titleText} numberOfLines={1}>
+              <Text
+                style={[
+                  styles.titleText,
+                  {
+                    color: mix_hexes(
+                      color.substring(0, 7),
+                      Colors[colorScheme].text
+                    ),
+                  },
+                ]}
+                numberOfLines={1}
+              >
                 {event.title}
               </Text>
-              <Text style={styles.locationText} numberOfLines={2}>
+              <Text
+                style={[
+                  styles.locationText,
+                  {
+                    color: mix_hexes(
+                      color.substring(0, 7),
+                      Colors[colorScheme].text
+                    ),
+                  },
+                ]}
+                numberOfLines={2}
+              >
                 {event.location}
               </Text>
             </View>
