@@ -1,24 +1,16 @@
-import {
-  Animated,
-  Dimensions,
-  Pressable,
-  StyleSheet,
-  View,
-} from "react-native";
+import { Animated, Pressable, StyleSheet, View } from "react-native";
 import { DaySchedule, Event, WeekSchedule } from "../../types";
 import { createRef, forwardRef, useCallback, useRef } from "react";
 
+import { ActivityIndicator } from "../Themed";
 import AppStyles from "../../styles/AppStyles";
 import CalendarCurrTime from "./CalendarCurrTime";
 import CalendarEvent from "./CalendarEvent";
 import CalendarGrid from "./CalendarGrid";
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
-import { Timestamp } from "firebase/firestore";
-import useColorScheme from "../../hooks/useColorScheme";
-import { calculateHeight, calculateTop } from "./utils";
 import { getStyledEvents } from "./layout";
-import { ActivityIndicator } from "../Themed";
+import useColorScheme from "../../hooks/useColorScheme";
 
 const CALENDAR_TIMES_WIDTH = 45;
 const CALENDAR_HOUR_HEIGHT = Layout.spacing.xxxlarge;
