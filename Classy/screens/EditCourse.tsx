@@ -153,7 +153,7 @@ export default function EditCourse({ route }: EditCourseProps) {
       >
         <View style={AppStyles.section}>
           <Text style={styles.title}>{course.code.join(", ")}</Text>
-          <Text style={styles.title}>{course.title}</Text>
+          <Text style={[styles.title, {color: Colors[colorScheme].secondaryText}]}>{course.title}</Text>
           <View style={styles.row}>
             <Text style={styles.subheading}>Color</Text>
             <TouchableOpacity
@@ -288,8 +288,9 @@ export default function EditCourse({ route }: EditCourseProps) {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: Layout.text.xxlarge,
+    fontSize: Layout.text.xlarge,
     fontWeight: "500",
+    marginBottom: Layout.spacing.small,
   },
   row: {
     ...AppStyles.row,

@@ -172,7 +172,7 @@ export default function Course({ route }: CourseProps) {
       >
         <View style={AppStyles.section}>
           <Text style={styles.title}>{course.code.join(", ")}</Text>
-          <Text style={styles.title}>{course.title}</Text>
+          <Text style={[styles.title, {color: Colors[colorScheme].secondaryText}]}>{course.title}</Text>
           <Text style={styles.unitsWays}>
             Units: {course.unitsMin}
             {course.unitsMin === course.unitsMax ? "" : `-${course.unitsMax}`},

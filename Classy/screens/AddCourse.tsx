@@ -186,7 +186,7 @@ export default function AddCourse({ route }: AddCourseProps) {
       >
         <View style={AppStyles.section}>
           <Text style={styles.title}>{course.code.join(", ")}</Text>
-          <Text style={styles.title}>{course.title}</Text>
+          <Text style={[styles.title, {color: Colors[colorScheme].secondaryText}]}>{course.title}</Text>
           <View style={styles.row}>
             <Text style={styles.subheading}>Quarter</Text>
             <Button
@@ -310,8 +310,9 @@ export default function AddCourse({ route }: AddCourseProps) {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: Layout.text.xxlarge,
+    fontSize: Layout.text.xlarge,
     fontWeight: "500",
+    marginBottom: Layout.spacing.small,
   },
   row: {
     ...AppStyles.row,
