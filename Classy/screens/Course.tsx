@@ -53,7 +53,6 @@ import { useNavigation } from "@react-navigation/core";
 
 const exploreCoursesLink =
   "https://explorecourses.stanford.edu/search?view=catalog&filter-coursestatus-Active=on&page=0&catalog=&academicYear=&q=";
-// TODO: Carta requires Stanford sign-in...
 const cartaLink = "https://carta-beta.stanford.edu/course/";
 
 export default function Course({ route }: CourseProps) {

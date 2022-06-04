@@ -104,7 +104,7 @@ export const getFriendStatus = async (userId: string, friendId: string) => {
     //   return;
     // }
 
-    console.log("friendship:", res.data());
+    // console.log("friendship:", res.data());
     friendDocId = res.id;
 
     if (res.data().status === "requested") {

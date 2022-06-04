@@ -154,8 +154,6 @@ export default function Settings() {
     );
   };
 
-  // TODO: include notifications setting
-
   return (
     <ScrollView
       style={[

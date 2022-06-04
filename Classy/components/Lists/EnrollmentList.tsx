@@ -22,7 +22,6 @@ export default function EnrollmentList({
 
   const context = useContext(AppContext);
 
-  // TODO: use FlatList
   return (
     <>
       {enrollments.map((enrollment, i) => (
