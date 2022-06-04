@@ -1,8 +1,10 @@
+import * as Haptics from "expo-haptics";
+
 import { ActivityIndicator, Ionicons, Text, View } from "../components/Themed";
-import { Course, History, SearchProps, User } from "../types";
+import { Course, SearchProps, User } from "../types";
 import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import { getHistory, setHistory } from "../services/history";
+import { setHistory } from "../services/history";
 import { searchCourses, searchMoreCourses } from "../services/courses";
 import { searchMoreUsers, searchUsers } from "../services/users";
 
@@ -61,6 +63,8 @@ export default function Search({ route }: SearchProps) {
   };
 
   const handleRemovePersonFromHistory = async (userId: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     const newPeople: User[] = context.history.people.filter(
       (user: User) => user.id !== userId
     );
@@ -83,6 +87,8 @@ export default function Search({ route }: SearchProps) {
   };
 
   const handleRemoveCourseFromHistory = async (courseId: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     const newCourses: Course[] = context.history.courses.filter(
       (course: Course) => course.courseId !== courseId
     );
