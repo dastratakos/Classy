@@ -88,13 +88,13 @@ export function Ionicons(props: IconProps) {
 
 export function ActivityIndicator(props: ActivityIndicatorProps) {
   const { lightColor, darkColor, ...otherProps } = props;
-  const color = useThemeColor(
+  const backgroundColor = useThemeColor(
     { light: lightColor, dark: darkColor },
     "background"
   );
 
   return (
-    <View style={AppStyles.activityIndicatorContainer}>
+    <View style={[AppStyles.activityIndicatorContainer, { backgroundColor }]}>
       <DefaultActivityIndicator />
     </View>
   );
