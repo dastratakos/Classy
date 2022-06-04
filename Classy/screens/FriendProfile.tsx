@@ -102,6 +102,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 
   const [enrollmentsLoading, setEnrollmentsLoading] = useState<boolean>(true);
 
+  const [loading, setLoading] = useState<boolean>(true);
+
   const actionSheetRef = useRef();
 
   const baseActionSheetOptions = ["Block", "Cancel"];
@@ -111,7 +113,11 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const blockedActionSheetOptions = ["Unblock", "Cancel"];
 
   useEffect(() => {
-    onRefresh();
+    const loadScreen = async () => {
+      await onRefresh();
+      setLoading(false);
+    };
+    loadScreen();
   }, []);
 
   useEffect(() => {
@@ -412,6 +418,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       ),
     },
   ];
+
+  if (loading) return <ActivityIndicator />;
 
   if (friendStatus === "block received") {
     return (
