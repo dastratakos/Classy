@@ -220,6 +220,10 @@ export default function ChannelDetails() {
     }
   };
 
+  const handleAddMember = () => {
+    console.log("add member pressed");
+  };
+
   return (
     <ScrollView
       style={{ backgroundColor: Colors[colorScheme].background }}
@@ -294,7 +298,7 @@ export default function ChannelDetails() {
         <View style={styles.innerContainer}>
           <Text style={[styles.title, { flex: 1 }]}>Members</Text>
           {role === "owner" ? (
-            <Pressable onPress={() => console.log("Add member")}>
+            <Pressable onPress={handleAddMember}>
               <Ionicons name="person-add" size={Layout.icon.medium} />
             </Pressable>
           ) : null}

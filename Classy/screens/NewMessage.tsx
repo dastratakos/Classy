@@ -1,6 +1,11 @@
 import * as Haptics from "expo-haptics";
 
-import { RefreshControl, ScrollView, StyleSheet } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import {
   collection,
   getDocs,
@@ -9,20 +14,25 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import { getChannelId, getNewGroupChatId } from "../services/messages";
+import { searchMoreUsers, searchUsers } from "../services/users";
 import { useContext, useState } from "react";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
+import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
+import EmptyList from "../components/EmptyList";
+import Layout from "../constants/Layout";
+import SVGVoid from "../assets/images/undraw/void.svg";
+import SVGChat from "../assets/images/undraw/groupChat.svg";
 import SelectableFriendCard from "../components/Cards/SelectableFriendCard";
 import SimpleSearchBar from "../components/SimpleSearchBar";
-import { View } from "../components/Themed";
+import { User } from "../types";
+import { Text, View } from "../components/Themed";
 import { db } from "../firebase";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import Button from "../components/Buttons/Button";
-import Layout from "../constants/Layout";
-import { getChannelId, getNewGroupChatId } from "../services/messages";
 
 export default function NewMessage() {
   const context = useContext(AppContext);
@@ -32,37 +42,64 @@ export default function NewMessage() {
   const [searchPhrase, setSearchPhrase] = useState("");
   const [focused, setFocused] = useState(false);
   const [members, setMembers] = useState({});
-  const [peopleSearchResults, setPeopleSearchResults] = useState([]);
 
-  const [refreshing, setRefreshing] = useState(false);
+  const [userSearchResults, setUserSearchResults] = useState<User[]>([]);
+  const [showFullUserResults, setShowFullUserResults] =
+    useState<boolean>(false);
+  const [lastUser, setLastUser] = useState<User>({} as User);
+  const [usersRefreshing, setUsersRefreshing] = useState<boolean>(false);
+  const [stopUserSearch, setStopUserSearch] = useState<boolean>(false);
+
   const [chatButtonLoading, setChatButtonLoading] = useState(false);
 
-  const searchPeople = async (search: string) => {
+  const handleSearchUsers = async (search: string) => {
+    setUsersRefreshing(true);
+
     if (search === "") {
-      setPeopleSearchResults([]);
+      setUserSearchResults([]);
+      setUsersRefreshing(false);
       return;
     }
 
-    // TODO: pagination
-    const q = query(
-      collection(db, "users"),
-      where("keywords", "array-contains", search.toLowerCase()),
-      orderBy("name"),
-      limit(3)
-    );
+    let { users, lastVisible } = await searchUsers(context.user.id, search);
+    setUserSearchResults([...users]);
 
-    const people = [];
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      if (doc.id !== context.user.id) people.push(doc.data());
-    });
-    setPeopleSearchResults([...people]);
+    console.log("users.length =", users.length);
+
+    setLastUser(lastVisible);
+    setUsersRefreshing(false);
   };
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    searchPeople(searchPhrase);
-    setRefreshing(false);
+  const handleSearchMoreUsers = async () => {
+    if (stopUserSearch) return;
+
+    // setUsersRefreshing(true);
+
+    if (!lastUser) {
+      console.log("Searching users:", searchPhrase);
+      let { users, lastVisible } = await searchUsers(
+        context.user.id,
+        searchPhrase,
+        10
+      );
+      setUserSearchResults([...users]);
+      setLastUser(lastVisible);
+
+      if (users.length < 10) setStopUserSearch(true);
+    } else {
+      console.log("Searching more users:", searchPhrase);
+      let { users, lastVisible } = await searchMoreUsers(
+        context.user.id,
+        searchPhrase,
+        lastUser
+      );
+      setUserSearchResults([...userSearchResults, ...users]);
+      setLastUser(lastVisible);
+
+      if (users.length < 10) setStopUserSearch(true);
+    }
+
+    // setUsersRefreshing(false);
   };
 
   const handleFriendPressed = (friend) => {
@@ -110,7 +147,7 @@ export default function NewMessage() {
       Object.keys(members).forEach((id) => {
         membersObj[`${id}`] = true;
       });
-      
+
       channelId = await getNewGroupChatId(membersObj);
     }
 
@@ -144,62 +181,147 @@ export default function NewMessage() {
     navigation.navigate("ChannelScreen");
   };
 
+  const MemberList = () => (
+    <FlatList
+      data={Object.values(members)}
+      renderItem={({ item }) => (
+        <SelectableFriendCard
+          friend={item}
+          onPress={() => handleFriendPressed(item)}
+          selected={item.id in members}
+        />
+      )}
+      keyExtractor={(item) => item.id}
+      contentContainerStyle={{
+        flexGrow: 1,
+        paddingHorizontal: Layout.spacing.medium,
+      }}
+      ListEmptyComponent={
+        usersRefreshing ? (
+          <ActivityIndicator />
+        ) : (
+          <EmptyList
+            SVGElement={SVGChat}
+            primaryText="Search for people to chat with"
+            secondaryText="Create a direct message or a group chat"
+          />
+        )
+      }
+    />
+  );
+
+  const UserResults = () => (
+    <>
+      {showFullUserResults ? (
+        <FlatList
+          data={userSearchResults}
+          renderItem={({ item }) => (
+            <SelectableFriendCard
+              friend={item}
+              onPress={() => handleFriendPressed(item)}
+              selected={item.id in members}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+          onEndReached={() => {
+            if (!usersRefreshing) handleSearchMoreUsers();
+          }}
+          onEndReachedThreshold={0}
+          refreshing={usersRefreshing}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: Layout.spacing.medium,
+          }}
+          ListFooterComponent={
+            stopUserSearch ? null : (
+              <View
+                style={{
+                  marginTop: Layout.spacing.small,
+                  marginBottom: Layout.spacing.medium,
+                }}
+              >
+                <ActivityIndicator />
+              </View>
+            )
+          }
+        />
+      ) : (
+        <FlatList
+          data={userSearchResults}
+          renderItem={({ item }) => (
+            <SelectableFriendCard
+              friend={item}
+              onPress={() => handleFriendPressed(item)}
+              selected={item.id in members}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+          refreshing={usersRefreshing}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: Layout.spacing.medium,
+          }}
+          ListFooterComponent={
+            <>
+              {/* Only display if we have at least 3 matching users */}
+              {userSearchResults.length === 3 && (
+                <TouchableOpacity
+                  onPress={() => {
+                    handleSearchMoreUsers();
+                    setShowFullUserResults(true);
+                  }}
+                  style={{
+                    alignSelf: "center",
+                    marginTop: Layout.spacing.small,
+                  }}
+                >
+                  <Text style={{ color: Colors.lightBlue }}>
+                    See all results
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </>
+          }
+          ListEmptyComponent={
+            usersRefreshing ? (
+              <ActivityIndicator />
+            ) : (
+              <EmptyList
+                SVGElement={SVGVoid}
+                primaryText={`No matching users for "${searchPhrase}"`}
+                secondaryText="Try searching again using a different spelling"
+              />
+            )
+          }
+        />
+      )}
+    </>
+  );
+
   return (
     <View style={{ flex: 1 }}>
-      <View style={AppStyles.section}>
+      <View style={{ ...AppStyles.section, alignItems: "center" }}>
         <SimpleSearchBar
           placeholder="Search people..."
           searchPhrase={searchPhrase}
           onChangeText={(text) => {
             setSearchPhrase(text);
-            searchPeople(text);
+            handleSearchUsers(text);
           }}
           focused={focused}
           setFocused={setFocused}
         />
-      </View>
-      <ScrollView
-        style={{ backgroundColor: Colors[colorScheme].background }}
-        contentContainerStyle={{ alignItems: "center" }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        <View style={[AppStyles.section, { alignItems: "center" }]}>
-          <View style={{ width: "50%", marginBottom: Layout.spacing.medium }}>
-            <Button
-              text="Chat"
-              onPress={handleChatPressed}
-              loading={chatButtonLoading}
-              disabled={Object.keys(members).length === 0}
-              emphasized
-            />
-          </View>
-          {searchPhrase === "" ? (
-            <>
-              {Object.values(members).map((friend) => (
-                <SelectableFriendCard
-                  friend={friend}
-                  onPress={() => handleFriendPressed(friend)}
-                  selected={friend.id in members}
-                  key={friend.id}
-                />
-              ))}
-            </>
-          ) : (
-            <>
-              {peopleSearchResults.map((friend) => (
-                <SelectableFriendCard
-                  friend={friend}
-                  onPress={() => handleFriendPressed(friend)}
-                  selected={friend.id in members}
-                  key={friend.id}
-                />
-              ))}
-            </>
-          )}
+        <View style={{ width: "50%", marginTop: Layout.spacing.medium }}>
+          <Button
+            text="Chat"
+            onPress={handleChatPressed}
+            loading={chatButtonLoading}
+            disabled={Object.keys(members).length === 0}
+            emphasized
+          />
         </View>
-      </ScrollView>
+      </View>
+      {searchPhrase === "" ? <MemberList /> : <UserResults />}
     </View>
   );
 }
