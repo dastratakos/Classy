@@ -24,6 +24,7 @@ export default function App() {
   const [friendIds, setFriendIds] = useState<string[]>([]);
   const [requestIds, setRequestIds] = useState<string[]>([]);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [history, setHistory] = useState<History>({} as History);
 
   // StreamChat
   const [streamClient, setStreamClient] = useState(
@@ -49,6 +50,8 @@ export default function App() {
     setRequestIds,
     enrollments,
     setEnrollments,
+    history,
+    setHistory,
 
     // StreamChat
     streamClient,

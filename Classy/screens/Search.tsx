@@ -1,6 +1,6 @@
 import { ActivityIndicator, Ionicons, Text, View } from "../components/Themed";
-import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { Course, History, SearchProps, User } from "../types";
+import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { getHistory, setHistory } from "../services/history";
 import { searchCourses, searchMoreCourses } from "../services/courses";
@@ -17,7 +17,6 @@ import SVGSearch from "../assets/images/undraw/courseSearch.svg";
 import SVGVoid from "../assets/images/undraw/void.svg";
 import SearchBar from "../components/SearchBar";
 import TabView from "../components/TabView";
-import useColorScheme from "../hooks/useColorScheme";
 
 export default function Search({ route }: SearchProps) {
   const context = useContext(AppContext);
@@ -39,49 +38,35 @@ export default function Search({ route }: SearchProps) {
   const [coursesRefreshing, setCoursesRefreshing] = useState<boolean>(true);
   const [stopCourseSearch, setStopCourseSearch] = useState<boolean>(false);
 
-  const [fullHistory, setFullHistory] = useState<History>({
-    people: [],
-    courses: [],
-  } as History);
-
-  const [historyLoading, setHistoryLoading] = useState<boolean>(true);
-
   console.log("rendering search page");
 
   useEffect(() => {
     const loadScreen = async () => {
-      collectHistory(context.user.id);
       handleSearchUsers("");
       handleSearchCourses("");
     };
     loadScreen();
   }, []);
 
-  const collectHistory = async (id: string) => {
-    setHistoryLoading(true);
-    setFullHistory(await getHistory(id));
-    setHistoryLoading(false);
-  };
-
   const handleClearPeoplePressed = async () => {
-    const newHistory = { people: [], courses: fullHistory.courses };
-    setFullHistory(newHistory);
+    const newHistory = { people: [], courses: context.history.courses };
+    context.setHistory(newHistory);
     setHistory(context.user.id, newHistory);
   };
 
   const handleClearCoursesPressed = async () => {
-    const newHistory = { people: fullHistory.people, courses: [] };
-    setFullHistory(newHistory);
+    const newHistory = { people: context.history.people, courses: [] };
+    context.setHistory(newHistory);
     setHistory(context.user.id, newHistory);
   };
 
   const handleRemovePersonFromHistory = async (userId: string) => {
-    const newPeople: User[] = fullHistory.people.filter(
+    const newPeople: User[] = context.history.people.filter(
       (user: User) => user.id !== userId
     );
 
-    const newHistory = { people: newPeople, courses: fullHistory.courses };
-    setFullHistory(newHistory);
+    const newHistory = { people: newPeople, courses: context.history.courses };
+    context.setHistory(newHistory);
     setHistory(context.user.id, newHistory);
   };
 
@@ -89,21 +74,21 @@ export default function Search({ route }: SearchProps) {
     /* Only store the last 10 searches. */
     const newPeople: User[] = [
       user,
-      ...fullHistory.people.filter((u: User) => u.id !== user.id),
+      ...context.history.people.filter((u: User) => u.id !== user.id),
     ].slice(0, 10);
 
-    const newHistory = { people: newPeople, courses: fullHistory.courses };
-    setFullHistory(newHistory);
+    const newHistory = { people: newPeople, courses: context.history.courses };
+    context.setHistory(newHistory);
     setHistory(context.user.id, newHistory);
   };
 
   const handleRemoveCourseFromHistory = async (courseId: number) => {
-    const newCourses: Course[] = fullHistory.courses.filter(
+    const newCourses: Course[] = context.history.courses.filter(
       (course: Course) => course.courseId !== courseId
     );
 
-    const newHistory = { people: fullHistory.people, courses: newCourses };
-    setFullHistory(newHistory);
+    const newHistory = { people: context.history.people, courses: newCourses };
+    context.setHistory(newHistory);
     setHistory(context.user.id, newHistory);
   };
 
@@ -111,13 +96,13 @@ export default function Search({ route }: SearchProps) {
     /* Only store the last 10 searches. */
     const newCourses: Course[] = [
       course,
-      ...fullHistory.courses.filter(
+      ...context.history.courses.filter(
         (c: Course) => c.courseId !== course.courseId
       ),
     ].slice(0, 10);
 
-    const newHistory = { people: fullHistory.people, courses: newCourses };
-    setFullHistory(newHistory);
+    const newHistory = { people: context.history.people, courses: newCourses };
+    context.setHistory(newHistory);
     setHistory(context.user.id, newHistory);
   };
 
@@ -220,7 +205,7 @@ export default function Search({ route }: SearchProps) {
 
   const PeopleHistory = () => (
     <>
-      {fullHistory.people && fullHistory.people.length > 0 && (
+      {context.history.people && context.history.people.length > 0 && (
         <View
           style={{
             ...AppStyles.row,
@@ -234,7 +219,7 @@ export default function Search({ route }: SearchProps) {
         </View>
       )}
       <FlatList
-        data={fullHistory.people}
+        data={context.history.people}
         renderItem={({ item }) => (
           <FriendCard
             friend={item}
@@ -250,23 +235,16 @@ export default function Search({ route }: SearchProps) {
           />
         )}
         keyExtractor={(item) => item.id}
-        refreshing={historyLoading}
         contentContainerStyle={{
           flexGrow: 1,
           paddingHorizontal: Layout.spacing.medium,
         }}
         ListEmptyComponent={
-          <>
-            {historyLoading ? (
-              <ActivityIndicator />
-            ) : (
-              <EmptyList
-                SVGElement={SVGSearch}
-                primaryText="Find people"
-                secondaryText="Search by first or last name"
-              />
-            )}
-          </>
+          <EmptyList
+            SVGElement={SVGSearch}
+            primaryText="Find people"
+            secondaryText="Search by first or last name"
+          />
         }
       />
     </>
@@ -360,7 +338,7 @@ export default function Search({ route }: SearchProps) {
 
   const CoursesHistory = () => (
     <>
-      {fullHistory.courses && fullHistory.courses.length > 0 && (
+      {context.history.courses && context.history.courses.length > 0 && (
         <View
           style={{
             ...AppStyles.row,
@@ -374,7 +352,7 @@ export default function Search({ route }: SearchProps) {
         </View>
       )}
       <FlatList
-        data={fullHistory.courses}
+        data={context.history.courses}
         renderItem={({ item }) => (
           <CourseCard
             course={item}
@@ -390,23 +368,18 @@ export default function Search({ route }: SearchProps) {
           />
         )}
         keyExtractor={(item) => item.courseId.toString()}
-        refreshing={historyLoading}
         contentContainerStyle={{
           flexGrow: 1,
           paddingHorizontal: Layout.spacing.medium,
         }}
         ListEmptyComponent={
-          historyLoading ? (
-            <ActivityIndicator />
-          ) : (
-            <EmptyList
-              SVGElement={SVGSearch}
-              primaryText="Find courses"
-              secondaryText={
-                'Search by code or name\n(e.g. "SOC1", "SOC 1", or\n"Introduction to Sociology")'
-              }
-            />
-          )
+          <EmptyList
+            SVGElement={SVGSearch}
+            primaryText="Find courses"
+            secondaryText={
+              'Search by code or name\n(e.g. "SOC1", "SOC 1", or\n"Introduction to Sociology")'
+            }
+          />
         }
       />
     </>

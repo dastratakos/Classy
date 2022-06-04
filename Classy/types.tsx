@@ -419,6 +419,8 @@ export type Context = {
   setRequestIds: (arg0: string[]) => void;
   enrollments: Enrollment[];
   setEnrollments: (arg0: Enrollment[]) => void;
+  history: History;
+  setHistory: (arg0: History) => void;
 
   // StreamChat
   streamClient: StreamChatGenerics;
