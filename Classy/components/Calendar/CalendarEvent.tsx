@@ -137,7 +137,6 @@ const styles = StyleSheet.create({
   },
   background: {
     borderRadius: Layout.radius.xsmall,
-    opacity: 0.6,
     minHeight: EVENT_MIN_HEIGHT - 1,
   },
   pressable: {
