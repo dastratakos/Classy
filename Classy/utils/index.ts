@@ -143,19 +143,26 @@ export const componentToName = (component: string) => {
   return component;
 };
 
-export const getTimeString = (
-  timestamp: Timestamp,
-  timeZone: string = "America/Los_Angeles"
-) => {
+export const getTimeString = (timestamp: Timestamp) => {
   if (!timestamp) return "";
 
-  const date = new Date(timestamp.seconds * 1000);
-  return date.toLocaleString("en-US", {
-    // return timestamp.toDate().toLocaleString("en-US", {
+  const hourOffset =
+    (timestamp.toDate().getTimezoneOffset() - new Date().getTimezoneOffset()) /
+    60;
+
+  const adjustedDate = new Date(
+    timestamp.toDate().getTime() + hourOffset * 3600 * 1000
+  );
+
+  // if (hourOffset === 1) {
+  //   console.log("old time:", timestamp.toDate().toTimeString());
+  //   console.log("new time:", adjustedDate.toTimeString());
+  // }
+
+  return adjustedDate.toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
-    timeZone: timeZone,
   });
 };
 
@@ -167,7 +174,6 @@ export const WEEK_MILLISECONDS = 7 * DAY_MILLISECONDS;
 
 export const getTimeSinceString = (
   timestamp: Timestamp,
-  timeZone: string = "America/Los_Angeles"
 ) => {
   if (!timestamp) return "";
 

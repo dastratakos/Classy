@@ -20,12 +20,20 @@ export const calculateHeight = (
   endTime: Timestamp,
   hourHeight: number
 ) => {
+  const hourOffset =
+    (endTime.toDate().getTimezoneOffset() - new Date().getTimezoneOffset()) /
+    60;
+
+  const adjustedEndDate = new Date(
+    endTime.toDate().getTime() + hourOffset * 3600 * 1000
+  );
+
   const startHours = startTime.toDate().getHours();
-  const endHours = endTime.toDate().getHours();
+  const endHours = adjustedEndDate.getHours();
   const hourDiff = endHours - startHours;
 
   const startMinutes = startTime.toDate().getMinutes();
-  const endMinutes = endTime.toDate().getMinutes();
+  const endMinutes = adjustedEndDate.getMinutes();
   const minDiff = endMinutes - startMinutes;
 
   return hourDiff * hourHeight + (minDiff * hourHeight) / 60;
