@@ -104,16 +104,11 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 
   const actionSheetRef = useRef();
 
-  const baseActionSheetOptions = ["Block", "Copy profile URL", "Cancel"];
+  const baseActionSheetOptions = ["Block", "Cancel"];
 
-  const friendActionSheetOptions = [
-    "Block",
-    "Remove friend",
-    "Copy profile URL",
-    "Cancel",
-  ];
+  const friendActionSheetOptions = ["Block", "Remove friend", "Cancel"];
 
-  const blockedActionSheetOptions = ["Unblock", "Copy profile URL", "Cancel"];
+  const blockedActionSheetOptions = ["Unblock", "Cancel"];
 
   useEffect(() => {
     onRefresh();
@@ -363,18 +358,18 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       const action = friendActionSheetOptions[index];
       if (action === "Block") blockAlert();
       else if (action === "Remove friend") removeFriendAlert();
-      else if (action === "Copy profile URL")
-        console.log("Copy profile URL pressed");
+      // else if (action === "Copy profile URL")
+      //   console.log("Copy profile URL pressed");
     } else if (friendStatus === "block sent") {
       const action = blockedActionSheetOptions[index];
       if (action === "Unblock") unblockAlert();
-      else if (action === "Copy profile URL")
-        console.log("Copy profile URL pressed");
+      // else if (action === "Copy profile URL")
+      //   console.log("Copy profile URL pressed");
     } else {
       const action = baseActionSheetOptions[index];
       if (action === "Block") blockAlert();
-      else if (action === "Copy profile URL")
-        console.log("Copy profile URL pressed");
+      // else if (action === "Copy profile URL")
+      //   console.log("Copy profile URL pressed");
     }
   };
 
