@@ -421,6 +421,8 @@ export type Context = {
   setEnrollments: (arg0: Enrollment[]) => void;
   history: History;
   setHistory: (arg0: History) => void;
+  favorites: FavoritedCourse[];
+  setFavorites: (arg0: FavoritedCourse[]) => void;
 
   // StreamChat
   streamClient: StreamChatGenerics;

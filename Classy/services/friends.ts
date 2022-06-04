@@ -240,7 +240,7 @@ export const getFriendsInCourse = async (
     }
     return friends;
   } else {
-    console.error(`No termId ${termId} for course ${courseId}`);
+    console.warn(`No termId ${termId} for course ${courseId}`);
     return [] as User[];
   }
 };
@@ -255,7 +255,7 @@ export const getNumFriendsInCourse = async (
 
   if (docSnap.exists()) {
     if (!docSnap.data().students) {
-      console.error(
+      console.warn(
         `No students doc for termId ${termId} for course ${courseId}`
       );
       return 0;
@@ -267,7 +267,7 @@ export const getNumFriendsInCourse = async (
     );
     return filtered.length;
   } else {
-    console.error(`No termId ${termId} for course ${courseId}`);
+    console.warn(`No termId ${termId} for course ${courseId}`);
     return 0;
   }
 };

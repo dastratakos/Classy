@@ -1,57 +1,38 @@
-import { ActivityIndicator, View } from "../components/Themed";
-import { ScrollView, StyleSheet } from "react-native";
-import { useContext, useEffect, useState } from "react";
+import { FlatList, StyleSheet } from "react-native";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import EmptyList from "../components/EmptyList";
 import FavoriteCard from "../components/Cards/FavoriteCard";
-import { FavoritedCourse } from "../types";
 import SVGImagination from "../assets/images/undraw/imagination.svg";
-import { getFavorites } from "../services/courses";
 import useColorScheme from "../hooks/useColorScheme";
+import { useContext } from "react";
 
 export default function Favorites() {
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
 
-  const [favorites, setFavorites] = useState<FavoritedCourse[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const loadScreen = async () => {
-      setFavorites(await getFavorites(context.user.id));
-      setLoading(false);
-    };
-    loadScreen();
-  }, []);
-
-  if (loading) return <ActivityIndicator />;
-
   return (
-    <ScrollView
+    <FlatList
+      data={context.favorites}
+      keyExtractor={(item) => item.courseId.toString()}
+      renderItem={({ item }) => <FavoriteCard favorite={item} />}
+      contentContainerStyle={{
+        ...AppStyles.section,
+        backgroundColor: Colors[colorScheme].background,
+      }}
       style={{ backgroundColor: Colors[colorScheme].background }}
-      contentContainerStyle={{ alignItems: "center" }}
-    >
-      <View style={AppStyles.section}>
-        {favorites.length > 0 ? (
-          <>
-            {favorites.map((favorite: FavoritedCourse, i: number) => (
-              <FavoriteCard favorite={favorite} key={i.toString()} />
-            ))}
-          </>
-        ) : (
-          <EmptyList
-            SVGElement={SVGImagination}
-            primaryText="No favorites"
-            secondaryText={
-              "Press the ☆ icon on a course\ndetails page to favorite it!"
-            }
-          />
-        )}
-      </View>
-    </ScrollView>
+      ListEmptyComponent={
+        <EmptyList
+          SVGElement={SVGImagination}
+          primaryText="No favorites"
+          secondaryText={
+            "Press the ☆ icon on a course\ndetails page to favorite it!"
+          }
+        />
+      }
+    />
   );
 }
 

@@ -8,7 +8,12 @@ import {
   Text,
   View,
 } from "../components/Themed";
-import { CourseProps, Course as CourseType, User } from "../types";
+import {
+  CourseProps,
+  Course as CourseType,
+  User,
+  FavoritedCourse,
+} from "../types";
 import {
   Pressable,
   RefreshControl,
@@ -36,9 +41,12 @@ import ReadMoreText from "../components/ReadMoreText";
 import SVGCamping from "../assets/images/undraw/camping.svg";
 import Separator from "../components/Separator";
 import Toast from "react-native-toast-message";
-import { getAllPeopleIdsInCourse } from "../services/friends";
+import {
+  getAllPeopleIdsInCourse,
+  getNumFriendsInCourse,
+} from "../services/friends";
 import { getUser } from "../services/users";
-import { termIdToFullName } from "../utils";
+import { getCurrentTermId, termIdToFullName } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
@@ -72,8 +80,11 @@ export default function Course({ route }: CourseProps) {
     setRefreshing(true);
 
     setFavorited(
-      await getIsFavorited(context.user.id, route.params.course.courseId)
+      context.favorites.filter(
+        (favorite: FavoritedCourse) => course.courseId === favorite.courseId
+      ).length > 0
     );
+
     const people = await getAllPeopleIdsInCourse(
       context.user.id,
       route.params.course.courseId
@@ -127,6 +138,26 @@ export default function Course({ route }: CourseProps) {
     if (!favorited) {
       setFavorited(true);
       addFavorite(context.user.id, course);
+
+      const data: FavoritedCourse = {
+        code: course.code,
+        courseId: course.courseId,
+        title: course.title,
+        userId: context.user.id,
+        numFriends: await getNumFriendsInCourse(
+          course.courseId,
+          context.friendIds,
+          getCurrentTermId()
+        ),
+      };
+
+      let newFavorites = context.favorites;
+      newFavorites.push(data);
+      newFavorites.sort((a: FavoritedCourse, b: FavoritedCourse) =>
+        a.code > b.code ? 1 : -1
+      );
+      context.setFavorites([...newFavorites]);
+
       Toast.show({
         type: "info",
         text1: "Added course to favorites",
@@ -134,30 +165,21 @@ export default function Course({ route }: CourseProps) {
     } else {
       setFavorited(false);
       deleteFavorite(context.user.id, course.courseId);
+
+      let newFavorites = context.favorites.filter(
+        (favorite: FavoritedCourse) => favorite.courseId !== course.courseId
+      );
+      context.setFavorites([...newFavorites]);
+
       Toast.show({
         type: "info",
         text1: "Removed course from favorites",
       });
     }
   };
-  let friendTitle = "Everyone";
-  if (filter === "Public") {
-    friendTitle = "Public Profiles";
-  } else if (filter === "Friends") {
-    friendTitle = "Friends";
-  }
-
-  let gers = "";
-  for (let i = 0; i < course.gers.length; i++) {
-    if (course.gers[i] !== "") {
-      gers += course.gers[i] + ", ";
-    }
-  }
-  if (gers.length !== 0) {
-    gers = gers.substring(0, gers.length - 2);
-  }
 
   if (refreshing) return <ActivityIndicator />;
+
   return (
     <>
       <ScrollView
@@ -172,11 +194,15 @@ export default function Course({ route }: CourseProps) {
       >
         <View style={AppStyles.section}>
           <Text style={styles.title}>{course.code.join(", ")}</Text>
-          <Text style={[styles.title, {color: Colors[colorScheme].secondaryText}]}>{course.title}</Text>
+          <Text
+            style={[styles.title, { color: Colors[colorScheme].secondaryText }]}
+          >
+            {course.title}
+          </Text>
           <Text style={styles.unitsWays}>
             Units: {course.unitsMin}
             {course.unitsMin === course.unitsMax ? "" : `-${course.unitsMax}`},
-            GERS: {gers || "None"}
+            GERS: {course.gers.filter((ger) => ger !== "").join(", ") || "None"}
           </Text>
           <ReadMoreText text={course.description} />
           <View
@@ -207,12 +233,16 @@ export default function Course({ route }: CourseProps) {
           {Object.keys(peopleData).length > 0 ? (
             <>
               <Text style={styles.friendsHeader} numberOfLines={1}>
-                {friendTitle + " in " + course.code.join(", ")}
+                {filter === "Public"
+                  ? "Public Profiles"
+                  : filter === "Friends"
+                  ? "Friends"
+                  : "Everyone"}
+                {" in " + course.code.join(", ")}
               </Text>
               <View
                 style={[AppStyles.row, { marginBottom: Layout.spacing.medium }]}
               >
-                {/* <View style={{ width: Layout.icon.medium }} /> */}
                 <View
                   style={{
                     width: 0,
@@ -230,9 +260,6 @@ export default function Course({ route }: CourseProps) {
                       setQuarter(text);
                     }}
                     setItems={setQuarterItems}
-                    // multiple
-                    // min={0}
-                    // max={2}
                     placeholder="Quarter"
                     placeholderStyle={{
                       color: Colors[colorScheme].secondaryText,
@@ -294,7 +321,6 @@ export default function Course({ route }: CourseProps) {
                   ))}
                 </Popover>
               </View>
-              {/* TODO: use SectionList? */}
               {Object.keys(peopleData)
                 .sort()
                 .reverse()

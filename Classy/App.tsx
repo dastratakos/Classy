@@ -10,7 +10,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { StreamChat } from "stream-chat";
 import Toast from "react-native-toast-message";
-import { Enrollment, User } from "./types";
+import { Enrollment, FavoritedCourse, User } from "./types";
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 
@@ -25,6 +25,7 @@ export default function App() {
   const [requestIds, setRequestIds] = useState<string[]>([]);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [history, setHistory] = useState<History>({} as History);
+  const [favorites, setFavorites] = useState<FavoritedCourse[]>([]);
 
   // StreamChat
   const [streamClient, setStreamClient] = useState(
@@ -52,6 +53,8 @@ export default function App() {
     setEnrollments,
     history,
     setHistory,
+    favorites,
+    setFavorites,
 
     // StreamChat
     streamClient,

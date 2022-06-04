@@ -28,6 +28,7 @@ import { getHistory } from "../services/history";
 import { getUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { getFavorites } from "../services/courses";
 
 export default function Login({ route }: LoginProps) {
   const context = useContext(AppContext);
@@ -82,15 +83,18 @@ export default function Login({ route }: LoginProps) {
     const user = await getUser(id);
     context.setUser(user);
 
-    const [friendIds, requestIds, enrollments, history] = await Promise.all([
-      getFriendIds(id),
-      getRequestIds(id),
-      getEnrollments(id),
-      getHistory(id),
-    ]);
+    const [friendIds, requestIds, enrollments, history, favorites] =
+      await Promise.all([
+        getFriendIds(id),
+        getRequestIds(id),
+        getEnrollments(id),
+        getHistory(id),
+        getFavorites(id),
+      ]);
     context.setFriendIds(friendIds);
     context.setRequestIds(requestIds);
     context.setHistory(history);
+    context.setFavorites(favorites);
 
     /* Get numFriends only for current enrollments. */
     for (let i = 0; i < enrollments.length; i++) {
