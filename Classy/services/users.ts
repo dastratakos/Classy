@@ -109,12 +109,27 @@ export const deleteUserCompletely = async (userId: string) => {
 
   /* 4. Get all Notifications and delete. */
   const batch4 = writeBatch(db);
-  const q4 = query(collection(db, "notifications"), where("userId", "==", userId));
+  const q4 = query(
+    collection(db, "notifications"),
+    where("userId", "==", userId)
+  );
   await getDocs(q4).then((querySnapshot4) => {
     querySnapshot4.forEach((doc) => {
       batch4.delete(doc.ref);
     });
     batch4.commit();
+  });
+
+  const batch5 = writeBatch(db);
+  const q5 = query(
+    collection(db, "notifications"),
+    where("friendId", "==", userId)
+  );
+  await getDocs(q5).then((querySnapshot5) => {
+    querySnapshot5.forEach((doc) => {
+      batch5.delete(doc.ref);
+    });
+    batch5.commit();
   });
 
   /* 5. Delete search history. */
