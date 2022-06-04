@@ -17,7 +17,7 @@ import {
 
 import { User } from "../types";
 import { db } from "../firebase";
-import { getEnrollmentsRaw } from "./enrollments";
+import { getEnrollments } from "./enrollments";
 
 export const getUser = async (id: string) => {
   const docRef = doc(db, "users", id);
@@ -63,7 +63,7 @@ export const updateUser = async (userId: string, data: Partial<User>) => {
 
 export const deleteUserCompletely = async (userId: string) => {
   /* 1. Get all Enrollments and delete. */
-  const enrollments = await getEnrollmentsRaw(userId);
+  const enrollments = await getEnrollments(userId);
   for (let enrollment of enrollments) {
     /* 1a. Delete enrollment doc. */
     await deleteDoc(doc(db, "enrollments", enrollment.docId));
@@ -99,10 +99,7 @@ export const deleteUserCompletely = async (userId: string) => {
 
   /* 3. Get all Favorites and delete. */
   const batch3 = writeBatch(db);
-  const q3 = query(
-    collection(db, "favorites"),
-    where("userId", "==", userId)
-  );
+  const q3 = query(collection(db, "favorites"), where("userId", "==", userId));
   await getDocs(q3).then((querySnapshot3) => {
     querySnapshot3.forEach((doc) => {
       batch3.delete(doc.ref);

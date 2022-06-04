@@ -28,6 +28,8 @@ export default function Register({ route }: RegisterProps) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const [registerLoading, setRegisterLoading] = useState<boolean>(false);
+
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
@@ -39,6 +41,8 @@ export default function Register({ route }: RegisterProps) {
     }
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    setRegisterLoading(true);
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((response) => {
@@ -61,9 +65,15 @@ export default function Register({ route }: RegisterProps) {
           ...context.user,
           ...data,
         });
+
+        setRegisterLoading(true);
+
         navigation.navigate("Onboarding");
       })
-      .catch((error) => setErrorMessage(error.message));
+      .catch((error) => {
+        setRegisterLoading(true);
+        setErrorMessage(error.message);
+      });
   };
 
   const connectStreamChatUser = async (
@@ -161,7 +171,13 @@ export default function Register({ route }: RegisterProps) {
           />
           <View style={{ height: Layout.spacing.large }} />
 
-          <Button text="Register" onPress={createUser} emphasized wide />
+          <Button
+            text="Register"
+            onPress={createUser}
+            loading={registerLoading}
+            emphasized
+            wide
+          />
         </View>
       </KeyboardAvoidingView>
       <View

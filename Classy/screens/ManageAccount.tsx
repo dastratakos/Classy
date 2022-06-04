@@ -22,6 +22,7 @@ import { signInWithEmailAndPassword } from "../firebase";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { deleteUserCompletely, updateUser } from "../services/users";
+import { History, User } from "../types";
 
 export default function Settings() {
   const context = useContext(AppContext);
@@ -50,17 +51,12 @@ export default function Settings() {
 
     signOut(auth)
       .then(() => {
-        context.setUser({
-          ...context.user,
-          id: "",
-          email: "",
-          name: "",
-          degrees: [],
-          gradYear: "",
-          interests: "",
-          isPrivate: false,
-          photoUrl: "",
-        });
+        context.setUser({} as User);
+        context.setFriendIds([]);
+        context.setRequestIds([]);
+        context.setEnrollments([]);
+        context.setHistory({} as History);
+        context.setFavorites([]);
 
         context.streamClient.disconnect();
 
@@ -120,22 +116,23 @@ export default function Settings() {
         deleteUserCompletely(user.uid);
         deleteUser(user);
 
-        context.setUser({
-          ...context.user,
-          id: "",
-          email: "",
-          name: "",
-          degrees: [],
-          gradYear: "",
-          interests: "",
-          isPrivate: false,
-          photoUrl: "",
-        });
+        signOut(auth)
+          .then(() => {
+            context.setUser({} as User);
+            context.setFriendIds([]);
+            context.setRequestIds([]);
+            context.setEnrollments([]);
+            context.setHistory({} as History);
+            context.setFavorites([]);
 
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "AuthStack" }],
-        });
+            context.streamClient.disconnect();
+
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "AuthStack" }],
+            });
+          })
+          .catch((error) => setErrorMessage(error.message));
       })
       .catch((error) => setErrorMessage(error.message));
   };
@@ -182,9 +179,11 @@ export default function Settings() {
           wide
         />
       )}
-      <Separator overrideStyles={{
+      <Separator
+        overrideStyles={{
           marginTop: Layout.spacing.large,
-        }}/>
+        }}
+      />
       <KeyboardAvoidingView style={styles.inputContainer}>
         {errorMessage ? (
           <Text style={AppStyles.errorText}>{errorMessage}</Text>
@@ -248,20 +247,29 @@ export default function Settings() {
         />
       </KeyboardAvoidingView>
       <Button text="Change Password" onPress={handleUpdatePassword} wide />
-      <Separator overrideStyles={{
+      <Separator
+        overrideStyles={{
           marginTop: Layout.spacing.large,
           marginBottom: Layout.spacing.large,
-        }}/>
-      <Button text="Delete Account" onPress={deleteAccountAlert} wide textStyle={{color: Colors.pink}} />
-      <Separator overrideStyles={{
+        }}
+      />
+      <Button
+        text="Delete Account"
+        onPress={deleteAccountAlert}
+        wide
+        textStyle={{ color: Colors.pink }}
+      />
+      <Separator
+        overrideStyles={{
           marginTop: Layout.spacing.large,
           marginBottom: Layout.spacing.large,
-        }}/>
+        }}
+      />
       <Button
         text="Log Out"
         onPress={handleSignOut}
         wide
-        containerStyle={{backgroundColor: Colors.pink}}
+        containerStyle={{ backgroundColor: Colors.pink }}
       />
     </ScrollView>
   );
