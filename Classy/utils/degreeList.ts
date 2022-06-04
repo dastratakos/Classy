@@ -1,30 +1,19 @@
 export const degreeList = [
-  {
-    label: "B.S.",
-    value: "B.S.",
-  },
-  {
-    label: "B.A.",
-    value: "B.A.",
-  },
-  {
-    label: "Coterm",
-    value: "Coterm",
-  },
-  {
-    label: "M.S.",
-    value: "M.S.",
-  },
-  {
-    label: "M.A.",
-    value: "M.A.",
-  },
-  {
-    label: "MBA",
-    value: "MBA",
-  },
-  {
-    label: "PhD",
-    value: "PhD",
-  },
+  { label: "B.A.", value: "B.A." },
+  { label: "B.S.", value: "B.S." },
+  { label: "Coterm", value: "Coterm" },
+  { label: "DMA", value: "DMA" },
+  { label: "JD", value: "JD" },
+  { label: "JSD", value: "JSD" },
+  { label: "JSM", value: "JSM" },
+  { label: "LLM", value: "LLM" },
+  { label: "MA", value: "MA" },
+  { label: "MA/JD", value: "MA/JD" },
+  { label: "MA/MBA", value: "MA/MBA" },
+  { label: "MA/MPP", value: "MA/MPP" },
+  { label: "MD", value: "MD" },
+  { label: "MFA", value: "MFA" },
+  { label: "MLS", value: "MLS" },
+  { label: "MPP", value: "MPP" },
+  { label: "MS", value: "MS" },
 ];
