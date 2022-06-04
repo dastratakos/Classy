@@ -9,7 +9,7 @@ import Navigation from "./navigation";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { StreamChat } from "stream-chat";
-import Toast from "react-native-toast-message";
+import Toast, { BaseToast } from "react-native-toast-message";
 import { Enrollment, FavoritedCourse, User } from "./types";
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
@@ -107,6 +107,19 @@ export default function App() {
     },
   };
 
+  const toastConfig = {
+    info: (props: object) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: Colors.light.tint }}
+        contentContainerStyle={{
+          backgroundColor: Colors[colorScheme].cardBackground,
+        }}
+        text1Style={{ color: Colors[colorScheme].text }}
+      />
+    ),
+  };
+
   useEffect(() => {
     return () => streamClient.disconnectUser();
   }, []);
@@ -120,7 +133,7 @@ export default function App() {
           <AppContext.Provider value={globalVariables}>
             <SafeAreaProvider>
               <Navigation colorScheme={colorScheme} />
-              <Toast />
+              <Toast config={toastConfig} />
               <StatusBar />
             </SafeAreaProvider>
           </AppContext.Provider>
