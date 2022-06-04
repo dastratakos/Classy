@@ -77,6 +77,8 @@ export default function AddCourse({ route }: AddCourseProps) {
       if (newSet.has(i)) newSet.delete(i);
       else newSet.add(i);
 
+      console.log("selected schedules:", newSet);
+
       setSelectedScheduleIndices(newSet);
     };
 
@@ -148,6 +150,9 @@ export default function AddCourse({ route }: AddCourseProps) {
       schedulesList.push(terms[`${context.selectedTerm}`][i])
     );
 
+    console.log("selectedScheduleIndices:", selectedScheduleIndices);
+    console.log("schedulesList:", schedulesList);
+
     let randomColor =
       enrollmentColors[Math.floor(Math.random() * enrollmentColors.length)];
 
@@ -166,7 +171,7 @@ export default function AddCourse({ route }: AddCourseProps) {
       code: course.code,
       courseId: course.courseId,
       grading,
-      schedules,
+      schedules: schedulesList,
       termId: context.selectedTerm,
       title: course.title,
       units: selectedUnits,
