@@ -47,7 +47,7 @@ export default function SearchBar({
       >
         <FontAwesome name="search" size={Layout.icon.small} />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: Colors[colorScheme].text }]}
           placeholder={placeholder}
           value={searchPhrase}
           onChangeText={(text) => {
