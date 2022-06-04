@@ -25,13 +25,7 @@ export default function FullCalendar({ route }: FullCalendarProps) {
 
   useEffect(() => {
     const loadScreen = async () => {
-      if (route.params.id === context.user.id) {
-        setWeekRes(getWeekFromEnrollments(context.enrollments));
-      } else {
-        setWeekRes(
-          getWeekFromEnrollments(await getEnrollments(route.params.id))
-        );
-      }
+      setWeekRes(getWeekFromEnrollments(route.params.enrollments));
       setRefreshing(false);
     };
     loadScreen();

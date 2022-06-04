@@ -78,7 +78,10 @@ export default function Quarters({ route }: QuartersProps) {
           <Button
             text="View Full Calendar"
             onPress={() =>
-              navigation.navigate("FullCalendar", { id: route.params.user.id })
+              navigation.navigate("FullCalendar", {
+                id: route.params.user.id,
+                enrollments: route.params.enrollments,
+              })
             }
           />
         </View>
