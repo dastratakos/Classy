@@ -57,7 +57,7 @@ export default function AddCoursesReminder({
           <Text style={notificationStyles.pressableText}>
             {termIdToFullName(notification.termId)}
           </Text>
-          <Text> by searching by course code or name.</Text>
+          <Text> by searching for course code or name.</Text>
         </Text>
       </View>
       {notification.unread && <View style={notificationStyles.indicator} />}
