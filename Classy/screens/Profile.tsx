@@ -18,7 +18,7 @@ import {
   termIdToQuarterName,
   timeIsEarlier,
 } from "../utils";
-import { updateUser } from "../services/users";
+import { getUser, updateUser } from "../services/users";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -49,20 +49,6 @@ export default function Profile() {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
-  const [currentEnrollments, setCurrentEnrollments] = useState<Enrollment[]>(
-    context.enrollments.filter(
-      (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
-    )
-  );
-
-  useEffect(() => {
-    setCurrentEnrollments(
-      context.enrollments.filter(
-        (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
-      )
-    );
-  }, [context.enrollments]);
-
   const quarterName = termIdToQuarterName(getCurrentTermId());
 
   const [weekRes, setWeekRes] = useState<{
@@ -78,10 +64,7 @@ export default function Profile() {
   const [inClass, setInClass] = useState(false);
 
   useEffect(() => {
-    const loadScreen = async () => {
-      setWeekRes(getWeekFromEnrollments(currentEnrollments));
-    };
-    loadScreen();
+    onRefresh();
 
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) setShowEmailVerification(!user.emailVerified);
@@ -99,6 +82,15 @@ export default function Profile() {
 
   const onRefresh = async () => {
     setRefreshing(true);
+
+    context.setUser(await getUser(context.user.id));
+    setWeekRes(
+      getWeekFromEnrollments(
+        context.enrollments.filter(
+          (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
+        )
+      )
+    );
 
     if (auth.currentUser)
       setShowEmailVerification(!auth.currentUser.emailVerified);
@@ -210,9 +202,30 @@ export default function Profile() {
       label: "Calendar",
       component: (
         <Calendar
-          week={weekRes.week}
-          startCalendarHour={weekRes.startCalendarHour}
-          endCalendarHour={weekRes.endCalendarHour}
+          week={
+            getWeekFromEnrollments(
+              context.enrollments.filter(
+                (enrollment: Enrollment) =>
+                  enrollment.termId === getCurrentTermId()
+              )
+            ).week
+          }
+          startCalendarHour={
+            getWeekFromEnrollments(
+              context.enrollments.filter(
+                (enrollment: Enrollment) =>
+                  enrollment.termId === getCurrentTermId()
+              )
+            ).startCalendarHour
+          }
+          endCalendarHour={
+            getWeekFromEnrollments(
+              context.enrollments.filter(
+                (enrollment: Enrollment) =>
+                  enrollment.termId === getCurrentTermId()
+              )
+            ).endCalendarHour
+          }
         />
       ),
     },
@@ -220,7 +233,9 @@ export default function Profile() {
       label: "Courses",
       component: (
         <EnrollmentList
-          enrollments={currentEnrollments}
+          enrollments={context.enrollments.filter(
+            (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
+          )}
           emphasized
           emptyElement={
             <EmptyList

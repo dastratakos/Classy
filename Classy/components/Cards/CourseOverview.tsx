@@ -1,32 +1,56 @@
 import { Pressable, StyleSheet, Alert } from "react-native";
-import { Text, View } from "../Themed";
-import { componentToName, getTimeString } from "../../utils";
+import { ActivityIndicator, Text, View } from "../Themed";
+import { componentToName, getCurrentTermId, getTimeString } from "../../utils";
 
 import AppStyles from "../../styles/AppStyles";
 import Colors from "../../constants/Colors";
 import CourseOverviewModal from "../CourseOverviewModal";
-import { CourseOverview as CourseOverviewType, Enrollment } from "../../types";
+import {
+  CourseOverview as CourseOverviewType,
+  Enrollment,
+  User,
+} from "../../types";
 import Layout from "../../constants/Layout";
 import ProfilePhoto from "../ProfilePhoto";
 import useColorScheme from "../../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import EmptyList from "../EmptyList";
 import EnrollmentModal from "../EnrollmentModal";
 import { deleteEnrollment } from "../../services/enrollments";
 import AppContext from "../../context/Context";
+import { getFriendsInCourse } from "../../services/friends";
 
-export default function CourseOverview({ data }: { data: CourseOverviewType }) {
+export default function CourseOverview({
+  data,
+  refreshParent,
+}: {
+  data: CourseOverviewType;
+  refreshParent?: () => void;
+}) {
   const navigation = useNavigation();
   const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  let midway = data.friends.length / 2;
-  if (data.friends.length % 2 !== 0) {
-    midway++;
-  }
+  const [friends, setFriends] = useState<User[]>([]);
+
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const loadComponent = async () => {
+      setFriends(
+        await getFriendsInCourse(
+          context.friendIds,
+          data.enrollment.courseId,
+          getCurrentTermId()
+        )
+      );
+      setLoading(false);
+    };
+    loadComponent();
+  }, []);
 
   const handleDeleteEnrollment = async () => {
     setModalVisible(false);
@@ -34,10 +58,12 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
 
     let newEnrollments = context.enrollments.filter(
       (enrollment: Enrollment) =>
-        enrollment.courseId !== data.enrollment.courseId &&
+        enrollment.courseId !== data.enrollment.courseId ||
         enrollment.termId !== data.enrollment.termId
     );
-    context.setEnrollments(newEnrollments);
+    context.setEnrollments([...newEnrollments]);
+
+    refreshParent();
   };
 
   const deleteEnrollmentAlert = () => {
@@ -81,11 +107,13 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
         <Text style={{ marginTop: Layout.spacing.xxsmall }}>
           {getTimeString(data.startInfo)} - {getTimeString(data.endInfo)}
         </Text>
-        <Text style={styles.classFriendsText}>
-          {`${data.friends.length} Class Friend${
-            data.friends.length === 1 ? "" : "s"
-          }`}
-        </Text>
+        {loading ? (
+          <ActivityIndicator />
+        ) : (
+          <Text style={styles.classFriendsText}>
+            {`${friends.length} Class Friend${friends.length === 1 ? "" : "s"}`}
+          </Text>
+        )}
         <View
           style={{
             backgroundColor: "transparent",
@@ -95,9 +123,9 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
           }}
         >
           {/* TODO: only show a certain num of friends, then allow for showing more */}
-          {/* Do this with data.friends.slice(0, num to show).map.... */}
-          {data.friends.length > 0 &&
-            data.friends.map((item) => (
+          {/* Do this with friends.slice(0, num to show).map.... */}
+          {friends.length > 0 &&
+            friends.map((item) => (
               <View
                 key={item.id}
                 style={[
@@ -125,7 +153,7 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
               </View>
             ))}
         </View>
-        {data.friends.length === 0 && (
+        {!loading && friends.length === 0 && (
           <View
             style={{
               marginTop: Layout.spacing.small,
@@ -136,7 +164,7 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
           </View>
         )}
         {/*TODO: allow for expanding nicely */}
-        {/* {data.friends.length > 3 && (
+        {/* {friends.length > 3 && (
           <Pressable onPress={() => setModalVisible(true)}>
             <Text
               style={{

@@ -55,6 +55,8 @@ export default function Home() {
   const onRefresh = async () => {
     setRefreshing(true);
 
+    // console.log("onRefresh");
+
     const currentEnrollments = context.enrollments.filter(
       (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
     );
@@ -62,17 +64,10 @@ export default function Home() {
     let todayArr: CourseOverviewType[] = [];
     let nextUpArr: CourseOverviewType[] = [];
     for (let enrollment of currentEnrollments) {
-      const friends = await getFriendsInCourse(
-        context.friendIds,
-        enrollment.courseId,
-        getCurrentTermId()
-      );
-
       for (let schedule of enrollment.schedules) {
         if (schedule.days.includes(daysOfWeek[today])) {
           todayArr.push({
             enrollment,
-            friends,
             startInfo: schedule.startInfo,
             endInfo: schedule.endInfo,
             component: schedule.component,
@@ -81,7 +76,6 @@ export default function Home() {
         if (schedule.days.includes(daysOfWeek[today < 5 ? today + 1 : 1])) {
           nextUpArr.push({
             enrollment,
-            friends,
             startInfo: schedule.startInfo,
             endInfo: schedule.endInfo,
             component: schedule.component,
@@ -134,7 +128,7 @@ export default function Home() {
       <View style={AppStyles.section}>
         {homeData.today.map((item) => (
           <View key={item.enrollment.courseId.toString()}>
-            <CourseOverview data={item} />
+            <CourseOverview data={item} refreshParent={onRefresh} />
           </View>
         ))}
         {homeData.today.length === 0 && (
@@ -163,7 +157,7 @@ export default function Home() {
       <View style={AppStyles.section}>
         {homeData.nextUp.map((item) => (
           <View key={item.enrollment.courseId.toString()}>
-            <CourseOverview data={item} />
+            <CourseOverview data={item} refreshParent={onRefresh} />
           </View>
         ))}
         {homeData.nextUp.length === 0 && (

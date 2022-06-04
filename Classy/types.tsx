@@ -147,7 +147,6 @@ export type WeekSchedule = DaySchedule[];
 
 export type CourseOverview = {
   enrollment: Enrollment;
-  friends: User[];
   startInfo: Timestamp;
   endInfo: Timestamp;
   component: string;

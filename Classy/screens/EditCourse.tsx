@@ -129,14 +129,13 @@ export default function EditCourse({ route }: EditCourseProps) {
 
     let newEnrollments = context.enrollments.filter(
       (e: Enrollment) =>
-        e.courseId !== enrollment.courseId &&
-        e.termId !== enrollment.termId
+        e.courseId !== enrollment.courseId || e.termId !== enrollment.termId
     );
     newEnrollments.push(data);
     newEnrollments.sort((a: Enrollment, b: Enrollment) =>
       a.code > b.code ? 1 : -1
     );
-    context.setEnrollments(newEnrollments);
+    context.setEnrollments([...newEnrollments]);
 
     setSaveLoading(false);
     navigation.goBack();

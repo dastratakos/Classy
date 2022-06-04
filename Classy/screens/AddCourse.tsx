@@ -187,7 +187,7 @@ export default function AddCourse({ route }: AddCourseProps) {
     newEnrollments.sort((a: Enrollment, b: Enrollment) =>
       a.code > b.code ? 1 : -1
     );
-    context.setEnrollments(newEnrollments);
+    context.setEnrollments([...newEnrollments]);
 
     /* Get friends in this course. */
     const friends = await getFriendsInCourse(
@@ -195,8 +195,6 @@ export default function AddCourse({ route }: AddCourseProps) {
       course.courseId,
       context.selectedTerm
     );
-
-    // console.log("friends in course:", friends);
 
     const quarterText =
       context.selectedTerm === getCurrentTermId()

@@ -38,10 +38,10 @@ export default function CalendarEvent({
 
     let newEnrollments = context.enrollments.filter(
       (enrollment: Enrollment) =>
-        enrollment.courseId !== event.enrollment.courseId &&
+        enrollment.courseId !== event.enrollment.courseId ||
         enrollment.termId !== event.enrollment.termId
     );
-    context.setEnrollments(newEnrollments);
+    context.setEnrollments([...newEnrollments]);
   };
 
   const deleteEnrollmentAlert = () => {

@@ -31,9 +31,9 @@ export default function EnrollmentCard({
 
     let newEnrollments = context.enrollments.filter(
       (e: Enrollment) =>
-        e.courseId !== enrollment.courseId && e.termId !== enrollment.termId
+        e.courseId !== enrollment.courseId || e.termId !== enrollment.termId
     );
-    context.setEnrollments(newEnrollments);
+    context.setEnrollments([...newEnrollments]);
   };
 
   const deleteEnrollmentAlert = () => {
