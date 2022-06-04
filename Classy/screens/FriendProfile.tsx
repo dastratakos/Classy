@@ -82,7 +82,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const [friendStatusLoading, setFriendStatusLoading] = useState<boolean>(true);
   const [courseSimilarity, setCourseSimilarity] = useState<number>(0);
   const [overlap, setOverlap] = useState<Enrollment[]>([]);
-  const [numFriends, setNumFriends] = useState<string>("");
+  const [friendIds, setFriendIds] = useState<string[]>([]);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [currentEnrollments, setCurrentEnrollments] = useState<Enrollment[]>(
     []
@@ -130,9 +130,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     setFriendStatus(res.friendStatus);
     setFriendDocId(res.friendDocId);
     setFriendStatusLoading(false);
-    getFriendIds(route.params.id).then((res) => {
-      setNumFriends(`${res.length}`);
-    });
+    getFriendIds(route.params.id).then((res) => setFriendIds(res));
 
     /* Get enrollments. */
     setEnrollmentsLoading(true);
@@ -566,12 +564,15 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             ) : null}
           </View>
           <SquareButton
-            num={numFriends}
-            text={"friend" + (numFriends === "1" ? "" : "s")}
+            num={friendIds.length.toString()}
+            text={"friend" + (friendIds.length === 1 ? "" : "s")}
             size={Layout.buttonHeight.large}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate("Friends", { id: route.params.id });
+              navigation.navigate("Friends", {
+                id: route.params.id,
+                friendIds,
+              });
             }}
           />
         </View>

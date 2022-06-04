@@ -212,7 +212,7 @@ export type RootStackParamList = {
   FullCalendar: { id: string };
   SelectColor: undefined;
   SelectQuarter: { terms: string[] };
-  Friends: { id: string };
+  Friends: { id: string; friendIds: string[] };
   FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
   CourseSimilarity: {
@@ -256,7 +256,7 @@ export type ProfileStackParamList = {
   FullCalendar: { id: string };
   SelectColor: undefined;
   SelectQuarter: { terms: string[] };
-  Friends: { id: string };
+  Friends: { id: string; friendIds: string[] };
   FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
   CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
@@ -278,7 +278,7 @@ export type SearchStackParamList = {
   FullCalendar: { id: string };
   SelectColor: undefined;
   SelectQuarter: { terms: string[] };
-  Friends: { id: string };
+  Friends: { id: string; friendIds: string[] };
   FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
   CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
@@ -300,7 +300,7 @@ export type HomeStackParamList = {
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
-  Friends: { id: string };
+  Friends: { id: string; friendIds: string[] };
   FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
   CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
@@ -322,7 +322,7 @@ export type NotificationStackParamList = {
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
-  Friends: { id: string };
+  Friends: { id: string; friendIds: string[] };
   FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
   CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };

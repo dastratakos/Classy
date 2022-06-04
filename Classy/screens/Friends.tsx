@@ -1,19 +1,17 @@
-import { ActivityIndicator } from "../components/Themed";
 import { FlatList, StyleSheet } from "react-native";
 import { FriendsProps, User } from "../types";
-import { getFriendIds, getFriendsFromIds } from "../services/friends";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import AppContext from "../context/Context";
+import { ActivityIndicator } from "../components/Themed";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
 import EmptyList from "../components/EmptyList";
 import FriendCard from "../components/Cards/FriendCard";
 import SVGNoFriends from "../assets/images/undraw/noFriends.svg";
+import { getFriendsFromIds } from "../services/friends";
 import useColorScheme from "../hooks/useColorScheme";
 
 export default function Friends({ route }: FriendsProps) {
-  const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
   const [friends, setFriends] = useState<User[]>([]);
@@ -22,11 +20,7 @@ export default function Friends({ route }: FriendsProps) {
 
   useEffect(() => {
     const loadScreen = async () => {
-      let friendIds: string[] = [];
-      if (route.params.id === context.user.id) friendIds = context.friendIds;
-      else friendIds = await getFriendIds(route.params.id);
-
-      setFriends(await getFriendsFromIds(friendIds));
+      setFriends(await getFriendsFromIds(route.params.friendIds));
 
       setIsLoading(false);
     };

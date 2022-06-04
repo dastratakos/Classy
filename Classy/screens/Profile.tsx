@@ -347,7 +347,10 @@ export default function Profile() {
             size={Layout.buttonHeight.large}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate("Friends", { id: context.user.id });
+              navigation.navigate("Friends", {
+                id: context.user.id,
+                friendIds: context.friendIds,
+              });
             }}
           />
         </View>
