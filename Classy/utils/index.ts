@@ -143,23 +143,23 @@ export const componentToName = (component: string) => {
   return component;
 };
 
-export const getTimeString = (timestamp: Timestamp) => {
-  if (!timestamp) return "";
-
+export const getAdjustedDate = (date: Date) => {
   const hourOffset =
-    (timestamp.toDate().getTimezoneOffset() - new Date().getTimezoneOffset()) /
-    60;
-
-  const adjustedDate = new Date(
-    timestamp.toDate().getTime() + hourOffset * 3600 * 1000
-  );
+    (date.getTimezoneOffset() - new Date().getTimezoneOffset()) / 60;
+  const adjustedDate = new Date(date.getTime() + hourOffset * 3600 * 1000);
 
   // if (hourOffset === 1) {
-  //   console.log("old time:", timestamp.toDate().toTimeString());
+  //   console.log("old time:", date.toTimeString());
   //   console.log("new time:", adjustedDate.toTimeString());
   // }
 
-  return adjustedDate.toLocaleString("en-US", {
+  return adjustedDate;
+};
+
+export const getTimeString = (timestamp: Timestamp) => {
+  if (!timestamp) return "";
+
+  return getAdjustedDate(timestamp.toDate()).toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
@@ -172,9 +172,7 @@ export const HOUR_MILLISECONDS = 60 * MINUTE_MILLISECONDS;
 export const DAY_MILLISECONDS = 24 * HOUR_MILLISECONDS;
 export const WEEK_MILLISECONDS = 7 * DAY_MILLISECONDS;
 
-export const getTimeSinceString = (
-  timestamp: Timestamp,
-) => {
+export const getTimeSinceString = (timestamp: Timestamp) => {
   if (!timestamp) return "";
 
   const timeDiff = Timestamp.now().toMillis() - timestamp.toMillis();
@@ -296,8 +294,8 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
           if (!a.endInfo) return 1;
           if (!b.endInfo) return -1;
           /* If start times are the same, sort by descending end times. */
-          const aEndDate = a.endInfo.toDate();
-          const bEndDate = b.endInfo.toDate();
+          const aEndDate = getAdjustedDate(a.endInfo.toDate());
+          const bEndDate = getAdjustedDate(b.endInfo.toDate());
           if (aEndDate.getHours() === bEndDate.getHours())
             return aEndDate.getMinutes() < bDate.getMinutes() ? 1 : -1;
           return aEndDate.getHours() < bEndDate.getHours() ? 1 : -1;

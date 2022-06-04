@@ -1,5 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import Layout from "../../constants/Layout";
+import { getAdjustedDate } from "../../utils";
 
 export const calculateTop = (
   time: Timestamp,
@@ -20,13 +21,7 @@ export const calculateHeight = (
   endTime: Timestamp,
   hourHeight: number
 ) => {
-  const hourOffset =
-    (endTime.toDate().getTimezoneOffset() - new Date().getTimezoneOffset()) /
-    60;
-
-  const adjustedEndDate = new Date(
-    endTime.toDate().getTime() + hourOffset * 3600 * 1000
-  );
+  const adjustedEndDate = getAdjustedDate(endTime.toDate());
 
   const startHours = startTime.toDate().getHours();
   const endHours = adjustedEndDate.getHours();
