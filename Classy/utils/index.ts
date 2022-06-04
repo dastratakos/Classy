@@ -251,26 +251,20 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
         enrollment.code.join(", ") + " " + componentToName(schedule.component);
       const event: Partial<Event> = {
         title,
-        // startInfo: schedule.startInfo,
-        // endInfo: schedule.endInfo,
+        startInfo: schedule.startInfo,
+        endInfo: schedule.endInfo,
         location: schedule.location,
         enrollment: enrollment,
       };
 
       if (schedule.startInfo) {
-        event.startInfo = Timestamp.fromDate(
-          getAdjustedDate(schedule.startInfo.toDate())
-        );
-        const startHour = event.startInfo.toDate().getHours();
+        const startHour = schedule.startInfo.toDate().getHours();
         /* startHour !== 0 filters for sections that are 12:00 AM - 12:00 AM. */
         if (startHour < startCalendarHour && startHour !== 0)
           startCalendarHour = startHour;
       }
       if (schedule.endInfo) {
-        event.endInfo = Timestamp.fromDate(
-          getAdjustedDate(schedule.endInfo.toDate())
-        );
-        const endHour = event.endInfo.toDate().getHours() + 1;
+        const endHour = schedule.endInfo.toDate().getHours() + 1;
         if (endHour > endCalendarHour) endCalendarHour = endHour;
       }
 

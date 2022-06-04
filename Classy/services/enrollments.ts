@@ -8,12 +8,13 @@ import {
   increment,
   orderBy,
   query,
+  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
-import { termIdToYear } from "../utils";
+import { getAdjustedDate, termIdToYear } from "../utils";
 
 export const getEnrollments = async (userId: string) => {
   const q = query(
@@ -25,7 +26,30 @@ export const getEnrollments = async (userId: string) => {
   const res: Enrollment[] = [];
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    res.push({ ...doc.data(), docId: doc.id, numFriends: -1 } as Enrollment);
+    const data: Enrollment = doc.data() as Enrollment;
+
+    let schedules = [];
+    for (let i = 0; i < data.schedules.length; i++) {
+      const schedule = data.schedules[i];
+      if (schedule.startInfo)
+        schedule.startInfo = Timestamp.fromDate(
+          getAdjustedDate(schedule.startInfo.toDate())
+        );
+      if (schedule.endInfo)
+        schedule.endInfo = Timestamp.fromDate(
+          getAdjustedDate(schedule.endInfo.toDate())
+        );
+      schedules.push(schedule);
+    }
+
+    let enrollment: Enrollment = {
+      ...data,
+      schedules,
+      docId: doc.id,
+      numFriends: -1,
+    };
+
+    res.push(enrollment);
   });
 
   return res;

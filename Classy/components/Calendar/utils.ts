@@ -9,10 +9,10 @@ export const calculateTop = (
   if (!time) return 0;
 
   const offset = Layout.spacing.medium + hourHeight / 2;
-  const adjustedDate = time.toDate();
-  const hourDiff = adjustedDate.getHours() - startCalendarHour;
+  const t = time.toDate();
+  const hourDiff = t.getHours() - startCalendarHour;
 
-  return offset + hourDiff * hourHeight + (adjustedDate.getMinutes() * hourHeight) / 60;
+  return offset + hourDiff * hourHeight + (t.getMinutes() * hourHeight) / 60;
 };
 
 export const calculateHeight = (
@@ -20,15 +20,12 @@ export const calculateHeight = (
   endTime: Timestamp,
   hourHeight: number
 ) => {
-  const adjustedStartDate = startTime.toDate();
-  const adjustedEndDate = endTime.toDate();
-
-  const startHours = adjustedStartDate.getHours();
-  const endHours = adjustedEndDate.getHours();
+  const startHours = startTime.toDate().getHours();
+  const endHours = endTime.toDate().getHours();
   const hourDiff = endHours - startHours;
 
-  const startMinutes = adjustedStartDate.getMinutes();
-  const endMinutes = adjustedEndDate.getMinutes();
+  const startMinutes = startTime.toDate().getMinutes();
+  const endMinutes = endTime.toDate().getMinutes();
   const minDiff = endMinutes - startMinutes;
 
   return hourDiff * hourHeight + (minDiff * hourHeight) / 60;
