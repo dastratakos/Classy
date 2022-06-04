@@ -10,6 +10,7 @@ import Layout from "../../constants/Layout";
 import { deleteEnrollment } from "../../services/enrollments";
 import { mix_hexes } from "../../utils/hexColorMixer";
 import useColorScheme from "../../hooks/useColorScheme";
+import { getUser } from "../../services/users";
 
 const EVENT_MIN_HEIGHT = 25;
 
@@ -42,6 +43,7 @@ export default function CalendarEvent({
         enrollment.termId !== event.enrollment.termId
     );
     context.setEnrollments([...newEnrollments]);
+    context.setUser(await getUser(context.user.id));
   };
 
   const deleteEnrollmentAlert = () => {

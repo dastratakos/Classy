@@ -10,6 +10,7 @@ import { useContext, useState } from "react";
 import EnrollmentModal from "../EnrollmentModal";
 import { deleteEnrollment } from "../../services/enrollments";
 import AppContext from "../../context/Context";
+import { getUser } from "../../services/users";
 
 export default function EnrollmentCard({
   enrollment,
@@ -34,6 +35,8 @@ export default function EnrollmentCard({
         e.courseId !== enrollment.courseId || e.termId !== enrollment.termId
     );
     context.setEnrollments([...newEnrollments]);
+
+    context.setUser(await getUser(context.user.id));
   };
 
   const deleteEnrollmentAlert = () => {

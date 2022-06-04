@@ -18,6 +18,7 @@ import { updateEnrollment } from "../services/enrollments";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { getNumFriendsInCourse } from "../services/friends";
+import { getUser } from "../services/users";
 
 export default function EditCourse({ route }: EditCourseProps) {
   const context = useContext(AppContext);
@@ -137,9 +138,12 @@ export default function EditCourse({ route }: EditCourseProps) {
     );
     context.setEnrollments([...newEnrollments]);
 
+    context.setUser(await getUser(context.user.id));
+
     setSaveLoading(false);
     navigation.goBack();
   };
+
   const Schedules = () => {
     if (context.selectedTerm === "") return null;
 

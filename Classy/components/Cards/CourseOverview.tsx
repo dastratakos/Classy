@@ -20,10 +20,11 @@ import EnrollmentModal from "../EnrollmentModal";
 import { deleteEnrollment } from "../../services/enrollments";
 import AppContext from "../../context/Context";
 import { getFriendsInCourse } from "../../services/friends";
+import { getUser } from "../../services/users";
 
 export default function CourseOverview({
   data,
-  refreshParent,
+  refreshParent = () => {},
 }: {
   data: CourseOverviewType;
   refreshParent?: () => void;
@@ -62,6 +63,7 @@ export default function CourseOverview({
         enrollment.termId !== data.enrollment.termId
     );
     context.setEnrollments([...newEnrollments]);
+    context.setUser(await getUser(context.user.id));
 
     refreshParent();
   };

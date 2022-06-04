@@ -25,6 +25,7 @@ import { getCourseTerms } from "../services/courses";
 import { getFriendsInCourse, getNumFriendsInCourse } from "../services/friends";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { getUser } from "../services/users";
 
 export default function AddCourse({ route }: AddCourseProps) {
   const context = useContext(AppContext);
@@ -222,6 +223,8 @@ export default function AddCourse({ route }: AddCourseProps) {
         context.selectedTerm
       );
     }
+
+    context.setUser(await getUser(context.user.id));
 
     setDoneLoading(false);
     navigation.goBack();
