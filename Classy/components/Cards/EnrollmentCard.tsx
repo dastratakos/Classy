@@ -28,6 +28,12 @@ export default function EnrollmentCard({
   const handleDeleteEnrollment = async () => {
     setModalVisible(false);
     await deleteEnrollment(enrollment);
+
+    let newEnrollments = context.enrollments.filter(
+      (e: Enrollment) =>
+        e.courseId !== enrollment.courseId && e.termId !== enrollment.termId
+    );
+    context.setEnrollments(newEnrollments);
   };
 
   const deleteEnrollmentAlert = () => {

@@ -5,18 +5,20 @@ import { componentToName, getTimeString } from "../../utils";
 import AppStyles from "../../styles/AppStyles";
 import Colors from "../../constants/Colors";
 import CourseOverviewModal from "../CourseOverviewModal";
-import { CourseOverview as CourseOverviewType } from "../../types";
+import { CourseOverview as CourseOverviewType, Enrollment } from "../../types";
 import Layout from "../../constants/Layout";
 import ProfilePhoto from "../ProfilePhoto";
 import useColorScheme from "../../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import EmptyList from "../EmptyList";
 import EnrollmentModal from "../EnrollmentModal";
 import { deleteEnrollment } from "../../services/enrollments";
+import AppContext from "../../context/Context";
 
 export default function CourseOverview({ data }: { data: CourseOverviewType }) {
   const navigation = useNavigation();
+  const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -29,6 +31,13 @@ export default function CourseOverview({ data }: { data: CourseOverviewType }) {
   const handleDeleteEnrollment = async () => {
     setModalVisible(false);
     await deleteEnrollment(data.enrollment);
+
+    let newEnrollments = context.enrollments.filter(
+      (enrollment: Enrollment) =>
+        enrollment.courseId !== data.enrollment.courseId &&
+        enrollment.termId !== data.enrollment.termId
+    );
+    context.setEnrollments(newEnrollments);
   };
 
   const deleteEnrollmentAlert = () => {

@@ -1,8 +1,8 @@
 import * as Haptics from "expo-haptics";
 
 import { ActivityIndicator, Text, View } from "../components/Themed";
-import { Course, EditCourseProps, Schedule } from "../types";
-import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { Course, EditCourseProps, Enrollment, Schedule } from "../types";
+import { Alert, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { getCourse, getCourseTerms } from "../services/courses";
 import { useContext, useEffect, useState } from "react";
 
@@ -13,10 +13,11 @@ import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import ScheduleCard from "../components/Cards/ScheduleCard";
 import SquareButton from "../components/Buttons/SquareButton";
-import { getTimeString, termIdToName } from "../utils";
+import { getTimeString, termIdToFullName, termIdToName } from "../utils";
 import { updateEnrollment } from "../services/enrollments";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { getNumFriendsInCourse } from "../services/friends";
 
 export default function EditCourse({ route }: EditCourseProps) {
   const context = useContext(AppContext);
@@ -66,12 +67,32 @@ export default function EditCourse({ route }: EditCourseProps) {
     loadScreen();
   }, []);
 
+  const duplicateCourseAlert = () =>
+    Alert.alert(
+      "Oops!",
+      `You are already enrolled in this course for ${termIdToFullName(
+        context.selectedTerm
+      )}.`,
+      [{ text: "OK" }]
+    );
+
   const handleSavePressed = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     setSaveLoading(true);
 
-    // TODO: check if you are already enrolled in this course for selectedQuarter
+    if (
+      enrollment.termId !== context.selectedTerm &&
+      context.enrollments.filter(
+        (enrollment: Enrollment) =>
+          enrollment.courseId === course.courseId &&
+          enrollment.termId === context.selectedTerm
+      ).length > 0
+    ) {
+      setSaveLoading(false);
+      duplicateCourseAlert();
+      return;
+    }
 
     /* Build schedulesList. */
     let schedulesList: Schedule[] = [];
@@ -88,6 +109,34 @@ export default function EditCourse({ route }: EditCourseProps) {
       selectedUnits,
       context.user.id
     );
+
+    const data: Enrollment = {
+      ...enrollment,
+      color: context.selectedColor,
+      grading,
+      schedules: schedulesList,
+      termId: context.selectedTerm,
+      units: selectedUnits,
+      numFriends:
+        context.selectedTerm === enrollment.termId
+          ? enrollment.numFriends
+          : await getNumFriendsInCourse(
+              course.courseId,
+              context.friendIds,
+              context.selectedTerm
+            ),
+    };
+
+    let newEnrollments = context.enrollments.filter(
+      (e: Enrollment) =>
+        e.courseId !== enrollment.courseId &&
+        e.termId !== enrollment.termId
+    );
+    newEnrollments.push(data);
+    newEnrollments.sort((a: Enrollment, b: Enrollment) =>
+      a.code > b.code ? 1 : -1
+    );
+    context.setEnrollments(newEnrollments);
 
     setSaveLoading(false);
     navigation.goBack();
@@ -153,7 +202,11 @@ export default function EditCourse({ route }: EditCourseProps) {
       >
         <View style={AppStyles.section}>
           <Text style={styles.title}>{course.code.join(", ")}</Text>
-          <Text style={[styles.title, {color: Colors[colorScheme].secondaryText}]}>{course.title}</Text>
+          <Text
+            style={[styles.title, { color: Colors[colorScheme].secondaryText }]}
+          >
+            {course.title}
+          </Text>
           <View style={styles.row}>
             <Text style={styles.subheading}>Color</Text>
             <TouchableOpacity

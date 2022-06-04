@@ -5,7 +5,7 @@ import { Text, View } from "./../Themed";
 import AppContext from "../../context/Context";
 import Colors from "../../constants/Colors";
 import EnrollmentModal from "./../EnrollmentModal";
-import { Event } from "../../types";
+import { Enrollment, Event } from "../../types";
 import Layout from "../../constants/Layout";
 import { deleteEnrollment } from "../../services/enrollments";
 import { mix_hexes } from "../../utils/hexColorMixer";
@@ -35,6 +35,13 @@ export default function CalendarEvent({
   const handleDeleteEnrollment = async () => {
     setModalVisible(false);
     await deleteEnrollment(event.enrollment);
+
+    let newEnrollments = context.enrollments.filter(
+      (enrollment: Enrollment) =>
+        enrollment.courseId !== event.enrollment.courseId &&
+        enrollment.termId !== event.enrollment.termId
+    );
+    context.setEnrollments(newEnrollments);
   };
 
   const deleteEnrollmentAlert = () => {

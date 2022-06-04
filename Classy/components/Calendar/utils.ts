@@ -21,13 +21,14 @@ export const calculateHeight = (
   endTime: Timestamp,
   hourHeight: number
 ) => {
+  const adjustedStartDate = getAdjustedDate(startTime.toDate());
   const adjustedEndDate = getAdjustedDate(endTime.toDate());
 
-  const startHours = startTime.toDate().getHours();
+  const startHours = adjustedStartDate.getHours();
   const endHours = adjustedEndDate.getHours();
   const hourDiff = endHours - startHours;
 
-  const startMinutes = startTime.toDate().getMinutes();
+  const startMinutes = adjustedStartDate.getMinutes();
   const endMinutes = adjustedEndDate.getMinutes();
   const minDiff = endMinutes - startMinutes;
 

@@ -49,9 +49,20 @@ export default function Profile() {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
-  const currentEnrollments = context.enrollments.filter(
-    (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
+  const [currentEnrollments, setCurrentEnrollments] = useState<Enrollment[]>(
+    context.enrollments.filter(
+      (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
+    )
   );
+
+  useEffect(() => {
+    setCurrentEnrollments(
+      context.enrollments.filter(
+        (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
+      )
+    );
+  }, [context.enrollments]);
+
   const quarterName = termIdToQuarterName(getCurrentTermId());
 
   const [weekRes, setWeekRes] = useState<{

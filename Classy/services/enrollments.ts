@@ -53,11 +53,11 @@ export const addEnrollment = async (
     userId: user.id,
   };
 
-  await addDoc(collection(db, "enrollments"), data);
+  const enrollmentRef = await addDoc(collection(db, "enrollments"), data);
 
   /* 2. Update number of units in user doc in users collection. */
   const yearKey = termIdToYear(termId);
-  console.log("yearKey:", yearKey);
+  // console.log("yearKey:", yearKey);
 
   let newTerms = user.terms;
 
@@ -82,6 +82,8 @@ export const addEnrollment = async (
     doc(doc(db, "courses", `${course.courseId}`), "terms", termId),
     courseData
   );
+
+  return enrollmentRef.id;
 };
 
 export const updateEnrollment = async (
