@@ -61,6 +61,25 @@ export default function EnrollmentModal({
     navigation.navigate("Course", { course });
   };
 
+  const ScheduleItem = ({ item }: { item: Schedule }) => (
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingHorizontal: Layout.spacing.small,
+        flexWrap: "wrap",
+        backgroundColor: "transparent",
+      }}
+    >
+      <Text style={styles.schedText}>
+        {item.days.map((day) => day.substring(0, 3)).join(", ")}
+      </Text>
+      <Text style={[styles.schedText, { paddingLeft: Layout.spacing.small }]}>
+        {getTimeString(item.startInfo)} - {getTimeString(item.endInfo)}
+      </Text>
+    </View>
+  );
+
   return (
     <Modal isVisible={visible} onBackdropPress={() => setVisible(false)}>
       <View
@@ -101,43 +120,24 @@ export default function EnrollmentModal({
             data={schedules}
             style={{ width: "100%", maxHeight: 200 }}
             keyExtractor={(_, index) => index.toString()}
-            renderItem={({ item }) => (
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Text style={styles.schedText}>
-                  {item.days.map((day) => day.substring(0, 3)).join(", ")}
-                </Text>
-                <Text style={styles.schedText}>
-                  {getTimeString(item.startInfo)} -{" "}
-                  {getTimeString(item.endInfo)}
-                </Text>
-              </View>
-            )}
+            renderItem={ScheduleItem}
           />
-        ) : (
+        ) : schedules.length > 0 ? (
           <View style={styles.classTimesWrap}>
             {schedules.map((schedule, i) => (
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  flexWrap: "wrap",
-                }}
-                key={i}
-              >
-                <Text style={styles.schedText}>
-                  {schedule.days.map((day) => day.substring(0, 3)).join(", ")}
-                </Text>
-                <Text style={styles.schedText}>
-                  {getTimeString(schedule.startInfo)} -{" "}
-                  {getTimeString(schedule.endInfo)}
-                </Text>
+              <View style={{ backgroundColor: "transparent" }} key={i}>
+                <ScheduleItem item={schedule} />
               </View>
             ))}
+          </View>
+        ) : (
+          <View
+            style={[
+              styles.classTimesWrap,
+              { paddingHorizontal: Layout.spacing.small },
+            ]}
+          >
+            <Text style={styles.schedText}>None</Text>
           </View>
         )}
 
@@ -213,7 +213,6 @@ const styles = StyleSheet.create({
   schedText: {
     fontSize: Layout.text.large,
     fontWeight: "500",
-    alignSelf: "flex-end",
   },
   buttonwrap: {
     flexDirection: "row",
