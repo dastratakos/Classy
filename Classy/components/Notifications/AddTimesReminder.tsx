@@ -60,9 +60,7 @@ export default function AddTimesReminder({
       />
       <View style={notificationStyles.textContainer}>
         <Text style={notificationStyles.notificationText} numberOfLines={3}>
-          <Text>Reminder to input your </Text>
-          <Text style={notificationStyles.pressableText}>class times </Text>
-          <Text>for </Text>
+          <Text>Reminder to input your class times for </Text>
           <Text style={notificationStyles.pressableText}>
             {termIdToFullName(notification.termId)}
           </Text>

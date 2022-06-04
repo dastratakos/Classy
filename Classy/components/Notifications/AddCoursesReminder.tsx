@@ -2,12 +2,10 @@ import { Alert, Image, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "../Themed";
 import { getTimeSinceString, termIdToFullName } from "../../utils";
 
-import AppContext from "../../context/Context";
 import Colors from "../../constants/Colors";
 import { Notification } from "../../types";
 import notificationStyles from "./notificationStyles";
 import useColorScheme from "../../hooks/useColorScheme";
-import { useContext } from "react";
 import { useNavigation } from "@react-navigation/core";
 
 export default function AddCoursesReminder({
@@ -21,7 +19,6 @@ export default function AddCoursesReminder({
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
-  const context = useContext(AppContext);
 
   const deleteNotificationAlert = () =>
     Alert.alert("Delete notification", "Are you sure?", [
@@ -56,8 +53,7 @@ export default function AddCoursesReminder({
       />
       <View style={notificationStyles.textContainer}>
         <Text style={notificationStyles.notificationText} numberOfLines={3}>
-          <Text style={notificationStyles.pressableText}>Add courses </Text>
-          <Text>to </Text>
+          <Text>Add courses to </Text>
           <Text style={notificationStyles.pressableText}>
             {termIdToFullName(notification.termId)}
           </Text>
