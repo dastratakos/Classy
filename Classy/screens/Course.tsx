@@ -9,12 +9,7 @@ import {
   View,
 } from "../components/Themed";
 import {
-  CourseProps,
-  Course as CourseType,
-  User,
-  FavoritedCourse,
-} from "../types";
-import {
+  Alert,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -22,10 +17,21 @@ import {
   TouchableOpacity,
 } from "react-native";
 import {
+  CourseProps,
+  Course as CourseType,
+  FavoritedCourse,
+  User,
+} from "../types";
+import {
   addFavorite,
   deleteFavorite,
   getIsFavorited,
 } from "../services/courses";
+import {
+  getAllPeopleIdsInCourse,
+  getNumFriendsInCourse,
+} from "../services/friends";
+import { getCurrentTermId, termIdToFullName } from "../utils";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -41,12 +47,7 @@ import ReadMoreText from "../components/ReadMoreText";
 import SVGCamping from "../assets/images/undraw/camping.svg";
 import Separator from "../components/Separator";
 import Toast from "react-native-toast-message";
-import {
-  getAllPeopleIdsInCourse,
-  getNumFriendsInCourse,
-} from "../services/friends";
 import { getUser } from "../services/users";
-import { getCurrentTermId, termIdToFullName } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
@@ -176,6 +177,27 @@ export default function Course({ route }: CourseProps) {
         text1: "Removed course from favorites",
       });
     }
+  };
+
+  const handleExplorePress = (courseId: number) => {
+    WebBrowser.openBrowserAsync(`${exploreCoursesLink}${courseId}`);
+  };
+
+  const handleCartaPress = (courseCode: string) => {
+    /* Remove spaces from the courseCode. */
+    Alert.alert(
+      "Carta",
+      "Note that Carta may require a Stanford login for the first time.",
+      [
+        {
+          text: "Continue",
+          onPress: () =>
+            WebBrowser.openBrowserAsync(
+              cartaLink + courseCode.replace(/\s+/g, "")
+            ),
+        },
+      ]
+    );
   };
 
   if (refreshing) return <ActivityIndicator />;
@@ -408,15 +430,6 @@ export default function Course({ route }: CourseProps) {
       </View>
     </>
   );
-}
-
-function handleExplorePress(courseId: number) {
-  WebBrowser.openBrowserAsync(`${exploreCoursesLink}${courseId}`);
-}
-
-function handleCartaPress(courseCode: string) {
-  /* Remove spaces from the courseCode. */
-  WebBrowser.openBrowserAsync(cartaLink + courseCode.replace(/\s+/g, ""));
 }
 
 const styles = StyleSheet.create({
