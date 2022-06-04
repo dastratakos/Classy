@@ -297,11 +297,11 @@ export default function ChannelDetails() {
         ) : null}
         <View style={styles.innerContainer}>
           <Text style={[styles.title, { flex: 1 }]}>Members</Text>
-          {role === "owner" ? (
+          {/* {role === "owner" && (
             <Pressable onPress={handleAddMember}>
               <Ionicons name="person-add" size={Layout.icon.medium} />
             </Pressable>
-          ) : null}
+          )} */}
         </View>
         {/* TODO: use FlatList */}
         {members.map((member) => {
@@ -315,15 +315,15 @@ export default function ChannelDetails() {
                     : null,
                 photoUrl: member.user.image,
               }}
-              rightElement={
-                role === "owner" ? (
-                  <Pressable onPress={() => console.log("Remove member")}>
-                    <Ionicons name="close" size={Layout.icon.medium} />
-                  </Pressable>
-                ) : (
-                  <></>
-                )
-              }
+              // rightElement={
+              //   role === "owner" ? (
+              //     <Pressable onPress={() => console.log("Remove member")}>
+              //       <Ionicons name="close" size={Layout.icon.medium} />
+              //     </Pressable>
+              //   ) : (
+              //     <></>
+              //   )
+              // }
               key={member.user.id}
             />
           );
