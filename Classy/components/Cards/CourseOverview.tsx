@@ -110,7 +110,7 @@ export default function CourseOverview({
           {getTimeString(data.startInfo)} - {getTimeString(data.endInfo)}
         </Text>
         {loading ? (
-          <ActivityIndicator />
+          <ActivityIndicator lightColor="transparent" darkColor="transparent" />
         ) : (
           <Text style={styles.classFriendsText}>
             {`${friends.length} Class Friend${friends.length === 1 ? "" : "s"}`}
