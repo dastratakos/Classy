@@ -27,7 +27,6 @@ import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { uploadImage } from "../services/storage";
 import { getChannelId } from "../services/messages";
-import { Ionicons } from "../components/Themed";
 import DoubleProfilePhoto from "../components/DoubleProfilePhoto";
 
 export default function ChannelDetails() {
@@ -254,7 +253,11 @@ export default function ChannelDetails() {
                     style={[
                       styles.input,
                       styles.groupName,
-                      { fontWeight: "500" },
+                      {
+                        fontWeight: "500",
+                        color: Colors[colorScheme].text,
+                        borderColor: Colors[colorScheme].photoBackground,
+                      },
                     ]}
                     autoCapitalize="words"
                     textContentType="name"
