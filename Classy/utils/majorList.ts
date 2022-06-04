@@ -245,9 +245,16 @@ export const majorList = [
   },
   { label: "Translation Studies", value: "Translation Studies" },
   { label: "Urban Studies", value: "Urban Studies" },
+  { label: "First Year", value: "First Year" },
+  { label: "Second Year", value: "Second Year" },
+  { label: "Third Year", value: "Third Year" },
+  { label: "Fourth Year", value: "Fourth Year" },
+  { label: "1L", value: "1L" },
+  { label: "2L", value: "2L" },
+  { label: "3L", value: "3L" },
 ];
 
-/**
+/** All Majors
 Aeronautics and Astronautics
 African and African American Studies
 African Studies
@@ -379,6 +386,7 @@ Theater and Performance Studies
 Translation Studies
 Urban Studies
  */
+
 /**
  * Undergrad
 Aeronautics and Astronautics
