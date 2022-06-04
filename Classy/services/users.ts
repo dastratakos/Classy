@@ -107,10 +107,20 @@ export const deleteUserCompletely = async (userId: string) => {
     batch3.commit();
   });
 
-  /* 4. Delete search history. */
+  /* 4. Get all Notifications and delete. */
+  const batch4 = writeBatch(db);
+  const q4 = query(collection(db, "notifications"), where("userId", "==", userId));
+  await getDocs(q4).then((querySnapshot4) => {
+    querySnapshot4.forEach((doc) => {
+      batch4.delete(doc.ref);
+    });
+    batch4.commit();
+  });
+
+  /* 5. Delete search history. */
   deleteDoc(doc(db, "history", userId));
 
-  /* 3. Get the user document and delete it. */
+  /* 6. Get the user document and delete it. */
   deleteDoc(doc(db, "users", userId));
 };
 
