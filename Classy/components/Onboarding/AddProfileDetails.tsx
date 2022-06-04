@@ -204,7 +204,13 @@ export default function AddProfileDetails({
                 placeholder="Name"
                 value={name}
                 onChangeText={setName}
-                style={[styles.input, { color: Colors[colorScheme].text }]}
+                style={[
+                  styles.input,
+                  {
+                    color: Colors[colorScheme].text,
+                    borderColor: Colors[colorScheme].text,
+                  },
+                ]}
                 autoCapitalize="words"
                 textContentType="name"
               />
@@ -219,7 +225,10 @@ export default function AddProfileDetails({
                     style={[
                       AppStyles.row,
                       styles.input,
-                      { marginVertical: Layout.spacing.small },
+                      {
+                        marginVertical: Layout.spacing.small,
+                        borderColor: Colors[colorScheme].text,
+                      },
                     ]}
                     key={i.toString()}
                     onPress={() => {
@@ -264,18 +273,20 @@ export default function AddProfileDetails({
                   setValue={setStartYear}
                   setItems={setStartYearItems}
                   placeholder="Start Year"
-                  placeholderStyle={{
-                    color: Colors[colorScheme].secondaryText,
-                  }}
+                  placeholderStyle={{ color: Colors[colorScheme].text }}
                   searchable
                   searchPlaceholder="Search..."
                   showBadgeDot={false}
                   dropDownDirection="TOP"
                   modalProps={{ animationType: "slide" }}
                   theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-                  style={{ backgroundColor: Colors[colorScheme].background }}
+                  style={{
+                    backgroundColor: Colors[colorScheme].background,
+                    borderColor: Colors[colorScheme].text,
+                  }}
                   dropDownContainerStyle={{
                     backgroundColor: Colors[colorScheme].background,
+                    borderColor: Colors[colorScheme].text,
                   }}
                 />
               </View>
@@ -293,7 +304,7 @@ export default function AddProfileDetails({
                   setItems={setGradYearItems}
                   placeholder="Graduation Year"
                   placeholderStyle={{
-                    color: Colors[colorScheme].secondaryText,
+                    color: Colors[colorScheme].text,
                   }}
                   searchable
                   searchPlaceholder="Search..."
@@ -301,9 +312,13 @@ export default function AddProfileDetails({
                   dropDownDirection="TOP"
                   modalProps={{ animationType: "slide" }}
                   theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-                  style={{ backgroundColor: Colors[colorScheme].background }}
+                  style={{
+                    backgroundColor: Colors[colorScheme].background,
+                    borderColor: Colors[colorScheme].text,
+                  }}
                   dropDownContainerStyle={{
                     backgroundColor: Colors[colorScheme].background,
+                    borderColor: Colors[colorScheme].text,
                   }}
                 />
               </View>

@@ -1,21 +1,22 @@
-import { useContext } from "react";
-
 import AppContext from "../context/Context";
 import { ChannelList } from "stream-chat-expo";
 import { Channel as ChannelType } from "stream-chat";
+import DoubleProfilePhoto from "../components/DoubleProfilePhoto";
+import Layout from "../constants/Layout";
+import ProfilePhoto from "../components/ProfilePhoto";
 import { StyleSheet } from "react-native";
 import { Text } from "../components/Themed";
+import { useContext } from "react";
 import { useNavigation } from "@react-navigation/core";
-import ProfilePhoto from "../components/ProfilePhoto";
-import Layout from "../constants/Layout";
-import useColorScheme from "../hooks/useColorScheme";
-import DoubleProfilePhoto from "../components/DoubleProfilePhoto";
 
 export default function Messages() {
   const context = useContext(AppContext);
   const navigation = useNavigation();
 
-  const filters = { members: { $in: [context.user.id] } };
+  const filters = {
+    members: { $in: [context.user.id] },
+    last_message_at: { $gt: "2021-01-15T09:30:20.45Z" },
+  };
   const sort = { last_message_at: -1 };
   const options = { limit: 20, messages_limit: 30 };
 

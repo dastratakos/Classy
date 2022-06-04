@@ -262,14 +262,18 @@ export default function Course({ route }: CourseProps) {
                     setItems={setQuarterItems}
                     placeholder="Quarter"
                     placeholderStyle={{
-                      color: Colors[colorScheme].secondaryText,
+                      color: Colors[colorScheme].text,
                     }}
                     showBadgeDot={false}
                     dropDownDirection="TOP"
                     theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-                    style={{ backgroundColor: Colors[colorScheme].background }}
+                    style={{
+                      backgroundColor: Colors[colorScheme].background,
+                      borderColor: Colors[colorScheme].text,
+                    }}
                     dropDownContainerStyle={{
                       backgroundColor: Colors[colorScheme].background,
+                      borderColor: Colors[colorScheme].text,
                     }}
                   />
                 </View>

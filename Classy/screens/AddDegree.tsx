@@ -127,9 +127,13 @@ export default function AddDegree() {
         dropDownDirection="TOP"
         modalProps={{ animationType: "slide" }}
         theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-        style={{ backgroundColor: Colors[colorScheme].background }}
+        style={{
+          backgroundColor: Colors[colorScheme].background,
+          borderColor: Colors[colorScheme].text,
+        }}
         dropDownContainerStyle={{
           backgroundColor: Colors[colorScheme].background,
+          borderColor: Colors[colorScheme].text,
         }}
         containerStyle={{ marginBottom: Layout.spacing.large }}
       />
@@ -150,9 +154,13 @@ export default function AddDegree() {
         dropDownDirection="TOP"
         modalProps={{ animationType: "slide" }}
         theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-        style={{ backgroundColor: Colors[colorScheme].background }}
+        style={{
+          backgroundColor: Colors[colorScheme].background,
+          borderColor: Colors[colorScheme].text,
+        }}
         dropDownContainerStyle={{
           backgroundColor: Colors[colorScheme].background,
+          borderColor: Colors[colorScheme].text,
         }}
         containerStyle={{ marginBottom: Layout.spacing.large }}
       />

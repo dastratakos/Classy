@@ -20,7 +20,7 @@ export default function ChannelScreen() {
       const filteredMembers = state.members.filter(
         (member) => member.user?.id !== context.user.id
       );
-      if (filteredMembers.length === 1) {
+      if (filteredMembers.length === 1 && filteredMembers[0].user.name) {
         context.setChannelName(filteredMembers[0].user.name);
       }
     };

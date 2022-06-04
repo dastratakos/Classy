@@ -236,7 +236,13 @@ export default function Settings() {
                   setName(text);
                   setSaveDisabled(false);
                 }}
-                style={[styles.input, { color: Colors[colorScheme].text }]}
+                style={[
+                  styles.input,
+                  {
+                    color: Colors[colorScheme].text,
+                    borderColor: Colors[colorScheme].text,
+                  },
+                ]}
                 autoCapitalize="words"
                 textContentType="name"
               />
@@ -251,7 +257,10 @@ export default function Settings() {
                     style={[
                       AppStyles.row,
                       styles.input,
-                      { marginVertical: Layout.spacing.small },
+                      {
+                        marginVertical: Layout.spacing.small,
+                        borderColor: Colors[colorScheme].text,
+                      },
                     ]}
                     key={i.toString()}
                     onPress={() => {
@@ -308,9 +317,13 @@ export default function Settings() {
                   dropDownDirection="TOP"
                   modalProps={{ animationType: "slide" }}
                   theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-                  style={{ backgroundColor: Colors[colorScheme].background }}
+                  style={{
+                    backgroundColor: Colors[colorScheme].background,
+                    borderColor: Colors[colorScheme].text,
+                  }}
                   dropDownContainerStyle={{
                     backgroundColor: Colors[colorScheme].background,
+                    borderColor: Colors[colorScheme].text,
                   }}
                 />
               </View>
@@ -339,9 +352,13 @@ export default function Settings() {
                   dropDownDirection="TOP"
                   modalProps={{ animationType: "slide" }}
                   theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-                  style={{ backgroundColor: Colors[colorScheme].background }}
+                  style={{
+                    backgroundColor: Colors[colorScheme].background,
+                    borderColor: Colors[colorScheme].text,
+                  }}
                   dropDownContainerStyle={{
                     backgroundColor: Colors[colorScheme].background,
+                    borderColor: Colors[colorScheme].text,
                   }}
                 />
               </View>
@@ -357,7 +374,13 @@ export default function Settings() {
                   setInterests(text);
                   setSaveDisabled(false);
                 }}
-                style={[styles.input, { color: Colors[colorScheme].text }]}
+                style={[
+                  styles.input,
+                  {
+                    color: Colors[colorScheme].text,
+                    borderColor: Colors[colorScheme].text,
+                  },
+                ]}
                 autoCapitalize="sentences"
               />
             </View>
@@ -368,7 +391,10 @@ export default function Settings() {
               <Text
                 style={[
                   styles.input,
-                  { color: Colors[colorScheme].secondaryText },
+                  {
+                    color: Colors[colorScheme].secondaryText,
+                    borderColor: Colors[colorScheme].text,
+                  },
                 ]}
               >
                 {auth.currentUser?.email}
