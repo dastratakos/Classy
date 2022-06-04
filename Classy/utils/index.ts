@@ -159,7 +159,7 @@ export const getAdjustedDate = (date: Date) => {
 export const getTimeString = (timestamp: Timestamp) => {
   if (!timestamp) return "";
 
-  return getAdjustedDate(timestamp.toDate()).toLocaleString("en-US", {
+  return timestamp.toDate().toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
@@ -249,22 +249,28 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
     for (let schedule of enrollment.schedules) {
       const title =
         enrollment.code.join(", ") + " " + componentToName(schedule.component);
-      const event: Event = {
+      const event: Partial<Event> = {
         title,
-        startInfo: schedule.startInfo,
-        endInfo: schedule.endInfo,
+        // startInfo: schedule.startInfo,
+        // endInfo: schedule.endInfo,
         location: schedule.location,
         enrollment: enrollment,
       };
 
       if (schedule.startInfo) {
-        const startHour = schedule.startInfo.toDate().getHours();
+        event.startInfo = Timestamp.fromDate(
+          getAdjustedDate(schedule.startInfo.toDate())
+        );
+        const startHour = event.startInfo.toDate().getHours();
         /* startHour !== 0 filters for sections that are 12:00 AM - 12:00 AM. */
         if (startHour < startCalendarHour && startHour !== 0)
           startCalendarHour = startHour;
       }
       if (schedule.endInfo) {
-        const endHour = schedule.endInfo.toDate().getHours() + 1;
+        event.endInfo = Timestamp.fromDate(
+          getAdjustedDate(schedule.endInfo.toDate())
+        );
+        const endHour = event.endInfo.toDate().getHours() + 1;
         if (endHour > endCalendarHour) endCalendarHour = endHour;
       }
 
@@ -287,22 +293,22 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
       if (!b.startInfo) return -1;
 
       /* Sort by ascending start times. */
-      const aDate = a.startInfo.toDate();
-      const bDate = b.startInfo.toDate();
-      if (aDate.getHours() === bDate.getHours()) {
-        if (aDate.getMinutes() === bDate.getMinutes()) {
+      const aStartDate = a.startInfo.toDate();
+      const bStartDate = b.startInfo.toDate();
+      if (aStartDate.getHours() === bStartDate.getHours()) {
+        if (aStartDate.getMinutes() === bStartDate.getMinutes()) {
           if (!a.endInfo) return 1;
           if (!b.endInfo) return -1;
           /* If start times are the same, sort by descending end times. */
-          const aEndDate = getAdjustedDate(a.endInfo.toDate());
-          const bEndDate = getAdjustedDate(b.endInfo.toDate());
+          const aEndDate = a.endInfo.toDate();
+          const bEndDate = b.endInfo.toDate();
           if (aEndDate.getHours() === bEndDate.getHours())
-            return aEndDate.getMinutes() < bDate.getMinutes() ? 1 : -1;
+            return aEndDate.getMinutes() < bStartDate.getMinutes() ? 1 : -1;
           return aEndDate.getHours() < bEndDate.getHours() ? 1 : -1;
         }
-        return aDate.getMinutes() > bDate.getMinutes() ? 1 : -1;
+        return aStartDate.getMinutes() > bStartDate.getMinutes() ? 1 : -1;
       }
-      return aDate.getHours() > bDate.getHours() ? 1 : -1;
+      return aStartDate.getHours() > bStartDate.getHours() ? 1 : -1;
     });
   }
 
