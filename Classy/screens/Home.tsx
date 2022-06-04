@@ -1,5 +1,9 @@
 import { ActivityIndicator, Text, View } from "../components/Themed";
-import { CourseOverview as CourseOverviewType, Enrollment, HomeData } from "../types";
+import {
+  CourseOverview as CourseOverviewType,
+  Enrollment,
+  HomeData,
+} from "../types";
 import {
   Pressable,
   RefreshControl,
@@ -15,6 +19,7 @@ import CourseOverview from "../components/Cards/CourseOverview";
 import EmptyList from "../components/EmptyList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
+import SVGHangOut from "../assets/images/undraw/hangOut.svg";
 import SVGRelax from "../assets/images/undraw/relax.svg";
 import Separator from "../components/Separator";
 import { Timestamp } from "firebase/firestore";
@@ -167,7 +172,7 @@ export default function Home() {
               <ActivityIndicator />
             ) : (
               <EmptyList
-                SVGElement={SVGRelax}
+                SVGElement={SVGHangOut}
                 primaryText="No classes"
                 secondaryText="Enjoy the day off!"
               />
