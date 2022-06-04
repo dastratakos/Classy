@@ -1,6 +1,6 @@
 import { Notification, User } from "../types";
 import { SectionList, StyleSheet } from "react-native";
-import { Text, View } from "../components/Themed";
+import { ActivityIndicator, Text, View } from "../components/Themed";
 import {
   deleteNotification,
   getNotifications,
@@ -106,6 +106,8 @@ export default function Notifications() {
 
     deleteNotification(docId);
   };
+
+  if (loading) return <ActivityIndicator />;
 
   return (
     <View
