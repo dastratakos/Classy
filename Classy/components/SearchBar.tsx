@@ -40,7 +40,7 @@ export default function SearchBar({
         style={[
           styles.inputContainer,
           {
-            backgroundColor: Colors[colorScheme].photoBackground,
+            backgroundColor: Colors[colorScheme].searchBarBackground,
             width,
           },
         ]}

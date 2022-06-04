@@ -30,6 +30,7 @@ export default {
     tabIconSelected: palette.lightBlue,
     border: palette.black,
     photoBackground: palette.lightLightGray,
+    searchBarBackground: palette.lightLightGray,
     overlay: "#00000088",
   },
   dark: {
@@ -44,6 +45,7 @@ export default {
     tabIconSelected: palette.white,
     border: palette.white,
     photoBackground: palette.gray,
+    searchBarBackground: palette.darkDarkGray,
     overlay: "#FFFFFF88",
   },
   status: {
