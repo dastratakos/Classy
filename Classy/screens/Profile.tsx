@@ -236,7 +236,6 @@ export default function Profile() {
           enrollments={context.enrollments.filter(
             (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
           )}
-          emphasized
           emptyElement={
             <EmptyList
               SVGElement={

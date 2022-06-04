@@ -67,8 +67,7 @@ export default function Enrollments({ route }: EnrollmentsProps) {
           ) : (
             <EnrollmentList
               enrollments={enrollments}
-              emphasized={context.user.id === route.params.userId}
-              checkEmphasized={context.user.id !== route.params.userId}
+              checkMutual={context.user.id !== route.params.userId}
               emptyElement={
                 <EmptyList
                   SVGElement={

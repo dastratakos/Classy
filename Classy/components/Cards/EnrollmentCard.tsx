@@ -15,11 +15,11 @@ import { getUser } from "../../services/users";
 export default function EnrollmentCard({
   enrollment,
   editable = true,
-  emphasized = false,
+  mutual = false,
 }: {
   enrollment: Enrollment;
   editable?: boolean;
-  emphasized?: boolean;
+  mutual?: boolean;
 }) {
   const context = useContext(AppContext);
   const colorScheme = useColorScheme();
@@ -53,7 +53,7 @@ export default function EnrollmentCard({
   };
 
   return (
-    <View>
+    <>
       <EnrollmentModal
         enrollment={enrollment}
         deleteFunc={deleteEnrollmentAlert}
@@ -61,37 +61,41 @@ export default function EnrollmentCard({
         setVisible={setModalVisible}
         editable={editable && enrollment.userId === context.user.id}
       />
-      <View
+      <TouchableOpacity
         style={[
           styles.container,
           AppStyles.boxShadow,
           { backgroundColor: Colors[colorScheme].cardBackground },
         ]}
+        onPress={() => setModalVisible(true)}
       >
-        <TouchableOpacity
-          onPress={() => setModalVisible(true)}
-          style={styles.innerContainer}
-        >
-          <View style={styles.textContainer}>
-            <Text style={styles.cardTitle} numberOfLines={1}>
-              {emphasized ? "⭐️ " : null}
-              {enrollment.code.join(", ")}
-            </Text>
-            <Text style={styles.cardSubtitle} numberOfLines={1}>
-              {enrollment.title}
-            </Text>
-          </View>
-          {enrollment.numFriends !== -1 && (
-            <View style={styles.numFriendsContainer}>
-              <Text style={styles.numberText}>{enrollment.numFriends}</Text>
-              <Text style={styles.friendsText}>
-                {"friend" + (enrollment.numFriends !== 1 ? "s" : "")}
+        <View style={styles.textContainer}>
+          <View style={styles.codeContainer}>
+            {mutual && (
+              <View style={styles.mutualContainer}>
+                <Text style={styles.mutualText}>Mutual</Text>
+              </View>
+            )}
+            <View style={styles.cardTitleContainer}>
+              <Text style={styles.cardTitle} numberOfLines={1}>
+                {enrollment.code.join(", ")}
               </Text>
             </View>
-          )}
-        </TouchableOpacity>
-      </View>
-    </View>
+          </View>
+          <Text style={styles.cardSubtitle} numberOfLines={1}>
+            {enrollment.title}
+          </Text>
+        </View>
+        {enrollment.numFriends !== -1 && (
+          <View style={styles.numFriendsContainer}>
+            <Text style={styles.numberText}>{enrollment.numFriends}</Text>
+            <Text style={styles.friendsText}>
+              {"friend" + (enrollment.numFriends !== 1 ? "s" : "")}
+            </Text>
+          </View>
+        )}
+      </TouchableOpacity>
+    </>
   );
 }
 
@@ -101,15 +105,32 @@ const styles = StyleSheet.create({
     paddingVertical: Layout.spacing.small,
     borderRadius: Layout.radius.medium,
     marginVertical: Layout.spacing.small,
-    width: "100%",
-  },
-  innerContainer: {
     flexDirection: "row",
     alignItems: "center",
+    width: "100%",
   },
   textContainer: {
     flex: 1,
     backgroundColor: "transparent",
+  },
+  codeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "transparent",
+  },
+  mutualContainer: {
+    backgroundColor: Colors.pink,
+    padding: Layout.spacing.xxsmall,
+    marginRight: Layout.spacing.xsmall,
+    borderRadius: Layout.radius.medium,
+  },
+  mutualText: {
+    fontSize: Layout.text.small,
+    color: Colors.white,
+  },
+  cardTitleContainer: {
+    backgroundColor: "transparent",
+    flex: 1,
   },
   cardTitle: {
     fontSize: Layout.text.xlarge,
@@ -122,8 +143,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: 55,
-    borderRadius: Layout.radius.xsmall,
-    marginLeft: Layout.spacing.small,
+    marginLeft: Layout.spacing.xxsmall,
     backgroundColor: "transparent",
   },
   numberText: {

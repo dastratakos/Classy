@@ -8,14 +8,12 @@ import AppContext from "../../context/Context";
 export default function EnrollmentList({
   enrollments,
   editable = true,
-  emphasized = false,
-  checkEmphasized = false,
+  checkMutual = false,
   emptyElement,
 }: {
   enrollments: Enrollment[];
   editable?: boolean;
-  emphasized?: boolean;
-  checkEmphasized?: boolean;
+  checkMutual?: boolean;
   emptyElement?: JSX.Element;
 }) {
   if (enrollments.length === 0) return <>{emptyElement || <EmptyList />}</>;
@@ -29,12 +27,11 @@ export default function EnrollmentList({
           <EnrollmentCard
             enrollment={enrollment}
             editable={editable}
-            emphasized={
-              emphasized ||
-              (checkEmphasized &&
-                context.enrollments
-                  .map((e: Enrollment) => e.courseId)
-                  .includes(enrollment.courseId))
+            mutual={
+              checkMutual &&
+              context.enrollments
+                .map((e: Enrollment) => e.courseId)
+                .includes(enrollment.courseId)
             }
           />
         </View>
