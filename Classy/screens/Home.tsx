@@ -24,7 +24,6 @@ import SVGRelax from "../assets/images/undraw/relax.svg";
 import Separator from "../components/Separator";
 import { Timestamp } from "firebase/firestore";
 import { getCurrentTermId } from "../utils";
-import { getFriendsInCourse } from "../services/friends";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
