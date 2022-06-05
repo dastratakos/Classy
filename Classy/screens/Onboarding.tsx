@@ -182,8 +182,8 @@ export default function Onboarding() {
 
 const styles = StyleSheet.create({
   image: {
-    height: Layout.window.width,
-    width: Layout.window.width,
+    height: Layout.window.width * 0.9,
+    width: Layout.window.width * 0.9,
     resizeMode: "contain",
   },
 });

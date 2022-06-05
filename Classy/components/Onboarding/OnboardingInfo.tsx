@@ -14,7 +14,9 @@ export default function OnboardingInfo({
 }) {
   return (
     <View style={styles.screenContainer}>
-      {image}
+      {/* <View style={{  }}> */}
+        {image}
+      {/* </View> */}
       <View style={styles.textContainer}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.body}>{body}</Text>
