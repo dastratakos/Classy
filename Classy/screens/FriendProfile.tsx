@@ -1,3 +1,4 @@
+import SVGVoid from "../assets/images/undraw/void.svg";
 import * as Haptics from "expo-haptics";
 
 import {
@@ -77,6 +78,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const context = useContext(AppContext);
 
   const [user, setUser] = useState<User>({} as User);
+  const [userNotFound, setUserNotFound] = useState<boolean>(false);
   const [friendStatus, setFriendStatus] = useState<string>("");
   const [friendDocId, setFriendDocId] = useState<string>("");
   const [friendStatusLoading, setFriendStatusLoading] = useState<boolean>(true);
@@ -127,7 +129,15 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    setUser(await getUser(route.params.id));
+    const user = await getUser(route.params.id);
+
+    if (Object.keys(user).length === 0) {
+      setUserNotFound(true);
+      setRefreshing(false);
+      return;
+    }
+
+    setUser(user);
 
     setQuarterName(termIdToQuarterName(getCurrentTermId()));
 
@@ -420,6 +430,17 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   ];
 
   if (loading) return <ActivityIndicator />;
+
+  if (userNotFound)
+    return (
+      <View style={{ flex: 1 }}>
+        <EmptyList
+          SVGElement={SVGVoid}
+          primaryText="Oops!"
+          secondaryText="User not found"
+        />
+      </View>
+    );
 
   if (friendStatus === "block received") {
     return (
