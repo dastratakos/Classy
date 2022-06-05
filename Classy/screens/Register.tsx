@@ -113,6 +113,9 @@ export default function Register({ route }: RegisterProps) {
       ]}
     >
       <KeyboardAvoidingView style={styles.keyboardContainer} behavior="padding">
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Classy</Text>
+        </View>
         <Text style={AppStyles.errorText}>{errorMessage}</Text>
         <View style={styles.inputContainer}>
           <TextInput
@@ -211,6 +214,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  titleContainer: {
+    marginBottom: Layout.spacing.large,
+  },
+  title: {
+    fontSize: Layout.text.xxlarge,
+    fontWeight: "500",
   },
   inputContainer: {
     width: "100%",
