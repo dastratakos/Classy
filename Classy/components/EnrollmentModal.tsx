@@ -1,16 +1,17 @@
-import { Pressable, StyleSheet } from "react-native";
-import { Text, View } from "./Themed";
+import { FlatList, Pressable, StyleSheet } from "react-native";
+import { FontAwesome, Text, View } from "./Themed";
 import { getTimeString, termIdToFullName } from "../utils";
 
 import AppStyles from "../styles/AppStyles";
 import Button from "./Buttons/Button";
 import Colors from "../constants/Colors";
-import { Enrollment } from "../types";
+import { Enrollment, Schedule } from "../types";
 import Layout from "../constants/Layout";
 import Modal from "react-native-modal";
 import { getCourse } from "../services/courses";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { useEffect, useState } from "react";
 
 export default function EnrollmentModal({
   enrollment,
@@ -28,118 +29,166 @@ export default function EnrollmentModal({
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+
+  useEffect(() => {
+    /* Filter for bad schedules. */
+    let schedules = enrollment.schedules;
+    for (let j = 0; j < schedules.length; j++) {
+      const sched = schedules[j];
+      if (
+        sched["days"].length === 0 ||
+        getTimeString(sched["startInfo"]) === "12:00 AM" ||
+        getTimeString(sched["startInfo"]) === "" ||
+        getTimeString(sched["endInfo"]) === "12:00 AM" ||
+        getTimeString(sched["endInfo"]) === ""
+      ) {
+        schedules.splice(j, 1);
+        j--;
+      }
+    }
+    setSchedules(schedules);
+  }, []);
+
   const onEdit = () => {
     setVisible(false);
-    console.log("onEdit");
     navigation.navigate("EditCourse", { enrollment });
   };
 
   const onViewMore = async () => {
     setVisible(false);
-    console.log("onViewMore");
     const course = await getCourse(enrollment.courseId);
     navigation.navigate("Course", { course });
   };
 
+  const ScheduleItem = ({ item }: { item: Schedule }) => (
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingHorizontal: Layout.spacing.small,
+        flexWrap: "wrap",
+        backgroundColor: "transparent",
+      }}
+    >
+      <Text style={styles.schedText}>
+        {item.days.map((day) => day.substring(0, 3)).join(", ")}
+      </Text>
+      <Text style={[styles.schedText, { paddingLeft: Layout.spacing.small }]}>
+        {getTimeString(item.startInfo)} - {getTimeString(item.endInfo)}
+      </Text>
+    </View>
+  );
+
   return (
-    <Modal isVisible={visible}>
-      <Pressable
-        style={styles.container}
-        onPress={() => {
-          console.log("closing");
-          setVisible(false);
-        }}
+    <Modal isVisible={visible} onBackdropPress={() => setVisible(false)}>
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: Colors[colorScheme].cardBackground },
+        ]}
       >
-        <Pressable
+        <Text style={styles.codes}>{enrollment.code.join(", ")}</Text>
+        <Text
           style={[
-            styles.modalView,
-            { backgroundColor: Colors[colorScheme].cardBackground },
+            styles.title,
+            {
+              color: Colors[colorScheme].secondaryText,
+            },
           ]}
         >
-          <Text style={styles.codes}>{enrollment.code.join(", ")}</Text>
-          <Text
-            style={[
-              styles.title,
-              {
-                color: Colors[colorScheme].secondaryText,
-              },
-            ]}
-          >
-            {enrollment.title}
+          {enrollment.title}
+        </Text>
+        <View style={styles.textwrap}>
+          <Text style={styles.descrip}>Quarter: </Text>
+          <Text style={[styles.descrip, { fontWeight: "500" }]}>
+            {termIdToFullName(enrollment.termId)}
           </Text>
-          <View style={styles.textwrap}>
-            <Text style={styles.descrip}>Quarter: </Text>
-            <Text style={[styles.descrip, { fontWeight: "500" }]}>
-              {termIdToFullName(enrollment.termId)}
-            </Text>
-          </View>
-          <View style={styles.textwrap}>
-            <Text style={styles.descrip}>Units: </Text>
-            <Text style={[styles.descrip, { fontWeight: "500" }]}>
-              {enrollment.units}
-            </Text>
-          </View>
-          <View style={styles.textwrap}>
-            <Text style={styles.descrip}>Class Times: </Text>
-          </View>
+        </View>
+        <View style={styles.textwrap}>
+          <Text style={styles.descrip}>Units: </Text>
+          <Text style={[styles.descrip, { fontWeight: "500" }]}>
+            {enrollment.units}
+          </Text>
+        </View>
+        <View style={styles.textwrap}>
+          <Text style={styles.descrip}>Class Times: </Text>
+        </View>
+
+        {schedules.length > 5 ? (
+          <FlatList
+            data={schedules}
+            style={{ width: "100%", maxHeight: 200 }}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={ScheduleItem}
+          />
+        ) : schedules.length > 0 ? (
           <View style={styles.classTimesWrap}>
-            {enrollment.schedules.map((schedule, i) => (
-              <Text style={styles.schedText}>
-                {schedule.days.join(", ")}{" "}
-                {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
-                {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
-                {getTimeString(schedule.endInfo, "America/Danmarkshavn")}
-              </Text>
+            {schedules.map((schedule, i) => (
+              <View style={{ backgroundColor: "transparent" }} key={i}>
+                <ScheduleItem item={schedule} />
+              </View>
             ))}
           </View>
-          {editable ? (
-            <View style={styles.buttonwrap}>
-              <View style={styles.buttonbox}>
-                <Button text="Edit" onPress={onEdit} emphasized />
-              </View>
-              <View
-                style={[
-                  styles.buttonbox,
-                  { paddingHorizontal: Layout.spacing.small },
-                ]}
-              >
-                <Button
-                  text="View More"
-                  onPress={onViewMore}
-                  containerStyle={{
-                    backgroundColor: Colors[colorScheme].background,
-                  }}
-                />
-              </View>
-              <View style={styles.buttonbox}>
-                <Button
-                  text="Delete"
-                  onPress={deleteFunc}
-                  containerStyle={{ backgroundColor: Colors.pink }}
-                  textStyle={{ color: Colors.white }}
-                />
-              </View>
+        ) : (
+          <View
+            style={[
+              styles.classTimesWrap,
+              { paddingHorizontal: Layout.spacing.small },
+            ]}
+          >
+            <Text style={styles.schedText}>None</Text>
+          </View>
+        )}
+
+        {editable ? (
+          <View style={styles.buttonwrap}>
+            <View style={styles.buttonbox}>
+              <Button text="Edit" onPress={onEdit} emphasized />
             </View>
-          ) : (
-            <View style={styles.wideButtonWrap}>
-              <Button wide emphasized text="View More" onPress={onViewMore} />
+            <View
+              style={[
+                styles.buttonbox,
+                { paddingHorizontal: Layout.spacing.small },
+              ]}
+            >
+              <Button
+                text="View More"
+                onPress={onViewMore}
+                containerStyle={{
+                  backgroundColor: Colors[colorScheme].background,
+                }}
+              />
             </View>
-          )}
-        </Pressable>
-      </Pressable>
+            <View style={styles.buttonbox}>
+              <Button
+                text="Delete"
+                onPress={deleteFunc}
+                containerStyle={{ backgroundColor: Colors.pink }}
+                textStyle={{ color: Colors.white }}
+              />
+            </View>
+          </View>
+        ) : (
+          <View style={styles.wideButtonWrap}>
+            <Button wide emphasized text="View More" onPress={onViewMore} />
+          </View>
+        )}
+      </View>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  modalView: {
     ...AppStyles.boxShadow,
     borderRadius: Layout.radius.large,
     padding: Layout.spacing.large,
+    alignItems: "flex-start",
+  },
+  titleRow: {
+    ...AppStyles.row,
+    backgroundColor: "transparent",
     alignItems: "flex-start",
   },
   codes: {

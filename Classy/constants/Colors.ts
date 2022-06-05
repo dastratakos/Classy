@@ -1,9 +1,9 @@
 const palette = {
   lightRed: "#ff6863",
   red: "#ff3742",
-  yellow: "#ffd670",
   deepRed: "#cb202d",
   pink: "#ef476f",
+  yellow: "#ffd670",
   green: "#20e070",
   lightBlue: "#33c5ff",
   black: "#000000",
@@ -30,6 +30,7 @@ export default {
     tabIconSelected: palette.lightBlue,
     border: palette.black,
     photoBackground: palette.lightLightGray,
+    searchBarBackground: palette.lightLightGray,
     overlay: "#00000088",
   },
   dark: {
@@ -44,11 +45,20 @@ export default {
     tabIconSelected: palette.white,
     border: palette.white,
     photoBackground: palette.gray,
+    searchBarBackground: palette.darkDarkGray,
     overlay: "#FFFFFF88",
   },
   status: {
     notInClass: palette.green,
     inClass: palette.red,
+  },
+  quarters: {
+    autumn: "#DF9C9B",
+    // autumn: "#FFCAAF",
+    winter: "#AAC1F0",
+    spring: "#BDD6AC",
+    // spring: "#D7ECD9",
+    summer: "#FBE6A2",
   },
   lightRed: palette.lightRed,
   red: palette.red,
@@ -60,3 +70,18 @@ export default {
   pink: palette.pink,
   yellow: palette.yellow,
 };
+
+export const enrollmentColors = [
+  "#C3291C" + "AA",
+  "#E25D33" + "AA",
+  "#FF7F0A" + "AA",
+  "#EDC14B" + "AA",
+  "#FFA098" + "AA",
+  "#D88177" + "AA",
+  "#397E49" + "AA",
+  "#5DB37E" + "AA",
+  "#4599DF" + "AA",
+  "#4350AF" + "AA",
+  "#832DA4" + "AA",
+  "#616161" + "AA",
+];

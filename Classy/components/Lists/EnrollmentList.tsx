@@ -1,28 +1,41 @@
+import EmptyList from "../EmptyList";
 import { Enrollment } from "../../types";
 import EnrollmentCard from "../Cards/EnrollmentCard";
-import { View, Text } from "../../components/Themed";
-import EmptyList from "../EmptyList";
+import { View } from "../Themed";
+import { useContext } from "react";
+import AppContext from "../../context/Context";
 
 export default function EnrollmentList({
   enrollments,
-  emptyPrimary,
-  emptySecondary,
+  editable = true,
+  checkMutual = false,
+  emptyElement,
 }: {
   enrollments: Enrollment[];
-  emptyPrimary?: string,
-  emptySecondary?: string,
+  editable?: boolean;
+  checkMutual?: boolean;
+  emptyElement?: JSX.Element;
 }) {
-  // TODO: use FlatList
+  if (enrollments.length === 0) return <>{emptyElement || <EmptyList />}</>;
+
+  const context = useContext(AppContext);
+
   return (
     <>
-      {enrollments.length > 0 ? enrollments.map((enrollment, i) => (
-        <EnrollmentCard
-          enrollment={enrollment}
-          key={`${enrollment.courseId}`}
-        />
-      )) : 
-        <EmptyList primaryText={emptyPrimary ? emptyPrimary : ""} secondaryText={emptySecondary ? emptySecondary : ""}/>
-      }
+      {enrollments.map((enrollment, i) => (
+        <View key={enrollment.courseId.toString() + i.toString()}>
+          <EnrollmentCard
+            enrollment={enrollment}
+            editable={editable}
+            mutual={
+              checkMutual &&
+              context.enrollments
+                .map((e: Enrollment) => e.courseId)
+                .includes(enrollment.courseId)
+            }
+          />
+        </View>
+      ))}
     </>
   );
 }

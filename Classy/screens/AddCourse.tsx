@@ -1,22 +1,31 @@
 import * as Haptics from "expo-haptics";
 
 import { ActivityIndicator, Text, View } from "../components/Themed";
-import { AddCourseProps, Schedule } from "../types";
-import { ScrollView, StyleSheet } from "react-native";
-import { getCurrentTermId, termIdToName } from "../utils";
+import { AddCourseProps, Enrollment, Schedule } from "../types";
+import { Alert, ScrollView, StyleSheet } from "react-native";
+import Colors, { enrollmentColors } from "../constants/Colors";
+import {
+  getCurrentTermId,
+  getTimeString,
+  sendPushNotification,
+  termIdToFullName,
+  termIdToName,
+} from "../utils";
+import { getFriendsInCourse, getNumFriendsInCourse } from "../services/friends";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
-import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import ScheduleCard from "../components/Cards/ScheduleCard";
 import SquareButton from "../components/Buttons/SquareButton";
+import { addEnrollment } from "../services/enrollments";
+import { addNotification } from "../services/notifications";
+import { getCourseTerms } from "../services/courses";
+import { getUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { getCourseTerms } from "../services/courses";
-import { addEnrollment } from "../services/enrollments";
 
 export default function AddCourse({ route }: AddCourseProps) {
   const context = useContext(AppContext);
@@ -67,6 +76,8 @@ export default function AddCourse({ route }: AddCourseProps) {
       if (newSet.has(i)) newSet.delete(i);
       else newSet.add(i);
 
+      console.log("selected schedules:", newSet);
+
       setSelectedScheduleIndices(newSet);
     };
 
@@ -76,27 +87,56 @@ export default function AddCourse({ route }: AddCourseProps) {
           marginBottom: Layout.buttonHeight.medium + Layout.spacing.medium,
         }}
       >
-        {terms[`${context.selectedTerm}`].map(
-          (schedule: Schedule, i: number) => (
-            <ScheduleCard
-              schedule={schedule}
-              key={`${i}`}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                handleScheduleSelected(i);
-              }}
-              selected={selectedScheduleIndices.has(i)}
-            />
+        {terms[`${context.selectedTerm}`]
+          .filter(
+            (sched: Schedule) =>
+              sched["days"].length !== 0 &&
+              getTimeString(sched["startInfo"]) !== "12:00 AM" &&
+              getTimeString(sched["startInfo"]) !== "" &&
+              getTimeString(sched["endInfo"]) !== "12:00 AM" &&
+              getTimeString(sched["endInfo"]) !== ""
           )
-        )}
+          .map((schedule: Schedule, i: number) => (
+            <View key={i.toString()}>
+              <ScheduleCard
+                schedule={schedule}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  handleScheduleSelected(i);
+                }}
+                selected={selectedScheduleIndices.has(i)}
+              />
+            </View>
+          ))}
       </View>
     );
   };
+
+  const duplicateCourseAlert = () =>
+    Alert.alert(
+      "Oops!",
+      `You are already enrolled in this course for ${termIdToFullName(
+        context.selectedTerm
+      )}. Please choose a different quarter.`,
+      [{ text: "OK" }]
+    );
 
   const handleDonePressed = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     setDoneLoading(true);
+
+    if (
+      context.enrollments.filter(
+        (enrollment: Enrollment) =>
+          enrollment.courseId === course.courseId &&
+          enrollment.termId === context.selectedTerm
+      ).length > 0
+    ) {
+      setDoneLoading(false);
+      duplicateCourseAlert();
+      return;
+    }
 
     /* Build schedulesList. */
     let schedulesList: Schedule[] = [];
@@ -104,14 +144,80 @@ export default function AddCourse({ route }: AddCourseProps) {
       schedulesList.push(terms[`${context.selectedTerm}`][i])
     );
 
-    await addEnrollment(
+    console.log("selectedScheduleIndices:", selectedScheduleIndices);
+    console.log("schedulesList:", schedulesList);
+
+    let randomColor =
+      enrollmentColors[Math.floor(Math.random() * enrollmentColors.length)];
+
+    const docId = await addEnrollment(
       course,
       grading,
       schedulesList,
       context.selectedTerm,
       selectedUnits,
-      context.user.id
+      randomColor,
+      context.user
     );
+
+    const data: Enrollment = {
+      docId,
+      code: course.code,
+      courseId: course.courseId,
+      grading,
+      schedules: schedulesList,
+      termId: context.selectedTerm,
+      title: course.title,
+      units: selectedUnits,
+      color: randomColor,
+      userId: context.user.id,
+      numFriends:
+        context.selectedTerm === getCurrentTermId()
+          ? await getNumFriendsInCourse(
+              course.courseId,
+              context.friendIds,
+              context.selectedTerm
+            )
+          : -1,
+    };
+
+    let newEnrollments = context.enrollments;
+    newEnrollments.push(data);
+    newEnrollments.sort((a: Enrollment, b: Enrollment) =>
+      a.code > b.code ? 1 : -1
+    );
+    context.setEnrollments([...newEnrollments]);
+
+    /* Get friends in this course. */
+    const friends = await getFriendsInCourse(
+      context.friendIds,
+      course.courseId,
+      context.selectedTerm
+    );
+
+    const quarterText =
+      context.selectedTerm === getCurrentTermId()
+        ? "this quarter"
+        : termIdToFullName(context.selectedTerm);
+
+    for (let friend of friends) {
+      sendPushNotification(
+        friend.expoPushToken,
+        `${context.user.name} just enrolled in ${course.code.join(", ")}: ${
+          course.title
+        } for ${quarterText}`
+      );
+
+      addNotification(
+        friend.id,
+        "MUTUAL_ENROLLMENT",
+        context.user.id,
+        course.courseId,
+        context.selectedTerm
+      );
+    }
+
+    context.setUser(await getUser(context.user.id));
 
     setDoneLoading(false);
     navigation.goBack();
@@ -128,7 +234,11 @@ export default function AddCourse({ route }: AddCourseProps) {
       >
         <View style={AppStyles.section}>
           <Text style={styles.title}>{course.code.join(", ")}</Text>
-          <Text style={styles.title}>{course.title}</Text>
+          <Text
+            style={[styles.title, { color: Colors[colorScheme].secondaryText }]}
+          >
+            {course.title}
+          </Text>
           <View style={styles.row}>
             <Text style={styles.subheading}>Quarter</Text>
             <Button
@@ -143,6 +253,9 @@ export default function AddCourse({ route }: AddCourseProps) {
                 })
               }
               emphasized={context.selectedTerm !== ""}
+              containerStyle={
+                context.selectedTerm === "" && { backgroundColor: Colors.pink }
+              }
             />
           </View>
           <View style={styles.row}>
@@ -200,9 +313,27 @@ export default function AddCourse({ route }: AddCourseProps) {
                           Haptics.impactAsync(
                             Haptics.ImpactFeedbackStyle.Medium
                           );
+                          console.log("setting grading to", grad);
+                          console.log(
+                            "context.selectedTerm:",
+                            context.selectedTerm
+                          );
+                          console.log(
+                            "terms[`${context.selectedTerm}`]:",
+                            terms[`${context.selectedTerm}`]
+                          );
+                          console.log(
+                            "Object.keys(terms):",
+                            Object.keys(terms)
+                          );
+                          console.log(
+                            "terms[`${context.selectedTerm}`][0]:",
+                            terms[`${context.selectedTerm}`][0]
+                          );
                           setGrading(grad);
                         }}
                         emphasized={grading === grad}
+                        key={i.toString()}
                       />
                     )
                   )}
@@ -233,12 +364,7 @@ export default function AddCourse({ route }: AddCourseProps) {
           <Button
             text="Done"
             onPress={handleDonePressed}
-            disabled={
-              !context.selectedTerm ||
-              !selectedUnits ||
-              !grading ||
-              !selectedScheduleIndices.size
-            }
+            disabled={!context.selectedTerm || !selectedUnits || !grading}
             loading={doneLoading}
             emphasized
           />
@@ -250,8 +376,9 @@ export default function AddCourse({ route }: AddCourseProps) {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: Layout.text.xxlarge,
+    fontSize: Layout.text.xlarge,
     fontWeight: "500",
+    marginBottom: Layout.spacing.small,
   },
   row: {
     ...AppStyles.row,

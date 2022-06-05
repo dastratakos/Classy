@@ -31,6 +31,16 @@ export const getUser = async (id: string) => {
   }
 };
 
+// TODO: this function needs to be optimized. Too many reads.
+export const getPublicUserIds = async (userId: string) => {
+  const q = query(collection(db, "users"), where("isPrivate", "==", false));
+  const publicUserIds: string[] = [];
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => publicUserIds.push(doc.data().id));
+
+  return publicUserIds;
+};
+
 export type NewUser = {
   id: string;
   email: string;
@@ -85,7 +95,47 @@ export const deleteUserCompletely = async (userId: string) => {
     batch2.commit();
   });
 
-  /* 3. Get the user document and delete it. */
+  // TODO: Remove from chats
+
+  /* 3. Get all Favorites and delete. */
+  const batch3 = writeBatch(db);
+  const q3 = query(collection(db, "favorites"), where("userId", "==", userId));
+  await getDocs(q3).then((querySnapshot3) => {
+    querySnapshot3.forEach((doc) => {
+      batch3.delete(doc.ref);
+    });
+    batch3.commit();
+  });
+
+  /* 4. Get all Notifications and delete. */
+  const batch4 = writeBatch(db);
+  const q4 = query(
+    collection(db, "notifications"),
+    where("userId", "==", userId)
+  );
+  await getDocs(q4).then((querySnapshot4) => {
+    querySnapshot4.forEach((doc) => {
+      batch4.delete(doc.ref);
+    });
+    batch4.commit();
+  });
+
+  const batch5 = writeBatch(db);
+  const q5 = query(
+    collection(db, "notifications"),
+    where("friendId", "==", userId)
+  );
+  await getDocs(q5).then((querySnapshot5) => {
+    querySnapshot5.forEach((doc) => {
+      batch5.delete(doc.ref);
+    });
+    batch5.commit();
+  });
+
+  /* 5. Delete search history. */
+  deleteDoc(doc(db, "history", userId));
+
+  /* 6. Get the user document and delete it. */
   deleteDoc(doc(db, "users", userId));
 };
 
@@ -94,20 +144,7 @@ export const searchUsers = async (
   search: string,
   maxLimit: number = 3
 ) => {
-  if (search === "") {
-    const qAll = query(
-      collection(db, "users"),
-      orderBy("name"),
-      limit(maxLimit)
-    );
-
-    const res: User[] = [];
-    const querySnapshot = await getDocs(qAll);
-    querySnapshot.forEach((doc) => {
-      if (doc.id !== userId) res.push(doc.data() as User);
-    });
-    return res;
-  }
+  if (search === "") return [];
 
   const q = query(
     collection(db, "users"),
@@ -116,18 +153,22 @@ export const searchUsers = async (
     limit(maxLimit)
   );
 
-  const res: User[] = [];
+  const users: User[] = [];
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    if (doc.id !== userId) res.push(doc.data() as User);
+    if (doc.id !== userId) users.push(doc.data() as User);
   });
-  return res;
+
+  const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+  return { users, lastVisible };
 };
 
 export const searchMoreUsers = async (
   userId: string,
   search: string,
-  lastUser: User
+  lastUser: User,
+  maxLimit: number = 10
 ) => {
   if (search === "") return [];
 
@@ -136,15 +177,18 @@ export const searchMoreUsers = async (
     where("keywords", "array-contains", search.toLowerCase()),
     orderBy("name"),
     startAfter(lastUser),
-    limit(3)
+    limit(maxLimit)
   );
 
-  const res: User[] = [];
+  const users: User[] = [];
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    if (doc.id !== userId) res.push(doc.data() as User);
+    if (doc.id !== userId) users.push(doc.data() as User);
   });
-  return res;
+
+  const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+  return { users, lastVisible };
 };
 
 export const generateTerms = (
@@ -154,12 +198,29 @@ export const generateTerms = (
 ) => {
   let res = terms;
   if (!res) res = {};
+
+  /* Remove empty years. */
+  for (const yearKey of Object.keys(res)) {
+    let empty = true;
+    for (const termId of Object.keys(res[yearKey])) {
+      if (res[yearKey][termId] > 0) {
+        empty = false;
+        break;
+      }
+    }
+
+    if (empty) {
+      delete res[yearKey];
+    }
+  }
+
+  /* Add and fill in the years in the range of startYear to gradYear. */
   for (let year = parseInt(startYear); year < parseInt(endYear); year++) {
     const yearKey = `${year}-${(year % 100) + 1}`;
 
     if (!res[yearKey]) res[yearKey] = {};
 
-    for (let quarter of [2, 4, 6]) {
+    for (let quarter of [2, 4, 6, 8]) {
       const termId = `${(year + 1 - 1900) * 10 + quarter}`;
       if (res[yearKey][termId]) continue;
       res[yearKey][termId] = 0;

@@ -11,9 +11,8 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { User } from "../types";
-import { getCurrentTermId } from "../utils";
 import { getCourseStudents } from "./courses";
-import { getUser } from "./users";
+import { getPublicUserIds, getUser } from "./users";
 
 export const getFriendIds = async (userId: string) => {
   const q = query(
@@ -105,7 +104,7 @@ export const getFriendStatus = async (userId: string, friendId: string) => {
     //   return;
     // }
 
-    console.log("friendship:", res.data());
+    // console.log("friendship:", res.data());
     friendDocId = res.id;
 
     if (res.data().status === "requested") {
@@ -139,8 +138,10 @@ export const addFriend = async (userId: string, friendId: string) => {
 };
 
 export const acceptRequest = async (friendDocId: string) => {
+  console.log("friendDocId:", friendDocId);
   const docRef = doc(db, "friends", friendDocId);
   await updateDoc(docRef, { status: "friends" });
+  console.log("done");
 };
 
 export const deleteFriendship = async (friendDocId: string) => {
@@ -179,34 +180,46 @@ export const blockUserWithDoc = async (
   });
 };
 
-export const getAllFriendsInCourse = async (
+export const getAllPeopleIdsInCourse = async (
   userId: string,
   courseId: number
 ) => {
-  const allStudents = await getCourseStudents(courseId);
-  const friendIds = await getFriendIds(userId);
+  // const allStudents = await getCourseStudents(courseId);
+  // const friendIds = await getFriendIds(userId);
+  // const publicIds = await getPublicUserIds(userId);
+
+  const [allStudents, friendIds, publicIds] = await Promise.all([
+    getCourseStudents(courseId),
+    getFriendIds(userId),
+    getPublicUserIds(userId),
+  ]);
 
   const res = {};
   Object.keys(allStudents).forEach((term) => {
     if (!allStudents[`${term}`]) return;
 
     let friends: string[] = [];
+    let publicUsers: string[] = [];
     Object.entries(allStudents[`${term}`]).filter(([studentId, enrolled]) => {
       if (enrolled && friendIds.includes(studentId)) friends.push(studentId);
+      else if (
+        enrolled &&
+        publicIds.includes(studentId) &&
+        studentId !== userId
+      )
+        publicUsers.push(studentId);
     });
-    res[`${term}`] = friends;
+    res[`${term}`] = { friendIds: friends, publicIds: publicUsers };
   });
 
   return res;
 };
 
 export const getFriendsInCourse = async (
-  userId: string,
+  friendIds: string[],
   courseId: number,
   termId: string
 ) => {
-  const friendIds = await getFriendIds(userId);
-
   const docRef = doc(doc(db, "courses", `${courseId}`), "terms", termId);
   const docSnap = await getDoc(docRef);
 
@@ -227,28 +240,34 @@ export const getFriendsInCourse = async (
     }
     return friends;
   } else {
-    console.log(`No termId ${currentTermId} for course ${courseId}`);
+    console.warn(`No termId ${termId} for course ${courseId}`);
     return [] as User[];
   }
 };
 
-export const getNumFriendInCourse = async (
+export const getNumFriendsInCourse = async (
   courseId: number,
-  friendIds: string[]
+  friendIds: string[],
+  termId: string
 ) => {
-  const currentTermId = getCurrentTermId();
-
-  const docRef = doc(doc(db, "courses", `${courseId}`), "terms", currentTermId);
+  const docRef = doc(doc(db, "courses", `${courseId}`), "terms", termId);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
+    if (!docSnap.data().students) {
+      console.warn(
+        `No students doc for termId ${termId} for course ${courseId}`
+      );
+      return 0;
+    }
+
     const students = docSnap.data().students;
     const filtered = Object.entries(students).filter(
       ([studentId, enrolled]) => enrolled && friendIds.includes(studentId)
     );
     return filtered.length;
   } else {
-    console.log(`No termId ${currentTermId} for course ${courseId}`);
+    console.warn(`No termId ${termId} for course ${courseId}`);
     return 0;
   }
 };

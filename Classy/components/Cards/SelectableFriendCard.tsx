@@ -1,14 +1,12 @@
-import { Icon, Text, View } from "../Themed";
+import { FontAwesome, Text, View } from "../Themed";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
-import AppContext from "../../context/Context";
 import AppStyles from "../../styles/AppStyles";
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
 import ProfilePhoto from "../ProfilePhoto";
 import useColorScheme from "../../hooks/useColorScheme";
-import { useContext } from "react";
-import { useNavigation } from "@react-navigation/core";
+import { Degree } from "../../types";
 
 export default function SelectableFriendCard({
   friend,
@@ -18,16 +16,20 @@ export default function SelectableFriendCard({
   friend: {
     id: string;
     name: string;
-    major?: string;
+    degrees?: Degree[];
     gradYear?: string;
     photoUrl: string;
   };
   onPress?: () => void;
   selected?: boolean;
 }) {
-  const context = useContext(AppContext);
-  const navigation = useNavigation();
   const colorScheme = useColorScheme();
+
+  const degreeText = friend.degrees
+    ? friend.degrees
+        .map((d: Degree) => d.major + (d.degree ? ` (${d.degree})` : ""))
+        .join(", ")
+    : "";
 
   return (
     <View
@@ -47,15 +49,15 @@ export default function SelectableFriendCard({
           <Text style={styles.cardTitle} numberOfLines={1}>
             {friend.name}
           </Text>
-          {friend.major || friend.gradYear ? (
+          {degreeText || friend.gradYear ? (
             <Text style={styles.cardSubtitle} numberOfLines={1}>
-              {friend.major}
-              {friend.major && friend.gradYear ? " | " : null}
+              {degreeText}
+              {degreeText && friend.gradYear ? " | " : null}
               {friend.gradYear}
             </Text>
           ) : null}
         </View>
-        <Icon
+        <FontAwesome
           name={selected ? "check-circle" : "circle-o"}
           size={Layout.icon.medium}
           lightColor={

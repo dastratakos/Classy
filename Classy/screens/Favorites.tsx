@@ -1,39 +1,38 @@
-import { ScrollView, StyleSheet } from "react-native";
-import { useContext, useEffect, useState } from "react";
+import { FlatList, StyleSheet } from "react-native";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
-import { FavoritedCourse } from "../types";
-import { View } from "../components/Themed";
-import { getFavorites } from "../services/courses";
-import useColorScheme from "../hooks/useColorScheme";
+import EmptyList from "../components/EmptyList";
 import FavoriteCard from "../components/Cards/FavoriteCard";
+import SVGImagination from "../assets/images/undraw/imagination.svg";
+import useColorScheme from "../hooks/useColorScheme";
+import { useContext } from "react";
 
 export default function Favorites() {
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
 
-  const [favorites, setFavorites] = useState<FavoritedCourse[]>([]);
-
-  useEffect(() => {
-    const loadScreen = async () => {
-      setFavorites(await getFavorites(context.user.id));
-    };
-    loadScreen();
-  }, []);
-
   return (
-    <ScrollView
+    <FlatList
+      data={context.favorites}
+      keyExtractor={(item) => item.courseId.toString()}
+      renderItem={({ item }) => <FavoriteCard favorite={item} />}
+      contentContainerStyle={{
+        ...AppStyles.section,
+        backgroundColor: Colors[colorScheme].background,
+      }}
       style={{ backgroundColor: Colors[colorScheme].background }}
-      contentContainerStyle={{ alignItems: "center" }}
-    >
-      <View style={AppStyles.section}>
-        {favorites.map((favorite: FavoritedCourse, i: number) => (
-          <FavoriteCard favorite={favorite} key={i.toString()} />
-        ))}
-      </View>
-    </ScrollView>
+      ListEmptyComponent={
+        <EmptyList
+          SVGElement={SVGImagination}
+          primaryText="No favorites"
+          secondaryText={
+            "Press the ☆ icon on a course\ndetails page to favorite it!"
+          }
+        />
+      }
+    />
   );
 }
 

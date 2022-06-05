@@ -60,35 +60,34 @@ export default function Button({
 
   if (emphasized)
     return (
-      <View
+      <TouchableOpacity
         style={[
           styles.container,
           { backgroundColor: Colors[colorScheme].tint },
           wide ? { width: "100%" } : null,
           containerStyle,
         ]}
+        onPress={onPress}
       >
-        <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
-          <Text style={[{ color: Colors[colorScheme].background }, textStyle]}>
-            {text}
-          </Text>
-        </TouchableOpacity>
-      </View>
+        <Text style={[{ color: Colors[colorScheme].background }, textStyle]}>
+          {text}
+        </Text>
+        {/* </TouchableOpacity> */}
+      </TouchableOpacity>
     );
 
   return (
-    <View
+    <TouchableOpacity
       style={[
         styles.container,
         { backgroundColor: Colors[colorScheme].cardBackground },
         wide ? { width: "100%" } : null,
         containerStyle,
       ]}
+      onPress={onPress}
     >
-      <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
-        <Text style={textStyle}>{text}</Text>
-      </TouchableOpacity>
-    </View>
+      <Text style={textStyle}>{text}</Text>
+    </TouchableOpacity>
   );
 }
 
@@ -97,6 +96,7 @@ const styles = StyleSheet.create({
     ...AppStyles.boxShadow,
     height: Layout.buttonHeight.medium,
     borderRadius: Layout.radius.medium,
+    padding: Layout.spacing.small,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
     height: Layout.buttonHeight.medium,
     width: "100%",
     borderRadius: Layout.radius.medium,
-    padding: Layout.spacing.small,
     alignItems: "center",
     justifyContent: "center",
   },

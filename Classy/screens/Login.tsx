@@ -1,6 +1,7 @@
 import * as Haptics from "expo-haptics";
 
 import {
+  ImageBackground,
   KeyboardAvoidingView,
   Pressable,
   StyleSheet,
@@ -8,6 +9,11 @@ import {
 } from "react-native";
 import { Text, View } from "../components/Themed";
 import { auth, signInWithEmailAndPassword } from "../firebase";
+import {
+  getFriendIds,
+  getNumFriendsInCourse,
+  getRequestIds,
+} from "../services/friends";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -16,19 +22,35 @@ import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import { LoginProps } from "../types";
-import { getFriendIds } from "../services/friends";
+import { getCurrentTermId } from "../utils";
+import { getEnrollments } from "../services/enrollments";
+import { getHistory } from "../services/history";
 import { getUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
+import { getFavorites } from "../services/courses";
 
 export default function Login({ route }: LoginProps) {
+  const context = useContext(AppContext);
+  const navigation = useNavigation();
+  const colorScheme = useColorScheme();
+
   const [email, setEmail] = useState(route.params?.email || "");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const context = useContext(AppContext);
-  const navigation = useNavigation();
-  const colorScheme = useColorScheme();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [loginButtonLoading, setLoginButtonLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    /* Check if user is signed in. */
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) setUp(user.uid);
+      else setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
 
   const connectStreamChatUser = async (
     id: string,
@@ -37,34 +59,56 @@ export default function Login({ route }: LoginProps) {
   ) => {
     const streamChatUser = { id, name, image: photoUrl };
 
-    await context.streamClient.connectUser(
+    const user = await context.streamClient.connectUser(
       streamChatUser,
       context.streamClient.devToken(streamChatUser.id)
     );
-    console.log("User connected:");
-    console.log(streamChatUser);
+    console.log("StreamChat user connected:", user);
+
+    context.setTotalUnreadCount(user.me.total_unread_count);
+
+    context.streamClient.on((event) => {
+      if (event.total_unread_count !== undefined) {
+        console.log("Total unread count:", event.total_unread_count);
+        context.setTotalUnreadCount(user.me.total_unread_count);
+      }
+
+      if (event.unread_channels !== undefined) {
+        console.log("Unread channels:", event.unread_channels);
+      }
+    });
   };
-
-  /* Check if user is signed in. */
-  useEffect(() => {
-    if (auth.currentUser) {
-      setUp(auth.currentUser.uid);
-    } else {
-      const unsubscribe = auth.onAuthStateChanged((user) => {
-        if (user) {
-          setUp(user.uid);
-        }
-      });
-
-      return unsubscribe;
-    }
-  }, []);
 
   const setUp = async (id: string) => {
     const user = await getUser(id);
     context.setUser(user);
 
-    context.setFriendIds(await getFriendIds(id));
+    const [friendIds, requestIds, enrollments, history, favorites] =
+      await Promise.all([
+        getFriendIds(id),
+        getRequestIds(id),
+        getEnrollments(id),
+        getHistory(id),
+        getFavorites(id),
+      ]);
+    context.setFriendIds(friendIds);
+    context.setRequestIds(requestIds);
+    context.setHistory(history);
+    context.setFavorites(favorites);
+
+    /* Get numFriends only for current enrollments. */
+    for (let i = 0; i < enrollments.length; i++) {
+      const enrollment = enrollments[i];
+      if (enrollment.termId !== getCurrentTermId()) continue;
+
+      enrollments[i].numFriends = await getNumFriendsInCourse(
+        enrollment.courseId,
+        friendIds,
+        enrollment.termId
+      );
+    }
+    context.setEnrollments(enrollments);
+
     connectStreamChatUser(id, user.name, user.photoUrl);
 
     if (user.onboarded)
@@ -73,6 +117,11 @@ export default function Login({ route }: LoginProps) {
         routes: [{ name: "Root" }],
       });
     else navigation.navigate("Onboarding");
+
+    setEmail("");
+    setPassword("");
+    setErrorMessage("");
+    setLoginButtonLoading(false);
   };
 
   const signIn = () => {
@@ -82,18 +131,27 @@ export default function Login({ route }: LoginProps) {
     }
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setLoginButtonLoading(true);
 
     signInWithEmailAndPassword(auth, email, password)
       .then((response) => {
         const user = response.user;
         console.log(`Logged in with: ${JSON.stringify(user, null, 2)}`);
-
-        setEmail("");
-        setPassword("");
-        setErrorMessage("");
       })
-      .catch((error) => setErrorMessage(error.message));
+      .catch((error) => {
+        setErrorMessage(error.message);
+        setLoginButtonLoading(false);
+      });
   };
+
+  if (loading)
+    return (
+      <ImageBackground
+        source={require("../assets/images/splash.png")}
+        style={{ height: Layout.window.height, width: Layout.window.width }}
+        resizeMode="cover"
+      />
+    );
 
   return (
     <View
@@ -148,7 +206,13 @@ export default function Login({ route }: LoginProps) {
         </View>
         <View style={{ height: Layout.spacing.large }} />
 
-        <Button text="Log In" onPress={signIn} emphasized wide />
+        <Button
+          text="Log In"
+          onPress={signIn}
+          loading={loginButtonLoading}
+          emphasized
+          wide
+        />
       </KeyboardAvoidingView>
       <View
         style={[

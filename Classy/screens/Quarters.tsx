@@ -1,35 +1,32 @@
 import { ScrollView, StyleSheet } from "react-native";
-import { Icon, Text, View } from "../components/Themed";
+import { Text, View } from "../components/Themed";
 
+import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
+import QuarterButton from "../components/Buttons/QuarterButton";
+import { Enrollment, QuartersProps } from "../types";
+import { termIdToQuarterName } from "../utils";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import AppStyles from "../styles/AppStyles";
-import { useContext, useState } from "react";
-import AppContext from "../context/Context";
-import { termIdToQuarterName } from "../utils";
-import { QuartersProps } from "../types";
-import QuarterButton from "../components/Buttons/QuarterButton";
 
 export default function Quarters({ route }: QuartersProps) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
-  const context = useContext(AppContext);
 
-  const [editMode, setEditMode] = useState(false);
-
-  if (!route.params.user.terms) return null;
+  const quarterColors = new Map([
+    ["Aut", { backgroundColor: Colors.quarters.autumn }],
+    ["Win", { backgroundColor: Colors.quarters.winter }],
+    ["Spr", { backgroundColor: Colors.quarters.spring }],
+    ["Sum", { backgroundColor: Colors.quarters.summer }],
+  ]);
 
   return (
     <>
       <ScrollView
         style={{ backgroundColor: Colors[colorScheme].background }}
-        contentContainerStyle={{
-          alignItems: "center",
-          paddingBottom: Layout.buttonHeight.medium + Layout.spacing.medium,
-        }}
+        contentContainerStyle={{ alignItems: "center" }}
       >
         <View style={AppStyles.section}>
           {Object.entries(route.params.user.terms)
@@ -48,10 +45,12 @@ export default function Quarters({ route }: QuartersProps) {
                   {Object.entries(terms)
                     .sort()
                     .map(([termId, numUnits]) => {
-                      /* Summer term with no units. */
-                      if (parseInt(termId) % 10 === 8 && numUnits === 0)
-                        return null;
-
+                      const color =
+                        numUnits > 0
+                          ? quarterColors.get(termIdToQuarterName(termId))
+                          : {};
+                      const textColor =
+                        numUnits > 0 ? { color: Colors.black } : {};
                       return (
                         <View style={styles.termButton} key={termId}>
                           <QuarterButton
@@ -60,72 +59,33 @@ export default function Quarters({ route }: QuartersProps) {
                             onPress={() =>
                               navigation.navigate("Enrollments", {
                                 userId: route.params.user.id,
+                                enrollments: route.params.enrollments.filter(
+                                  (enrollment: Enrollment) =>
+                                    enrollment.termId === termId
+                                ),
                                 termId,
                               })
                             }
+                            color={color}
+                            textColor={textColor}
                           />
-                          {editMode && (
-                            <View style={styles.minusButton}>
-                              <Icon
-                                name="minus-circle"
-                                size={Layout.icon.medium}
-                                lightColor={Colors.deepRed}
-                                darkColor={Colors.deepRed}
-                              />
-                            </View>
-                          )}
                         </View>
                       );
                     })}
                 </View>
               </View>
             ))}
-          {editMode && (
-            <View style={AppStyles.row}>
-              <Button
-                text="2017-18"
-                onPress={() => console.log("2017-18 pressed")}
-              />
-              <Button
-                text="2022-23"
-                onPress={() => console.log("2022-23 pressed")}
-              />
-            </View>
-          )}
+          <Button
+            text="View Full Calendar"
+            onPress={() =>
+              navigation.navigate("FullCalendar", {
+                id: route.params.user.id,
+                enrollments: route.params.enrollments,
+              })
+            }
+          />
         </View>
       </ScrollView>
-      {/* TODO: edit quarters */}
-      {route.params.user.id === context.user.id && (
-        <View style={styles.ctaContainer}>
-          {editMode ? (
-            <>
-              <View style={{ width: "48%", backgroundColor: "transparent" }}>
-                <Button
-                  text="Cancel"
-                  onPress={() => {
-                    setEditMode(false);
-                  }}
-                />
-              </View>
-              <View style={{ width: "48%", backgroundColor: "transparent" }}>
-                <Button
-                  text="Done"
-                  onPress={() => {
-                    // updateQuartersDBs();
-                    setEditMode(false);
-                  }}
-                  emphasized
-                />
-              </View>
-            </>
-          ) : // <Button
-          //   text="Edit Quarters"
-          //   onPress={() => setEditMode(true)}
-          //   wide
-          // />
-          null}
-        </View>
-      )}
     </>
   );
 }
@@ -153,24 +113,8 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   termButton: {
-    width: "30%",
-    marginVertical: Layout.spacing.small,
-    backgroundColor: "transparent",
-  },
-  ctaContainer: {
-    ...AppStyles.row,
-    position: "absolute",
-    bottom: Layout.spacing.medium,
-    left: Layout.spacing.medium,
-    right: Layout.spacing.medium,
-    backgroundColor: "transparent",
-  },
-  minusButton: {
-    position: "absolute",
-    right: -8,
-    top: -8,
-    // backgroundColor: Colors.white,
-    // borderRadius: Layout.icon.medium / 2,
+    width: "22%",
+    marginBottom: Layout.spacing.small,
     backgroundColor: "transparent",
   },
 });

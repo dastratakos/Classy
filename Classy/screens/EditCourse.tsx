@@ -1,9 +1,9 @@
 import * as Haptics from "expo-haptics";
 
 import { ActivityIndicator, Text, View } from "../components/Themed";
-import { Course, EditCourseProps, Schedule } from "../types";
-import { ScrollView, StyleSheet } from "react-native";
-import { termIdToName } from "../utils";
+import { Course, EditCourseProps, Enrollment, Schedule } from "../types";
+import { Alert, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { getCourse, getCourseTerms } from "../services/courses";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -13,10 +13,12 @@ import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import ScheduleCard from "../components/Cards/ScheduleCard";
 import SquareButton from "../components/Buttons/SquareButton";
+import { getTimeString, termIdToFullName, termIdToName } from "../utils";
+import { updateEnrollment } from "../services/enrollments";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { getCourse, getCourseTerms } from "../services/courses";
-import { updateEnrollment } from "../services/enrollments";
+import { getNumFriendsInCourse } from "../services/friends";
+import { getUser } from "../services/users";
 
 export default function EditCourse({ route }: EditCourseProps) {
   const context = useContext(AppContext);
@@ -39,6 +41,8 @@ export default function EditCourse({ route }: EditCourseProps) {
 
   useEffect(() => {
     const loadScreen = async () => {
+      context.setSelectedColor(enrollment.color || Colors.pink);
+
       const course = await getCourse(enrollment.courseId);
       setCourse(course);
 
@@ -64,6 +68,82 @@ export default function EditCourse({ route }: EditCourseProps) {
     loadScreen();
   }, []);
 
+  const duplicateCourseAlert = () =>
+    Alert.alert(
+      "Oops!",
+      `You are already enrolled in this course for ${termIdToFullName(
+        context.selectedTerm
+      )}.`,
+      [{ text: "OK" }]
+    );
+
+  const handleSavePressed = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    setSaveLoading(true);
+
+    if (
+      enrollment.termId !== context.selectedTerm &&
+      context.enrollments.filter(
+        (enrollment: Enrollment) =>
+          enrollment.courseId === course.courseId &&
+          enrollment.termId === context.selectedTerm
+      ).length > 0
+    ) {
+      setSaveLoading(false);
+      duplicateCourseAlert();
+      return;
+    }
+
+    /* Build schedulesList. */
+    let schedulesList: Schedule[] = [];
+    selectedScheduleIndices.forEach((i) =>
+      schedulesList.push(terms[`${context.selectedTerm}`][i])
+    );
+
+    await updateEnrollment(
+      enrollment,
+      context.selectedColor || Colors.pink,
+      grading,
+      schedulesList,
+      context.selectedTerm,
+      selectedUnits,
+      context.user.id
+    );
+
+    const data: Enrollment = {
+      ...enrollment,
+      color: context.selectedColor,
+      grading,
+      schedules: schedulesList,
+      termId: context.selectedTerm,
+      units: selectedUnits,
+      numFriends:
+        context.selectedTerm === enrollment.termId
+          ? enrollment.numFriends
+          : await getNumFriendsInCourse(
+              course.courseId,
+              context.friendIds,
+              context.selectedTerm
+            ),
+    };
+
+    let newEnrollments = context.enrollments.filter(
+      (e: Enrollment) =>
+        e.courseId !== enrollment.courseId || e.termId !== enrollment.termId
+    );
+    newEnrollments.push(data);
+    newEnrollments.sort((a: Enrollment, b: Enrollment) =>
+      a.code > b.code ? 1 : -1
+    );
+    context.setEnrollments([...newEnrollments]);
+
+    context.setUser(await getUser(context.user.id));
+
+    setSaveLoading(false);
+    navigation.goBack();
+  };
+
   const Schedules = () => {
     if (context.selectedTerm === "") return null;
 
@@ -75,6 +155,21 @@ export default function EditCourse({ route }: EditCourseProps) {
       setSelectedScheduleIndices(newSet);
     };
 
+    let schedules = terms[`${context.selectedTerm}`];
+    for (let j = 0; j < schedules.length; j++) {
+      const sched = schedules[j];
+      if (
+        sched["days"].length === 0 ||
+        getTimeString(sched["startInfo"]) === "12:00 AM" ||
+        getTimeString(sched["startInfo"]) === "" ||
+        getTimeString(sched["endInfo"]) === "12:00 AM" ||
+        getTimeString(sched["endInfo"]) === ""
+      ) {
+        schedules.splice(j, 1);
+        j--;
+      }
+    }
+
     return (
       <View
         style={{
@@ -83,44 +178,21 @@ export default function EditCourse({ route }: EditCourseProps) {
       >
         {terms[`${context.selectedTerm}`].map(
           (schedule: Schedule, i: number) => (
-            <ScheduleCard
-              schedule={schedule}
-              key={`${i}`}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                setSaveDisabled(false);
-                handleScheduleSelected(i);
-              }}
-              selected={selectedScheduleIndices.has(i)}
-            />
+            <View key={i.toString()}>
+              <ScheduleCard
+                schedule={schedule}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  setSaveDisabled(false);
+                  handleScheduleSelected(i);
+                }}
+                selected={selectedScheduleIndices.has(i)}
+              />
+            </View>
           )
         )}
       </View>
     );
-  };
-
-  const handleSavePressed = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-
-    setSaveLoading(true);
-
-    /* Build schedulesList. */
-    let schedulesList: Schedule[] = [];
-    selectedScheduleIndices.forEach((i) =>
-      schedulesList.push(terms[`${context.selectedTerm}`][i])
-    );
-
-    await updateEnrollment(
-      enrollment,
-      grading,
-      schedulesList,
-      context.selectedTerm,
-      selectedUnits,
-      context.user.id
-    );
-
-    setSaveLoading(false);
-    navigation.goBack();
   };
 
   if (loading) return <ActivityIndicator />;
@@ -133,7 +205,24 @@ export default function EditCourse({ route }: EditCourseProps) {
       >
         <View style={AppStyles.section}>
           <Text style={styles.title}>{course.code.join(", ")}</Text>
-          <Text style={styles.title}>{course.title}</Text>
+          <Text
+            style={[styles.title, { color: Colors[colorScheme].secondaryText }]}
+          >
+            {course.title}
+          </Text>
+          <View style={styles.row}>
+            <Text style={styles.subheading}>Color</Text>
+            <TouchableOpacity
+              style={[
+                styles.colorPicker,
+                { backgroundColor: context.selectedColor },
+              ]}
+              onPress={() => {
+                setSaveDisabled(false);
+                navigation.navigate("SelectColor");
+              }}
+            />
+          </View>
           <View style={styles.row}>
             <Text style={styles.subheading}>Quarter</Text>
             <Button
@@ -200,18 +289,20 @@ export default function EditCourse({ route }: EditCourseProps) {
               {context.selectedTerm && terms[`${context.selectedTerm}`] ? (
                 <>
                   {terms[`${context.selectedTerm}`][0].grading.map(
-                    (grad, i) => (
-                      <Button
-                        text={grad}
-                        onPress={() => {
-                          Haptics.impactAsync(
-                            Haptics.ImpactFeedbackStyle.Medium
-                          );
-                          setSaveDisabled(false);
-                          setGrading(grad);
-                        }}
-                        emphasized={grading === grad}
-                      />
+                    (grad: string, i: number) => (
+                      <View key={i.toString()}>
+                        <Button
+                          text={grad}
+                          onPress={() => {
+                            Haptics.impactAsync(
+                              Haptics.ImpactFeedbackStyle.Medium
+                            );
+                            setSaveDisabled(false);
+                            setGrading(grad);
+                          }}
+                          emphasized={grading === grad}
+                        />
+                      </View>
                     )
                   )}
                 </>
@@ -253,8 +344,9 @@ export default function EditCourse({ route }: EditCourseProps) {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: Layout.text.xxlarge,
+    fontSize: Layout.text.xlarge,
     fontWeight: "500",
+    marginBottom: Layout.spacing.small,
   },
   row: {
     ...AppStyles.row,
@@ -270,6 +362,12 @@ const styles = StyleSheet.create({
   },
   subheading: {
     fontSize: Layout.text.large,
+  },
+  colorPicker: {
+    ...AppStyles.boxShadow,
+    height: Layout.buttonHeight.medium,
+    width: 2 * Layout.buttonHeight.medium,
+    borderRadius: Layout.radius.medium,
   },
   gradingBasisWrap: {
     marginVertical: Layout.spacing.medium,

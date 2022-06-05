@@ -1,23 +1,22 @@
-import { useContext } from "react";
-
 import AppContext from "../context/Context";
 import { ChannelList } from "stream-chat-expo";
 import { Channel as ChannelType } from "stream-chat";
-import { StyleSheet } from "react-native";
-import { Text, View } from "../components/Themed";
-import { useNavigation } from "@react-navigation/core";
-import ProfilePhoto from "../components/ProfilePhoto";
+import DoubleProfilePhoto from "../components/DoubleProfilePhoto";
 import Layout from "../constants/Layout";
-import AppStyles from "../styles/AppStyles";
-import Colors from "../constants/Colors";
-import useColorScheme from "../hooks/useColorScheme";
+import ProfilePhoto from "../components/ProfilePhoto";
+import { StyleSheet } from "react-native";
+import { Text } from "../components/Themed";
+import { useContext } from "react";
+import { useNavigation } from "@react-navigation/core";
 
 export default function Messages() {
   const context = useContext(AppContext);
   const navigation = useNavigation();
-  const colorScheme = useColorScheme();
 
-  const filters = { members: { $in: [context.user.id] } };
+  const filters = {
+    members: { $in: [context.user.id] },
+    last_message_at: { $gt: "2021-01-15T09:30:20.45Z" },
+  };
   const sort = { last_message_at: -1 };
   const options = { limit: 20, messages_limit: 30 };
 
@@ -45,35 +44,15 @@ export default function Messages() {
         // console.log("last message:", channel.state.messages.slice(-1));
 
         /* Get two users and display both images. */
-        const photo0 = filteredMembers[0].user.image;
-        const photo1 = filteredMembers[1].user.image;
+        const photo0: string = filteredMembers[0].user.image;
+        const photo1: string = filteredMembers[1].user.image;
 
         return (
-          <View style={AppStyles.row}>
-            <View
-              style={{
-                height: Layout.photo.xsmall,
-                width: Layout.photo.xsmall,
-              }}
-            >
-              <ProfilePhoto
-                url={photo0}
-                size={Layout.photo.xsmall * 0.7}
-                style={{ position: "absolute", right: 0, top: 0 }}
-              />
-              <ProfilePhoto
-                url={photo1}
-                size={Layout.photo.xsmall * 0.7 + 2}
-                style={{
-                  position: "absolute",
-                  left: -2,
-                  bottom: -2,
-                  borderWidth: 2,
-                  borderColor: Colors[colorScheme].background,
-                }}
-              />
-            </View>
-          </View>
+          <DoubleProfilePhoto
+            frontUrl={photo0}
+            backUrl={photo1}
+            size={Layout.photo.xsmall}
+          />
         );
       }
     }

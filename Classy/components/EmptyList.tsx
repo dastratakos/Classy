@@ -1,22 +1,42 @@
-import { View, Text } from "../components/Themed";
+import { FunctionComponent, SVGProps } from "react";
+import { Text, View } from "../components/Themed";
+
+import Colors from "../constants/Colors";
 import Layout from "../constants/Layout";
 import { StyleSheet } from "react-native";
 import useColorScheme from "../hooks/useColorScheme";
-import Colors from "../constants/Colors";
 
 export default function EmptyList({
-  primaryText,
+  SVGElement,
+  primaryText = "",
   secondaryText = "",
 }: {
-  primaryText: string;
+  SVGElement?: FunctionComponent<SVGProps>;
+  primaryText?: string;
   secondaryText?: string;
 }) {
   const colorScheme = useColorScheme();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.primary}>{primaryText}</Text>
-      <Text style={[styles.secondary, {color: Colors[colorScheme].secondaryText}]}>{secondaryText}</Text>
+      {SVGElement ? (
+        <SVGElement style={styles.svg} width={250} height={200} />
+      ) : null}
+      {primaryText !== "" || secondaryText !== "" ? (
+        <>
+          <Text style={styles.primary}>{primaryText}</Text>
+          <Text
+            style={[
+              styles.secondary,
+              { color: Colors[colorScheme].secondaryText },
+            ]}
+          >
+            {secondaryText}
+          </Text>
+        </>
+      ) : (
+        <Text style={styles.primary}>Nothing to see here</Text>
+      )}
     </View>
   );
 }
@@ -27,6 +47,10 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "transparent",
+  },
+  svg: {
+    marginVertical: Layout.spacing.medium,
   },
   primary: {
     fontSize: Layout.text.large,
@@ -35,6 +59,6 @@ const styles = StyleSheet.create({
   secondary: {
     fontSize: Layout.text.medium,
     padding: Layout.spacing.xsmall,
-    textAlign: "center"
+    textAlign: "center",
   },
 });

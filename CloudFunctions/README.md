@@ -19,3 +19,16 @@ kill the previous instance of the emulator with these commands:
 lsof -i tcp:8080
 kill -15 [PID]
 ```
+
+To save the state of your emulator, run this command, which will save the
+contents to the `./emulator` directory:
+
+```sh
+firebase emulators:export emulator
+```
+
+To start the emulator with the saved state, run this command:
+
+```sh
+firebase emulators:start --import emulator
+```

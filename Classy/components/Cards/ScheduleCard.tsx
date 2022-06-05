@@ -1,5 +1,5 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { Icon, Text, View } from "../Themed";
+import { FontAwesome, Text, View } from "../Themed";
 import { componentToName, getTimeString } from "../../utils";
 
 import AppStyles from "../../styles/AppStyles";
@@ -12,17 +12,15 @@ export default function ScheduleCard({
   schedule,
   onPress,
   selected,
-  key,
 }: {
   schedule: Schedule;
   onPress: () => void;
   selected?: boolean;
-  key: string;
 }) {
   const colorScheme = useColorScheme();
 
   return (
-    <View style={[styles.container, AppStyles.boxShadow]} key={key}>
+    <View style={[styles.container, AppStyles.boxShadow]}>
       <TouchableOpacity
         onPress={onPress}
         style={[
@@ -36,13 +34,11 @@ export default function ScheduleCard({
               {schedule.sectionNumber} {componentToName(schedule.component)}
             </Text>
             <Text style={styles.cardSubtitle} numberOfLines={1}>
-              {schedule.days.join(", ")}{" "}
-              {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
-              {getTimeString(schedule.startInfo, "Africa/Casablanca")} -{" "}
-              {getTimeString(schedule.endInfo, "Africa/Casablanca")}
+              {schedule.days.join(", ")} {getTimeString(schedule.startInfo)} -{" "}
+              {getTimeString(schedule.endInfo)}
             </Text>
           </View>
-          <Icon
+          <FontAwesome
             name={selected ? "check-circle" : "circle-o"}
             size={Layout.icon.medium}
             lightColor={

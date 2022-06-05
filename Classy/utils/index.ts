@@ -1,5 +1,6 @@
+import { Enrollment, Event, WeekSchedule } from "../types";
+
 import { Timestamp } from "firebase/firestore";
-import { Day, Enrollment, Event, WeekSchedule } from "../types";
 
 export const generateSubstrings = (text: string) => {
   let substrings: string[] = [];
@@ -142,20 +143,69 @@ export const componentToName = (component: string) => {
   return component;
 };
 
-export const getTimeString = (
-  timestamp: Timestamp,
-  timeZone: string = "America/Los_Angeles"
-) => {
+export const getAdjustedDate = (date: Date) => {
+  const hourOffset =
+    (date.getTimezoneOffset() - new Date().getTimezoneOffset()) / 60;
+  const adjustedDate = new Date(date.getTime() + hourOffset * 3600 * 1000);
+
+  // if (hourOffset === 1) {
+  //   console.log("old time:", date.toTimeString());
+  //   console.log("new time:", adjustedDate.toTimeString());
+  // }
+
+  return adjustedDate;
+};
+
+export const getTimeString = (timestamp: Timestamp) => {
   if (!timestamp) return "";
 
-  const date = new Date(timestamp.seconds * 1000);
-  return date.toLocaleString("en-US", {
-    // return timestamp.toDate().toLocaleString("en-US", {
+  return timestamp.toDate().toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
-    timeZone: timeZone,
   });
+};
+
+export const SECOND_MILLISECONDS = 1000;
+export const MINUTE_MILLISECONDS = 60 * SECOND_MILLISECONDS;
+export const HOUR_MILLISECONDS = 60 * MINUTE_MILLISECONDS;
+export const DAY_MILLISECONDS = 24 * HOUR_MILLISECONDS;
+export const WEEK_MILLISECONDS = 7 * DAY_MILLISECONDS;
+
+export const getTimeSinceString = (timestamp: Timestamp) => {
+  if (!timestamp) return "";
+
+  const timeDiff = Timestamp.now().toMillis() - timestamp.toMillis();
+
+  // console.log(
+  //   "timeDiff:",
+  //   timeDiff,
+  //   Timestamp.now().toDate().toTimeString(),
+  //   timestamp.toDate().toTimeString()
+  // );
+
+  if (timeDiff < HOUR_MILLISECONDS) {
+    return `${Math.floor(timeDiff / MINUTE_MILLISECONDS + 1)}m`;
+  }
+  if (timeDiff < DAY_MILLISECONDS) {
+    return `${Math.floor(timeDiff / HOUR_MILLISECONDS + 1)}h`;
+  }
+  if (timeDiff < WEEK_MILLISECONDS) {
+    return `${Math.floor(timeDiff / DAY_MILLISECONDS + 1)}d`;
+  }
+  if (timeDiff < 4 * WEEK_MILLISECONDS) {
+    return `${Math.floor(timeDiff / WEEK_MILLISECONDS + 1)}w`;
+  }
+
+  const now = Timestamp.now().toDate();
+  const then = timestamp.toDate();
+
+  const monthDiff =
+    now.getMonth() -
+    then.getMonth() +
+    12 * (now.getFullYear() - then.getFullYear());
+
+  return `${monthDiff}mo`;
 };
 
 export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
@@ -188,20 +238,43 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
     Wednesday: 2,
     Thursday: 3,
     Friday: 4,
+    Saturday: 5,
+    Sunday: 6,
   };
+
+  let startCalendarHour = 8;
+  let endCalendarHour = 18;
 
   for (let enrollment of enrollments) {
     for (let schedule of enrollment.schedules) {
       const title =
         enrollment.code.join(", ") + " " + componentToName(schedule.component);
-      const event: Event = {
+      const event: Partial<Event> = {
         title,
         startInfo: schedule.startInfo,
         endInfo: schedule.endInfo,
         location: schedule.location,
         enrollment: enrollment,
       };
+
+      if (schedule.startInfo) {
+        const startHour = schedule.startInfo.toDate().getHours();
+        /* startHour !== 0 filters for sections that are 12:00 AM - 12:00 AM. */
+        if (startHour < startCalendarHour && startHour !== 0)
+          startCalendarHour = startHour;
+      }
+      if (schedule.endInfo) {
+        const endHour = schedule.endInfo.toDate().getHours() + 1;
+        if (endHour > endCalendarHour) endCalendarHour = endHour;
+      }
+
       for (let day of schedule.days) {
+        if (!(day in dayIndices)) {
+          console.error(
+            `Invalid day ${day} for enrollment with docId ${enrollment.docId}`
+          );
+          continue;
+        }
         const index = dayIndices[`${day}`];
         week[index].events.push(event);
       }
@@ -209,8 +282,51 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
   }
 
   for (let i = 0; i < week.length; i++) {
-    week[i].events.sort((a: Event, b: Event) => a.startInfo > b.startInfo);
+    week[i].events = week[i].events.sort((a: Event, b: Event) => {
+      if (!a.startInfo) return 1;
+      if (!b.startInfo) return -1;
+
+      /* Sort by ascending start times. */
+      const aStartDate = a.startInfo.toDate();
+      const bStartDate = b.startInfo.toDate();
+      if (aStartDate.getHours() === bStartDate.getHours()) {
+        if (aStartDate.getMinutes() === bStartDate.getMinutes()) {
+          if (!a.endInfo) return 1;
+          if (!b.endInfo) return -1;
+          /* If start times are the same, sort by descending end times. */
+          const aEndDate = a.endInfo.toDate();
+          const bEndDate = b.endInfo.toDate();
+          if (aEndDate.getHours() === bEndDate.getHours())
+            return aEndDate.getMinutes() < bStartDate.getMinutes() ? 1 : -1;
+          return aEndDate.getHours() < bEndDate.getHours() ? 1 : -1;
+        }
+        return aStartDate.getMinutes() > bStartDate.getMinutes() ? 1 : -1;
+      }
+      return aStartDate.getHours() > bStartDate.getHours() ? 1 : -1;
+    });
   }
 
-  return week;
+  // console.log("week:", week);
+
+  return { week, startCalendarHour, endCalendarHour };
+};
+
+/**
+ * Compares two Timestamps by checking only the hour and minute values. Returns
+ * true if a is strictly earlier than b.
+ *
+ * @param a The first Timestamp object to compare
+ * @param b The second Timestamp object to compare
+ * @returns boolean true if a's time is earlier, false otherwise
+ */
+export const timeIsEarlier = (a: Timestamp, b: Timestamp) => {
+  const aHours = a.toDate().getHours();
+  const bHours = b.toDate().getHours();
+
+  if (aHours !== bHours) return aHours < bHours;
+
+  const aMinutes = a.toDate().getMinutes();
+  const bMinutes = b.toDate().getMinutes();
+
+  return aMinutes < bMinutes;
 };

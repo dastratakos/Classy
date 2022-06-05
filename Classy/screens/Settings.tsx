@@ -8,9 +8,10 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { Text, View } from "../components/Themed";
-import { useCallback, useContext, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import ActionSheet from "react-native-actionsheet";
 import AppContext from "../context/Context";
@@ -22,11 +23,10 @@ import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import { SaveFormat } from "expo-image-manipulator";
 import Separator from "../components/Separator";
-import { User } from "../types";
+import { Degree, User } from "../types";
 import { auth } from "../firebase";
 import { generateSubstrings } from "../utils";
-import { majorList } from "../utils/majorList";
-import { updateUser } from "../services/users";
+import { generateTerms, updateUser } from "../services/users";
 import { uploadImage } from "../services/storage";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
@@ -40,16 +40,19 @@ export default function Settings() {
   const [photoUrl, setPhotoUrl] = useState(context.user.photoUrl || "");
   const [name, setName] = useState(context.user.name || "");
 
-  const [major, setMajor] = useState(context.user.major || ""); // TODO: use array for multiple select
-  const [majorOpen, setMajorOpen] = useState(false);
-  const [majorItems, setMajorItems] = useState(majorList);
-  const onMajorOpen = useCallback(() => setGradYearOpen(false), []);
-  // DropDownPicker.setMode("BADGE"); // TODO: for multiple select
+  const [startYear, setStartYear] = useState(context.user.startYear || "");
+  const [startYearOpen, setStartYearOpen] = useState(false);
+  const [startYearItems, setStartYearItems] = useState(yearList);
+  const onStartYearOpen = useCallback(() => {
+    setGradYearOpen(false);
+  }, []);
 
   const [gradYear, setGradYear] = useState(context.user.gradYear || "");
   const [gradYearOpen, setGradYearOpen] = useState(false);
   const [gradYearItems, setGradYearItems] = useState(yearList);
-  const onGradYearOpen = useCallback(() => setMajorOpen(false), []);
+  const onGradYearOpen = useCallback(() => {
+    setStartYearOpen(false);
+  }, []);
 
   const [interests, setInterests] = useState(context.user.interests || "");
 
@@ -67,22 +70,31 @@ export default function Settings() {
   const handleSavePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
+    if (startYear > gradYear) {
+      alert("Error: StartYear cannot be after Graduation Year");
+      return;
+    }
+
     const newUser: User = {
       ...context.user,
       name,
-      major,
+      degrees: context.user.degrees,
+      startYear,
       gradYear,
       interests,
       photoUrl,
       keywords: generateSubstrings(name),
+      terms: generateTerms(context.user.terms, startYear, gradYear),
     };
 
     context.setUser(newUser);
     updateUser(context.user.id, newUser);
-    context.streamClient.updateUser({
+    context.streamClient.partialUpdateUser({
       id: context.user.id,
-      name,
-      image: photoUrl,
+      set: {
+        name: name,
+        image: photoUrl,
+      },
     });
 
     navigation.goBack();
@@ -99,7 +111,7 @@ export default function Settings() {
       if (!pickerResult.cancelled) {
         const compressedImage = await ImageManipulator.manipulateAsync(
           pickerResult.uri,
-          [{ resize: { width: 200, height: 200 } }],
+          [{ resize: { width: 750, height: 750 } }],
           { format: SaveFormat.JPEG }
         );
 
@@ -119,10 +131,12 @@ export default function Settings() {
 
         updateUser(context.user.id, newUser);
 
-        context.streamClient.updateUser({
+        context.streamClient.partialUpdateUser({
           id: context.user.id,
-          name,
-          image: photoUrl,
+          set: {
+            name: name,
+            image: photoUrl,
+          },
         });
       }
     } catch (error) {
@@ -179,152 +193,239 @@ export default function Settings() {
   };
 
   return (
-    <ScrollView
-      style={[
-        styles.container,
-        { backgroundColor: Colors[colorScheme].background },
-        // { alignItems: "center" },
-      ]}
-      contentContainerStyle={{ alignItems: "center" }}
-    >
-      <KeyboardAvoidingView
-        style={styles.keyboardContainer}
+    <>
+      <ScrollView
+        style={[
+          styles.container,
+          { backgroundColor: Colors[colorScheme].background },
+          // { alignItems: "center" },
+        ]}
         contentContainerStyle={{ alignItems: "center" }}
-        behavior="position"
       >
-        <ProfilePhoto
-          url={photoUrl}
-          size={Layout.photo.xlarge}
-          style={{ marginBottom: Layout.spacing.medium }}
-          loading={uploading}
+        <KeyboardAvoidingView
+          style={styles.keyboardContainer}
+          contentContainerStyle={{ alignItems: "center" }}
+          behavior="position"
+        >
+          <ProfilePhoto
+            url={photoUrl}
+            size={Layout.photo.xlarge}
+            style={{ marginBottom: Layout.spacing.medium }}
+            loading={uploading}
+            withModal
+          />
+          <Button
+            text="Change profile photo"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              actionSheetRef.current?.show();
+            }}
+          />
+          <Separator
+            overrideStyles={{ marginTop: Layout.spacing.large, width: "100%" }}
+          />
+          <View style={styles.inputContainer}>
+            <View style={styles.item}>
+              <View style={styles.field}>
+                <Text>Name</Text>
+              </View>
+              <TextInput
+                placeholder="Name"
+                value={name}
+                onChangeText={(text) => {
+                  setName(text);
+                  setSaveDisabled(false);
+                }}
+                style={[
+                  styles.input,
+                  {
+                    color: Colors[colorScheme].text,
+                    borderColor: Colors[colorScheme].text,
+                  },
+                ]}
+                autoCapitalize="words"
+                textContentType="name"
+              />
+            </View>
+            <View style={styles.item}>
+              <View style={styles.field}>
+                <Text>Degrees</Text>
+              </View>
+              {context.user.degrees &&
+                context.user.degrees.map((degree: Degree, i: number) => (
+                  <TouchableOpacity
+                    style={[
+                      AppStyles.row,
+                      styles.input,
+                      {
+                        marginVertical: Layout.spacing.small,
+                        borderColor: Colors[colorScheme].text,
+                      },
+                    ]}
+                    key={i.toString()}
+                    onPress={() => {
+                      context.setEditDegreeIndex(i);
+                      navigation.navigate("EditDegree");
+                    }}
+                  >
+                    <Text>{degree.degree}</Text>
+                    <Text>{degree.major}</Text>
+                  </TouchableOpacity>
+                ))}
+              <View style={{ height: Layout.spacing.medium }} />
+              <Button
+                text="Add Degree"
+                emphasized={
+                  context.user.degrees
+                    ? context.user.degrees.length === 0
+                    : true
+                }
+                onPress={() => {
+                  const newDegrees = [
+                    ...context.user.degrees,
+                    { degree: "", major: "" },
+                  ];
+                  context.setUser({ ...context.user, degrees: newDegrees });
+                  context.setEditDegreeIndex(newDegrees.length - 1);
+                  navigation.navigate("AddDegree");
+                }}
+              />
+            </View>
+            <View style={AppStyles.row}>
+              <View style={[styles.item, { width: "48%" }]}>
+                <View style={styles.field}>
+                  <Text>Start Year</Text>
+                </View>
+                <DropDownPicker
+                  open={startYearOpen}
+                  onOpen={onStartYearOpen}
+                  value={startYear}
+                  items={startYearItems}
+                  setOpen={setStartYearOpen}
+                  setValue={(text) => {
+                    setStartYear(text);
+                    setSaveDisabled(false);
+                  }}
+                  setItems={setStartYearItems}
+                  placeholder="Start Year"
+                  placeholderStyle={{
+                    color: Colors[colorScheme].secondaryText,
+                  }}
+                  searchable
+                  searchPlaceholder="Search..."
+                  showBadgeDot={false}
+                  dropDownDirection="TOP"
+                  modalProps={{ animationType: "slide" }}
+                  theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+                  style={{
+                    backgroundColor: Colors[colorScheme].background,
+                    borderColor: Colors[colorScheme].text,
+                  }}
+                  dropDownContainerStyle={{
+                    backgroundColor: Colors[colorScheme].background,
+                    borderColor: Colors[colorScheme].text,
+                  }}
+                />
+              </View>
+              <View style={[styles.item, { width: "48%" }]}>
+                <View style={styles.field}>
+                  <Text>Graduation Year</Text>
+                </View>
+                <DropDownPicker
+                  open={gradYearOpen}
+                  onOpen={onGradYearOpen}
+                  value={gradYear}
+                  items={gradYearItems}
+                  setOpen={setGradYearOpen}
+                  setValue={(text) => {
+                    setGradYear(text);
+                    setSaveDisabled(false);
+                  }}
+                  setItems={setGradYearItems}
+                  placeholder="Graduation Year"
+                  placeholderStyle={{
+                    color: Colors[colorScheme].secondaryText,
+                  }}
+                  searchable
+                  searchPlaceholder="Search..."
+                  showBadgeDot={false}
+                  dropDownDirection="TOP"
+                  modalProps={{ animationType: "slide" }}
+                  theme={colorScheme === "light" ? "LIGHT" : "DARK"}
+                  style={{
+                    backgroundColor: Colors[colorScheme].background,
+                    borderColor: Colors[colorScheme].text,
+                  }}
+                  dropDownContainerStyle={{
+                    backgroundColor: Colors[colorScheme].background,
+                    borderColor: Colors[colorScheme].text,
+                  }}
+                />
+              </View>
+            </View>
+            <View style={styles.item}>
+              <View style={styles.field}>
+                <Text>Clubs & Interests</Text>
+              </View>
+              <TextInput
+                placeholder="Clubs & Interests"
+                value={interests}
+                onChangeText={(text) => {
+                  setInterests(text);
+                  setSaveDisabled(false);
+                }}
+                style={[
+                  styles.input,
+                  {
+                    color: Colors[colorScheme].text,
+                    borderColor: Colors[colorScheme].text,
+                  },
+                ]}
+                autoCapitalize="sentences"
+              />
+            </View>
+            <View style={styles.item}>
+              <View style={styles.field}>
+                <Text>Email</Text>
+              </View>
+              <Text
+                style={[
+                  styles.input,
+                  {
+                    color: Colors[colorScheme].secondaryText,
+                    borderColor: Colors[colorScheme].text,
+                  },
+                ]}
+              >
+                {auth.currentUser?.email}
+              </Text>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+        <Separator
+          overrideStyles={{ marginBottom: Layout.spacing.large, width: "100%" }}
         />
         <Button
-          text="Change profile photo"
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            actionSheetRef.current?.show();
+          text="Manage Account"
+          onPress={() => navigation.navigate("ManageAccount")}
+          wide
+          containerStyle={{
+            marginBottom: Layout.spacing.xxxlarge + Layout.buttonHeight.medium,
           }}
         />
-        <Separator />
-        <View style={styles.inputContainer}>
-          <View style={styles.item}>
-            <View style={styles.field}>
-              <Text>Name</Text>
-            </View>
-            <TextInput
-              placeholder="Name"
-              value={name}
-              onChangeText={(text) => {
-                setName(text);
-                setSaveDisabled(false);
-              }}
-              style={[styles.input, { color: Colors[colorScheme].text }]}
-              autoCapitalize="words"
-              textContentType="name"
-            />
-          </View>
-          <View style={styles.item}>
-            <View style={styles.field}>
-              <Text>Major</Text>
-            </View>
-            <DropDownPicker
-              open={majorOpen}
-              onOpen={onMajorOpen}
-              value={major}
-              items={majorItems}
-              setOpen={setMajorOpen}
-              setValue={(text) => {
-                setMajor(text);
-                setSaveDisabled(false);
-              }}
-              setItems={setMajorItems}
-              // multiple
-              // min={0}
-              // max={2}
-              placeholder="Major"
-              placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
-              searchable
-              searchPlaceholder="Search..."
-              showBadgeDot={false}
-              dropDownDirection="TOP"
-              modalProps={{
-                animationType: "slide",
-              }}
-              theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-              addCustomItem
-              // style={{borderWidth: 0}}
-            />
-          </View>
-          <View style={styles.item}>
-            <View style={styles.field}>
-              <Text>Graduation Year</Text>
-            </View>
-            <DropDownPicker
-              open={gradYearOpen}
-              onOpen={onGradYearOpen}
-              value={gradYear}
-              items={gradYearItems}
-              setOpen={setGradYearOpen}
-              setValue={setGradYear}
-              setItems={setGradYearItems}
-              // multiple
-              // min={0}
-              // max={2}
-              placeholder="Graduation Year"
-              placeholderStyle={{ color: Colors[colorScheme].secondaryText }}
-              searchable
-              searchPlaceholder="Search..."
-              showBadgeDot={false}
-              dropDownDirection="TOP"
-              modalProps={{
-                animationType: "slide",
-              }}
-              theme={colorScheme === "light" ? "LIGHT" : "DARK"}
-              // style={{borderWidth: 0}}
-            />
-          </View>
-          <View style={styles.item}>
-            <View style={styles.field}>
-              <Text>Clubs & Interests</Text>
-            </View>
-            <TextInput
-              placeholder="Clubs & Interests"
-              value={interests}
-              onChangeText={(text) => {
-                setInterests(text);
-                setSaveDisabled(false);
-              }}
-              style={[styles.input, { color: Colors[colorScheme].text }]}
-              autoCapitalize="sentences"
-            />
-          </View>
-          <View style={styles.item}>
-            <View style={styles.field}>
-              <Text>Email</Text>
-            </View>
-            <Text
-              style={[
-                styles.input,
-                { color: Colors[colorScheme].secondaryText },
-              ]}
-            >
-              {auth.currentUser?.email}
-            </Text>
-          </View>
-        </View>
-      </KeyboardAvoidingView>
-      <Separator />
-      <Button
-        text="Manage Account"
-        onPress={() => navigation.navigate("ManageAccount")}
-        wide
-      />
-      <Separator />
-      <View style={[AppStyles.row, { marginBottom: Layout.spacing.xxlarge }]}>
-        <View style={{ width: "48%" }}>
+        <ActionSheet
+          ref={actionSheetRef}
+          options={actionSheetOptions}
+          cancelButtonIndex={actionSheetOptions.length - 1}
+          destructiveButtonIndex={0}
+          onPress={handleActionSheetOptionPressed}
+        />
+      </ScrollView>
+      <View style={styles.ctaContainer}>
+        <View style={{ width: "48%", backgroundColor: "transparent" }}>
           <Button text="Cancel" onPress={() => navigation.goBack()} />
         </View>
-        <View style={{ width: "48%" }}>
+        <View style={{ width: "48%", backgroundColor: "transparent" }}>
           <Button
             text="Save Changes"
             onPress={handleSavePress}
@@ -333,15 +434,7 @@ export default function Settings() {
           />
         </View>
       </View>
-
-      <ActionSheet
-        ref={actionSheetRef}
-        options={actionSheetOptions}
-        cancelButtonIndex={actionSheetOptions.length - 1}
-        destructiveButtonIndex={0}
-        onPress={handleActionSheetOptionPressed}
-      />
-    </ScrollView>
+    </>
   );
 }
 
@@ -365,5 +458,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: Layout.spacing.medium,
     borderRadius: Layout.radius.small,
+  },
+  ctaContainer: {
+    ...AppStyles.row,
+    position: "absolute",
+    bottom: Layout.spacing.medium,
+    left: Layout.spacing.medium,
+    right: Layout.spacing.medium,
+    backgroundColor: "transparent",
   },
 });

@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   termButton: {
-    width: "30%",
+    width: "22%",
     marginVertical: Layout.spacing.small,
     backgroundColor: "transparent",
   },

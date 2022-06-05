@@ -10,17 +10,16 @@ import { useContext, useState } from "react";
 import EnrollmentModal from "../EnrollmentModal";
 import { deleteEnrollment } from "../../services/enrollments";
 import AppContext from "../../context/Context";
+import { getUser } from "../../services/users";
 
 export default function EnrollmentCard({
   enrollment,
-  key,
-  numFriends = 0,
-  emphasize = false,
+  editable = true,
+  mutual = false,
 }: {
   enrollment: Enrollment;
-  key: string;
-  numFriends?: number;
-  emphasize?: boolean;
+  editable?: boolean;
+  mutual?: boolean;
 }) {
   const context = useContext(AppContext);
   const colorScheme = useColorScheme();
@@ -30,6 +29,14 @@ export default function EnrollmentCard({
   const handleDeleteEnrollment = async () => {
     setModalVisible(false);
     await deleteEnrollment(enrollment);
+
+    let newEnrollments = context.enrollments.filter(
+      (e: Enrollment) =>
+        e.courseId !== enrollment.courseId || e.termId !== enrollment.termId
+    );
+    context.setEnrollments([...newEnrollments]);
+
+    context.setUser(await getUser(context.user.id));
   };
 
   const deleteEnrollmentAlert = () => {
@@ -46,43 +53,49 @@ export default function EnrollmentCard({
   };
 
   return (
-    <View key={key}>
+    <>
       <EnrollmentModal
         enrollment={enrollment}
         deleteFunc={deleteEnrollmentAlert}
         visible={modalVisible}
         setVisible={setModalVisible}
-        editable={enrollment.userId === context.user.id}
+        editable={editable && enrollment.userId === context.user.id}
       />
-      <View
+      <TouchableOpacity
         style={[
           styles.container,
           AppStyles.boxShadow,
           { backgroundColor: Colors[colorScheme].cardBackground },
         ]}
+        onPress={() => setModalVisible(true)}
       >
-        <TouchableOpacity
-          onPress={() => setModalVisible(true)}
-          style={styles.innerContainer}
-        >
-          <View style={styles.textContainer}>
-            <Text style={styles.cardTitle} numberOfLines={1}>
-              {enrollment.code.join(", ")}
-              {emphasize ? " ⭐️" : null}
-            </Text>
-            <Text style={styles.cardSubtitle} numberOfLines={1}>
-              {enrollment.title}
-            </Text>
+        <View style={styles.textContainer}>
+          <View style={styles.codeContainer}>
+            {mutual && (
+              <View style={styles.mutualContainer}>
+                <Text style={styles.mutualText}>Mutual</Text>
+              </View>
+            )}
+            <View style={styles.cardTitleContainer}>
+              <Text style={styles.cardTitle} numberOfLines={1}>
+                {enrollment.code.join(", ")}
+              </Text>
+            </View>
           </View>
+          <Text style={styles.cardSubtitle} numberOfLines={1}>
+            {enrollment.title}
+          </Text>
+        </View>
+        {enrollment.numFriends !== -1 && (
           <View style={styles.numFriendsContainer}>
-            <Text style={styles.numberText}>{numFriends}</Text>
+            <Text style={styles.numberText}>{enrollment.numFriends}</Text>
             <Text style={styles.friendsText}>
-              {"friend" + (numFriends !== 1 ? "s" : "")}
+              {"friend" + (enrollment.numFriends !== 1 ? "s" : "")}
             </Text>
           </View>
-        </TouchableOpacity>
-      </View>
-    </View>
+        )}
+      </TouchableOpacity>
+    </>
   );
 }
 
@@ -92,15 +105,32 @@ const styles = StyleSheet.create({
     paddingVertical: Layout.spacing.small,
     borderRadius: Layout.radius.medium,
     marginVertical: Layout.spacing.small,
-    width: "100%",
-  },
-  innerContainer: {
     flexDirection: "row",
     alignItems: "center",
+    width: "100%",
   },
   textContainer: {
     flex: 1,
     backgroundColor: "transparent",
+  },
+  codeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "transparent",
+  },
+  mutualContainer: {
+    backgroundColor: Colors.pink,
+    padding: Layout.spacing.xxsmall,
+    marginRight: Layout.spacing.xsmall,
+    borderRadius: Layout.radius.medium,
+  },
+  mutualText: {
+    fontSize: Layout.text.small,
+    color: Colors.white,
+  },
+  cardTitleContainer: {
+    backgroundColor: "transparent",
+    flex: 1,
   },
   cardTitle: {
     fontSize: Layout.text.xlarge,
@@ -112,10 +142,8 @@ const styles = StyleSheet.create({
   numFriendsContainer: {
     alignItems: "center",
     justifyContent: "center",
-    height: Layout.photo.small,
-    width: Layout.photo.small,
-    borderRadius: Layout.radius.xsmall,
-    marginLeft: Layout.spacing.small,
+    width: 55,
+    marginLeft: Layout.spacing.xxsmall,
     backgroundColor: "transparent",
   },
   numberText: {

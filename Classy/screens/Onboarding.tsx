@@ -25,7 +25,6 @@ export default function Onboarding() {
 
   const [photoUrl, setPhotoUrl] = useState(context.user.photoUrl);
   const [name, setName] = useState(context.user.name);
-  const [major, setMajor] = useState(context.user.major);
   const [startYear, setStartYear] = useState("2018"); // TODO: compute these values
   const [gradYear, setGradYear] = useState("2022");
   const [errorMessage, setErrorMessage] = useState("");
@@ -43,7 +42,6 @@ export default function Onboarding() {
 
     const data = {
       name: name ? name : "",
-      major: major ? major : "",
       photoUrl: photoUrl ? photoUrl : "",
       keywords: generateSubstrings(name),
       startYear,
@@ -87,8 +85,6 @@ export default function Onboarding() {
           setPhotoUrl={setPhotoUrl}
           name={name}
           setName={setName}
-          major={major}
-          setMajor={setMajor}
           startYear={startYear}
           setStartYear={setStartYear}
           gradYear={gradYear}
@@ -186,8 +182,8 @@ export default function Onboarding() {
 
 const styles = StyleSheet.create({
   image: {
-    height: Layout.window.width,
-    width: Layout.window.width,
+    height: Layout.window.width * 0.9,
+    width: Layout.window.width * 0.9,
     resizeMode: "contain",
   },
 });

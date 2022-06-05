@@ -1,31 +1,22 @@
-import { Enrollment, User } from "../types";
 import { FlatList, Pressable, StyleSheet } from "react-native";
-import { Text, View } from "./Themed";
+import { FontAwesome, Text, View } from "./Themed";
 import { componentToName, getTimeString } from "../utils";
 
 import AppStyles from "../styles/AppStyles";
 import Colors from "../constants/Colors";
+import { CourseOverview } from "../types";
 import Layout from "../constants/Layout";
 import Modal from "react-native-modal";
 import ProfilePhoto from "../components/ProfilePhoto";
-import { Timestamp } from "firebase/firestore";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 
 export default function CourseOverviewModal({
-  enrollment,
-  friends,
-  startInfo,
-  endInfo,
-  component,
+  data,
   visible,
   setVisible,
 }: {
-  enrollment: Enrollment;
-  friends: User[];
-  startInfo: Timestamp;
-  endInfo: Timestamp;
-  component: string;
+  data: CourseOverview;
   visible: boolean;
   setVisible: (arg0: boolean) => void;
 }) {
@@ -33,90 +24,93 @@ export default function CourseOverviewModal({
   const colorScheme = useColorScheme();
 
   return (
-    <Modal isVisible={visible}>
-      <Pressable style={[styles.container]} onPress={() => setVisible(false)}>
-        <Pressable
-          style={[
-            styles.modalView,
-            { backgroundColor: Colors[colorScheme].secondaryBackground },
-            { maxHeight: "50%" },
-          ]}
+    <Modal isVisible={visible} onBackdropPress={() => setVisible(false)}>
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: Colors[colorScheme].secondaryBackground },
+          { maxHeight: "50%" },
+        ]}
+      >
+        <Text style={styles.code}>
+          {data.enrollment.code.join(", ")}{" "}
+          {data.component && componentToName(data.component)}
+        </Text>
+        <Text style={{ marginTop: Layout.spacing.xxsmall }}>
+          {getTimeString(data.startInfo)} - {getTimeString(data.endInfo)}
+        </Text>
+        <Text
+          style={{
+            fontWeight: "500",
+            marginTop: Layout.spacing.small,
+            alignSelf: "center",
+          }}
         >
-          <Text style={styles.code}>
-            {enrollment.code.join(", ")}{" "}
-            {component && componentToName(component)}
-          </Text>
-          <Text style={{ marginTop: Layout.spacing.xxsmall }}>
-            {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
-            {getTimeString(startInfo, "Africa/Casablanca")} -{" "}
-            {getTimeString(endInfo, "America/Danmarkshavn")}
-          </Text>
-          <Text
-            style={{
-              fontWeight: "bold",
-              marginTop: Layout.spacing.small,
-              alignSelf: "center",
-            }}
-          >
-            Class Friends ({friends.length})
-          </Text>
+          Class Friends ({data.friends.length})
+        </Text>
 
-          <View
-            style={{
-              maxHeight: "80%",
-              width: "100%",
-              backgroundColor: Colors[colorScheme].secondaryBackground,
-            }}
-          >
-            <FlatList
-              data={friends}
-              renderItem={({ item }) => (
-                <View
-                  style={[
-                    styles.friendContainer,
-                    AppStyles.boxShadow,
-                    { backgroundColor: Colors[colorScheme].background },
-                  ]}
+        <View
+          style={{
+            maxHeight: "80%",
+            width: "100%",
+            backgroundColor: Colors[colorScheme].secondaryBackground,
+          }}
+        >
+          <FlatList
+            data={data.friends}
+            renderItem={({ item }) => (
+              <View
+                style={[
+                  styles.friendContainer,
+                  AppStyles.boxShadow,
+                  { backgroundColor: Colors[colorScheme].background },
+                ]}
+              >
+                <Pressable
+                  style={[AppStyles.row, { backgroundColor: "transparent" }]}
+                  onPress={() => {
+                    navigation.navigate("FriendProfile", { id: item.id });
+                    setVisible(false);
+                  }}
                 >
-                  <Pressable
-                    style={[AppStyles.row, { backgroundColor: "transparent" }]}
-                    onPress={() => {
-                      navigation.navigate("FriendProfile", { id: item.id });
-                      setVisible(false);
+                  <ProfilePhoto
+                    url={item.photoUrl}
+                    size={Layout.photo.xsmall}
+                  />
+                  <View
+                    style={{
+                      backgroundColor: "transparent",
+                      flexGrow: 1,
                     }}
                   >
-                    <ProfilePhoto
-                      url={item.photoUrl}
-                      size={Layout.photo.xsmall}
-                    />
-                    <View
-                      style={{
-                        backgroundColor: "transparent",
-                        flexGrow: 1,
-                      }}
-                    >
-                      <Text style={{ fontSize: Layout.text.large }}>
-                        {" "}
-                        {item.name}
-                      </Text>
-                    </View>
-                  </Pressable>
-                </View>
-              )}
-              keyExtractor={(item) => `${item.id}`}
-              style={{ flexGrow: 0 }}
-            />
-          </View>
-        </Pressable>
-      </Pressable>
+                    <Text style={{ fontSize: Layout.text.large }}>
+                      {" "}
+                      {item.name}
+                    </Text>
+                  </View>
+                </Pressable>
+              </View>
+            )}
+            keyExtractor={(item) => item.id.toString()}
+            style={{ flexGrow: 0 }}
+          />
+        </View>
+      </View>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
+    ...AppStyles.boxShadow,
+    margin: Layout.spacing.xxsmall,
+    borderRadius: Layout.radius.large,
+    padding: Layout.spacing.large,
+  },
+  titleRow: {
+    ...AppStyles.row,
+    backgroundColor: "transparent",
+    alignItems: "flex-start",
   },
   friendContainer: {
     paddingHorizontal: Layout.spacing.xsmall,
@@ -125,12 +119,6 @@ const styles = StyleSheet.create({
     marginVertical: Layout.spacing.small,
     alignSelf: "center",
     width: "97%",
-  },
-  modalView: {
-    ...AppStyles.boxShadow,
-    margin: Layout.spacing.xxsmall,
-    borderRadius: Layout.radius.large,
-    padding: Layout.spacing.large,
   },
   code: {
     fontSize: Layout.text.xlarge,

@@ -1,27 +1,34 @@
 import * as React from "react";
 
-import { ColorSchemeName } from "react-native";
+import { ColorSchemeName, Button as RNButton } from "react-native";
 import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
 } from "@react-navigation/native";
-import { RootStackParamList, RootTabParamList } from "../types";
+import {
+  ProfileStackScreenProps,
+  RootStackParamList,
+  RootTabParamList,
+} from "../types";
 
+import AddDegree from "../screens/AddDegree";
+import AuthStackNavigator from "./AuthStackNavigator";
 import Colors from "../constants/Colors";
+import EditDegree from "../screens/EditDegree";
 import { FontAwesome } from "@expo/vector-icons";
-import LinkingConfiguration from "./LinkingConfiguration";
 import HomeStackNavigator from "./HomeStackNavigator";
-import NotFoundScreen from "../screens/NotFoundScreen";
+import Layout from "../constants/Layout";
+import LinkingConfiguration from "./LinkingConfiguration";
+import ManageAccount from "../screens/ManageAccount";
+import NotificationStackNavigator from "./NotificationStackNavigator";
 import ProfileStackNavigator from "./ProfileStackNavigator";
+import SearchStackNavigator from "./SearchStackNavigator";
+import SelectColor from "../screens/SelectColor";
+import SelectQuarter from "../screens/SelectQuarter";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import useColorScheme from "../hooks/useColorScheme";
-import AuthStackNavigator from "./AuthStackNavigator";
-import ManageAccount from "../screens/ManageAccount";
-import SearchStackNavigator from "./SearchStackNavigator";
-import SelectQuarter from "../screens/SelectQuarter";
-import Layout from "../constants/Layout";
 
 /**
  * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
@@ -62,17 +69,76 @@ function RootNavigator() {
         component={BottomTabNavigator}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name="NotFound"
-        component={NotFoundScreen}
-        options={{ title: "Oops!" }}
-      />
-      <Stack.Group screenOptions={{ presentation: "modal" }}>
-        <Stack.Screen name="ManageAccount" component={ManageAccount} />
+      <Stack.Group
+        screenOptions={{ presentation: "modal", gestureEnabled: false }}
+      >
+        <Stack.Screen
+          name="ManageAccount"
+          component={ManageAccount}
+          options={({
+            navigation,
+          }: ProfileStackScreenProps<"ManageAccount">) => ({
+            title: "Profile",
+            headerRight: () => (
+              <RNButton
+                title="Done"
+                color={Colors.lightBlue}
+                onPress={() => navigation.goBack()}
+              />
+            ),
+          })}
+        />
         <Stack.Screen
           name="SelectQuarter"
           component={SelectQuarter}
-          options={{ title: "Select Quarter" }}
+          options={({
+            navigation,
+          }: ProfileStackScreenProps<"SelectQuarter">) => ({
+            title: "Select Quarter",
+            headerRight: () => (
+              <RNButton
+                title="Cancel"
+                color={Colors.lightBlue}
+                onPress={() => navigation.goBack()}
+              />
+            ),
+          })}
+        />
+        <Stack.Screen
+          name="SelectColor"
+          component={SelectColor}
+          options={({
+            navigation,
+          }: ProfileStackScreenProps<"SelectColor">) => ({
+            title: "Select Color",
+            headerRight: () => (
+              <RNButton
+                title="Cancel"
+                color={Colors.lightBlue}
+                onPress={() => navigation.goBack()}
+              />
+            ),
+          })}
+        />
+        <Stack.Screen
+          name="AddDegree"
+          component={AddDegree}
+          options={{ title: "Add Degree" }}
+        />
+        <Stack.Screen
+          name="EditDegree"
+          component={EditDegree}
+          getId={() => new Date().getTime().toString()}
+          options={({ navigation }: ProfileStackScreenProps<"EditDegree">) => ({
+            title: "Edit Degree",
+            headerRight: () => (
+              <RNButton
+                title="Cancel"
+                color={Colors.lightBlue}
+                onPress={() => navigation.goBack()}
+              />
+            ),
+          })}
         />
       </Stack.Group>
     </Stack.Navigator>
@@ -101,9 +167,7 @@ function BottomTabNavigator() {
         options={{
           title: "Home",
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="home" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
       <BottomTab.Screen
@@ -113,6 +177,15 @@ function BottomTabNavigator() {
           title: "Search",
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="NotificationStack"
+        component={NotificationStackNavigator}
+        options={{
+          title: "Notifications",
+          headerShown: false,
+          tabBarIcon: ({ color }) => <TabBarIcon name="bell" color={color} />,
         }}
       />
       <BottomTab.Screen

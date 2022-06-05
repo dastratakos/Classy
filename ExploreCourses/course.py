@@ -1,6 +1,6 @@
 from calendar import c
 import copy
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import html
 import os
 from pprint import pprint
@@ -131,6 +131,10 @@ class Course():
         Returns:
             dictionary:  Dictionary mapping terms to Lists of sections.
         """
+        def utc_to_local(utc_dt):
+            return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None) + \
+                timedelta(hours=7)
+
         terms = {}
 
         for section in sections:
@@ -145,18 +149,19 @@ class Course():
             if startDate == "":
                 startInfo = None
             elif startTime == "":
-                startInfo = datetime.strptime(startDate, "%b %d, %Y")
+                startInfo = utc_to_local(
+                    datetime.strptime(startDate, "%b %d, %Y"))
             else:
-                startInfo = datetime.strptime(
-                    f"{startDate} {startTime}", "%b %d, %Y %I:%M:%S %p")
+                startInfo = utc_to_local(datetime.strptime(
+                    f"{startDate} {startTime}", "%b %d, %Y %I:%M:%S %p"))
 
             if endDate == "":
                 endInfo = None
             elif endTime == "":
-                endInfo = datetime.strptime(endDate, "%b %d, %Y")
+                endInfo = utc_to_local(datetime.strptime(endDate, "%b %d, %Y"))
             else:
-                endInfo = datetime.strptime(
-                    f"{endDate} {endTime}", "%b %d, %Y %I:%M:%S %p")
+                endInfo = utc_to_local(datetime.strptime(
+                    f"{endDate} {endTime}", "%b %d, %Y %I:%M:%S %p"))
 
             sec = {
                 "termId": int(section.findtext("termId")),
@@ -207,7 +212,7 @@ class Course():
                     substr += ch
                     substrings.append(substr)
             return substrings
-                    
+
         keywords = [str(courseId)]
 
         codes = [x.lower() for x in c] + \

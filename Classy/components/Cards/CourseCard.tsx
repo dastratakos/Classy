@@ -1,26 +1,49 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Text, View } from "../Themed";
 
-import Colors from "../../constants/Colors";
-import Layout from "../../constants/Layout";
-import { useNavigation } from "@react-navigation/core";
-import useColorScheme from "../../hooks/useColorScheme";
-import { Course } from "../../types";
 import AppStyles from "../../styles/AppStyles";
+import Colors from "../../constants/Colors";
+import { Course } from "../../types";
+import Layout from "../../constants/Layout";
+import useColorScheme from "../../hooks/useColorScheme";
+import { useNavigation } from "@react-navigation/core";
 
 export default function CourseCard({
   course,
-  key,
-  numFriends = 0,
-  emphasize = false,
+  rightElement,
+  onPress = () => {},
+  searchTerm,
 }: {
   course: Course;
-  key: string
-  numFriends?: number;
-  emphasize?: boolean;
+  rightElement?: JSX.Element;
+  onPress?: () => void;
+  searchTerm?: string;
 }) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+
+  let codesList: string[] = course.code;
+
+  if (searchTerm) {
+    // if no space, add in for code matching
+    if (!searchTerm.includes(" ")) {
+      const numIndex = searchTerm.search(/[^A-Za-z]/);
+      if (numIndex > 0)
+        searchTerm =
+          searchTerm.substring(0, numIndex) +
+          " " +
+          searchTerm.substring(numIndex);
+    }
+    searchTerm = searchTerm.toUpperCase();
+
+    let matchingCodes = [];
+    let otherCodes = [];
+    for (let code of course.code) {
+      if (code.startsWith(searchTerm)) matchingCodes.push(code);
+      else otherCodes.push(code);
+    }
+    codesList = [...matchingCodes, ...otherCodes];
+  }
 
   return (
     <View
@@ -31,24 +54,21 @@ export default function CourseCard({
       ]}
     >
       <TouchableOpacity
-        onPress={() => navigation.navigate("Course", { course })}
+        onPress={() => {
+          onPress();
+          navigation.navigate("Course", { course });
+        }}
         style={styles.innerContainer}
       >
         <View style={styles.textContainer}>
           <Text style={styles.cardTitle} numberOfLines={1}>
-            {course.code.join(", ")}
-            {emphasize ? " ⭐️" : null}
+            {codesList.join(", ")}
           </Text>
           <Text style={styles.cardSubtitle} numberOfLines={1}>
             {course.title}
           </Text>
         </View>
-        <View style={styles.numFriendsContainer}>
-          <Text style={styles.numberText}>{numFriends}</Text>
-          <Text style={styles.friendsText}>
-            {"friend" + (numFriends !== 1 ? "s" : "")}
-          </Text>
-        </View>
+        {rightElement}
       </TouchableOpacity>
     </View>
   );
@@ -76,15 +96,6 @@ const styles = StyleSheet.create({
   },
   cardSubtitle: {
     fontSize: Layout.text.medium,
-  },
-  numFriendsContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: Layout.photo.small,
-    width: Layout.photo.small,
-    borderRadius: Layout.radius.xsmall,
-    marginLeft: Layout.spacing.small,
-    backgroundColor: "transparent",
   },
   numberText: {
     fontSize: Layout.text.xlarge,

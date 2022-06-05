@@ -28,6 +28,8 @@ export default function Register({ route }: RegisterProps) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const [registerLoading, setRegisterLoading] = useState<boolean>(false);
+
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const context = useContext(AppContext);
@@ -40,6 +42,8 @@ export default function Register({ route }: RegisterProps) {
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
+    setRegisterLoading(true);
+
     createUserWithEmailAndPassword(auth, email, password)
       .then((response) => {
         if (auth.currentUser) sendEmailVerification(auth.currentUser);
@@ -50,19 +54,26 @@ export default function Register({ route }: RegisterProps) {
         const data = {
           id: uid,
           email,
+          degrees: [],
           interests: "",
           createdAt: Timestamp.now(),
           isPrivate: false,
-        }
+        };
         setUser(data);
 
         context.setUser({
           ...context.user,
           ...data,
         });
+
+        setRegisterLoading(true);
+
         navigation.navigate("Onboarding");
       })
-      .catch((error) => setErrorMessage(error.message));
+      .catch((error) => {
+        setRegisterLoading(true);
+        setErrorMessage(error.message);
+      });
   };
 
   const connectStreamChatUser = async (
@@ -74,12 +85,24 @@ export default function Register({ route }: RegisterProps) {
     if (name) streamChatUser.name = name;
     if (photoUrl) streamChatUser.photoUrl = photoUrl;
 
-    await context.streamClient.connectUser(
+    const user = await context.streamClient.connectUser(
       streamChatUser,
       context.streamClient.devToken(streamChatUser.id)
     );
-    console.log("User connected:");
-    console.log(streamChatUser);
+    console.log("StreamChat user connected:", user);
+
+    context.setTotalUnreadCount(user.me.total_unread_count);
+
+    context.streamClient.on((event) => {
+      if (event.total_unread_count !== undefined) {
+        console.log("Total unread count:", event.total_unread_count);
+        context.setTotalUnreadCount(user.me.total_unread_count);
+      }
+
+      if (event.unread_channels !== undefined) {
+        console.log("Unread channels:", event.unread_channels);
+      }
+    });
   };
 
   return (
@@ -90,6 +113,9 @@ export default function Register({ route }: RegisterProps) {
       ]}
     >
       <KeyboardAvoidingView style={styles.keyboardContainer} behavior="padding">
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Classy</Text>
+        </View>
         <Text style={AppStyles.errorText}>{errorMessage}</Text>
         <View style={styles.inputContainer}>
           <TextInput
@@ -148,7 +174,13 @@ export default function Register({ route }: RegisterProps) {
           />
           <View style={{ height: Layout.spacing.large }} />
 
-          <Button text="Register" onPress={createUser} emphasized wide />
+          <Button
+            text="Register"
+            onPress={createUser}
+            loading={registerLoading}
+            emphasized
+            wide
+          />
         </View>
       </KeyboardAvoidingView>
       <View
@@ -182,6 +214,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  titleContainer: {
+    marginBottom: Layout.spacing.large,
+  },
+  title: {
+    fontSize: Layout.text.xxlarge,
+    fontWeight: "500",
   },
   inputContainer: {
     width: "100%",

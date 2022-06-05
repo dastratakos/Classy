@@ -1,83 +1,138 @@
-import { Enrollment, User } from "../../types";
-import { Pressable, StyleSheet } from "react-native";
-import { Text, View } from "../Themed";
-import { componentToName, getTimeString } from "../../utils";
+import { Pressable, StyleSheet, Alert } from "react-native";
+import { ActivityIndicator, Text, View } from "../Themed";
+import { componentToName, getCurrentTermId, getTimeString } from "../../utils";
 
 import AppStyles from "../../styles/AppStyles";
 import Colors from "../../constants/Colors";
 import CourseOverviewModal from "../CourseOverviewModal";
+import {
+  CourseOverview as CourseOverviewType,
+  Enrollment,
+  User,
+} from "../../types";
 import Layout from "../../constants/Layout";
 import ProfilePhoto from "../ProfilePhoto";
-import { Timestamp } from "firebase/firestore";
 import useColorScheme from "../../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import EmptyList from "../EmptyList";
+import EnrollmentModal from "../EnrollmentModal";
+import { deleteEnrollment } from "../../services/enrollments";
+import AppContext from "../../context/Context";
+import { getFriendsInCourse } from "../../services/friends";
+import { getUser } from "../../services/users";
 
 export default function CourseOverview({
-  key,
-  enrollment,
-  friends,
-  startInfo,
-  endInfo,
-  component,
+  data,
+  refreshParent = () => {},
 }: {
-  key: string;
-  enrollment: Enrollment;
-  friends: User[];
-  startInfo: Timestamp;
-  endInfo: Timestamp;
-  component: string;
+  data: CourseOverviewType;
+  refreshParent?: () => void;
 }) {
   const navigation = useNavigation();
+  const context = useContext(AppContext);
   const colorScheme = useColorScheme();
 
   const [modalVisible, setModalVisible] = useState(false);
 
+  const [friends, setFriends] = useState<User[]>([]);
+
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const loadComponent = async () => {
+      setFriends(
+        await getFriendsInCourse(
+          context.friendIds,
+          data.enrollment.courseId,
+          getCurrentTermId()
+        )
+      );
+      setLoading(false);
+    };
+    loadComponent();
+  }, []);
+
+  const handleDeleteEnrollment = async () => {
+    setModalVisible(false);
+    await deleteEnrollment(data.enrollment);
+
+    let newEnrollments = context.enrollments.filter(
+      (enrollment: Enrollment) =>
+        enrollment.courseId !== data.enrollment.courseId ||
+        enrollment.termId !== data.enrollment.termId
+    );
+    context.setEnrollments([...newEnrollments]);
+    context.setUser(await getUser(context.user.id));
+
+    refreshParent();
+  };
+
+  const deleteEnrollmentAlert = () => {
+    Alert.alert("Delete course", `Are you sure?`, [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: handleDeleteEnrollment,
+      },
+    ]);
+  };
+
   return (
-    <View key={key}>
-      <CourseOverviewModal
-        enrollment={enrollment}
-        friends={friends}
-        startInfo={startInfo}
-        endInfo={endInfo}
-        component={component}
+    <View>
+      {/* <CourseOverviewModal
+        data={data}
         visible={modalVisible}
         setVisible={setModalVisible}
+      /> */}
+      <EnrollmentModal
+        enrollment={data.enrollment}
+        visible={modalVisible}
+        setVisible={setModalVisible}
+        editable
+        deleteFunc={deleteEnrollmentAlert}
       />
-      <View
+      <Pressable
         style={[
           styles.container,
-          { backgroundColor: Colors.pink },
+          { backgroundColor: data.enrollment.color || Colors.pink + "AA" },
         ]}
+        onPress={() => setModalVisible(true)}
       >
         <Text style={styles.code}>
-          {enrollment.code.join(", ")} {component && componentToName(component)}
+          {data.enrollment.code.join(", ")}{" "}
+          {data.component && componentToName(data.component)}
         </Text>
         <Text style={{ marginTop: Layout.spacing.xxsmall }}>
-          {/* TODO: AFRICA IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE */}
-          {getTimeString(startInfo, "Africa/Casablanca")} -{" "}
-          {getTimeString(endInfo, "America/Danmarkshavn")}
+          {getTimeString(data.startInfo)} - {getTimeString(data.endInfo)}
         </Text>
-        <Text
+        {loading ? (
+          <ActivityIndicator lightColor="transparent" darkColor="transparent" />
+        ) : (
+          <Text style={styles.classFriendsText}>
+            {`${friends.length} Class Friend${friends.length === 1 ? "" : "s"}`}
+          </Text>
+        )}
+        <View
           style={{
-            fontWeight: "bold",
-            marginTop: Layout.spacing.small,
-            alignSelf: "center",
+            backgroundColor: "transparent",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "space-between",
           }}
         >
-          Class Friends ({friends.length})
-        </Text>
-        <View
-          style={{ backgroundColor: "transparent"}}
-        >
+          {/* TODO: only show a certain num of friends, then allow for showing more */}
+          {/* Do this with friends.slice(0, num to show).map.... */}
           {friends.length > 0 &&
-            friends.slice(0, 3).map((item) => (
+            friends.map((item) => (
               <View
                 key={item.id}
                 style={[
                   styles.friendContainer,
-                  AppStyles.boxShadow,
-                  { backgroundColor: Colors[colorScheme].secondaryBackground },
+                  { backgroundColor: Colors[colorScheme].background },
                 ]}
               >
                 <Pressable
@@ -91,29 +146,27 @@ export default function CourseOverview({
                     url={item.photoUrl}
                     size={Layout.photo.xsmall}
                   />
-                  <View
-                    style={{
-                      backgroundColor: "transparent",
-                      flexGrow: 1,
-                    }}
-                  >
-                    <Text style={{ fontSize: Layout.text.large }}>
-                      {" "}
+                  <View style={styles.friendNameWrap}>
+                    <Text numberOfLines={1} style={styles.friendNameText}>
                       {item.name}
                     </Text>
                   </View>
                 </Pressable>
               </View>
             ))}
-          {friends.length === 0 && (
-            <Text
-              style={{ alignSelf: "center", marginTop: Layout.spacing.small }}
-            >
-              No friends in this class yet!
-            </Text>
-          )}
         </View>
-        {friends.length > 3 && (
+        {!loading && friends.length === 0 && (
+          <View
+            style={{
+              marginTop: Layout.spacing.small,
+              backgroundColor: "transparent",
+            }}
+          >
+            <EmptyList primaryText="No friends in this class yet!" />
+          </View>
+        )}
+        {/*TODO: allow for expanding nicely */}
+        {/* {friends.length > 3 && (
           <Pressable onPress={() => setModalVisible(true)}>
             <Text
               style={{
@@ -125,14 +178,15 @@ export default function CourseOverview({
               Show More
             </Text>
           </Pressable>
-        )}
-      </View>
+        )} */}
+      </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    ...AppStyles.boxShadow,
     paddingHorizontal: Layout.spacing.medium,
     paddingVertical: Layout.spacing.small,
     borderRadius: Layout.radius.large,
@@ -140,11 +194,12 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   friendContainer: {
+    ...AppStyles.boxShadow,
     paddingHorizontal: Layout.spacing.xsmall,
     paddingVertical: Layout.spacing.xsmall,
     borderRadius: Layout.radius.medium,
     marginVertical: Layout.spacing.xxsmall,
-    width: "100%",
+    width: "49%",
   },
   code: {
     fontSize: Layout.text.xlarge,
@@ -153,5 +208,20 @@ const styles = StyleSheet.create({
   schedText: {
     fontSize: Layout.text.medium,
     fontWeight: "500",
+  },
+  classFriendsText: {
+    fontWeight: "500",
+    marginTop: Layout.spacing.small,
+    marginBottom: Layout.spacing.xsmall,
+    alignSelf: "center",
+  },
+  friendNameWrap: {
+    backgroundColor: "transparent",
+    flexGrow: 1,
+  },
+  friendNameText: {
+    fontSize: Layout.text.medium,
+    paddingLeft: Layout.spacing.xsmall,
+    width: 100,
   },
 });

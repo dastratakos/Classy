@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
+  Pressable,
 } from "react-native";
 import { Text, View } from "../components/Themed";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -26,6 +27,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
 import { uploadImage } from "../services/storage";
 import { getChannelId } from "../services/messages";
+import DoubleProfilePhoto from "../components/DoubleProfilePhoto";
 
 export default function ChannelDetails() {
   const context = useContext(AppContext);
@@ -107,6 +109,7 @@ export default function ChannelDetails() {
           url={photoUrl}
           size={Layout.photo.xlarge}
           style={{ marginBottom: Layout.spacing.medium }}
+          withModal
         />
       );
     else if (photoUrls.length !== 2)
@@ -119,36 +122,12 @@ export default function ChannelDetails() {
       );
 
     return (
-      <View
-        style={[
-          AppStyles.row,
-          { justifyContent: "center", marginBottom: Layout.spacing.medium },
-        ]}
-      >
-        <View
-          style={{
-            height: Layout.photo.xlarge,
-            width: Layout.photo.xlarge,
-          }}
-        >
-          <ProfilePhoto
-            url={photoUrls[0]}
-            size={Layout.photo.xlarge * 0.7}
-            style={{ position: "absolute", right: 0, top: 0 }}
-          />
-          <ProfilePhoto
-            url={photoUrls[1]}
-            size={Layout.photo.xlarge * 0.7 + 2}
-            style={{
-              position: "absolute",
-              left: -2,
-              bottom: -2,
-              borderWidth: 2,
-              borderColor: Colors[colorScheme].background,
-            }}
-          />
-        </View>
-      </View>
+      <DoubleProfilePhoto
+        frontUrl={photoUrls[0]}
+        backUrl={photoUrls[1]}
+        size={Layout.photo.xlarge}
+        style={{ marginBottom: Layout.spacing.medium }}
+      />
     );
   };
 
@@ -173,7 +152,7 @@ export default function ChannelDetails() {
       if (!pickerResult.cancelled) {
         const compressedImage = await ImageManipulator.manipulateAsync(
           pickerResult.uri,
-          [{ resize: { width: 200, height: 200 } }],
+          [{ resize: { width: 750, height: 750 } }],
           { format: SaveFormat.JPEG }
         );
 
@@ -240,6 +219,10 @@ export default function ChannelDetails() {
     }
   };
 
+  const handleAddMember = () => {
+    console.log("add member pressed");
+  };
+
   return (
     <ScrollView
       style={{ backgroundColor: Colors[colorScheme].background }}
@@ -248,73 +231,102 @@ export default function ChannelDetails() {
       <View style={[AppStyles.section, { alignItems: "center" }]}>
         {members.length > 1 ? (
           <>
-            <RenderPhoto />
-            {role === "owner" ? (
-              <Button
-                text="Change group photo"
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  if (channelId) {
-                    actionSheetRef.current?.show();
-                  } else {
-                    alert(
-                      "Sorry, we are unable to change the group photo right now"
-                    );
-                  }
-                }}
-              />
-            ) : null}
-            <Separator />
-            <KeyboardAvoidingView
-              style={styles.inputContainer}
-              behavior="padding"
+            <Pressable
+              onPress={() => {
+                role === "owner" && actionSheetRef.current?.show();
+              }}
             >
-              <View
-                style={[AppStyles.row, { marginBottom: Layout.spacing.large }]}
-              >
-                <View style={styles.field}>
-                  <Text>Group name</Text>
-                </View>
-                <TextInput
-                  placeholder="Name"
-                  value={groupName}
-                  onChangeText={(text) => {
-                    setGroupName(text);
-                    setSaveDisabled(false);
-                  }}
-                  style={[styles.input, { color: Colors[colorScheme].text }]}
-                  autoCapitalize="words"
-                  textContentType="name"
-                />
-              </View>
-              <View style={AppStyles.row}>
-                <View style={{ width: "48%", backgroundColor: "transparent" }}>
-                  <Button text="Cancel" onPress={() => navigation.goBack()} />
-                </View>
-                <View style={{ width: "48%", backgroundColor: "transparent" }}>
-                  <Button
-                    text="Save Name"
-                    onPress={handleSavePress}
-                    loading={saveLoading}
-                    disabled={saveDisabled}
-                    emphasized
+              <RenderPhoto />
+            </Pressable>
+            {role === "owner" ? (
+              <>
+                <KeyboardAvoidingView
+                  style={{ alignItems: "center", width: "100%" }}
+                >
+                  <TextInput
+                    placeholder="Name"
+                    value={groupName}
+                    onChangeText={(text) => {
+                      setGroupName(text);
+                      setSaveDisabled(false);
+                    }}
+                    style={[
+                      styles.input,
+                      styles.groupName,
+                      {
+                        fontWeight: "500",
+                        color: Colors[colorScheme].text,
+                        borderColor: Colors[colorScheme].photoBackground,
+                      },
+                    ]}
+                    autoCapitalize="words"
+                    textContentType="name"
                   />
+                </KeyboardAvoidingView>
+                <View
+                  style={[AppStyles.row, { marginTop: Layout.spacing.medium }]}
+                >
+                  <View
+                    style={{ width: "48%", backgroundColor: "transparent" }}
+                  >
+                    <Button text="Cancel" onPress={() => navigation.goBack()} />
+                  </View>
+                  <View
+                    style={{ width: "48%", backgroundColor: "transparent" }}
+                  >
+                    <Button
+                      text="Save Name"
+                      onPress={handleSavePress}
+                      loading={saveLoading}
+                      disabled={saveDisabled}
+                      emphasized
+                    />
+                  </View>
                 </View>
-              </View>
-            </KeyboardAvoidingView>
-            <Separator />
+              </>
+            ) : (
+              <Text style={[styles.groupName, { fontWeight: "500" }]}>
+                {groupName}
+              </Text>
+            )}
+
+            <Separator
+              overrideStyles={{
+                width: "100%",
+                marginTop: Layout.spacing.large,
+              }}
+            />
           </>
         ) : null}
-        <Text style={styles.title}>Members</Text>
+        <View style={styles.innerContainer}>
+          <Text style={[styles.title, { flex: 1 }]}>Members</Text>
+          {/* {role === "owner" && (
+            <Pressable onPress={handleAddMember}>
+              <Ionicons name="person-add" size={Layout.icon.medium} />
+            </Pressable>
+          )} */}
+        </View>
         {/* TODO: use FlatList */}
         {members.map((member) => {
           return (
             <FriendCard
               friend={{
                 ...member.user,
-                major: members.length > 1 ? member.role : null,
+                degrees:
+                  members.length > 1
+                    ? [{ degree: "", major: member.role }]
+                    : null,
                 photoUrl: member.user.image,
               }}
+              // rightElement={
+              //   role === "owner" ? (
+              //     <Pressable onPress={() => console.log("Remove member")}>
+              //       <Ionicons name="close" size={Layout.icon.medium} />
+              //     </Pressable>
+              //   ) : (
+              //     <></>
+              //   )
+              // }
               key={member.user.id}
             />
           );
@@ -339,21 +351,31 @@ export default function ChannelDetails() {
 }
 
 const styles = StyleSheet.create({
+  groupName: {
+    fontSize: Layout.text.xlarge,
+    fontWeight: "500",
+  },
+  innerContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
   title: {
     fontSize: Layout.text.large,
     fontWeight: "500",
-    marginTop: Layout.spacing.small,
-    marginBottom: Layout.spacing.medium,
+    marginVertical: Layout.spacing.xsmall,
   },
   inputContainer: {
     width: "100%",
   },
   field: {
-    width: "40%",
-    paddingRight: Layout.spacing.large,
+    width: "50%",
   },
   input: {
     paddingVertical: Layout.spacing.xsmall,
-    width: "60%",
+    width: "50%",
+    paddingHorizontal: Layout.spacing.small,
+    borderBottomWidth: 0.5,
+    textAlign: "center",
   },
 });

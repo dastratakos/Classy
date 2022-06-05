@@ -1,4 +1,5 @@
 from pprint import pprint
+import random
 from unicodedata import name
 
 import firebase_admin
@@ -18,8 +19,8 @@ class FirestoreConnection:
         self.db = firestore.client()
 
     def read_data(self, collection="users"):
-        users_ref = self.db.collection(f"{collection}").limit(3)
-        docs = users_ref.stream()
+        collection_ref = self.db.collection(f"{collection}").limit(3)
+        docs = collection_ref.stream()
 
         for doc in docs:
             print(f"{doc.id} => {doc.to_dict()}")
@@ -118,7 +119,7 @@ class FirestoreConnection:
 
     def add_terms(self, all_courses):
         i = 0
-        for course in tqdm(reversed(all_courses.values())):
+        for course in tqdm(all_courses.values()):
             course_ref = self.db.collection(u"courses").document(
                 f"{course.courseId}")
 
@@ -126,16 +127,11 @@ class FirestoreConnection:
                 if i % 250 == 0:
                     batch = self.db.batch()
 
-                # if i % 100 == 0 or i % 100 == 99:
-                #     print(f"i = {i}")
-
-                term_data = {
-                    "schedules": terms
-                }
+                term_data = {"schedules": terms}
 
                 term_ref = course_ref.collection(
                     u"terms").document(f"{termId}")
-                batch.set(term_ref, term_data)
+                batch.update(term_ref, term_data)
 
                 if i % 250 == 249:
                     batch.commit()
@@ -144,6 +140,51 @@ class FirestoreConnection:
 
         print(f"processed {i} terms")
         batch.commit()
+
+    def adjust_enrollment_times(self, all_courses):
+        collection_ref = self.db.collection(u"enrollments")
+        docs = collection_ref.stream()
+
+        for doc in docs:
+            print(f"doc.id: {doc.id}")
+
+            enrollment = doc.to_dict()
+            courseId = int(enrollment["courseId"])
+
+            new_schedules = []
+
+            for schedule in enrollment["schedules"]:
+                termId = int(schedule["termId"])
+                sectionNumber = schedule["sectionNumber"]
+
+                # print(f"termId: {termId}")
+                # print(f"sectionNumber: {sectionNumber}")
+
+                if courseId not in all_courses:
+                    print(f"ERROR: could not find courseId {courseId}")
+                gold_course = all_courses[courseId]
+
+                if termId not in gold_course.terms:
+                    print(
+                        f"ERROR: could not find termId {termId} for courseId {courseId}")
+
+                found_schedule = False
+                for gold_schedule in gold_course.terms[termId]:
+                    if sectionNumber == gold_schedule["sectionNumber"]:
+                        # print(f"gold_schedule: {gold_schedule}")
+                        found_schedule = True
+                        new_schedules.append(gold_schedule)
+                        break
+
+                if not found_schedule:
+                    print(
+                        f"ERROR: could not find sectionNumber {sectionNumber} for termId {termId} for courseId {courseId}")
+
+            # print(f"new_schedules = {new_schedules}")
+
+            enrollment_ref = self.db.collection(
+                u"enrollments").document(f"{doc.id}")
+            enrollment_ref.update({"schedules": new_schedules})
 
     def search(self, search, collection="courses"):
         coll_ref = self.db.collection(f"{collection}")
@@ -181,3 +222,33 @@ class FirestoreConnection:
 
             user_ref = self.db.collection(u"users").document(f"{id}")
             user_ref.update(data)
+
+    def add_enrollment_colors(self):
+        colors = [
+            "#C3291C" + "AA",
+            "#E25D33" + "AA",
+            "#FF7F0A" + "AA",
+            "#EDC14B" + "AA",
+            "#FFA098" + "AA",
+            "#D88177" + "AA",
+            "#397E49" + "AA",
+            "#5DB37E" + "AA",
+            "#4599DF" + "AA",
+            "#4350AF" + "AA",
+            "#832DA4" + "AA",
+            "#616161" + "AA",
+        ]
+
+        enrollments_ref = self.db.collection(u"enrollments")
+        docs = enrollments_ref.stream()
+
+        for doc in docs:
+            id = doc.id
+
+            data = {
+                u"color": random.choice(colors),
+            }
+
+            enrollment_ref = self.db.collection(
+                u"enrollments").document(f"{id}")
+            enrollment_ref.update(data)

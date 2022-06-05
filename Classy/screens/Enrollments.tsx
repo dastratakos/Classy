@@ -1,34 +1,50 @@
+import { ActivityIndicator, Text, View } from "../components/Themed";
+import { Enrollment, EnrollmentsProps } from "../types";
 import { ScrollView, StyleSheet } from "react-native";
-import { Text, View } from "../components/Themed";
+import { termIdToFullName, termIdToQuarterName } from "../utils";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
 import Colors from "../constants/Colors";
-import { Enrollment, EnrollmentsProps, User } from "../types";
+import EmptyList from "../components/EmptyList";
+import EnrollmentList from "../components/Lists/EnrollmentList";
 import Layout from "../constants/Layout";
-import { termIdToFullName } from "../utils";
+import SVGAutumn from "../assets/images/undraw/autumn.svg";
+import SVGNoCourses from "../assets/images/undraw/noCourses.svg";
+import SVGSpring from "../assets/images/undraw/spring.svg";
+import SVGSummer from "../assets/images/undraw/summer.svg";
+import SVGWinter from "../assets/images/undraw/winter.svg";
+import { getNumFriendsInCourse } from "../services/friends";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { getEnrollmentsForTerm } from "../services/enrollments";
-import EnrollmentList from "../components/Lists/EnrollmentList";
 
 export default function Enrollments({ route }: EnrollmentsProps) {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
-
-  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-
   const context = useContext(AppContext);
 
-  const myEnrollment = context.user.id == route.params.userId;
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const quarterName = termIdToQuarterName(route.params.termId);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const loadScreen = async () => {
-      setEnrollments(
-        await getEnrollmentsForTerm(route.params.userId, route.params.termId)
-      );
+      let enrollments = route.params.enrollments;
+      for (let i = 0; i < enrollments.length; i++) {
+        const enrollment = enrollments[i];
+        if (enrollment.numFriends !== -1) continue;
+
+        enrollments[i].numFriends = await getNumFriendsInCourse(
+          enrollment.courseId,
+          context.friendIds,
+          route.params.termId
+        );
+      }
+      setEnrollments(enrollments);
+
+      setLoading(false);
     };
     loadScreen();
   }, []);
@@ -37,13 +53,44 @@ export default function Enrollments({ route }: EnrollmentsProps) {
     <>
       <ScrollView
         style={{ backgroundColor: Colors[colorScheme].background }}
-        contentContainerStyle={{ alignItems: "center" }}
+        contentContainerStyle={{
+          alignItems: "center",
+          paddingBottom: Layout.buttonHeight.medium + Layout.spacing.medium,
+        }}
       >
         <Text style={styles.title}>
           {termIdToFullName(route.params.termId)}
         </Text>
         <View style={AppStyles.section}>
-          <EnrollmentList enrollments={enrollments} emptyPrimary="No courses" emptySecondary={myEnrollment ? "Add some from the search tab, or explore your friends' courses!" : ""}/>
+          {loading ? (
+            <ActivityIndicator />
+          ) : (
+            <EnrollmentList
+              enrollments={enrollments}
+              checkMutual={context.user.id !== route.params.userId}
+              emptyElement={
+                <EmptyList
+                  SVGElement={
+                    quarterName === "Aut"
+                      ? SVGAutumn
+                      : quarterName === "Win"
+                      ? SVGWinter
+                      : quarterName === "Spr"
+                      ? SVGSpring
+                      : quarterName === "Sum"
+                      ? SVGSummer
+                      : SVGNoCourses
+                  }
+                  primaryText="No courses this quarter"
+                  secondaryText={
+                    context.user.id == route.params.userId
+                      ? "Add some from the search tab, or explore your friends' courses!"
+                      : ""
+                  }
+                />
+              }
+            />
+          )}
         </View>
       </ScrollView>
       <View style={styles.ctaContainer}>

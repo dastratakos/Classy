@@ -1,4 +1,4 @@
-import { Course, Enrollment, Schedule } from "../types";
+import { Course, Enrollment, Schedule, User } from "../types";
 import {
   addDoc,
   collection,
@@ -8,28 +8,13 @@ import {
   increment,
   orderBy,
   query,
+  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
-import { termIdToYear } from "../utils";
-
-export const getEnrollmentsForTerm = async (userId: string, termId: string) => {
-  const q = query(
-    collection(db, "enrollments"),
-    where("userId", "==", userId),
-    where("termId", "==", termId),
-    orderBy("code")
-  );
-
-  const res: Enrollment[] = [];
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((doc) => {
-    res.push({ ...doc.data(), docId: doc.id } as Enrollment);
-  });
-  return res;
-};
+import { getAdjustedDate, termIdToYear } from "../utils";
 
 export const getEnrollments = async (userId: string) => {
   const q = query(
@@ -41,29 +26,33 @@ export const getEnrollments = async (userId: string) => {
   const res: Enrollment[] = [];
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    res.push({ ...doc.data(), docId: doc.id } as Enrollment);
+    const data: Enrollment = doc.data() as Enrollment;
+
+    let schedules = [];
+    for (let i = 0; i < data.schedules.length; i++) {
+      const schedule = data.schedules[i];
+      if (schedule.startInfo)
+        schedule.startInfo = Timestamp.fromDate(
+          getAdjustedDate(schedule.startInfo.toDate())
+        );
+      if (schedule.endInfo)
+        schedule.endInfo = Timestamp.fromDate(
+          getAdjustedDate(schedule.endInfo.toDate())
+        );
+      schedules.push(schedule);
+    }
+
+    let enrollment: Enrollment = {
+      ...data,
+      schedules,
+      docId: doc.id,
+      numFriends: -1,
+    };
+
+    res.push(enrollment);
   });
+
   return res;
-};
-
-export const getOverlap = async (userId: string, friendId: string) => {
-  const userEnrollments = await getEnrollments(userId);
-  const friendEnrollments = await getEnrollments(friendId);
-
-  const friendEnrollmentIds = new Set<number>();
-  friendEnrollments.forEach((enrollment) =>
-    friendEnrollmentIds.add(enrollment.courseId)
-  );
-
-  const overlap = userEnrollments.filter((enrollment) =>
-    friendEnrollmentIds.has(enrollment.courseId)
-  );
-
-  let courseSimilarity = 0;
-  if (userEnrollments.length)
-    courseSimilarity = (100 * overlap.length) / userEnrollments.length;
-
-  return { courseSimilarity, overlap };
 };
 
 export const addEnrollment = async (
@@ -72,7 +61,8 @@ export const addEnrollment = async (
   schedules: Schedule[],
   termId: string,
   units: number,
-  userId: string
+  color: string,
+  user: User
 ) => {
   /* 1. Create doc in enrollments collection. */
   const data = {
@@ -83,31 +73,46 @@ export const addEnrollment = async (
     termId,
     title: course.title,
     units,
-    userId,
+    color,
+    userId: user.id,
   };
 
-  await addDoc(collection(db, "enrollments"), data);
+  const enrollmentRef = await addDoc(collection(db, "enrollments"), data);
 
   /* 2. Update number of units in user doc in users collection. */
-  const year = termIdToYear(termId);
-  const termKey = `terms.${year}.${termId}`;
-  let userData = {};
-  userData[termKey] = increment(units);
+  const yearKey = termIdToYear(termId);
+  // console.log("yearKey:", yearKey);
 
-  await updateDoc(doc(db, "users", userId), userData);
+  let newTerms = user.terms;
 
-  /* 3. Updates students list for that term in courses collection. */
-  const studentsKey = `students.${userId}`;
+  if (yearKey in newTerms) {
+    if (termId in newTerms[yearKey]) newTerms[yearKey][termId] += units;
+    else newTerms[yearKey][termId] = units;
+  } else {
+    newTerms[yearKey] = {};
+    for (let quarter of ["2", "4", "6", "8"]) {
+      const termIdKey = termId.substring(0, 3) + quarter;
+      newTerms[yearKey][termIdKey] = termIdKey === termId ? units : 0;
+    }
+  }
+
+  await updateDoc(doc(db, "users", user.id), { terms: newTerms });
+
+  /* 3. Update students list for that term in courses collection. */
+  const studentsKey = `students.${user.id}`;
   let courseData = {};
   courseData[studentsKey] = true;
   await updateDoc(
     doc(doc(db, "courses", `${course.courseId}`), "terms", termId),
     courseData
   );
+
+  return enrollmentRef.id;
 };
 
 export const updateEnrollment = async (
   oldEnrollment: Enrollment,
+  color: string,
   grading: string,
   schedules: Schedule[],
   termId: string,
@@ -116,6 +121,7 @@ export const updateEnrollment = async (
 ) => {
   /* 1. Update doc in enrollments collection. */
   const data = {
+    color,
     grading,
     schedules,
     termId,
@@ -133,8 +139,12 @@ export const updateEnrollment = async (
   const termKey = `terms.${year}.${termId}`;
 
   let userData = {};
-  userData[oldTermKey] = increment(-oldEnrollment.units);
-  userData[termKey] = increment(units);
+  if (oldTermKey === termKey) {
+    userData[termKey] = increment(units - oldEnrollment.units);
+  } else {
+    userData[oldTermKey] = increment(-oldEnrollment.units);
+    userData[termKey] = increment(units);
+  }
 
   await updateDoc(doc(db, "users", userId), userData);
 

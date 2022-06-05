@@ -1,6 +1,8 @@
+import * as Haptics from "expo-haptics";
 import * as Notifications from "expo-notifications";
 
-import { Icon, Icon2, Text, View } from "../components/Themed";
+import { Degree, Enrollment, WeekSchedule } from "../types";
+import { FontAwesome, SimpleLineIcons, Text, View } from "../components/Themed";
 import {
   Platform,
   Pressable,
@@ -13,6 +15,8 @@ import {
   getCurrentTermId,
   getWeekFromEnrollments,
   termIdToFullName,
+  termIdToQuarterName,
+  timeIsEarlier,
 } from "../utils";
 import { getUser, updateUser } from "../services/users";
 import { useContext, useEffect, useState } from "react";
@@ -20,61 +24,47 @@ import { useContext, useEffect, useState } from "react";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
-import Calendar from "../components/Calendar";
+import Calendar from "../components/Calendar/Calendar";
 import Colors from "../constants/Colors";
 import Constants from "expo-constants";
-import { Enrollment, WeekSchedule } from "../types";
+import EmptyList from "../components/EmptyList";
 import EnrollmentList from "../components/Lists/EnrollmentList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
+import SVGAutumn from "../assets/images/undraw/autumn.svg";
+import SVGNoCourses from "../assets/images/undraw/noCourses.svg";
+import SVGSpring from "../assets/images/undraw/spring.svg";
+import SVGSummer from "../assets/images/undraw/summer.svg";
+import SVGWinter from "../assets/images/undraw/winter.svg";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
 import TabView from "../components/TabView";
 import { Timestamp } from "firebase/firestore";
 import { auth } from "../firebase";
-import { getEnrollmentsForTerm } from "../services/enrollments";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { getFriendIds, getRequestIds } from "../services/friends";
 
 export default function Profile() {
   const context = useContext(AppContext);
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
-  const [numFriends, setNumFriends] = useState<string>("");
-  const [numRequests, setNumRequests] = useState<number>(0);
-  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-  const [week, setWeek] = useState<WeekSchedule>([]);
+  const quarterName = termIdToQuarterName(getCurrentTermId());
+
+  const [weekRes, setWeekRes] = useState<{
+    week: WeekSchedule;
+    startCalendarHour: number;
+    endCalendarHour: number;
+  }>({ week: [], startCalendarHour: 8, endCalendarHour: 6 });
   const [refreshing, setRefreshing] = useState<boolean>(true);
+
   const [showEmailVerification, setShowEmailVerification] = useState<boolean>(
     !auth.currentUser?.emailVerified
   );
   const [inClass, setInClass] = useState(false);
 
   useEffect(() => {
-    const loadScreen = async () => {
-      // if (!context.user && auth.currentUser) getUser(auth.currentUser.uid);
-      if (auth.currentUser) {
-        const user = await getUser(auth.currentUser.uid);
-        context.setUser({ ...context.user, ...user });
-        getFriendIds(context.user.id).then((res) =>
-          setNumFriends(`${res.length}`)
-        );
-
-        getRequestIds(context.user.id).then((res) =>
-          setNumRequests(res.length)
-        );
-
-        const res = await getEnrollmentsForTerm(
-          context.user.id,
-          getCurrentTermId()
-        );
-        setEnrollments(res);
-        setWeek(getWeekFromEnrollments(res));
-      }
-    };
-    loadScreen();
+    onRefresh();
 
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) setShowEmailVerification(!user.emailVerified);
@@ -88,58 +78,43 @@ export default function Profile() {
   useEffect(() => {
     const interval = setInterval(checkInClass, 1000);
     return () => clearInterval(interval);
-  }, [week]);
+  }, [weekRes]);
 
   const onRefresh = async () => {
     setRefreshing(true);
 
-    const user = await getUser(context.user.id);
-    context.setUser({ ...context.user, ...user });
-    getFriendIds(context.user.id).then((res) => {
-      setNumFriends(`${res.length}`);
-    });
-
-    getRequestIds(context.user.id).then((res) => setNumRequests(res.length));
-
-    const res = await getEnrollmentsForTerm(
-      context.user.id,
-      getCurrentTermId()
+    context.setUser(await getUser(context.user.id));
+    setWeekRes(
+      getWeekFromEnrollments(
+        context.enrollments.filter(
+          (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
+        )
+      )
     );
-    setEnrollments(res);
-    setWeek(getWeekFromEnrollments(res));
 
     if (auth.currentUser)
       setShowEmailVerification(!auth.currentUser.emailVerified);
     console.log("emailVerified:", auth.currentUser?.emailVerified);
 
-    checkInClass();
-
     setRefreshing(false);
   };
 
   const checkInClass = () => {
-    const now = Timestamp.now().toDate();
-    const today = now.getDay() - 1;
+    const now = Timestamp.now();
+    const today = now.toDate().getDay() - 1;
 
-    if (!week[today]) {
+    if (!weekRes.week[today]) {
       setInClass(false);
       return;
     }
 
-    for (let event of week[today].events) {
-      const startInfo = event.startInfo.toDate();
-      var startTime = new Date();
-      // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
-      startTime.setHours(startInfo.getHours() + 7);
-      startTime.setMinutes(startInfo.getMinutes());
-
-      const endInfo = event.endInfo.toDate();
-      var endTime = new Date();
-      // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
-      endTime.setHours(endInfo.getHours() + 7);
-      endTime.setMinutes(endInfo.getMinutes());
-
-      if (startTime <= now && endTime >= now) {
+    for (let event of weekRes.week[today].events) {
+      if (!event.startInfo) continue;
+      if (!event.endInfo) continue;
+      if (
+        timeIsEarlier(event.startInfo, now) &&
+        timeIsEarlier(now, event.endInfo)
+      ) {
         setInClass(true);
         return;
       }
@@ -172,7 +147,7 @@ export default function Profile() {
               },
             ]}
           >
-            <Icon name="close" size={Layout.icon.small} />
+            <FontAwesome name="close" size={Layout.icon.small} />
           </Pressable>
         </View>
         <Separator />
@@ -181,12 +156,13 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((expoPushToken) => {
-      if (expoPushToken) {
-        context.setUser({ ...context.user, expoPushToken });
-        updateUser(context.user.id, { expoPushToken });
-      }
-    });
+    if (!context.user.expoPushToken)
+      registerForPushNotificationsAsync().then((expoPushToken) => {
+        if (expoPushToken) {
+          context.setUser({ ...context.user, expoPushToken });
+          updateUser(context.user.id, { expoPushToken });
+        }
+      });
   }, []);
 
   const registerForPushNotificationsAsync = async () => {
@@ -224,11 +200,61 @@ export default function Profile() {
   const tabs = [
     {
       label: "Calendar",
-      component: <Calendar week={week} />,
+      component: (
+        <Calendar
+          week={
+            getWeekFromEnrollments(
+              context.enrollments.filter(
+                (enrollment: Enrollment) =>
+                  enrollment.termId === getCurrentTermId()
+              )
+            ).week
+          }
+          startCalendarHour={
+            getWeekFromEnrollments(
+              context.enrollments.filter(
+                (enrollment: Enrollment) =>
+                  enrollment.termId === getCurrentTermId()
+              )
+            ).startCalendarHour
+          }
+          endCalendarHour={
+            getWeekFromEnrollments(
+              context.enrollments.filter(
+                (enrollment: Enrollment) =>
+                  enrollment.termId === getCurrentTermId()
+              )
+            ).endCalendarHour
+          }
+        />
+      ),
     },
     {
       label: "Courses",
-      component: <EnrollmentList enrollments={enrollments} emptyPrimary="No courses" emptySecondary="Add some from the search tab, or explore your friends' courses!" />,
+      component: (
+        <EnrollmentList
+          enrollments={context.enrollments.filter(
+            (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
+          )}
+          emptyElement={
+            <EmptyList
+              SVGElement={
+                quarterName === "Aut"
+                  ? SVGAutumn
+                  : quarterName === "Win"
+                  ? SVGWinter
+                  : quarterName === "Spr"
+                  ? SVGSpring
+                  : quarterName === "Sum"
+                  ? SVGSummer
+                  : SVGNoCourses
+              }
+              primaryText="No courses this quarter"
+              secondaryText="Add some from the search tab, or explore your friends' courses!"
+            />
+          }
+        />
+      ),
     },
   ];
 
@@ -244,59 +270,62 @@ export default function Profile() {
       {/* {showEmailVerification && showSendVerificationEmail()} */}
       <View style={AppStyles.section}>
         <View style={AppStyles.row}>
-          <View style={[AppStyles.row, { flex: 1 }]}>
-            <ProfilePhoto
-              url={context.user.photoUrl}
-              size={Layout.photo.large}
-              style={{ marginRight: Layout.spacing.large }}
-            />
-            <View style={{ flexGrow: 1 }}>
-              <Text style={styles.name}>{context.user.name}</Text>
+          <ProfilePhoto
+            url={context.user.photoUrl}
+            size={Layout.photo.large}
+            style={{ marginRight: Layout.spacing.large }}
+            withModal
+          />
+          <View style={{ width: "100%", flexShrink: 1 }}>
+            <Text style={styles.name}>{context.user.name}</Text>
+            <View
+              style={[AppStyles.row, { marginVertical: Layout.spacing.xsmall }]}
+            >
               <View
                 style={[
-                  AppStyles.row,
-                  { marginVertical: Layout.spacing.xsmall },
+                  styles.status,
+                  inClass ? styles.inClass : styles.notInClass,
+                ]}
+              />
+              <Text
+                style={[
+                  styles.statusText,
+                  { color: Colors[colorScheme].secondaryText },
                 ]}
               >
-                <View
-                  style={[
-                    styles.status,
-                    inClass ? styles.inClass : styles.notInClass,
-                  ]}
-                />
-                <Text
-                  style={[
-                    styles.statusText,
-                    { color: Colors[colorScheme].secondaryText },
-                  ]}
-                >
-                  {inClass ? "In class" : "Not in class"}
-                </Text>
-              </View>
-              <Button
-                text="Edit Profile"
-                onPress={() => navigation.navigate("Settings")}
-                wide
-              />
+                {inClass ? "In class" : "Not in class"}
+              </Text>
             </View>
+            <Button
+              text="Edit Profile"
+              onPress={() => navigation.navigate("Settings")}
+              wide
+            />
           </View>
         </View>
         <View style={[AppStyles.row, { marginVertical: 15 }]}>
           <View style={{ flex: 1, marginRight: Layout.spacing.small }}>
-            {/* Major */}
-            {context.user.major ? (
-              <View style={AppStyles.row}>
+            {/* Degrees */}
+            {context.user.degrees ? (
+              <View style={[AppStyles.row, { justifyContent: "center" }]}>
                 <View style={styles.iconWrapper}>
-                  <Icon2 name="pencil" size={Layout.icon.small} />
+                  <SimpleLineIcons name="pencil" size={Layout.icon.small} />
                 </View>
-                <Text style={styles.aboutText}>{context.user.major}</Text>
+                <View style={styles.aboutText}>
+                  {context.user.degrees.map((d: Degree, i: number) => (
+                    <Text style={styles.aboutText} key={i}>
+                      {d.major}
+                      {d.degree ? ` (${d.degree})` : ""}
+                    </Text>
+                  ))}
+                </View>
               </View>
             ) : null}
             {/* Graduation Year */}
             {context.user.gradYear ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon2 name="graduation" size={Layout.icon.small} />
+                  <SimpleLineIcons name="graduation" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{context.user.gradYear}</Text>
               </View>
@@ -305,18 +334,23 @@ export default function Profile() {
             {context.user.interests ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon2 name="puzzle" size={Layout.icon.small} />
+                  <SimpleLineIcons name="puzzle" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{context.user.interests}</Text>
               </View>
             ) : null}
           </View>
           <SquareButton
-            num={`${numFriends}`}
-            text={"friend" + (numFriends === "1" ? "" : "s")}
+            num={`${context.friendIds.length}`}
+            text={"friend" + (context.friendIds.length === 1 ? "" : "s")}
             size={Layout.buttonHeight.large}
-            onPress={() => navigation.navigate("MyFriends")}
-            indicator={numRequests > 0}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              navigation.navigate("Friends", {
+                id: context.user.id,
+                friendIds: context.friendIds,
+              });
+            }}
           />
         </View>
         <View style={[AppStyles.row]}>
@@ -326,14 +360,21 @@ export default function Profile() {
           <Button
             text="View All Quarters"
             onPress={() =>
-              navigation.navigate("Quarters", { user: context.user })
+              navigation.navigate("Quarters", {
+                user: context.user,
+                enrollments: context.enrollments,
+              })
             }
           />
         </View>
       </View>
       <Separator />
       <View style={AppStyles.section}>
-        <TabView tabs={tabs} selectedStyle={{ backgroundColor: Colors.pink }} />
+        <TabView
+          tabs={tabs}
+          selectedStyle={{ backgroundColor: Colors.pink }}
+          initialSelectedId={0}
+        />
       </View>
     </ScrollView>
   );

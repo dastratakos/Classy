@@ -1,18 +1,15 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { ActivityIndicator, Text, View } from "../Themed";
+import { Text, View } from "../Themed";
 
-import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
-import useColorScheme from "../../hooks/useColorScheme";
 import AppStyles from "../../styles/AppStyles";
 
 export default function QuarterButton({
   num,
   text,
   onPress,
-  disabled = false,
-  loading = false,
-  emphasized = false,
+  color,
+  textColor,
 }: {
   num: string;
   text: string;
@@ -20,76 +17,16 @@ export default function QuarterButton({
   disabled?: boolean;
   loading?: boolean;
   emphasized?: boolean;
+  color?: Object;
+  textColor?: Object;
 }) {
-  const colorScheme = useColorScheme();
-
-  if (disabled)
-    return (
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: Colors[colorScheme].tertiaryBackground },
-        ]}
-      >
-        <Text style={styles.text}>{text}</Text>
-        <View
-          style={[styles.unitContainer, { backgroundColor: "transparent" }]}
-        >
-          <Text style={styles.number}>{num}</Text>
-          <Text style={styles.unitsText}>Units</Text>
-        </View>
-      </View>
-    );
-
-  if (loading)
-    return (
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: Colors[colorScheme].secondaryBackground },
-        ]}
-      >
-        <ActivityIndicator />
-      </View>
-    );
-
-  if (emphasized)
-    return (
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: Colors[colorScheme].tint },
-        ]}
-      >
-        <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
-          <Text
-            style={[styles.text, { color: Colors[colorScheme].background }]}
-          >
-            {text}
-          </Text>
-          <View
-            style={[styles.unitContainer, { backgroundColor: "transparent" }]}
-          >
-            <Text
-              style={[styles.number, { color: Colors[colorScheme].background }]}
-            >
-              {num}
-            </Text>
-            <Text style={styles.unitsText}>Units</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
-
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, color]}>
       <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
-        <Text style={styles.text}>{text}</Text>
-        <View
-          style={[styles.unitContainer, { backgroundColor: "transparent" }]}
-        >
-          <Text style={styles.number}>{num}</Text>
-          <Text style={styles.unitsText}>Units</Text>
+        <Text style={[styles.text, textColor]}>{text}</Text>
+        <View style={styles.unitContainer}>
+          <Text style={[styles.number, textColor]}>{num}</Text>
+          <Text style={[styles.unitsText, textColor]}>Units</Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -105,7 +42,7 @@ const styles = StyleSheet.create({
   innerContainer: {
     width: "100%",
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     borderRadius: Layout.radius.medium,
     justifyContent: "space-around",
     alignItems: "center",
@@ -115,6 +52,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    backgroundColor: "transparent",
   },
   number: {
     fontSize: Layout.text.xlarge,
@@ -123,6 +61,6 @@ const styles = StyleSheet.create({
     fontSize: Layout.text.small,
   },
   text: {
-    fontSize: Layout.text.large,
+    fontSize: Layout.text.medium,
   },
 });

@@ -14,6 +14,8 @@ import {
 
 import { FavoritedCourse } from "../types";
 import { db } from "../firebase";
+import { getFriendIds, getNumFriendsInCourse } from "./friends";
+import { getCurrentTermId } from "../utils";
 
 export const getCourse = async (courseId: number) => {
   const q = query(collection(db, "courses"), where("courseId", "==", courseId));
@@ -26,25 +28,32 @@ export const getCourse = async (courseId: number) => {
   return res;
 };
 
-export const searchCourses = async (search: string) => {
+export const searchCourses = async (search: string, maxLimit: number = 3) => {
   if (search === "") return [];
 
   const q = query(
     collection(db, "courses"),
     where("keywords", "array-contains", search.toLowerCase().trim()),
     orderBy("code"),
-    limit(3)
+    limit(maxLimit)
   );
 
-  const res: Course[] = [];
+  const courses: Course[] = [];
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    res.push(doc.data() as Course);
+    courses.push(doc.data() as Course);
   });
-  return res;
+
+  const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+  return { courses, lastVisible };
 };
 
-export const searchMoreCourses = async (search: string, lastCourse: Course) => {
+export const searchMoreCourses = async (
+  search: string,
+  lastCourse: Course,
+  maxLimit: number = 10
+) => {
   if (search === "") return [];
 
   const q = query(
@@ -52,15 +61,19 @@ export const searchMoreCourses = async (search: string, lastCourse: Course) => {
     where("keywords", "array-contains", search.toLowerCase().trim()),
     orderBy("code"),
     startAfter(lastCourse),
-    limit(3)
+    limit(maxLimit)
   );
 
-  const res: Course[] = [];
+  const courses: Course[] = [];
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    res.push(doc.data() as Course);
+    courses.push(doc.data() as Course);
   });
-  return res;
+  console.log("In searchMoreCourses, courses.length =", courses.length);
+
+  const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+  return { courses, lastVisible };
 };
 
 export const getCourseTerms = async (courseId: number) => {
@@ -120,6 +133,21 @@ export const getFavorites = async (userId: string) => {
   querySnapshot.forEach((doc) => {
     res.push(doc.data() as FavoritedCourse);
   });
+
+  /**
+   * Collect number of friends per favorite.
+   * NOTE: since the user has not specified a term, it will get the number
+   * of friends for the current term.
+   */
+  const friendIds = await getFriendIds(userId);
+  for (let i = 0; i < res.length; i++) {
+    res[i].numFriends = await getNumFriendsInCourse(
+      res[i].courseId,
+      friendIds,
+      getCurrentTermId()
+    );
+  }
+
   return res;
 };
 

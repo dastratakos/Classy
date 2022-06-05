@@ -14,7 +14,6 @@ export default function SquareButton({
   disabled = false,
   loading = false,
   emphasized = false,
-  indicator = false,
 }: {
   num?: string;
   text?: string;
@@ -23,7 +22,6 @@ export default function SquareButton({
   disabled?: boolean;
   loading?: boolean;
   emphasized?: boolean;
-  indicator?: boolean;
 }) {
   const colorScheme = useColorScheme();
 
@@ -41,7 +39,6 @@ export default function SquareButton({
       >
         <Text style={styles.number}>{num}</Text>
         <Text style={styles.text}>{text}</Text>
-        {indicator && <View style={styles.indicator} />}
       </View>
     );
 
@@ -58,7 +55,6 @@ export default function SquareButton({
         ]}
       >
         <ActivityIndicator />
-        {indicator && <View style={styles.indicator} />}
       </View>
     );
 
@@ -90,7 +86,6 @@ export default function SquareButton({
             </Text>
           ) : null}
         </TouchableOpacity>
-        {indicator && <View style={styles.indicator} />}
       </View>
     );
 
@@ -109,7 +104,6 @@ export default function SquareButton({
         {num && num !== "" ? <Text style={styles.number}>{num}</Text> : null}
         {text && text !== "" ? <Text style={styles.text}>{text}</Text> : null}
       </TouchableOpacity>
-      {indicator && <View style={styles.indicator} />}
     </View>
   );
 }
@@ -132,14 +126,5 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: Layout.text.medium,
-  },
-  indicator: {
-    height: 15,
-    width: 15,
-    borderRadius: 15 / 2,
-    backgroundColor: Colors.pink,
-    position: "absolute",
-    top: -3,
-    right: -3,
   },
 });

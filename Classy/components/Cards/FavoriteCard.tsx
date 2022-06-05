@@ -11,13 +11,9 @@ import { getCourse } from "../../services/courses";
 
 export default function FavoriteCard({
   favorite,
-  key,
-  numFriends = 0,
   emphasize = false,
 }: {
   favorite: FavoritedCourse;
-  key: string;
-  numFriends?: number;
   emphasize?: boolean;
 }) {
   const navigation = useNavigation();
@@ -50,9 +46,9 @@ export default function FavoriteCard({
           </Text>
         </View>
         <View style={styles.numFriendsContainer}>
-          <Text style={styles.numberText}>{numFriends}</Text>
+          <Text style={styles.numberText}>{favorite.numFriends}</Text>
           <Text style={styles.friendsText}>
-            {"friend" + (numFriends !== 1 ? "s" : "")}
+            {"friend" + (favorite.numFriends !== 1 ? "s" : "")}
           </Text>
         </View>
       </TouchableOpacity>

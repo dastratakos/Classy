@@ -1,5 +1,13 @@
+import SVGVoid from "../assets/images/undraw/void.svg";
 import * as Haptics from "expo-haptics";
 
+import {
+  ActivityIndicator,
+  FontAwesome,
+  SimpleLineIcons,
+  Text,
+  View,
+} from "../components/Themed";
 import {
   Alert,
   Pressable,
@@ -7,8 +15,13 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { Enrollment, FriendProfileProps, User, WeekSchedule } from "../types";
-import { Icon, Icon2, Text, View } from "../components/Themed";
+import {
+  Degree,
+  Enrollment,
+  FriendProfileProps,
+  User,
+  WeekSchedule,
+} from "../types";
 import {
   acceptRequest,
   addFriend,
@@ -17,30 +30,44 @@ import {
   deleteFriendship,
   getFriendIds,
   getFriendStatus,
+  getNumFriendsInCourse,
 } from "../services/friends";
+import {
+  addNotification,
+  deleteFriendshipNotifications,
+} from "../services/notifications";
 import {
   getCurrentTermId,
   getWeekFromEnrollments,
   sendPushNotification,
   termIdToFullName,
+  termIdToQuarterName,
+  timeIsEarlier,
 } from "../utils";
-import { getEnrollmentsForTerm, getOverlap } from "../services/enrollments";
 import { useContext, useEffect, useRef, useState } from "react";
 
 import ActionSheet from "react-native-actionsheet";
 import AppContext from "../context/Context";
 import AppStyles from "../styles/AppStyles";
 import Button from "../components/Buttons/Button";
-import Calendar from "../components/Calendar";
+import Calendar from "../components/Calendar/Calendar";
 import Colors from "../constants/Colors";
+import EmptyList from "../components/EmptyList";
 import EnrollmentList from "../components/Lists/EnrollmentList";
 import Layout from "../constants/Layout";
 import ProfilePhoto from "../components/ProfilePhoto";
 import ProgressBar from "../components/ProgressBar";
+import SVGAutumn from "../assets/images/undraw/autumn.svg";
+import SVGNoCourses from "../assets/images/undraw/noCourses.svg";
+import SVGPrivate from "../assets/images/undraw/private.svg";
+import SVGSpring from "../assets/images/undraw/spring.svg";
+import SVGSummer from "../assets/images/undraw/summer.svg";
+import SVGWinter from "../assets/images/undraw/winter.svg";
 import Separator from "../components/Separator";
 import SquareButton from "../components/Buttons/SquareButton";
 import TabView from "../components/TabView";
 import { Timestamp } from "firebase/firestore";
+import { getEnrollments } from "../services/enrollments";
 import { getUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
@@ -51,92 +78,139 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const context = useContext(AppContext);
 
   const [user, setUser] = useState<User>({} as User);
+  const [userNotFound, setUserNotFound] = useState<boolean>(false);
   const [friendStatus, setFriendStatus] = useState<string>("");
   const [friendDocId, setFriendDocId] = useState<string>("");
   const [friendStatusLoading, setFriendStatusLoading] = useState<boolean>(true);
   const [courseSimilarity, setCourseSimilarity] = useState<number>(0);
   const [overlap, setOverlap] = useState<Enrollment[]>([]);
-  const [numFriends, setNumFriends] = useState<string>("");
+  const [friendIds, setFriendIds] = useState<string[]>([]);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-  const [week, setWeek] = useState<WeekSchedule>([]);
+  const [currentEnrollments, setCurrentEnrollments] = useState<Enrollment[]>(
+    []
+  );
+  const [quarterName, setQuarterName] = useState<string>("");
+  const [weekRes, setWeekRes] = useState<{
+    week: WeekSchedule;
+    startCalendarHour: number;
+    endCalendarHour: number;
+  }>({ week: [], startCalendarHour: 8, endCalendarHour: 6 });
   const [inClass, setInClass] = useState<boolean>(false);
 
-  const [refreshing, setRefreshing] = useState(false);
-  const [messageButtonLoading, setMessageButtonLoading] = useState(false);
-  const [addFriendDisabled, setAddFriendDisabled] = useState(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [messageButtonLoading, setMessageButtonLoading] =
+    useState<boolean>(false);
+  const [addFriendDisabled, setAddFriendDisabled] = useState<boolean>(false);
+
+  const [enrollmentsLoading, setEnrollmentsLoading] = useState<boolean>(true);
+
+  const [loading, setLoading] = useState<boolean>(true);
 
   const actionSheetRef = useRef();
 
-  const baseActionSheetOptions = ["Block", "Copy profile URL", "Cancel"];
+  const baseActionSheetOptions = ["Block", "Cancel"];
 
-  const friendActionSheetOptions = [
-    "Block",
-    "Remove friend",
-    "Copy profile URL",
-    "Cancel",
-  ];
+  const friendActionSheetOptions = ["Block", "Remove friend", "Cancel"];
 
-  const blockedActionSheetOptions = ["Unblock", "Copy profile URL", "Cancel"];
+  const blockedActionSheetOptions = ["Unblock", "Cancel"];
 
   useEffect(() => {
-    onRefresh();
+    const loadScreen = async () => {
+      await onRefresh();
+      setLoading(false);
+    };
+    loadScreen();
   }, []);
 
   useEffect(() => {
     const interval = setInterval(checkInClass, 1000);
     return () => clearInterval(interval);
-  }, [week]);
+  }, [weekRes]);
 
   const onRefresh = async () => {
     setRefreshing(true);
-    setUser(await getUser(route.params.id));
+    const user = await getUser(route.params.id);
 
+    if (Object.keys(user).length === 0) {
+      setUserNotFound(true);
+      setRefreshing(false);
+      return;
+    }
+
+    setUser(user);
+
+    setQuarterName(termIdToQuarterName(getCurrentTermId()));
+
+    /* Get friend status. */
     const res = await getFriendStatus(context.user.id, route.params.id);
     setFriendStatus(res.friendStatus);
     setFriendDocId(res.friendDocId);
     setFriendStatusLoading(false);
-    getFriendIds(route.params.id).then((res) => {
-      setNumFriends(`${res.length}`);
-    });
+    getFriendIds(route.params.id).then((res) => setFriendIds(res));
 
-    const res2 = await getEnrollmentsForTerm(
-      route.params.id,
-      getCurrentTermId()
+    /* Get enrollments. */
+    setEnrollmentsLoading(true);
+
+    const friendEnrollments = await getEnrollments(route.params.id);
+
+    /* Get numFriends only for current enrollments. */
+    for (let i = 0; i < friendEnrollments.length; i++) {
+      const enrollment = friendEnrollments[i];
+      if (enrollment.termId !== getCurrentTermId()) continue;
+
+      friendEnrollments[i].numFriends = await getNumFriendsInCourse(
+        enrollment.courseId,
+        context.friendIds,
+        enrollment.termId
+      );
+    }
+
+    setEnrollments(friendEnrollments);
+    const currentEnrollments = friendEnrollments.filter(
+      (enrollment: Enrollment) => enrollment.termId === getCurrentTermId()
     );
-    setEnrollments(res2);
-    const weekRes = getWeekFromEnrollments(res2);
-    setWeek(weekRes);
+    setCurrentEnrollments(currentEnrollments);
+    setWeekRes(getWeekFromEnrollments(currentEnrollments));
 
-    const res3 = await getOverlap(context.user.id, route.params.id);
-    setCourseSimilarity(res3.courseSimilarity);
-    setOverlap(res3.overlap);
+    setEnrollmentsLoading(false);
+
+    /* Get overlap and course similarity. */
+    const friendEnrollmentIds = new Set<number>();
+    friendEnrollments.forEach((enrollment) =>
+      friendEnrollmentIds.add(enrollment.courseId)
+    );
+
+    const overlap = context.enrollments.filter((enrollment) =>
+      friendEnrollmentIds.has(enrollment.courseId)
+    );
+
+    setOverlap(overlap);
+
+    let courseSimilarity = 0;
+    if (context.enrollments.length)
+      courseSimilarity = (100 * overlap.length) / context.enrollments.length;
+
+    setCourseSimilarity(courseSimilarity);
 
     setRefreshing(false);
   };
 
   const checkInClass = () => {
-    const now = Timestamp.now().toDate();
-    const today = now.getDay() - 1;
+    const now = Timestamp.now();
+    const today = now.toDate().getDay() - 1;
 
-    if (!week[today]) {
+    if (!weekRes.week[today]) {
       setInClass(false);
       return;
     }
 
-    for (let event of week[today].events) {
-      const startInfo = event.startInfo.toDate();
-      var startTime = new Date();
-      // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
-      startTime.setHours(startInfo.getHours() + 7);
-      startTime.setMinutes(startInfo.getMinutes());
-
-      const endInfo = event.endInfo.toDate();
-      var endTime = new Date();
-      // TODO: 7 IS BECAUSE OF TIMEZONE ERROR IN FIRESTORE DATABASE
-      endTime.setHours(endInfo.getHours() + 7);
-      endTime.setMinutes(endInfo.getMinutes());
-
-      if (startTime <= now && endTime >= now) {
+    for (let event of weekRes.week[today].events) {
+      if (!event.startInfo) continue;
+      if (!event.endInfo) continue;
+      if (
+        timeIsEarlier(event.startInfo, now) &&
+        timeIsEarlier(now, event.endInfo)
+      ) {
         setInClass(true);
         return;
       }
@@ -155,6 +229,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       user.expoPushToken,
       `${context.user.name} sent you a friend request`
     );
+
+    addNotification(user.id, "FRIEND_REQUEST_RECEIVED", context.user.id);
   };
 
   const handleAcceptRequest = async () => {
@@ -167,6 +243,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       user.expoPushToken,
       `${context.user.name} accepted your friend request`
     );
+
+    addNotification(user.id, "NEW_FRIENDSHIP", context.user.id);
   };
 
   const handleDeleteFriendship = async () => {
@@ -174,6 +252,7 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     setAddFriendDisabled(false);
 
     deleteFriendship(friendDocId);
+    deleteFriendshipNotifications(context.user.id, user.id);
 
     setFriendDocId("");
   };
@@ -183,6 +262,8 @@ export default function FriendProfile({ route }: FriendProfileProps) {
 
     if (friendDocId) blockUserWithDoc(context.user.id, user.id, friendDocId);
     else blockUser(context.user.id, user.id);
+
+    deleteFriendshipNotifications(context.user.id, user.id);
   };
 
   const cancelFriendRequestAlert = () =>
@@ -289,40 +370,77 @@ export default function FriendProfile({ route }: FriendProfileProps) {
   const handleActionSheetOptionPressed = (index: number) => {
     if (friendStatus === "friends") {
       const action = friendActionSheetOptions[index];
-      if (action === "Block") {
-        blockAlert();
-      } else if (action === "Remove friend") {
-        removeFriendAlert();
-      } else if (action === "Copy profile URL") {
-        console.log("Copy profile URL pressed");
-      }
+      if (action === "Block") blockAlert();
+      else if (action === "Remove friend") removeFriendAlert();
+      // else if (action === "Copy profile URL")
+      //   console.log("Copy profile URL pressed");
     } else if (friendStatus === "block sent") {
       const action = blockedActionSheetOptions[index];
-      if (action === "Unblock") {
-        unblockAlert();
-      } else if (action === "Copy profile URL") {
-        console.log("Copy profile URL pressed");
-      }
+      if (action === "Unblock") unblockAlert();
+      // else if (action === "Copy profile URL")
+      //   console.log("Copy profile URL pressed");
     } else {
       const action = baseActionSheetOptions[index];
-      if (action === "Block") {
-        blockAlert();
-      } else if (action === "Copy profile URL") {
-        console.log("Copy profile URL pressed");
-      }
+      if (action === "Block") blockAlert();
+      // else if (action === "Copy profile URL")
+      //   console.log("Copy profile URL pressed");
     }
   };
 
   const tabs = [
     {
       label: "Calendar",
-      component: <Calendar week={week} />,
+      component: (
+        <Calendar
+          week={weekRes.week}
+          startCalendarHour={weekRes.startCalendarHour}
+          endCalendarHour={weekRes.endCalendarHour}
+        />
+      ),
     },
     {
       label: "Courses",
-      component: <EnrollmentList enrollments={enrollments} emptyPrimary="No Courses" />,
+      component: (
+        <EnrollmentList
+          enrollments={currentEnrollments}
+          checkMutual
+          emptyElement={
+            enrollmentsLoading ? (
+              <ActivityIndicator />
+            ) : (
+              <EmptyList
+                SVGElement={
+                  quarterName === "Aut"
+                    ? SVGAutumn
+                    : quarterName === "Win"
+                    ? SVGWinter
+                    : quarterName === "Spr"
+                    ? SVGSpring
+                    : quarterName === "Sum"
+                    ? SVGSummer
+                    : SVGNoCourses
+                }
+                primaryText="No courses this quarter"
+              />
+            )
+          }
+        />
+      ),
     },
   ];
+
+  if (loading) return <ActivityIndicator />;
+
+  if (userNotFound)
+    return (
+      <View style={{ flex: 1 }}>
+        <EmptyList
+          SVGElement={SVGVoid}
+          primaryText="Oops!"
+          secondaryText="User not found"
+        />
+      </View>
+    );
 
   if (friendStatus === "block received") {
     return (
@@ -351,112 +469,115 @@ export default function FriendProfile({ route }: FriendProfileProps) {
     >
       <View style={AppStyles.section}>
         <View style={AppStyles.row}>
-          <View style={[AppStyles.row, { flex: 1 }]}>
-            <ProfilePhoto
-              url={user.photoUrl}
-              size={Layout.photo.large}
-              style={{ marginRight: Layout.spacing.large }}
-            />
-            <View style={{ flexGrow: 1 }}>
-              <Text style={styles.name}>{user.name}</Text>
+          <ProfilePhoto
+            url={user.photoUrl}
+            size={Layout.photo.large}
+            style={{ marginRight: Layout.spacing.large }}
+            withModal
+          />
+          <View style={{ width: "100%", flexShrink: 1 }}>
+            <Text style={styles.name}>{user.name}</Text>
+            <View
+              style={[AppStyles.row, { marginVertical: Layout.spacing.xsmall }]}
+            >
               <View
                 style={[
-                  AppStyles.row,
-                  { marginVertical: Layout.spacing.xsmall },
+                  styles.status,
+                  inClass ? styles.inClass : styles.notInClass,
+                ]}
+              />
+              <Text
+                style={[
+                  styles.statusText,
+                  { color: Colors[colorScheme].secondaryText },
                 ]}
               >
-                <View
-                  style={[
-                    styles.status,
-                    inClass ? styles.inClass : styles.notInClass,
-                  ]}
-                />
-                <Text
-                  style={[
-                    styles.statusText,
-                    { color: Colors[colorScheme].secondaryText },
-                  ]}
-                >
-                  {inClass ? "In class" : "Not in class"}
-                </Text>
-              </View>
-              <View style={[AppStyles.row, { justifyContent: "flex-start" }]}>
-                {friendStatusLoading ? (
-                  <View style={{ marginRight: Layout.spacing.small }}>
-                    <Button
-                      onPress={() => console.log("Loading pressed")}
-                      loading
-                    />
-                  </View>
-                ) : (
-                  <>
-                    {friendStatus === "not friends" && (
-                      <View style={{ marginRight: Layout.spacing.small }}>
-                        <Button
-                          text="Add Friend"
-                          onPress={handleAddFriend}
-                          disabled={addFriendDisabled}
-                          emphasized
-                        />
-                      </View>
-                    )}
-                    {friendStatus === "request sent" && (
-                      <View style={{ marginRight: Layout.spacing.small }}>
-                        <Button
-                          text="Requested"
-                          onPress={cancelFriendRequestAlert}
-                        />
-                      </View>
-                    )}
-                    {friendStatus === "request received" && (
-                      <View style={{ marginRight: Layout.spacing.small }}>
-                        <Button
-                          text="Accept request"
-                          onPress={handleAcceptRequest}
-                          emphasized
-                        />
-                      </View>
-                    )}
-                  </>
-                )}
-                <Button
-                  text="Message"
-                  onPress={handleMessagePressed}
-                  loading={messageButtonLoading}
-                />
-                <Pressable
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    actionSheetRef.current?.show();
-                  }}
-                  style={({ pressed }) => [
-                    styles.ellipsis,
-                    { opacity: pressed ? 0.5 : 1 },
-                    { backgroundColor: Colors[colorScheme].cardBackground },
-                  ]}
-                >
-                  <Icon name="ellipsis-h" size={Layout.icon.medium} />
-                </Pressable>
-              </View>
+                {inClass ? "In class" : "Not in class"}
+              </Text>
+            </View>
+            <View style={[AppStyles.row, { justifyContent: "flex-start" }]}>
+              {friendStatusLoading ? (
+                <View style={{ marginRight: Layout.spacing.small }}>
+                  <Button
+                    onPress={() => console.log("Loading pressed")}
+                    loading
+                  />
+                </View>
+              ) : (
+                <>
+                  {friendStatus === "not friends" && (
+                    <View style={{ marginRight: Layout.spacing.small }}>
+                      <Button
+                        text="Add Friend"
+                        onPress={handleAddFriend}
+                        disabled={addFriendDisabled}
+                        emphasized
+                      />
+                    </View>
+                  )}
+                  {friendStatus === "request sent" && (
+                    <View style={{ marginRight: Layout.spacing.small }}>
+                      <Button
+                        text="Requested"
+                        onPress={cancelFriendRequestAlert}
+                      />
+                    </View>
+                  )}
+                  {friendStatus === "request received" && (
+                    <View style={{ marginRight: Layout.spacing.small }}>
+                      <Button
+                        text="Accept"
+                        onPress={handleAcceptRequest}
+                        emphasized
+                      />
+                    </View>
+                  )}
+                </>
+              )}
+              <Button
+                text="Message"
+                onPress={handleMessagePressed}
+                loading={messageButtonLoading}
+              />
+              <Pressable
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  actionSheetRef.current?.show();
+                }}
+                style={({ pressed }) => [
+                  styles.ellipsis,
+                  { opacity: pressed ? 0.5 : 1 },
+                  { backgroundColor: Colors[colorScheme].cardBackground },
+                ]}
+              >
+                <FontAwesome name="ellipsis-h" size={Layout.icon.medium} />
+              </Pressable>
             </View>
           </View>
         </View>
         <View style={[AppStyles.row, { marginTop: 15 }]}>
           <View style={{ flex: 1, marginRight: Layout.spacing.small }}>
-            {/* Major */}
-            {user.major ? (
+            {/* Degrees */}
+            {user.degrees ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon2 name="pencil" size={Layout.icon.small} />
+                  <SimpleLineIcons name="pencil" size={Layout.icon.small} />
                 </View>
-                <Text style={styles.aboutText}>{user.major}</Text>
+                <View style={styles.aboutText}>
+                  {user.degrees.map((d: Degree, i: number) => (
+                    <Text style={styles.aboutText} key={i}>
+                      {d.major}
+                      {d.degree ? ` (${d.degree})` : ""}
+                    </Text>
+                  ))}
+                </View>
               </View>
             ) : null}
             {/* Graduation Year */}
             {user.gradYear ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon2 name="graduation" size={Layout.icon.small} />
+                  <SimpleLineIcons name="graduation" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{user.gradYear}</Text>
               </View>
@@ -465,42 +586,53 @@ export default function FriendProfile({ route }: FriendProfileProps) {
             {user.interests ? (
               <View style={AppStyles.row}>
                 <View style={styles.iconWrapper}>
-                  <Icon2 name="puzzle" size={Layout.icon.small} />
+                  <SimpleLineIcons name="puzzle" size={Layout.icon.small} />
                 </View>
                 <Text style={styles.aboutText}>{user.interests}</Text>
               </View>
             ) : null}
           </View>
           <SquareButton
-            num={numFriends}
-            text={"friend" + (numFriends === "1" ? "" : "s")}
+            num={friendIds.length.toString()}
+            text={"friend" + (friendIds.length === 1 ? "" : "s")}
             size={Layout.buttonHeight.large}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate("Friends", { id: route.params.id });
+              navigation.navigate("Friends", {
+                id: route.params.id,
+                friendIds,
+              });
             }}
           />
         </View>
         {!user.isPrivate || friendStatus === "friends" ? (
           <>
-            <ProgressBar
-              progress={courseSimilarity}
-              text={`${Math.round(courseSimilarity)}% course similarity`}
-              onPress={() =>
-                navigation.navigate("CourseSimilarity", {
-                  courseSimilarity,
-                  overlap,
-                })
-              }
-              containerStyle={{ marginTop: Layout.spacing.medium }}
-            />
+            {!refreshing && (
+              <ProgressBar
+                progress={courseSimilarity}
+                text={`${Math.round(courseSimilarity)}% course similarity`}
+                onPress={() =>
+                  navigation.navigate("CourseSimilarity", {
+                    friendId: user.id,
+                    courseSimilarity,
+                    overlap,
+                  })
+                }
+                containerStyle={{ marginTop: Layout.spacing.medium }}
+              />
+            )}
             <View style={[AppStyles.row, { marginTop: Layout.spacing.medium }]}>
               <Text style={styles.term}>
                 {termIdToFullName(getCurrentTermId())}
               </Text>
               <Button
                 text="View All Quarters"
-                onPress={() => navigation.navigate("Quarters", { user })}
+                onPress={() =>
+                  navigation.navigate("Quarters", {
+                    user,
+                    enrollments: enrollments,
+                  })
+                }
               />
             </View>
           </>
@@ -508,17 +640,17 @@ export default function FriendProfile({ route }: FriendProfileProps) {
       </View>
       <Separator />
       {user.isPrivate && !(friendStatus === "friends") ? (
-        <View
-          style={{ alignItems: "center", marginTop: Layout.spacing.xxxlarge }}
-        >
-          <Icon name="lock" size={100} />
-          <Text>This user is private</Text>
-        </View>
+        <EmptyList
+          SVGElement={SVGPrivate}
+          primaryText="This user is private"
+          secondaryText="Add them as a friend to see their courses"
+        />
       ) : (
         <View style={AppStyles.section}>
           <TabView
             tabs={tabs}
             selectedStyle={{ backgroundColor: Colors.pink }}
+            initialSelectedId={1}
           />
         </View>
       )}

@@ -7,11 +7,15 @@ import {
   Text as DefaultText,
   View as DefaultView,
 } from "react-native";
+import {
+  FontAwesome as DefaultFontAwesome,
+  Ionicons as DefaultIonicons,
+  SimpleLineIcons as DefaultSimpleLineIcons,
+} from "@expo/vector-icons";
 
-import Colors from "../constants/Colors";
-import { FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
-import useColorScheme from "../hooks/useColorScheme";
 import AppStyles from "../styles/AppStyles";
+import Colors from "../constants/Colors";
+import useColorScheme from "../hooks/useColorScheme";
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
@@ -61,29 +65,36 @@ export function View(props: ViewProps) {
   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
 }
 
-export function Icon(props: IconProps) {
+export function FontAwesome(props: IconProps) {
   const { lightColor, darkColor, style, ...otherProps } = props;
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
 
-  return <FontAwesome style={[{ color }, style]} {...otherProps} />;
+  return <DefaultFontAwesome style={[{ color }, style]} {...otherProps} />;
 }
 
-export function Icon2(props: IconProps) {
+export function SimpleLineIcons(props: IconProps) {
   const { lightColor, darkColor, style, ...otherProps } = props;
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
 
-  return <SimpleLineIcons style={[{ color }, style]} {...otherProps} />;
+  return <DefaultSimpleLineIcons style={[{ color }, style]} {...otherProps} />;
+}
+
+export function Ionicons(props: IconProps) {
+  const { lightColor, darkColor, style, ...otherProps } = props;
+  const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
+
+  return <DefaultIonicons style={[{ color }, style]} {...otherProps} />;
 }
 
 export function ActivityIndicator(props: ActivityIndicatorProps) {
   const { lightColor, darkColor, ...otherProps } = props;
-  const color = useThemeColor(
+  const backgroundColor = useThemeColor(
     { light: lightColor, dark: darkColor },
     "background"
   );
 
   return (
-    <View style={AppStyles.activityIndicatorContainer}>
+    <View style={[AppStyles.activityIndicatorContainer, { backgroundColor }]}>
       <DefaultActivityIndicator />
     </View>
   );

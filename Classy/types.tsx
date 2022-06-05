@@ -10,15 +10,36 @@ import {
 
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { Channel as ChannelType } from "stream-chat";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MessageType } from "stream-chat-expo";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Timestamp } from "firebase/firestore";
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList { }
+    interface RootParamList extends RootStackParamList {}
   }
 }
+
+export type Degree = {
+  degree: string;
+  major: string;
+};
+
+export type User = {
+  id: string;
+  email: string;
+  name: string;
+  degrees: { degree: string; major: string }[];
+  startYear: string;
+  gradYear: string;
+  interests: string;
+  isPrivate: boolean;
+  photoUrl: string;
+  expoPushToken: string;
+  terms: Object;
+  keywords: string[];
+  onboarded: boolean;
+};
 
 export type Course = {
   academicCareer: string;
@@ -47,6 +68,21 @@ export type FavoritedCourse = {
   courseId: number;
   title: string;
   userId: string;
+  numFriends: number;
+};
+
+/**
+ * Lists of the last 10 searches for courses and people. Courses is a list of
+ * courseIds and people is a list of userIds.
+ */
+export type HistoryIds = {
+  courses: number[];
+  people: string[];
+};
+
+export type History = {
+  courses: Course[];
+  people: User[];
 };
 
 export type Enrollment = {
@@ -59,6 +95,8 @@ export type Enrollment = {
   title: string;
   units: number; // Chosen number of units
   userId: string;
+  color: string;
+  numFriends: number;
 };
 
 export type Term = {
@@ -107,20 +145,45 @@ export type DaySchedule = { day: Day; events: Event[] };
 
 export type WeekSchedule = DaySchedule[];
 
-export type HomeData = {
+export type CourseOverview = {
   enrollment: Enrollment;
-  friends: User[];
   startInfo: Timestamp;
   endInfo: Timestamp;
   component: string;
-}[]
+};
+
+export type HomeData = { today: CourseOverview[]; nextUp: CourseOverview[] };
+
+export type NotificationType =
+  | "FRIEND_REQUEST_RECEIVED"
+  | "NEW_FRIENDSHIP"
+  | "MUTUAL_ENROLLMENT"
+  | "ADD_COURSES_REMINDER"
+  | "ADD_TIMES_REMINDER";
+
+export type Notification = {
+  docId: string;
+  userId: string;
+  type: NotificationType;
+  timestamp: Timestamp;
+  friendId: string;
+  courseId: number;
+  termId: string;
+  unread: boolean;
+};
 
 export type RootStackParamList = {
   AuthStack: NavigatorScreenParams<RootTabParamList> | undefined;
   HomeStack: NavigatorScreenParams<HomeStackParamList> | undefined;
   ProfileStack: NavigatorScreenParams<ProfileStackParamList> | undefined;
+  SearchStack: NavigatorScreenParams<SearchStackParamList> | undefined;
+  NotificationStack:
+    | NavigatorScreenParams<NotificationStackParamList>
+    | undefined;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Settings: undefined;
+  AddDegree: undefined;
+  EditDegree: undefined;
   ManageAccount: undefined;
   NotFound: undefined;
 
@@ -137,18 +200,26 @@ export type RootStackParamList = {
   ChannelDetails: undefined;
   NewMessage: undefined;
 
+  Search: { initialSelectedTab?: number };
+
   Profile: undefined;
   Favorites: undefined;
-  Enrollments: { userId: string; termId: string };
+  Enrollments: { userId: string; enrollments: Enrollment[]; termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
-  Quarters: { user: User };
+  Quarters: { user: User; enrollments: Enrollment[] };
+  FullCalendar: { id: string; enrollments: Enrollment[] };
+  SelectColor: undefined;
   SelectQuarter: { terms: string[] };
-  MyFriends: undefined;
-  Friends: { id: string };
+  Friends: { id: string; friendIds: string[] };
+  FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
-  CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
+  CourseSimilarity: {
+    friendId: string;
+    courseSimilarity: number;
+    overlap: Enrollment[];
+  };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
@@ -158,6 +229,9 @@ export type RootTabParamList = {
   HomeStack: NavigatorScreenParams<HomeStackParamList> | undefined;
   SearchStack: NavigatorScreenParams<SearchStackParamList> | undefined;
   ProfileStack: NavigatorScreenParams<ProfileStackParamList> | undefined;
+  NotificationStack:
+    | NavigatorScreenParams<NotificationStackParamList>
+    | undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
@@ -168,38 +242,44 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
 
 export type ProfileStackParamList = {
   Settings: undefined;
+  AddDegree: undefined;
+  EditDegree: undefined;
   ManageAccount: undefined;
 
   Profile: undefined;
   Favorites: undefined;
-  Enrollments: { userId: string; termId: string };
+  Enrollments: { userId: string; enrollments: Enrollment[]; termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
-  Quarters: { user: User };
+  Quarters: { user: User; enrollments: Enrollment[] };
+  FullCalendar: { id: string; enrollments: Enrollment[] };
+  SelectColor: undefined;
   SelectQuarter: { terms: string[] };
-  MyFriends: undefined;
-  Friends: { id: string };
+  Friends: { id: string; friendIds: string[] };
+  FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
   CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
 
 export type ProfileStackScreenProps<
   Screen extends keyof ProfileStackParamList
-  > = NativeStackScreenProps<ProfileStackParamList>;
+> = NativeStackScreenProps<ProfileStackParamList>;
 
 export type SearchStackParamList = {
-  Search: undefined;
+  Search: { initialSelectedTab?: number };
   Profile: undefined;
   Favorites: undefined;
-  Enrollments: { userId: string; termId: string };
+  Enrollments: { userId: string; enrollments: Enrollment[]; termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
-  Quarters: { user: User };
+  Quarters: { user: User; enrollments: Enrollment[] };
+  FullCalendar: { id: string; enrollments: Enrollment[] };
+  SelectColor: undefined;
   SelectQuarter: { terms: string[] };
-  MyFriends: undefined;
-  Friends: { id: string };
+  Friends: { id: string; friendIds: string[] };
+  FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
   CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
@@ -216,18 +296,41 @@ export type HomeStackParamList = {
   ChannelDetails: undefined;
   NewMessage: undefined;
 
-  Enrollments: { userId: string; termId: string };
+  Enrollments: { userId: string; enrollments: Enrollment[]; termId: string };
   Course: { course: Course };
   AddCourse: { course: Course };
   EditCourse: { enrollment: Enrollment };
-  MyFriends: undefined;
-  Friends: { id: string };
+  Friends: { id: string; friendIds: string[] };
+  FriendRequests: { requests: User[] };
   FriendProfile: { id: string };
   CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
 };
 
 export type HomeStackScreenProps<Screen extends keyof HomeStackParamList> =
   NativeStackScreenProps<HomeStackParamList>;
+
+export type NotificationStackParamList = {
+  Home: undefined;
+
+  Messages: undefined;
+  ChannelScreen: undefined;
+  ThreadScreen: { id: string };
+  ChannelDetails: undefined;
+  NewMessage: undefined;
+
+  Enrollments: { userId: string; enrollments: Enrollment[]; termId: string };
+  Course: { course: Course };
+  AddCourse: { course: Course };
+  EditCourse: { enrollment: Enrollment };
+  Friends: { id: string; friendIds: string[] };
+  FriendRequests: { requests: User[] };
+  FriendProfile: { id: string };
+  CourseSimilarity: { courseSimilarity: number; overlap: Enrollment[] };
+};
+
+export type NotificationStackScreenProps<
+  Screen extends keyof NotificationStackParamList
+> = NativeStackScreenProps<NotificationStackParamList>;
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -237,6 +340,8 @@ export type AuthStackParamList = {
 
 export type AuthStackScreenProps<Screen extends keyof AuthStackParamList> =
   NativeStackScreenProps<AuthStackParamList>;
+
+export type SearchProps = NativeStackScreenProps<RootStackParamList, "Search">;
 
 export type LoginProps = NativeStackScreenProps<RootStackParamList, "Login">;
 export type RegisterProps = NativeStackScreenProps<
@@ -261,9 +366,19 @@ export type ThreadScreenProps = NativeStackScreenProps<
   "ThreadScreen"
 >;
 
+export type FullCalendarProps = NativeStackScreenProps<
+  RootStackParamList,
+  "FullCalendar"
+>;
+
 export type FriendsProps = NativeStackScreenProps<
   RootStackParamList,
   "Friends"
+>;
+
+export type FriendRequestsProps = NativeStackScreenProps<
+  RootStackParamList,
+  "FriendRequests"
 >;
 
 export type FriendProfileProps = NativeStackScreenProps<
@@ -293,27 +408,22 @@ export type QuartersProps = NativeStackScreenProps<
 
 // Context
 
-export type User = {
-  id: string;
-  email: string;
-  name: string;
-  major: string;
-  startYear: string;
-  gradYear: string;
-  interests: string;
-  isPrivate: boolean;
-  photoUrl: string;
-  expoPushToken: string;
-  terms: Object;
-  keywords: string[];
-  onboarded: boolean;
-};
-
 export type Context = {
+  // Firestore
   user: User;
   setUser: (arg0: User) => void;
   friendIds: string[];
   setFriendIds: (arg0: string[]) => void;
+  requestIds: string[];
+  setRequestIds: (arg0: string[]) => void;
+  enrollments: Enrollment[];
+  setEnrollments: (arg0: Enrollment[]) => void;
+  history: History;
+  setHistory: (arg0: History) => void;
+  favorites: FavoritedCourse[];
+  setFavorites: (arg0: FavoritedCourse[]) => void;
+
+  // StreamChat
   streamClient: StreamChatGenerics;
   setStreamClient: (arg0: StreamChatGenerics) => void;
   channel: ChannelType;
@@ -322,8 +432,16 @@ export type Context = {
   setChannelName: (arg0: string) => void;
   thread: undefined;
   setThread: (arg0: MessageType) => void;
+  totalUnreadCount: number;
+  setTotalUnreadCount: (arg0: number) => void;
+
+  // Modal selections
   selectedTerm: string;
   setSelectedTerm: (arg0: string) => void;
+  selectedColor: string;
+  setSelectedColor: (arg0: string) => void;
+  editDegreeIndex: number;
+  setEditDegreeIndex: (arg0: number) => void;
 };
 
 // Stream Chat
