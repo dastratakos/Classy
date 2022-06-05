@@ -2,8 +2,8 @@ import * as Haptics from "expo-haptics";
 
 import { ActivityIndicator, Text, View } from "../components/Themed";
 import { AddCourseProps, Enrollment, Schedule } from "../types";
-import Colors, { enrollmentColors } from "../constants/Colors";
 import { Alert, ScrollView, StyleSheet } from "react-native";
+import Colors, { enrollmentColors } from "../constants/Colors";
 import {
   getCurrentTermId,
   getTimeString,
@@ -11,6 +11,7 @@ import {
   termIdToFullName,
   termIdToName,
 } from "../utils";
+import { getFriendsInCourse, getNumFriendsInCourse } from "../services/friends";
 import { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context/Context";
@@ -22,10 +23,9 @@ import SquareButton from "../components/Buttons/SquareButton";
 import { addEnrollment } from "../services/enrollments";
 import { addNotification } from "../services/notifications";
 import { getCourseTerms } from "../services/courses";
-import { getFriendsInCourse, getNumFriendsInCourse } from "../services/friends";
+import { getUser } from "../services/users";
 import useColorScheme from "../hooks/useColorScheme";
 import { useNavigation } from "@react-navigation/core";
-import { getUser } from "../services/users";
 
 export default function AddCourse({ route }: AddCourseProps) {
   const context = useContext(AppContext);
@@ -68,8 +68,6 @@ export default function AddCourse({ route }: AddCourseProps) {
     loadScreen();
   }, []);
 
-  let schedules = terms[`${context.selectedTerm}`];
-
   const Schedules = () => {
     if (context.selectedTerm === "") return null;
 
@@ -83,38 +81,33 @@ export default function AddCourse({ route }: AddCourseProps) {
       setSelectedScheduleIndices(newSet);
     };
 
-    for (let j = 0; j < schedules.length; j++) {
-      const sched = schedules[j];
-      if (
-        sched["days"].length === 0 ||
-        getTimeString(sched["startInfo"]) === "12:00 AM" ||
-        getTimeString(sched["startInfo"]) === "" ||
-        getTimeString(sched["endInfo"]) === "12:00 AM" ||
-        getTimeString(sched["endInfo"]) === ""
-      ) {
-        schedules.splice(j, 1);
-        j--;
-      }
-    }
-
     return (
       <View
         style={{
           marginBottom: Layout.buttonHeight.medium + Layout.spacing.medium,
         }}
       >
-        {schedules.map((schedule: Schedule, i: number) => (
-          <View key={i.toString()}>
-            <ScheduleCard
-              schedule={schedule}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                handleScheduleSelected(i);
-              }}
-              selected={selectedScheduleIndices.has(i)}
-            />
-          </View>
-        ))}
+        {terms[`${context.selectedTerm}`]
+          .filter(
+            (sched: Schedule) =>
+              sched["days"].length !== 0 &&
+              getTimeString(sched["startInfo"]) !== "12:00 AM" &&
+              getTimeString(sched["startInfo"]) !== "" &&
+              getTimeString(sched["endInfo"]) !== "12:00 AM" &&
+              getTimeString(sched["endInfo"]) !== ""
+          )
+          .map((schedule: Schedule, i: number) => (
+            <View key={i.toString()}>
+              <ScheduleCard
+                schedule={schedule}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  handleScheduleSelected(i);
+                }}
+                selected={selectedScheduleIndices.has(i)}
+              />
+            </View>
+          ))}
       </View>
     );
   };
@@ -320,6 +313,23 @@ export default function AddCourse({ route }: AddCourseProps) {
                           Haptics.impactAsync(
                             Haptics.ImpactFeedbackStyle.Medium
                           );
+                          console.log("setting grading to", grad);
+                          console.log(
+                            "context.selectedTerm:",
+                            context.selectedTerm
+                          );
+                          console.log(
+                            "terms[`${context.selectedTerm}`]:",
+                            terms[`${context.selectedTerm}`]
+                          );
+                          console.log(
+                            "Object.keys(terms):",
+                            Object.keys(terms)
+                          );
+                          console.log(
+                            "terms[`${context.selectedTerm}`][0]:",
+                            terms[`${context.selectedTerm}`][0]
+                          );
                           setGrading(grad);
                         }}
                         emphasized={grading === grad}
@@ -354,12 +364,7 @@ export default function AddCourse({ route }: AddCourseProps) {
           <Button
             text="Done"
             onPress={handleDonePressed}
-            disabled={
-              !context.selectedTerm ||
-              !selectedUnits ||
-              !grading ||
-              (!selectedScheduleIndices.size && schedules.size)
-            }
+            disabled={!context.selectedTerm || !selectedUnits || !grading}
             loading={doneLoading}
             emphasized
           />
