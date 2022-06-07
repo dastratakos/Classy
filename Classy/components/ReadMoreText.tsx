@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import Colors from "../constants/Colors";
 import { Text } from "./Themed";
 import useColorScheme from "../hooks/useColorScheme";
+import Layout from "../constants/Layout";
 
 export default function ReadMoreText({ text }: { text: string }) {
   const colorScheme = useColorScheme();
@@ -34,7 +35,11 @@ export default function ReadMoreText({ text }: { text: string }) {
       {isLongText && (
         <Text
           onPress={() => setShowFullText(!showFullText)}
-          style={{ color: Colors[colorScheme].tint, alignSelf: "flex-end" }}
+          style={{
+            color: Colors[colorScheme].tint,
+            alignSelf: "flex-end",
+            marginTop: Layout.spacing.xxsmall,
+          }}
         >
           {showFullText ? "Read less" : "Read more"}
         </Text>

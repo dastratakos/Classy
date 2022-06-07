@@ -25,7 +25,6 @@ import {
 import {
   addFavorite,
   deleteFavorite,
-  getIsFavorited,
 } from "../services/courses";
 import {
   getAllPeopleIdsInCourse,
@@ -231,7 +230,7 @@ export default function Course({ route }: CourseProps) {
               AppStyles.row,
               {
                 justifyContent: "space-between",
-                marginTop: Layout.spacing.small,
+                marginTop: Layout.spacing.large,
               },
             ]}
           >
