@@ -1,21 +1,24 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
 import { FontAwesome, Text, View } from "../Themed";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { componentToName, getTimeString } from "../../utils";
 
 import AppStyles from "../../styles/AppStyles";
 import Colors from "../../constants/Colors";
 import Layout from "../../constants/Layout";
 import { Schedule } from "../../types";
+import { getAdjustedDate } from "../../utils";
 import useColorScheme from "../../hooks/useColorScheme";
 
 export default function ScheduleCard({
   schedule,
   onPress,
   selected,
+  adjustDate = false,
 }: {
   schedule: Schedule;
   onPress: () => void;
   selected?: boolean;
+  adjustDate?: boolean;
 }) {
   const colorScheme = useColorScheme();
 
@@ -34,8 +37,16 @@ export default function ScheduleCard({
               {schedule.sectionNumber} {componentToName(schedule.component)}
             </Text>
             <Text style={styles.cardSubtitle} numberOfLines={1}>
-              {schedule.days.join(", ")} {getTimeString(schedule.startInfo)} -{" "}
-              {getTimeString(schedule.endInfo)}
+              {schedule.days
+                .map((day: string) => day.substring(0, 3))
+                .join(", ")}{" "}
+              {adjustDate
+                ? getTimeString(getAdjustedDate(schedule.startInfo))
+                : getTimeString(schedule.startInfo)}{" "}
+              -{" "}
+              {adjustDate
+                ? getTimeString(getAdjustedDate(schedule.endInfo))
+                : getTimeString(schedule.endInfo)}
             </Text>
           </View>
           <FontAwesome

@@ -82,6 +82,7 @@ export const getCourseTerms = async (courseId: number) => {
   const res = {};
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
+    // TODO: call getAdjustedDate() on the schedules' startInfo and enfInfo
     let resSchedules = doc.data().schedules;
     resSchedules.sort(
       (a: Schedule, b: Schedule) => a.sectionNumber > b.sectionNumber

@@ -8,13 +8,12 @@ import {
   increment,
   orderBy,
   query,
-  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
+import { getAdjustedDate, termIdToYear } from "../utils";
 
 import { db } from "../firebase";
-import { getAdjustedDate, termIdToYear } from "../utils";
 
 export const getEnrollments = async (userId: string) => {
   const q = query(
@@ -32,13 +31,9 @@ export const getEnrollments = async (userId: string) => {
     for (let i = 0; i < data.schedules.length; i++) {
       const schedule = data.schedules[i];
       if (schedule.startInfo)
-        schedule.startInfo = Timestamp.fromDate(
-          getAdjustedDate(schedule.startInfo.toDate())
-        );
+        schedule.startInfo = getAdjustedDate(schedule.startInfo);
       if (schedule.endInfo)
-        schedule.endInfo = Timestamp.fromDate(
-          getAdjustedDate(schedule.endInfo.toDate())
-        );
+        schedule.endInfo = getAdjustedDate(schedule.endInfo);
       schedules.push(schedule);
     }
 

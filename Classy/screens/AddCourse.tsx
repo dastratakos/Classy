@@ -105,6 +105,7 @@ export default function AddCourse({ route }: AddCourseProps) {
                   handleScheduleSelected(i);
                 }}
                 selected={selectedScheduleIndices.has(i)}
+                adjustDate
               />
             </View>
           ))}

@@ -187,6 +187,7 @@ export default function EditCourse({ route }: EditCourseProps) {
                   handleScheduleSelected(i);
                 }}
                 selected={selectedScheduleIndices.has(i)}
+                adjustDate
               />
             </View>
           )

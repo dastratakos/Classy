@@ -143,7 +143,8 @@ export const componentToName = (component: string) => {
   return component;
 };
 
-export const getAdjustedDate = (date: Date) => {
+export const getAdjustedDate = (timestamp: Timestamp) => {
+  const date = timestamp.toDate();
   const hourOffset =
     (date.getTimezoneOffset() - new Date().getTimezoneOffset()) / 60;
   const adjustedDate = new Date(date.getTime() + hourOffset * 3600 * 1000);
@@ -153,7 +154,7 @@ export const getAdjustedDate = (date: Date) => {
   //   console.log("new time:", adjustedDate.toTimeString());
   // }
 
-  return adjustedDate;
+  return Timestamp.fromDate(adjustedDate);
 };
 
 export const getTimeString = (timestamp: Timestamp) => {
