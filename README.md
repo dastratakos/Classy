@@ -22,13 +22,11 @@ Frontend - Expo App (TypeScript)
 To run the app, run these commands:
 
 ```sh
-cd app
+cd Classy
 expo start
 ```
 
 Then, type `Shift + i` to select an iOS simulator to run the app on.
-
-Backend - Firebase
 
 To publish the app to the App Store, use the following commands:
 
@@ -36,6 +34,15 @@ To publish the app to the App Store, use the following commands:
 eas build -p ios
 eas submit -p ios --latest
 ```
+
+To publish the app to the Play Store, use the following commands:
+
+```sh
+eas build -p android
+eas submit -p android --latest
+```
+
+Backend - Firebase
 
 ## Team
 | <img src=images/grace.JPG width=160/> | <img src=images/mel.jpeg width=160/> | <img src=images/tara.jpeg width=160/> | <img src=images/jiwon.jpeg width=160/> | <img src=images/dean.jpg width=160/> |
