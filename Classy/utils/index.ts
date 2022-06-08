@@ -277,7 +277,7 @@ export const getWeekFromEnrollments = (enrollments: Enrollment[]) => {
           continue;
         }
         const index = dayIndices[`${day}`];
-        week[index].events.push(event);
+        if (index <= week.length) week[index].events.push(event);
       }
     }
   }
