@@ -1,3 +1,10 @@
+"""
+explore_courses_course.py
+-------------------------
+Author: Dean Stratakos
+Date: October 5, 2022
+"""
+
 from calendar import c
 import copy
 from datetime import datetime, timedelta, timezone

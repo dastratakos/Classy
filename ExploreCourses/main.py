@@ -1,29 +1,64 @@
-from datetime import timedelta, timezone
-import pickle
+"""
+main.py
+----------------------
+Author: Dean Stratakos
+Date: October 5, 2022
+"""
 
-from firestore_connection import FirestoreConnection
-from course_connection import CourseConnection
+import time
+
+from src.firestore_connection import FirestoreConnection
+from src.explore_courses_connection import ExploreCoursesConnection
+from src.nested_persistent_storage import NestedPersistentStorage
+
+# CONFIG
+DIR = "./data"
+DEPTH = 2
+ENTITY_NAME = "course"
+PKL_FILENAME = "./all_courses_2011-2022.pkl"
 
 
-def download_courses(start_year=2011, end_year=2021):
-    cc = CourseConnection()
-    years = [f"{i}-{i+1}" for i in range(start_year, end_year + 1)]
-    for year in years:
-        cc.download_all_courses_by_year(year)
+def download_courses(start_year=2011, end_year=2022):
+    ecc = ExploreCoursesConnection()
+    nps = NestedPersistentStorage(dir=DIR,
+                                  depth=DEPTH,
+                                  entity_name=ENTITY_NAME)
+
+    academic_years = [f"{i}-{i+1}" for i in range(start_year, end_year + 1)]
+
+    for academic_year in academic_years:
+        total_start = time.time()
+
+        for school in ecc.get_schools(academic_year=academic_year):
+            start = time.time()
+            school_name = school["name"]
+            departments = school["departments"]
+
+            for dept in school["departments"]:
+                department_code = dept["name"]
+
+                courses = ecc.get_courses(department_code=department_code,
+                                          academic_year=academic_year)
+
+                nps.write(courses,
+                          f"{department_code}.xml",
+                          academic_year, school_name)
+
+            end = time.time()
+            print(f"  ({end - start:.2f} s) {school_name}: {len(departments)}")
+
+        total_end = time.time()
+        print(f"({total_end - total_start:.2f} s) {academic_year}")
+
+    nps.generate_pkl(pkl_filename=PKL_FILENAME)
 
 
-def load_courses(from_pkl=True):
-    if from_pkl:
-        with open("all_courses.pkl", "rb") as f:
-            print("Loading all courses from all_courses.pkl...")
-            all_courses = pickle.load(f)
+def load_courses():
+    nps = NestedPersistentStorage(dir=DIR,
+                                  depth=DEPTH,
+                                  entity_name=ENTITY_NAME)
 
-    else:
-        cc = CourseConnection()
-        all_courses = cc.get_all_courses_from_downloads()
-
-        with open("all_courses.pkl", "wb") as f:
-            pickle.dump(all_courses, f)
+    all_courses = nps.load(pkl_filename=PKL_FILENAME)
 
     print(f"Found {len(all_courses)} courses")
 
@@ -39,71 +74,27 @@ def load_courses(from_pkl=True):
     return all_courses
 
 
-def analyze_start_and_end_times(all_courses):
-    earliest_start_hour = 8
-    earliest_start_minute = 0
-    earliest_start_code = []
-
-    latest_end_hour = 6
-    latest_end_minute = 0
-    latest_end_code = []
-
-    for course in all_courses.values():
-        if 1226 not in course.terms:
-            continue
-        # print(course.terms[1226])
-        for sched in course.terms[1226]:
-            if (sched["startInfo"] and sched["startInfo"].hour != 0):
-                start_hour = sched["startInfo"].hour
-                start_minute = sched["startInfo"].minute
-
-                if (start_hour < earliest_start_hour or
-                    (start_hour == earliest_start_hour and
-                     start_minute < earliest_start_minute)):
-                    earliest_start_hour = start_hour
-                    earliest_start_minute = start_minute
-                    earliest_start_code = course.code
-
-            if (sched["endInfo"] and sched["endInfo"].hour != 0):
-                end_hour = sched["endInfo"].hour
-                end_minute = sched["endInfo"].minute
-
-                if (end_hour > latest_end_hour or
-                    (end_hour == latest_end_hour and
-                     end_minute > latest_end_minute)):
-                    latest_end_hour = end_hour
-                    latest_end_minute = end_minute
-                    latest_end_code = course.code
-
-    print(
-        f"Earliest start time: {earliest_start_hour}:{earliest_start_minute} ({earliest_start_code})")
-    print(
-        f"Latest end time: {latest_end_hour}:{latest_end_minute} ({latest_end_code})")
-
-
-def analyze_time_adjustment(all_courses):
-    def utc_to_local(utc_dt):
-        return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None) + timedelta(hours=7)
-
-    for course in all_courses.values():
-
-        for term in course.terms.values():
-
-            for sched in term:
-                print("old:", sched["startInfo"], sched["startInfo"].tzname())
-                print("new:", utc_to_local(sched["startInfo"]), utc_to_local(
-                    sched["startInfo"]).tzname())
-
-
 if __name__ == "__main__":
+    # TODO: argparse
+
+    """
+    python3 main.py
+    -r --read (print out or download?)
+    -w --write (from loading or from downloading/uploading)
+    -u --update (from loading or from downloading/uploading)
+    -i --interactive (can perform reads and writes?)
+    """
+
     """
     Step 1: Download all courses from 2021-2022 to 2016-2017.
     """
-    # download_courses()
+    # download_courses(start_year=2022, end_year=2022)
+    download_courses(start_year=2012)
 
     """
     Step 2: Load all courses into dictionary of Course objects.
     """
+    all_courses = load_courses()
     # all_courses = load_courses(from_pkl=True)
     # analyze_time_adjustment(all_courses)
     # analyze_start_and_end_times(all_courses)
@@ -111,7 +102,7 @@ if __name__ == "__main__":
     """
     Step 3: Create a FirestoreConnection object and upload each course.
     """
-    firestore_connection = FirestoreConnection()
+    # firestore_connection = FirestoreConnection()
 
     # firestore_connection.read_course(next(iter(all_courses.items())))
     # firestore_connection.read_data(collection="courses")
@@ -120,7 +111,7 @@ if __name__ == "__main__":
     # firestore_connection.adjust_enrollment_times(all_courses)
     # firestore_connection.add_keywords_to_users()
     # firestore_connection.adjust_course_times()
-    firestore_connection.add_enrollment_colors()
+    # firestore_connection.add_enrollment_colors()
 
     # while True:
     #     search = input("Enter a search word: ")
