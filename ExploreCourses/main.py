@@ -89,7 +89,7 @@ if __name__ == "__main__":
     Step 1: Download all courses from 2021-2022 to 2016-2017.
     """
     # download_courses(start_year=2022, end_year=2022)
-    download_courses(start_year=2012)
+    # download_courses(start_year=2012)
 
     """
     Step 2: Load all courses into dictionary of Course objects.
