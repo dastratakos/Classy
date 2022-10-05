@@ -23,6 +23,7 @@ To run the app, run these commands:
 
 ```sh
 cd Classy
+yarn install
 expo start
 ```
 
