@@ -44,11 +44,40 @@ export const sendPushNotification = async (
 };
 
 export const getCurrentTermId = () => {
-  const now = new Date();
-  const year = now.getFullYear();
+  // TODO: this logic will only hold up until 2023-08-18
 
-  // TODO: calculate this value. This will also affect year (e.g. 2021 vs 2022)
-  const quarter = 6;
+  let now = new Date();
+
+  /* https://studentservices.stanford.edu/stanford-academic-calendar-2022-23 */
+  const academic_calendar = [
+    new Date("2022-09-26"), // aut_start
+    new Date("2022-12-09"), // aut_classes_end
+    new Date("2022-12-16"), // aut_end
+
+    new Date("2023-01-09"), // win_start
+    new Date("2023-03-17"), // win_classes_end
+    new Date("2023-03-24"), // win_end
+
+    new Date("2023-04-03"), // spr_start
+    new Date("2023-06-07"), // spr_classes_end
+    new Date("2023-06-14"), // spr_end
+
+    new Date("2023-06-26"), // sum_start
+    new Date("2023-08-17"), // sum_classes_end
+    new Date("2023-08-19"), // sum_end
+  ];
+
+  let quarter = 2;
+
+  for (let i = 0; i < academic_calendar.length; i++) {
+    if (now < academic_calendar[i]) {
+      quarter = (Math.floor((i - 1) / 3) + 1) * 2;
+      break;
+    }
+  }
+
+  /* Add one if the quarter is 2 (autumn). E.g. Aut of 2022-23 is year 2023. */
+  const year = now.getFullYear() + (quarter === 2 ? 1 : 0);
 
   return `${(year - 1900) * 10 + quarter}`;
 };
