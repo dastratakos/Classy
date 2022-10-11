@@ -124,13 +124,19 @@ class FirestoreConnection:
 
             i += 1
 
-    def add_terms(self, all_courses):
+    def __termId_in_year(self, termId: int, academic_year: str):
+        return termId // 10 == (int(academic_year[:4]) - 1900 + 1)
+
+    def add_terms(self, all_courses, academic_year=None):
         i = 0
         for course in tqdm(all_courses.values()):
             course_ref = self.db.collection(u"courses").document(
                 f"{course.courseId}")
 
             for termId, terms in course.terms.items():
+                if academic_year and not self.__termId_in_year(termId, academic_year):
+                    continue
+
                 if i % 250 == 0:
                     batch = self.db.batch()
 
@@ -138,7 +144,8 @@ class FirestoreConnection:
 
                 term_ref = course_ref.collection(
                     u"terms").document(f"{termId}")
-                batch.update(term_ref, term_data)
+                # batch.update(term_ref, term_data)
+                batch.set(term_ref, term_data)
 
                 if i % 250 == 249:
                     batch.commit()

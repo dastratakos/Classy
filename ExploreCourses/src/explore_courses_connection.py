@@ -58,7 +58,7 @@ class ExploreCoursesConnection():
 
         params = {
             "view": "xml",
-            "year": academic_year.replace('-', '')
+            "academicYear": academic_year.replace("-", "")
         }
 
         res = self.__session.get(self.__URL, params=params)
@@ -88,12 +88,13 @@ class ExploreCoursesConnection():
         the courses from the response.
 
         Args:
-            query (str):                   The query of the call. TODO: put example
-            academic_year (str, optional):  The year to query (e.g. "2022-2023").
-                                           Defaults to None.
+            query (str):                    The query of the call. TODO: put example
+            academic_year (str, optional):  The year to query (e.g.
+                                            "2022-2023"). Defaults to None.
 
         Returns:
-            bytes:                         An XML object containing the courses.
+            bytes:                          An XML object containing the
+                                            courses.
         """
 
         url = self.__URL + "search"
@@ -105,7 +106,7 @@ class ExploreCoursesConnection():
         }
         params.update({f: "on" for f in filters})
         if academic_year:
-            params.update({"academic_year": academic_year.replace('-', '')})
+            params.update({"academicYear": academic_year.replace("-", "")})
 
         res = self.__session.get(url, params=params)
         return res.content
@@ -118,11 +119,13 @@ class ExploreCoursesConnection():
         is then returned as bytes.
 
         Args:
-            department_code (str):  The department to query.
-            year (str, optional):   The year to query (e.g. "2022-2023").
+            department_code (str):          The department to query.
+            academic_year (str, optional):  The year to query (e.g.
+                                            "2022-2023").
 
         Returns:
-            bytes:                 An XML object containing all the courses.
+            bytes:                          An XML object containing all the
+                                            courses.
         """
         filters.append(f"filter-departmentcode-{department_code}")
         courses = self.__get_courses_by_query(department_code,

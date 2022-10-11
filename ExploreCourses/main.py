@@ -5,6 +5,7 @@ Author: Dean Stratakos
 Date: October 5, 2022
 """
 
+import os
 import time
 
 from src.firestore_connection import FirestoreConnection
@@ -16,6 +17,7 @@ DIR = "./data"
 DEPTH = 2
 ENTITY_NAME = "course"
 PKL_FILENAME = "./all_courses_2011-2022.pkl"
+TIMESTAMP = "2022-10-12 00:05:00.000000"
 
 
 def download_courses(start_year=2011, end_year=2022):
@@ -36,6 +38,12 @@ def download_courses(start_year=2011, end_year=2022):
 
             for dept in school["departments"]:
                 department_code = dept["name"]
+
+                timestamp = nps.get_timestamp(f"{department_code}.xml",
+                                              academic_year, school_name)
+                if timestamp and timestamp < TIMESTAMP:
+                    # print(f"Skipping {academic_year} {department_code}")
+                    continue
 
                 courses = ecc.get_courses(department_code=department_code,
                                           academic_year=academic_year)
@@ -75,9 +83,9 @@ def load_courses():
 
 
 if __name__ == "__main__":
+    """
     # TODO: argparse
 
-    """
     python3 main.py
     -r --read (print out or download?)
     -w --write (from loading or from downloading/uploading)
@@ -88,26 +96,22 @@ if __name__ == "__main__":
     """
     Step 1: Download all courses from 2021-2022 to 2016-2017.
     """
-    # download_courses(start_year=2022, end_year=2022)
-    # download_courses(start_year=2012)
+    # download_courses()
 
     """
     Step 2: Load all courses into dictionary of Course objects.
     """
     all_courses = load_courses()
-    # all_courses = load_courses(from_pkl=True)
-    # analyze_time_adjustment(all_courses)
-    # analyze_start_and_end_times(all_courses)
 
     """
     Step 3: Create a FirestoreConnection object and upload each course.
     """
-    # firestore_connection = FirestoreConnection()
+    firestore_connection = FirestoreConnection()
 
     # firestore_connection.read_course(next(iter(all_courses.items())))
     # firestore_connection.read_data(collection="courses")
     # firestore_connection.add_courses(all_courses)
-    # firestore_connection.add_terms(all_courses)
+    firestore_connection.add_terms(all_courses)
     # firestore_connection.adjust_enrollment_times(all_courses)
     # firestore_connection.add_keywords_to_users()
     # firestore_connection.adjust_course_times()

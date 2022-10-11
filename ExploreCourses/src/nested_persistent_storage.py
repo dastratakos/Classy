@@ -5,6 +5,8 @@ Author: Dean Stratakos
 Date: October 5, 2022
 """
 
+import csv
+from datetime import datetime
 import os
 import pickle
 import time
@@ -28,6 +30,9 @@ class NestedPersistentStorage():
             entity_name (str): _description_
         """
         self.__dir = dir
+        self.__timestamps_filename = f"{dir}/timestamps.csv"
+        self.__timestamps_fieldnames = ["timestamp", "path"]
+        self.__timestamps_format = "%Y-%m-%d %H:%M:%S.%f"
         self.__depth = depth
         self.__entity_name = entity_name
 
@@ -80,8 +85,7 @@ class NestedPersistentStorage():
                 # Base case
                 if curr_depth == self.__depth + 1:
                     if not os.path.isfile(curr_path):
-                        print(f"[ERROR]: curr_path {curr_path} is not a file.")
-                        return
+                        assert False, f"[ERROR]: curr_path {curr_path} is not a file."
 
                     with open(curr_path) as f:
                         # TODO: abstract XML specific code
@@ -125,7 +129,6 @@ class NestedPersistentStorage():
         """ Iterates through the nested storage and generate a .pkl file.
 
         TODO: Provide ways to get data from a specific directory.
-        TODO: Use the RESET parameter.
 
         Args:
             pkl_filename (str):      The name of the file to create.
@@ -137,8 +140,20 @@ class NestedPersistentStorage():
                                      generate .pkl file from scratch.
                                      Defaults to False.
         """
-        all_entities = self.__collect_all_entities(path=self.__dir,
-                                                   verbose=True)
+        if os.path.exists(pkl_filename):
+            if reset:
+                print(f"[INFO] Overwriting file: {pkl_filename}.")
+            else:
+                print(f"[WARNING] File already exists: {pkl_filename}.")
+                while True:
+                    user_input = input("Continue? (y/n): ")
+                    if user_input.lower() == "n":
+                        print(f"[INFO] Skipping pkl generation.")
+                        return
+                    if user_input.lower() == "y":
+                        break
+
+        all_entities = self.__collect_all_entities(verbose=True)
 
         with open(pkl_filename, "wb") as f:
             pickle.dump(all_entities, f)
@@ -150,26 +165,26 @@ class NestedPersistentStorage():
             pkl_filename (str):  The name of the file to load.
         """
         if not os.path.exists(pkl_filename):
-            print(f"[ERROR]: Could not find .pkl file {pkl_filename}")
-            return
+            assert False, f"[ERROR]: Could not find .pkl file {pkl_filename}"
 
         with open(pkl_filename, "rb") as f:
             return pickle.load(f)
 
     def write(self, data, filename, *path):
-        """ Writes DATA to the specified FILENAME. Creates the nested
-        directories if they do not exist.
+        """ Writes DATA to the specified FILENAME and PATH. Creates the nested
+        directories if they do not exist. Overwrites any existing file at the
+        specified FILENAME and PATH (denoted by the "w" in "wb" mode).
 
         Args:
-            data (bytes):       The data to write to the file
-            filename (_type_):  The name of the file to write to.
-            *path (*str):       The path of the file. len(path) must be equal to
-                                self.__depth.
+            data (bytes):    The data to write to the file
+            filename (str):  The name of the file to write to.
+            *path (*str):    The path of the file. len(path) must be equal to
+                             self.__depth.
         """
         if len(path) != self.__depth:
             actual = f"*path {path} has length {len(path)}"
             expected = f"Expected {self.__depth}"
-            print(f"[ERROR]: {actual}. {expected}.")
+            assert False, f"[ERROR in write()]: {actual}. {expected}."
 
         current_path = self.__dir
         for dir in path:
@@ -178,6 +193,83 @@ class NestedPersistentStorage():
                 os.mkdir(current_path)
 
         current_path = f"{current_path}/{filename}"
-        if not os.path.exists(current_path):
-            with open(current_path, "xb") as f:
-                f.write(data)
+        with open(current_path, "wb") as f:
+            f.write(data)
+        self.__set_timestamp(filename, *path)
+
+    def __set_timestamp(self, filename, *path):
+        """ Sets the timestamp of the last time data was written to the given
+        FILENAME and PATH to now.
+
+        Args:
+            filename (str):  The name of the file to write to.
+            *path (*str):    The path of the file. len(path) must be equal to
+                             self.__depth.
+        """
+        if len(path) != self.__depth:
+            actual = f"*path {path} has length {len(path)}"
+            expected = f"Expected {self.__depth}"
+            assert False, f"[ERROR in __set_timestamp()]: {actual}. {expected}."
+
+        full_path = f"{self.__dir}/{''.join([f'{p}/' for p in path])}{filename}"
+
+        if not os.path.exists(self.__timestamps_filename):
+            with open(self.__timestamps_filename, "w") as f:
+                writer = csv.DictWriter(
+                    f, fieldnames=self.__timestamps_fieldnames)
+                timestamp = datetime.strftime(
+                    datetime.now(), self.__timestamps_format)
+                writer.writerow({"path": full_path, "timestamp": timestamp})
+            return
+
+        filename = self.__timestamps_filename
+        tmp_filename = self.__timestamps_filename.replace(".csv", "_tmp.csv")
+
+        with open(filename, "r") as f_read, open(tmp_filename, "w") as f_write:
+            reader = csv.DictReader(
+                f_read, fieldnames=self.__timestamps_fieldnames)
+            writer = csv.DictWriter(
+                f_write, fieldnames=self.__timestamps_fieldnames)
+
+            timestamp = datetime.strftime(
+                datetime.now(), self.__timestamps_format)
+            new_row = {"path": full_path, "timestamp": timestamp}
+
+            found = False
+            for row in reader:
+                if row["path"] == full_path:
+                    row = new_row
+                    found = True
+                writer.writerow(row)
+            if not found:
+                writer.writerow(new_row)
+
+        os.remove(filename)
+        os.rename(tmp_filename, filename)
+
+    def get_timestamp(self, filename, *path):
+        """ Returns the timestamp of the last time data was written to the given
+        FILENAME and PATH.
+
+        Args:
+            filename (str):  The name of the file to write to.
+            *path (*str):    The path of the file. len(path) must be equal to
+                             self.__depth.
+        """
+        if len(path) != self.__depth:
+            actual = f"*path {path} has length {len(path)}"
+            expected = f"Expected {self.__depth}"
+            assert False, f"[ERROR in get_timestamp()]: {actual}. {expected}."
+
+        if not os.path.exists(self.__timestamps_filename):
+            return None
+
+        full_path = f"{self.__dir}/{''.join([f'{p}/' for p in path])}{filename}"
+
+        with open(self.__timestamps_filename, "r") as f:
+            reader = csv.DictReader(f, fieldnames=self.__timestamps_fieldnames)
+            for row in reader:
+                if row["path"] == full_path:
+                    return row["timestamp"]
+
+        return None
