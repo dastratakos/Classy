@@ -1,6 +1,19 @@
-import { Animated, Pressable, StyleSheet, View } from "react-native";
+import {
+  Animated,
+  Dimensions,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
 import { DaySchedule, Event, WeekSchedule } from "../../types";
-import { createRef, forwardRef, useCallback, useRef } from "react";
+import {
+  createRef,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { ActivityIndicator } from "../Themed";
 import AppStyles from "../../styles/AppStyles";
@@ -31,7 +44,16 @@ export default function Calendar({
   /* Create new data structure with ref property. */
   const newEvents = week.map((item) => ({ ...item, ref: createRef() }));
 
-  const DAY_WIDTH = Layout.window.width - 2 * Layout.spacing.medium;
+  const [dayWidth, setDayWidth] = useState(
+    Dimensions.get("window").width - 2 * Layout.spacing.medium
+  );
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setDayWidth(window.width - 2 * Layout.spacing.medium);
+    });
+    return () => subscription?.remove();
+  });
+
   const scrollX = useRef(new Animated.Value(0)).current;
 
   const d = new Date();
@@ -54,7 +76,7 @@ export default function Calendar({
     ) => {
       const inputRange = Array.from(
         { length: numDays },
-        (_, idx) => idx * DAY_WIDTH
+        (_, idx) => idx * dayWidth
       );
       const regularOpacity = scrollX.interpolate({
         inputRange,
@@ -115,13 +137,13 @@ export default function Calendar({
   }) => {
     const inputRange = Array.from(
       { length: numDays },
-      (_, idx) => idx * DAY_WIDTH
+      (_, idx) => idx * dayWidth
     );
     const indicatorLeft = scrollX.interpolate({
       inputRange,
       outputRange: Array.from(
         { length: numDays },
-        (_, idx) => (idx * DAY_WIDTH) / numDays + DAY_WIDTH / numDays / 2 - 15
+        (_, idx) => (idx * dayWidth) / numDays + dayWidth / numDays / 2 - 15
       ),
     });
     const regularOpacity = scrollX.interpolate({
@@ -205,13 +227,13 @@ export default function Calendar({
       events,
       startCalendarHour,
       CALENDAR_HOUR_HEIGHT,
-      DAY_WIDTH,
+      dayWidth,
       CALENDAR_TIMES_WIDTH,
       Layout.spacing.xsmall
     );
 
     return (
-      <View style={{ width: DAY_WIDTH }}>
+      <View style={{ width: dayWidth }}>
         <CalendarGrid
           times={times}
           index={index}
@@ -243,7 +265,7 @@ export default function Calendar({
 
   const onItemPress = useCallback((itemIndex) => {
     ref?.current?.scrollToOffset({
-      offset: itemIndex * DAY_WIDTH,
+      offset: itemIndex * dayWidth,
     });
   });
 
@@ -271,7 +293,7 @@ export default function Calendar({
           /* Default to Monday if it's a weekend. */
           const initialSelected = today >= 0 && today <= 4 ? today : 0;
           ref?.current?.scrollToOffset({
-            offset: initialSelected * DAY_WIDTH,
+            offset: initialSelected * dayWidth,
             animated: false,
           });
         }}
