@@ -71,7 +71,7 @@ export const getCurrentTermId = () => {
 
   for (let i = 0; i < academic_calendar.length; i++) {
     if (now < academic_calendar[i]) {
-      quarter = (Math.floor((i - 1) / 3) + 1) * 2;
+      quarter = (Math.floor(i / 3) + 1) * 2;
       break;
     }
   }
