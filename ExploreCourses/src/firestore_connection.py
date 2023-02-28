@@ -20,7 +20,7 @@ class FirestoreConnection:
     def __init__(self):
         # Use a service account
         cred = credentials.Certificate(
-            "./cs194w-team4-firebase-adminsdk-nlhhi-817038c561.json")
+            "./cs194w-team4-843758eb5ad5.json")
         firebase_admin.initialize_app(cred)
 
         self.db = firestore.client()
